@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.next/
+.vinext/
+.wrangler/
+.env*
+*.tsbuildinfo
+next-env.d.ts
+output/
+work/
+*.log
+*.tar.gz
+*.rar
+.DS_Store

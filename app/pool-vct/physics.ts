@@ -1,0 +1,139 @@
+import * as T from 'three';
+
+export type Collider = { center:T.Vector3; half:T.Vector3; rotation?:T.Quaternion; radius?:number; slide?:boolean };
+export type Ladder = { base:T.Vector3; top:T.Vector3; exit:T.Vector3 };
+export type Contact = { normal:T.Vector3; depth:number };
+
+export function sphereContact(p:T.Vector3,r:number,c:Collider):Contact|null {
+  const q=p.clone().sub(c.center);if(c.rotation)q.applyQuaternion(c.rotation.clone().invert());
+  let normal:T.Vector3,depth:number;
+  if(c.radius!==undefined){
+    const horizontal=Math.hypot(q.x,q.z),outsideSide=horizontal-c.radius,outsideY=Math.abs(q.y)-c.half.y;
+    if(outsideSide>=r||outsideY>=r)return null;
+    if(outsideSide>0&&outsideY>0){const distance=Math.hypot(outsideSide,outsideY);if(distance>=r)return null;normal=new T.Vector3(q.x/horizontal*outsideSide,Math.sign(q.y)*outsideY,q.z/horizontal*outsideSide).normalize();depth=r-distance;}
+    else if(outsideSide>outsideY){normal=new T.Vector3(q.x/(horizontal||1),0,q.z/(horizontal||1));if(horizontal===0)normal.set(1,0,0);depth=r-outsideSide;}
+    else {normal=new T.Vector3(0,Math.sign(q.y)||1,0);depth=r-outsideY;}
+  }else{
+    const closest=q.clone().clamp(c.half.clone().negate(),c.half),delta=q.clone().sub(closest),distance=delta.length();
+    if(distance>=r)return null;
+    if(distance>1e-8){normal=delta.divideScalar(distance);depth=r-distance;}
+    else {const gaps=c.half.clone().sub(new T.Vector3(Math.abs(q.x),Math.abs(q.y),Math.abs(q.z)));const axis=gaps.x<gaps.y&&gaps.x<gaps.z?'x':gaps.y<gaps.z?'y':'z';normal=new T.Vector3();normal[axis]=Math.sign(q[axis])||1;depth=r+gaps[axis];}
+  }
+  if(c.rotation)normal.applyQuaternion(c.rotation);return {normal,depth};
+}
+
+export function resolveSphere(p:T.Vector3,v:T.Vector3,r:number,colliders:Collider[],bounce=.24){
+  let grounded=false;
+  for(let pass=0;pass<2;pass++)for(const c of colliders){
+    // Cheap broad phase; rotated box extent uses its bounding sphere.
+    const reach=c.rotation?c.half.length():Math.max(c.half.x,c.half.z,c.radius??0);
+    if(Math.abs(p.x-c.center.x)>reach+r||Math.abs(p.z-c.center.z)>reach+r)continue;
+    const contact=sphereContact(p,r,c);if(!contact)continue;
+    p.addScaledVector(contact.normal,contact.depth+.0001);const speed=v.dot(contact.normal);
+    if(speed<0)v.addScaledVector(contact.normal,-(1+bounce)*speed);
+    if(contact.normal.y>.5)grounded=true;
+  }
+  return grounded;
+}
+
+export function rayOccluded(origin:T.Vector3,target:T.Vector3,colliders:Collider[],radius=.015){
+  const direction=target.clone().sub(origin),distance=direction.length();direction.normalize();
+  // Exact OBB slab query; cylindrical blockers use a conservative box for targeting.
+  for(const c of colliders){const p=origin.clone().sub(c.center),d=direction.clone();if(c.rotation){const inv=c.rotation.clone().invert();p.applyQuaternion(inv);d.applyQuaternion(inv);}
+    const h=c.half.clone().addScalar(radius);const hit=new T.Ray(p,d).intersectBox(new T.Box3(h.clone().negate(),h),new T.Vector3());
+    if(hit&&hit.distanceTo(p)<distance-.05)return true;
+  }return false;
+}
+
+export type PropBody = {
+  position:T.Vector3;velocity:T.Vector3;rotation:T.Quaternion;radius:number;floatBias:number;name:string;
+  visual:T.Group;parts:{mesh:T.InstancedMesh;index:number;local:T.Matrix4}[];
+  promoted:boolean;splashCooldown:number;
+};
+
+export class PropPhysics {
+  bodies:PropBody[]=[];held:PropBody|null=null;distance=1.7;throws=0;grabs=0;
+  private accumulator=0;
+  private scene:T.Scene;
+  private splash:(x:number,z:number,power:number)=>void;
+  private surface:(x:number,z:number,time:number)=>number;
+  constructor(scene:T.Scene,splash:(x:number,z:number,power:number)=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z)){this.scene=scene;this.splash=splash;this.surface=surface;}
+  add(body:PropBody){this.bodies.push(body);}
+  remove(bodies:PropBody[]){const removed=new Set(bodies.filter(b=>!b.promoted));this.bodies=this.bodies.filter(b=>!removed.has(b));}
+  pick(camera:T.Camera,colliders:Collider[]){
+    const ray=new T.Ray(camera.position.clone(),camera.getWorldDirection(new T.Vector3()));let result:PropBody|null=null,nearest=3.6;
+    for(const b of this.bodies){const hit=ray.intersectSphere(new T.Sphere(b.position,b.radius+.07),new T.Vector3());if(hit){const d=hit.distanceTo(camera.position);if(d<nearest&&!rayOccluded(camera.position,b.position,colliders)){nearest=d;result=b;}}}return result;
+  }
+  grab(b:PropBody){
+    if(!b.promoted){const zero=new T.Matrix4().makeScale(0,0,0);for(const p of b.parts){p.mesh.setMatrixAt(p.index,zero);p.mesh.instanceMatrix.needsUpdate=true;}b.promoted=true;this.scene.add(b.visual);}
+    this.held=b;this.distance=1.7;this.grabs++;b.velocity.set(0,0,0);
+  }
+  release(camera?:T.Camera,speed=11){if(!this.held)return;this.held.velocity.set(0,0,0);if(camera){this.held.velocity.copy(camera.getWorldDirection(new T.Vector3())).multiplyScalar(speed);this.held.velocity.y+=1.2;this.throws++;}this.held=null;}
+  rebase(shift:T.Vector3){for(const b of this.bodies)b.position.sub(shift);}
+  update(dt:number,camera:T.Camera,colliders:Collider[],time:number,enabled=true){
+    if(enabled)this.accumulator+=Math.min(dt,.2);
+    const h=1/120;
+    while(this.accumulator>=h){this.accumulator-=h;
+      const nearby=this.bodies.filter(b=>b.position.distanceToSquared(camera.position)<24*24||b===this.held);
+      for(const b of nearby){
+        const before=b.position.y;b.splashCooldown=Math.max(0,b.splashCooldown-h);
+        if(b===this.held){
+          const target=camera.position.clone().addScaledVector(camera.getWorldDirection(new T.Vector3()),this.distance);target.y-=.1;
+          b.velocity.copy(target.sub(b.position)).multiplyScalar(16).clampLength(0,12);
+        }else{
+          // floatBias lifts the buoyancy target so props whose visual sits below the
+          // collider centre (ducks) keep their tuned waterline while resting dry.
+          const water=this.surface(b.position.x,b.position.z,time)+b.floatBias;
+          if(b.position.y<water+.06){b.velocity.y+=(water-b.position.y)*45*h-b.velocity.y*5*h;b.velocity.x*=Math.exp(-2*h);b.velocity.z*=Math.exp(-2*h);}
+          else b.velocity.y-=9.81*h;
+          b.velocity.clampLength(0,18);
+        }
+        b.position.addScaledVector(b.velocity,h);resolveSphere(b.position,b.velocity,b.radius,colliders,b===this.held?0:.3);
+        if(b!==this.held){const playerVolume={center:camera.position.clone().add(new T.Vector3(0,-.82,0)),half:new T.Vector3(.32,.82,.32),radius:.32};const contact=sphereContact(b.position,b.radius,playerVolume);if(contact){b.position.addScaledVector(contact.normal,contact.depth+.001);b.velocity.addScaledVector(contact.normal,.08);}}
+        if(before>.32&&b.position.y<=.32&&b.velocity.length()>1&&b.splashCooldown===0){this.splash(b.position.x,b.position.z,Math.min(.5,.06+b.velocity.length()*.028));b.splashCooldown=.7;}
+        if(b!==this.held&&b.velocity.lengthSq()>.04){const spin=new T.Quaternion().setFromAxisAngle(new T.Vector3(b.velocity.z,0,-b.velocity.x).normalize(),Math.min(b.velocity.length(),6)*h);b.rotation.premultiply(spin);}
+      }
+      // Spatial buckets avoid an all-pairs pass over the streamed population.
+      const buckets=new Map<string,PropBody[]>();for(const b of nearby){const key=`${Math.floor(b.position.x)},${Math.floor(b.position.z)}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key)!.push(b);}
+      const ids=new Map(nearby.map((b,i)=>[b,i]));
+      for(const a of nearby)for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++)for(const b of buckets.get(`${Math.floor(a.position.x)+x},${Math.floor(a.position.z)+z}`)??[]){
+        if(ids.get(a)!>=ids.get(b)!)continue;const delta=b.position.clone().sub(a.position),length=delta.length(),sum=a.radius+b.radius;if(length>=sum||length<1e-6)continue;
+        const n=delta.divideScalar(length),depth=sum-length;a.position.addScaledVector(n,-depth*.5);b.position.addScaledVector(n,depth*.5);
+        const speed=b.velocity.clone().sub(a.velocity).dot(n);if(speed<0){a.velocity.addScaledVector(n,speed*.65);b.velocity.addScaledVector(n,-speed*.65);}
+      }
+    }
+    for(const b of this.bodies){
+      if(b.promoted){b.visual.position.copy(b.position);b.visual.quaternion.copy(b.rotation);}
+      else for(const part of b.parts){const root=new T.Matrix4().compose(b.position.clone().sub(part.mesh.position),b.rotation,new T.Vector3(1,1,1));part.mesh.setMatrixAt(part.index,root.multiply(part.local));part.mesh.instanceMatrix.needsUpdate=true;}
+    }
+    this.bodies=this.bodies.filter(b=>{if(b.promoted&&b!==this.held&&b.position.distanceTo(camera.position)>80){this.scene.remove(b.visual);return false;}return true;});
+  }
+}
+
+export class PlayerPhysics {
+  vertical=0;grounded=false;climbing:Ladder|null=null;climbProgress=0;slides=0;
+  private accumulator=0;
+  nearest(camera:T.Camera,ladders:Ladder[]){return ladders.find(l=>Math.min(...[l.base,l.top,l.exit].map(p=>Math.hypot(camera.position.x-p.x,camera.position.z-p.z)))<1.25&&camera.position.y>l.base.y-.5&&camera.position.y<l.top.y+2.3)??null;}
+  toggle(camera:T.Camera,ladders:Ladder[]){if(this.climbing){this.climbing=null;return;}this.climbing=this.nearest(camera,ladders);if(this.climbing){this.climbProgress=T.MathUtils.clamp(camera.position.y-1.65-this.climbing.base.y,0,this.climbing.top.y-this.climbing.base.y);this.vertical=0;}}
+  update(dt:number,camera:T.Camera,keys:Set<string>,colliders:Collider[]){
+    this.accumulator+=Math.min(dt,.2);const h=1/120;
+    while(this.accumulator>=h){this.accumulator-=h;
+      if(this.climbing){const l=this.climbing,height=l.top.y-l.base.y;this.climbProgress+=(Number(keys.has('KeyW'))-Number(keys.has('KeyS')))*1.8*h;
+        const t=T.MathUtils.clamp(this.climbProgress/height,0,1);camera.position.copy(l.base).lerp(l.top,t);camera.position.y+=1.65;
+        if(this.climbProgress>=height){camera.position.copy(l.exit);camera.position.y+=1.65;this.climbing=null;this.grounded=true;}
+        else if(this.climbProgress<0){this.climbing=null;camera.position.y=1.5;}continue;
+      }
+      const move=new T.Vector3(Number(keys.has('KeyD'))-Number(keys.has('KeyA')),0,Number(keys.has('KeyS'))-Number(keys.has('KeyW'))).normalize().applyAxisAngle(new T.Vector3(0,1,0),camera.rotation.y).multiplyScalar(keys.has('ShiftLeft')?5.2:2.6);
+      this.vertical-=9.81*h;
+      if(camera.position.y<1.5&&this.vertical<0){this.vertical+=(1.5-camera.position.y)*50*h-this.vertical*7*h;}
+      if(keys.has('Space')&&this.grounded){this.vertical=4.5;this.grounded=false;}
+      const v=new T.Vector3(move.x,this.vertical,move.z);camera.position.addScaledVector(v,h);this.grounded=false;
+      for(let pass=0;pass<2;pass++)for(const c of colliders){
+        const reach=c.rotation?c.half.length():Math.max(c.half.x,c.half.z,c.radius??0);if(Math.abs(camera.position.x-c.center.x)>reach+.4||Math.abs(camera.position.z-c.center.z)>reach+.4)continue;
+        for(const down of [1.32,.83,.34]){const p=camera.position.clone();p.y-=down;const contact=sphereContact(p,.32,c);if(!contact)continue;camera.position.addScaledVector(contact.normal,contact.depth+.0001);const speed=v.dot(contact.normal);if(speed<0)v.addScaledVector(contact.normal,-speed);
+          if(contact.normal.y>.5){this.grounded=true;if(c.slide){const gravity=new T.Vector3(0,-9.81,0);gravity.addScaledVector(contact.normal,-gravity.dot(contact.normal));camera.position.addScaledVector(gravity,h*.55);this.slides++;}}
+        }
+      }this.vertical=v.y;
+    }
+  }
+}

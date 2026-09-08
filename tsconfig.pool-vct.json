@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": ["app/pool-vct/**/*.ts", "app/pool-vct/**/*.tsx"],
+  "exclude": ["node_modules", ".next", "Pool", "PoolCore", "PoolCore_1"]
+}
