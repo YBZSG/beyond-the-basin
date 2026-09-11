@@ -8,10 +8,18 @@ export function randomFor(x: number, z: number, seed: number) {
   return () => { s += 0x6d2b79f5; let t = Math.imul(s ^ s >>> 15, 1 | s); t ^= t + Math.imul(t ^ t >>> 7, 61 | t); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 }
 // Every edge has an eight metre opening, so independently generated neighbours agree.
+// Corruption deepens with exploration distance: the pool complex stays pristine
+// near the spawn room and decays further out (lights fail, tiles stain, signs
+// turn wrong). It is a pure function of room coordinates, so streamed
+// regeneration of the same room always reproduces the same decay.
+export function corruptionLevel(x: number, z: number) {
+  const d = Math.max(Math.abs(x), Math.abs(z));
+  return d <= 1 ? 0 : d <= 3 ? 1 : d <= 6 ? 2 : 3;
+}
 export function roomLayout(x: number, z: number, seed: number) {
   const rng = randomFor(x, z, seed);
-  const anchors:Record<string,number>={'0,0':0,'0,-1':3,'-1,0':6,'1,0':5,'0,1':4};
-  return { variant: anchors[`${x},${z}`] ?? Math.floor(rng() * 7), tint: rng(), ducks: 8 + Math.floor(rng() * 14) };
+  const anchors:Record<string,number>={'0,0':0,'0,-1':3,'-1,0':6,'1,0':5,'0,1':4,'1,1':7};
+  return { variant: anchors[`${x},${z}`] ?? Math.floor(rng() * 8), tint: rng(), ducks: 8 + Math.floor(rng() * 14), corrupt: corruptionLevel(x, z) };
 }
 export function blocked(position: T.Vector3, solids: Solid[]) {
   return solids.some(b => b.min.y < 1.7 && b.max.y > 0.65 && position.x > b.min.x - .28 && position.x < b.max.x + .28 && position.z > b.min.z - .28 && position.z < b.max.z + .28);
@@ -80,11 +88,17 @@ export class VoxelField {
         const d2 = dx * dx + dy * dy + dz * dz; if (d2 > 324) continue;
         const d = Math.sqrt(d2);
         let visible = true;
-        // Skip the source cell; the conservative surface voxel can be thicker than geometry.
-        for (let t = 1.6; t < d - .9; t += .8) {
-          const gx = (px + dx * t / d - ox) * 1.3333333, gy = (py + dy * t / d - oy) * 1.3333333, gz = (pz + dz * t / d - oz) * 1.3333333;
-          const sx = gx < 0 ? -1 : gx | 0, sy = gy < 0 ? -1 : gy | 0, sz = gz < 0 ? -1 : gz | 0;
-          if (sx < 128 && sy < 32 && sz < 128 && occupancy[sx + 128 * (sy + 32 * sz)]) { visible = false; break; }
+        // 8× DDA march: each step is one eighth of a cell, so samples stay
+        // grid-aligned and a ray can never stride over a one-voxel-thin wall
+        // (the old .8m step was wider than a .75m cell). Eight consecutive
+        // samples usually share a cell, so only cell crossings retest occupancy.
+        const dirx = dx / d, diry = dy / d, dirz = dz / d, dda = .75 / 8;
+        let last = -1;
+        for (let t = 1.6; t < d - .9; t += dda) {
+          const sx = ((px + dirx * t - ox) * 1.3333333) | 0, sy = ((py + diry * t - oy) * 1.3333333) | 0, sz = ((pz + dirz * t - oz) * 1.3333333) | 0;
+          if (sx < 0 || sy < 0 || sz < 0 || sx > 127 || sy > 31 || sz > 127) continue;
+          const idx = sx + 128 * (sy + 32 * sz);
+          if (idx !== last) { if (occupancy[idx]) { visible = false; break; } last = idx; }
         }
         if (visible) { const e = ls[k + 6] / (d2 + 3); r += ls[k + 3] * e; g += ls[k + 4] * e; b += ls[k + 5] * e; }
       }

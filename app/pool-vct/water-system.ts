@@ -103,13 +103,13 @@ export class InteractiveWater {
   uniforms={waterTime:{value:0},impacts:{value:Array.from({length:12},()=>new T.Vector4(0,0,-100,0))},
     blocks:{value:Array.from({length:16},()=>new T.Vector4(0,0,0,0))},blockCount:{value:0}};
   causticUniforms={poolCaustics:{value:null as T.Texture|null},poolCausticsWalls:{value:null as T.Texture|null},causticGain:{value:1.5},waterLightPower:{value:1}};
-  target=new T.WebGLRenderTarget(4096,4096,{type:T.HalfFloatType,depthBuffer:false,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter,magFilter:T.LinearFilter});
+  target=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter,magFilter:T.LinearFilter});
   wallTarget=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter,magFilter:T.LinearFilter});
   private scene=new T.Scene();
   private wallScene=new T.Scene();
   private camera=new T.Camera();
-  private geometry=new T.PlaneGeometry(32,32,768,768);
-  private filterTarget=new T.WebGLRenderTarget(4096,4096,{type:T.HalfFloatType,depthBuffer:false});
+  private geometry=new T.PlaneGeometry(32,32,384,384);
+  private filterTarget=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false});
   private filterScene=new T.Scene();
   private filterMaterial=new T.ShaderMaterial({
     uniforms:{source:{value:null as T.Texture|null},stepSize:{value:new T.Vector2()},strips:{value:1}},
@@ -170,7 +170,7 @@ export class InteractiveWater {
           void main(){
             vec2 dx=dFdx(sourcePoint),dy=dFdy(sourcePoint);
             float sourceArea=abs(dx.x*dy.y-dx.y*dy.x);
-            float focus=clamp(sourceArea/(32.0*32.0/(4096.0*4096.0)),0.0,9.0);
+            float focus=clamp(sourceArea/(32.0*32.0/(2048.0*2048.0)),0.0,9.0);
             float visibility=texture2D(visibilityMap,sourcePoint/32.0+.5).r;
             float light=focus*powerAtSurface*visibility;
             gl_FragColor=vec4(vec3(light)*vec3(.73,.91,1.0),1.0);
@@ -182,7 +182,7 @@ export class InteractiveWater {
       for(const def of InteractiveWater.wallDefs)for(const reflected of [false,true]){
         // Emit from the horizontal water surface. A vertical source collapses
         // to a line in XZ and produces a degenerate, displaced wall atlas.
-        const geometry=new T.PlaneGeometry(32,32,384,384);
+        const geometry=new T.PlaneGeometry(32,32,192,192);
         geometry.rotateX(-Math.PI/2);
         this.wallGeometries.push(geometry);
         const wallMat=new T.ShaderMaterial({
@@ -406,16 +406,17 @@ export class InteractiveWater {
     // A flat, unchanged pool has unchanged light transport. Reuse it instead of
     // retracing millions of rays every frame while the player is standing still.
     if(!active&&!this.lastActive&&!this.dirty&&ready===this.lastReady)return;
+    // Moving caustics follow every water frame; only settled transport is cached.
     this.lastActive=active;this.lastReady=ready;this.dirty=false;
     const previous=renderer.getRenderTarget(),clear=renderer.getClearColor(new T.Color()),alpha=renderer.getClearAlpha();
     renderer.setRenderTarget(this.target);renderer.setClearColor(0,0);renderer.clear();renderer.render(this.scene,this.camera);
     // Integrate neighbouring computed photon footprints; no image/pattern input.
     this.filterMaterial.uniforms.source.value=this.target.texture;
     this.filterMaterial.uniforms.strips.value=1;
-    this.filterMaterial.uniforms.stepSize.value.set(1.4/4096,0);
+    this.filterMaterial.uniforms.stepSize.value.set(1.4/2048,0);
     renderer.setRenderTarget(this.filterTarget);renderer.render(this.filterScene,this.camera);
     this.filterMaterial.uniforms.source.value=this.filterTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(0,1.4/4096);
+    this.filterMaterial.uniforms.stepSize.value.set(0,1.4/2048);
     renderer.setRenderTarget(this.target);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(this.wallTarget);renderer.setClearColor(0,0);renderer.clear();renderer.render(this.wallScene,this.camera);
     this.filterMaterial.uniforms.strips.value=4;

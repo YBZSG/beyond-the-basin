@@ -56,3 +56,25 @@ test('ladder reaches the platform exit and releases climbing state',()=>{
   for(let i=0;i<68;i++)player.update(1/60,camera,new Set(['KeyW']),[]);
   assert.equal(player.climbing,null);assert.ok(camera.position.y>3.5);assert.ok(camera.position.z>.8);
 });
+test('hard wall hits emit impact events and resting contact stays quiet',()=>{
+  let events=[];
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,{impact:(b,s)=>events.push([b.name,s])});
+  const egg=body(new T.Vector3(0,2,0));physics.add(egg);
+  const camera=new T.PerspectiveCamera();camera.position.set(-1,2,0);camera.lookAt(2,2,0);camera.updateMatrixWorld();
+  physics.grab(egg);physics.release(camera);
+  const wall={center:new T.Vector3(1,2,0),half:new T.Vector3(.05,4,4)};
+  for(let i=0;i<60;i++)physics.update(1/60,camera,[wall],i/60);
+  assert.ok(events.length>=1&&events.length<=4);
+  assert.ok(events.every(([name,s])=>name==='鸡蛋'&&s>1.15));
+  // Once settled against the wall the egg stops reporting.
+  const settled=events.length;
+  for(let i=0;i<120;i++)physics.update(1/60,camera,[wall],i/60);
+  assert.ok(events.length-settled<=1);
+});
+test('grabbing a prop fires the grab callback',()=>{
+  let grabs=0;
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,{grab:()=>grabs++});
+  const duck=body(new T.Vector3(0,2,0));physics.add(duck);
+  physics.grab(duck);assert.equal(grabs,1);
+  physics.grab(duck);assert.equal(grabs,2);
+});
