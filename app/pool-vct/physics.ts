@@ -49,7 +49,12 @@ export type PropKind = 'egg' | 'duck' | 'ball';
 export type PropBody = {
   position:T.Vector3;velocity:T.Vector3;rotation:T.Quaternion;radius:number;floatBias:number;name:string;kind:PropKind;
   visual:T.Group;parts:{mesh:T.InstancedMesh;index:number;local:T.Matrix4}[];
-  promoted:boolean;splashCooldown:number;hitCooldown:number;
+  promoted:boolean;splashCooldown:number;hitCooldown:number;wakeTimer?:number;wakeX?:number;wakeZ?:number;
+  /** Per-kind buoyancy tuning (PROP_SPEC): spring stiffness, damping ratio, a
+   * cap on the spring acceleration (slow deep refloat vs quick pop), horizontal
+   * drag rate while submerged (light bodies ride waves farther), and a splash
+   * power multiplier for hard entries. */
+  buoyK?:number;buoyZeta?:number;buoyMax?:number;flowRate?:number;splashBoost?:number;
 };
 
 export type PropEvents = { impact?: (b: PropBody, strength: number) => void; grab?: (b: PropBody) => void };
@@ -60,8 +65,11 @@ export class PropPhysics {
   private scene:T.Scene;
   private splash:(x:number,z:number,power:number)=>void;
   private surface:(x:number,z:number,time:number)=>number;
+  private flow?:(x:number,z:number)=>{u:number;v:number};
+  private slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number};
+  private wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void;
   private impactEvent?:PropEvents['impact'];private grabEvent?:PropEvents['grab'];
-  constructor(scene:T.Scene,splash:(x:number,z:number,power:number)=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents){this.scene=scene;this.splash=splash;this.surface=surface;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
+  constructor(scene:T.Scene,splash:(x:number,z:number,power:number)=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents,flow?:(x:number,z:number)=>{u:number;v:number},wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void,slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number}){this.scene=scene;this.splash=splash;this.surface=surface;this.flow=flow;this.slope=slope;this.wave=wave;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
   add(body:PropBody){body.hitCooldown=0;this.bodies.push(body);}
   remove(bodies:PropBody[]){const removed=new Set(bodies.filter(b=>!b.promoted));this.bodies=this.bodies.filter(b=>!removed.has(b));}
   pick(camera:T.Camera,colliders:Collider[]){
@@ -89,10 +97,57 @@ export class PropPhysics {
           // floatBias lifts the buoyancy target so props whose visual sits below the
           // collider centre (ducks) keep their tuned waterline while resting dry.
           const water=this.surface(b.position.x,b.position.z,time)+b.floatBias;
-          if(b.position.y<water+.06){b.velocity.y+=(water-b.position.y)*45*h-b.velocity.y*5*h;b.velocity.x*=Math.exp(-2*h);b.velocity.z*=Math.exp(-2*h);}
+          // Buoyancy ramps in with submerged fraction and stays soft: entry
+          // momentum carries a body deep underwater for a beat before it floats
+          // back up. Per-kind density reshapes the dive: dense eggs bottom out
+          // and refloat slowly, light ducks and balls pop straight back up.
+          // The waterline equilibrium itself stays on the tuned bias target.
+          if(b.position.y<water+b.radius){
+            const buoyK=b.buoyK??64,submRest=(b.floatBias+b.radius)/(2*b.radius);
+            const ramp=Math.min(1,(water+b.radius-b.position.y)/(2*b.radius)/submRest);
+            const spring=T.MathUtils.clamp((water-b.position.y)*buoyK*ramp,-(b.buoyMax??1e9),b.buoyMax??1e9);
+            b.velocity.y+=(spring-b.velocity.y*2*(b.buoyZeta??.44)*Math.sqrt(buoyK)*ramp)*h;
+          }
           else b.velocity.y-=9.81*h;
           b.velocity.clampLength(0,18);
         }
+        // Drag is relative to the local flow. Feed a small share of the body's
+        // lost momentum back into the larger water footprint; no extra position
+        // drift or recurring height pulse can manufacture energy here.
+        const surface=this.surface(b.position.x,b.position.z,time);
+        const subm=T.MathUtils.clamp((surface+b.floatBias+b.radius-b.position.y)/(2*b.radius),0,1);
+        if(subm>0){
+          const f=this.flow?.(b.position.x,b.position.z)??{u:0,v:0};
+          // The drag chases the local current plus the Stokes drift the wave
+          // train carries, so props glide along with passing waves instead of
+          // only bobbing; the slope push rocks them over long wave faces.
+          let targetU=f.u,targetV=f.v;
+          if(b!==this.held){const w=this.slope?.(b.position.x,b.position.z,.38);
+            if(w){const s=subm*h;b.velocity.x+=w.ax*s;b.velocity.z+=w.az*s;targetU+=w.ux;targetV+=w.uz;}}
+          const ru=b.velocity.x-targetU,rv=b.velocity.z-targetV;
+          // Fast attack, soft release: a passing wave grabs the hull within a
+          // fraction of a second (the ring only shelters a spot briefly), then
+          // the per-kind low drag lets it glide out over its own inertia.
+          const overtaken=targetU*targetU+targetV*targetV>b.velocity.x*b.velocity.x+b.velocity.z*b.velocity.z;
+          const k=1-Math.exp(-(overtaken?10:(b.flowRate??8))*subm*h);
+          b.velocity.x-=ru*k;b.velocity.z-=rv*k;
+          if(this.wave&&Math.hypot(ru,rv)>.08){
+            b.wakeTimer=(b.wakeTimer??0)+h;
+            // Form drag on the water grows with hull speed SQUARED: a slow
+            // nudge leaves a hairline ripple, a fast drag throws a real bow
+            // wave. The source stays hull-sized, so the mark is narrow and the
+            // solver's own dispersion does the widening downstream.
+            const wk=1-Math.exp(-8*subm*h);
+            const share=(b===this.held?.8:1)*.09;
+            b.wakeX=(b.wakeX??0)+ru*Math.hypot(ru,rv)*wk*share;
+            b.wakeZ=(b.wakeZ??0)+rv*Math.hypot(ru,rv)*wk*share;
+            if(b.wakeTimer>=.05){
+              const rel=Math.hypot(ru,rv);
+              this.wave(b.position.x,b.position.z,b.wakeX,b.wakeZ,b.radius*.6+.06,ru/rel,rv/rel,rel);
+              b.wakeTimer=0;b.wakeX=0;b.wakeZ=0;
+            }
+          }else{b.wakeTimer=0;b.wakeX=0;b.wakeZ=0;}
+        }else{b.wakeTimer=0;b.wakeX=0;b.wakeZ=0;}
         b.position.addScaledVector(b.velocity,h);
         const beforeHit=b.velocity.clone();
         // Beach balls are the only bouncy kind: a light vinyl shell rebounds at
@@ -104,8 +159,21 @@ export class PropPhysics {
         if(b!==this.held&&b.hitCooldown<=0&&hit>1.15){b.hitCooldown=.18;this.impactEvent?.(b,hit);}
         b.hitCooldown=Math.max(0,b.hitCooldown-h);
         if(b!==this.held){const playerVolume={center:camera.position.clone().add(new T.Vector3(0,-.82,0)),half:new T.Vector3(.32,.82,.32),radius:.32};const contact=sphereContact(b.position,b.radius,playerVolume);if(contact){b.position.addScaledVector(contact.normal,contact.depth+.001);b.velocity.addScaledVector(contact.normal,.08);}}
-        if(before>.32&&b.position.y<=.32&&b.velocity.length()>1&&b.splashCooldown===0){this.splash(b.position.x,b.position.z,Math.min(.5,.06+b.velocity.length()*.028));b.splashCooldown=.7;}
-        if(b!==this.held&&b.velocity.lengthSq()>.04){const spin=new T.Quaternion().setFromAxisAngle(new T.Vector3(b.velocity.z,0,-b.velocity.x).normalize(),Math.min(b.velocity.length(),6)*h);b.rotation.premultiply(spin);}
+        if(before>surface&&b.position.y<=this.surface(b.position.x,b.position.z,time)&&b.velocity.length()>1&&b.splashCooldown===0){
+          // Dense bodies (eggs) announce the entry: a boosted splash power
+          // scales the particle burst, water impact and audio together.
+          const boost=b.splashBoost??1;
+          this.splash(b.position.x,b.position.z,Math.min(.5*boost,(.06+b.velocity.length()*.028)*boost));
+          b.splashCooldown=.7;
+        }
+        if(b!==this.held&&subm>0&&b.kind!=='ball'){
+          const r=b.radius;
+          const nx=(this.surface(b.position.x-r,b.position.z,time)-this.surface(b.position.x+r,b.position.z,time))/(2*r);
+          const nz=(this.surface(b.position.x,b.position.z-r,time)-this.surface(b.position.x,b.position.z+r,time))/(2*r);
+          const normal=new T.Vector3(nx,1,nz).normalize(),yaw=new T.Euler().setFromQuaternion(b.rotation,'YXZ').y;
+          const tilt=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),normal).multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),yaw));
+          b.rotation.slerp(tilt,1-Math.exp(-12*h));
+        }else if(b!==this.held&&b.velocity.lengthSq()>.04){const spin=new T.Quaternion().setFromAxisAngle(new T.Vector3(b.velocity.z,0,-b.velocity.x).normalize(),Math.min(b.velocity.length(),6)*h);b.rotation.premultiply(spin);}
       }
       // Spatial buckets avoid an all-pairs pass over the streamed population.
       const buckets=new Map<string,PropBody[]>();for(const b of nearby){const key=`${Math.floor(b.position.x)},${Math.floor(b.position.z)}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key)!.push(b);}

@@ -18,6 +18,28 @@ npm run build
 npm start
 ```
 
+## 手机版（Android APK）
+
+游戏可打包成完全离线的 Android 应用：WebView 壳加载打包进 APK 的静态页面，触屏设备自动启用虚拟摇杆与按键。构建需要 Android SDK（`ANDROID_HOME` 已配置即可）和 JDK 17+（脚本会自动在 `%USERPROFILE%\.jdks` 中寻找，本机已装 `temurin-17`）：
+
+```sh
+npm run apk          # vite 打包 web → 写入 APK assets → gradle assembleDebug
+```
+
+产物在 `dist-apk/BeyondTheBasin-PoolCore-debug.apk`，安装：`adb install -r dist-apk/BeyondTheBasin-PoolCore-debug.apk`。只重打 web 资产可跑 `npm run apk:web` 后用 `powershell -File build-apk.ps1 -SkipWeb` 收尾。
+
+触屏操作：左侧摇杆移动（推满快走）、右侧滑动转视角、轻点水面/道具互动，「跳」「拿起」「投掷」圆形按键，右上 ☰ 暂停；系统返回键同样呼出暂停菜单。
+
+## 单文件 HTML 版
+
+把整个游戏（JS、CSS、音效、水波纹理）打进一个 HTML 文件，双击即可游玩，也便于直接分发：
+
+```sh
+npm run single
+```
+
+产物为 `dist-single/BEYOND-THE-BASIN-PoolCore-single.html`（约 3.2MB），本地 file:// 或任意静态托管均可运行。音效为 OGG 格式，Safari 不支持解码，建议 Chrome / Edge / Firefox；桌面端仍以键鼠操作，手机浏览器打开则自动启用触屏。
+
 ## 操作
 
 | 操作 | 按键 |

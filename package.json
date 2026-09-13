@@ -11,7 +11,10 @@
     "start": "vinext start",
     "lint": "eslint app tests",
     "typecheck": "tsc -p tsconfig.pool-vct.json",
-    "test": "node --experimental-strip-types --test tests/pool-vct.test.mjs tests/pool-physics.test.mjs"
+    "apk:web": "vite build --config vite.apk.config.ts",
+    "apk": "powershell -NoProfile -ExecutionPolicy Bypass -File build-apk.ps1",
+    "single": "vite build --config vite.single.config.ts && node build-single.mjs",
+    "test": "node --experimental-strip-types --test tests/pool-vct.test.mjs tests/pool-physics.test.mjs tests/pool-water.test.mjs tests/pool-particles.test.mjs tests/pool-room-repair.test.mjs"
   },
   "dependencies": {
     "@types/three": "^0.185.4",

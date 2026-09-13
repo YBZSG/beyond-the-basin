@@ -26,6 +26,18 @@ test('thrown object enters water, emits a splash and floats back up',()=>{
   for(let i=0;i<360;i++)physics.update(1/60,camera,[],i/60);
   assert.ok(splashes>=1);assert.ok(egg.position.y>.2&&egg.position.y<.42);
 });
+test('a dropped prop plunges underwater before floating back up',()=>{
+  const physics=new PropPhysics(new T.Scene(),()=>{});
+  const egg={position:new T.Vector3(0,2,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.18,floatBias:0,name:'鸡蛋',kind:'egg',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0};
+  physics.add(egg);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  let minY=9;
+  for(let i=0;i<360;i++){physics.update(1/60,camera,[],i/60);minY=Math.min(minY,egg.position.y);}
+  // Entry momentum must carry the body well under the waterline, not park it at
+  // the surface, and buoyancy must then recover it to the tuned waterline.
+  assert.ok(minY<.1,`never plunged: minY ${minY.toFixed(3)}`);
+  assert.ok(Math.abs(egg.position.y-.32)<.02,`failed to refloat: ${egg.position.y.toFixed(3)}`);
+});
 test('charged throws launch at the given speed and make bigger ripples',()=>{
   const powers=[];const physics=new PropPhysics(new T.Scene(),(x,z,power)=>powers.push(power));
   const egg=body(new T.Vector3(0,2,0));physics.add(egg);
@@ -77,4 +89,104 @@ test('grabbing a prop fires the grab callback',()=>{
   const duck=body(new T.Vector3(0,2,0));physics.add(duck);
   physics.grab(duck);assert.equal(grabs,1);
   physics.grab(duck);assert.equal(grabs,2);
+});
+test('floating props drift with the shallow-water flow',()=>{
+  // A steady .8 m/s current: strong drag against the resting-water damping
+  // converges to most of the flow speed while the duck keeps its waterline.
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,undefined,()=>({u:.8,v:0}));
+  const duck={position:new T.Vector3(0,.45,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.2,floatBias:.125,name:'小黄鸭',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0};
+  physics.add(duck);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  for(let i=0;i<300;i++)physics.update(1/60,camera,[],i/60);
+  assert.ok(duck.velocity.x>.55,`flow drag failed: ${duck.velocity.x}`);
+  assert.ok(Math.abs(duck.position.y-(.32+.125))<.05,`waterline drifted: ${duck.position.y}`);
+});
+test('wave slope force rocks and carries floaters',()=>{
+  // A fixed 2 m/s² wave push stands in for the solver: drag equilibrium lands
+  // at accel / drag rate (2/8 = .25 m/s) while the waterline holds.
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,undefined,()=>({u:0,v:0}),undefined,()=>({ax:2,az:0,ux:0,uz:0}));
+  const duck={position:new T.Vector3(0,.45,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.2,floatBias:.125,name:'小黄鸭',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0};
+  physics.add(duck);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  for(let i=0;i<120;i++)physics.update(1/60,camera,[],i/60);
+  assert.ok(duck.velocity.x>.15,`slope force failed: ${duck.velocity.x}`);
+  assert.ok(Math.abs(duck.velocity.z)<.02,`cross drift leaked: ${duck.velocity.z}`);
+  assert.ok(Math.abs(duck.position.y-(.32+.125))<.05,`waterline drifted: ${duck.position.y}`);
+});
+test('floaters glide with the Stokes drift of a passing wave train',()=>{
+  // The wave push doubles as a drift velocity the drag chases: a sustained
+  // .7 m/s transport carries the duck along instead of just rocking it.
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,undefined,()=>({u:0,v:0}),undefined,()=>({ax:0,az:0,ux:.7,uz:0}));
+  const duck={position:new T.Vector3(0,.45,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.2,floatBias:.125,name:'小黄鸭',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0};
+  physics.add(duck);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  for(let i=0;i<180;i++)physics.update(1/60,camera,[],i/60);
+  assert.ok(duck.velocity.x>.4,`drift failed: ${duck.velocity.x}`);
+  assert.ok(duck.position.x>.3,`no glide: ${duck.position.x}`);
+  assert.ok(Math.abs(duck.position.y-(.32+.125))<.05,`waterline drifted: ${duck.position.y}`);
+});
+test('low-drag skimmers still exchange momentum with the water',()=>{
+  const events=[];
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,undefined,()=>({u:0,v:0}),(x,z,ix,iz)=>events.push([ix,iz]));
+  const ball={position:new T.Vector3(0,.45,0),velocity:new T.Vector3(.6,0,0),rotation:new T.Quaternion(),radius:.21,floatBias:.05,name:'海滩球',kind:'ball',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0,flowRate:1.6,wakeTimer:0};
+  physics.add(ball);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  for(let i=0;i<120;i++)physics.update(1/60,camera,[],i/60);
+  assert.ok(events.length>=6,`skimmer produced ${events.length} wake events`);
+  assert.ok(events.every(([ix])=>ix>0),'wake lost its direction');
+  // The low drag rate itself is untouched: the ball keeps skimming slowly.
+  assert.ok(ball.velocity.x>.1,`unexpected braking: ${ball.velocity.x}`);
+});
+test('dense eggs bottom out and refloat slowly; light ducks pop right back up',()=>{
+  const floor={center:new T.Vector3(0,-1.22,0),half:new T.Vector3(8,.5,8)};
+  const run=(kind,radius,bias,props)=>{
+    const physics=new PropPhysics(new T.Scene(),()=>{});
+    const b={position:new T.Vector3(0,2,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius,floatBias:bias,name:kind,kind,visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0,...props};
+    physics.add(b);
+    const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+    let minY=9,backAt=Infinity;
+    for(let i=0;i<600;i++){physics.update(1/60,camera,[floor],i/60);
+      minY=Math.min(minY,b.position.y);
+      if(backAt===Infinity&&i>60&&Math.abs(b.position.y-(.32+bias))<.012)backAt=i/60;}
+    return {minY,backAt};
+  };
+  const egg=run('egg',.17,0,{buoyK:16,buoyZeta:.5,buoyMax:4,flowRate:5});
+  const duck=run('duck',.2,.125,{buoyK:90,buoyZeta:.32,buoyMax:30,flowRate:12});
+  // The dense egg dives well under the waterline (deep enough to find the
+  // floor on a thrown entry) and takes its time coming back.
+  assert.ok(egg.minY<-.25,`egg never sank: ${egg.minY.toFixed(3)}`);
+  assert.ok(Number.isFinite(egg.backAt)&&egg.backAt<10,`egg failed to refloat: ${egg.backAt}`);
+  assert.ok(duck.backAt<egg.backAt,`duck surfaced at ${duck.backAt}s, egg at ${egg.backAt}s`);
+});
+test('hard egg entries splash harder than the same drop of a duck',()=>{
+  const powers=[];
+  const physics=new PropPhysics(new T.Scene(),(x,z,p)=>powers.push(p));
+  const egg={position:new T.Vector3(0,4,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.17,floatBias:0,name:'鸡蛋',kind:'egg',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0,splashBoost:1.6};
+  physics.add(egg);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  for(let i=0;i<300;i++)physics.update(1/60,camera,[],i/60);
+  const eggPower=Math.max(...powers);
+  powers.length=0;
+  const duck={position:new T.Vector3(0,4,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.2,floatBias:.125,name:'小黄鸭',kind:'duck',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0};
+  physics.add(duck);
+  for(let i=0;i<300;i++)physics.update(1/60,camera,[],i/60);
+  const duckPower=Math.max(...powers);
+  assert.ok(eggPower>duckPower*1.2,`egg ${eggPower.toFixed(3)} vs duck ${duckPower.toFixed(3)}`);
+  assert.ok(eggPower>.4,`egg splash too weak: ${eggPower.toFixed(3)}`);
+});
+test('moving floaters exchange momentum with the water on a cadence; resting ones stay quiet',()=>{
+  const events=[];
+  const flow={u:.35,v:0};
+  const physics=new PropPhysics(new T.Scene(),()=>{},()=>.32,undefined,()=>flow,(x,z,ix,iz,sigma)=>events.push({ix,iz,sigma}));
+  const duck={position:new T.Vector3(0,.45,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.2,floatBias:.125,name:'小黄鸭',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0,wakeTimer:0};
+  physics.add(duck);
+  const camera=new T.PerspectiveCamera();camera.position.set(6,2,6);
+  for(let i=0;i<180;i++)physics.update(1/60,camera,[],i/60);
+  assert.ok(events.length>=1,`exchange cadence ${events.length}`);
+  assert.ok(Math.abs(events[0].ix)<.2,`impulse too strong: ${events[0].ix}`);
+  assert.ok(events.reduce((sum,e)=>sum+Math.abs(e.ix),0)<.35*.08,'water impulse cannot exceed the body momentum exchange budget');
+  // A floater in still water is silent.
+  events.length=0;duck.velocity.set(0,0,0);duck.wakeTimer=0;flow.u=0;flow.v=0;
+  for(let i=0;i<180;i++)physics.update(1/60,camera,[],i/60);
+  assert.equal(events.length,0,'resting floater churned the pool');
 });

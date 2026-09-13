@@ -3,80 +3,55 @@ import type { Water } from 'three/addons/objects/Water.js';
 import type { Solid, Lamp } from './world';
 import { shaderStructs, shaderIntersectFunction } from 'three-mesh-bvh';
 import type { ReflectionField } from './rt';
+import { ShallowWater, SW_CELL } from './shallow-water.ts';
+import type { Collider } from './physics';
 
-// The same height field drives visible normals, floating objects and refracted rays.
+// The shallow-water state texture drives visible normals, floating objects and
+// refracted rays: R = surface elevation in metres over the 96m plane, sampled
+// with hardware bilinear filtering. The resting pool has no artificial waves.
 export const WATER_WAVES = /* glsl */`
-uniform float waterTime;
-uniform vec4 impacts[12];
-// Pillars and pool-side steps of the central room, as XZ boxes: (minx,minz,maxx,maxz).
-uniform vec4 poolBlocks[16];
-uniform int poolBlockCount;
-float poolWave(vec2 source,vec2 p,float age,float power) {
-  float r=length(p-source);
-  float front=r-age*1.7;
-  return power*exp(-front*front*3.2)*exp(-age*.32)*(1.0-smoothstep(11.0,14.0,age))/sqrt(1.0+r)*sin(front*10.5);
+uniform sampler2D poolSurface;
+float poolHeight(vec2 p){return texture2D(poolSurface,(p+vec2(48.0))/96.0).r;}
+vec3 poolNormal(vec2 p){
+  float e=${SW_CELL};
+  return normalize(vec3(poolHeight(p-vec2(e,0.))-poolHeight(p+vec2(e,0.)),2.0*e,poolHeight(p-vec2(0.,e))-poolHeight(p+vec2(0.,e))));
 }
-// One wall of the room the splash happened in: the mirrored source radiates the
-// reflected wave. It is dropped unless its straight path to the receiver crosses
-// the wall on solid masonry - the eight metre portal gaps stay open, and waves
-// from neighbouring rooms do not leak phantom reflections in.
-float poolMirror(vec2 m,vec2 p,float age,float power,float plane,int axis,float centre) {
-  float mAxis=axis==0?m.x:m.y,pAxis=axis==0?p.x:p.y;
-  if((mAxis>plane)==(pAxis>plane))return 0.0;
-  float crossing=(plane-mAxis)/(pAxis-mAxis);
-  float along=(axis==0?m.y:m.x)+crossing*((axis==0?p.y:p.x)-(axis==0?m.y:m.x));
-  return poolWave(m,p,age,power*1.5*smoothstep(3.2,4.8,abs(along-centre)));
-}
-// Steps and pillars that cross the waterline bounce ripples too. Every face of
-// the block is a short mirror whose reflected wave fades out past the face's
-// ends; only splashes in the central room consult the blocks, neighbouring
-// rooms keep their wall-only reflection.
-float poolBlockMirror(vec2 s,vec2 p,float age,float power,vec4 blk) {
-  float h=0.0;
-  for(int edge=0;edge<4;edge++) {
-    // edge 0/1: faces at x=minx/maxx; edge 2/3: faces at z=minz/maxz.
-    float plane=edge==0?blk.x:(edge==1?blk.z:(edge==2?blk.y:blk.w));
-    int axis=edge<2?0:1;
-    float sA=axis==0?s.x:s.y;
-    float m=2.0*plane-sA;
-    float pA=axis==0?p.x:p.y;
-    if((m>plane)==(pA>plane))continue;
-    float crossing=(plane-m)/(pA-m);
-    float other=axis==0?s.y+crossing*(p.y-s.y):s.x+crossing*(p.x-s.x);
-    float lo=axis==0?blk.y:blk.x;
-    float hi=axis==0?blk.w:blk.z;
-    float fade=smoothstep(lo-.25,lo,other)*(1.0-smoothstep(hi,hi+.25,other));
-    if(fade<=0.0)continue;
-    vec2 msource=axis==0?vec2(m,s.y):vec2(s.x,m);
-    h+=poolWave(msource,p,age,power*.85*fade);
-  }
-  return h;
-}
-float poolHeight(vec2 p) {
-  // Enclosed pool: no wind or pump is enabled. Only real interactions add waves.
-  float h=0.0;
-  for(int i=0;i<12;i++) {
-    float age=waterTime-impacts[i].z;
-    if(age>0.0 && age<14.0) {
-      vec2 s=impacts[i].xy;
-      h+=poolWave(s,p,age,impacts[i].w);
-      vec2 c=32.0*floor(s/32.0+0.5);
-      h+=poolMirror(vec2(2.0*(c.x+15.7)-s.x,s.y),p,age,impacts[i].w,c.x+15.7,0,c.y);
-      h+=poolMirror(vec2(2.0*(c.x-15.7)-s.x,s.y),p,age,impacts[i].w,c.x-15.7,0,c.y);
-      h+=poolMirror(vec2(s.x,2.0*(c.y+15.7)-s.y),p,age,impacts[i].w,c.y+15.7,1,c.x);
-      h+=poolMirror(vec2(s.x,2.0*(c.y-15.7)-s.y),p,age,impacts[i].w,c.y-15.7,1,c.x);
-      if(abs(c.x)<16.5&&abs(c.y)<16.5) {
-        for(int k=0;k<poolBlockCount;k++)h+=poolBlockMirror(s,p,age,impacts[i].w,poolBlocks[k]);
-      }
-    }
-  }
-  return h;
-}
-vec3 poolNormal(vec2 p) {
-  float e=.015;
-  return normalize(vec3(poolHeight(p-vec2(e,0))-poolHeight(p+vec2(e,0)),2.0*e,poolHeight(p-vec2(0,e))-poolHeight(p+vec2(0,e))));
+// Filter displacement to the render mesh's 25cm vertex spacing. A wide
+// Gaussian-ish 9-tap kernel keeps short rings out of the geometry — they would
+// alias into lumpy, uneven mesh bumps — while the shading normal still carries
+// every detail at full strength.
+float poolHeightSmooth(vec2 p){
+  float h=poolHeight(p)*4.0;
+  h+=(poolHeight(p+vec2(.22,.0))+poolHeight(p-vec2(.22,.0))+poolHeight(p+vec2(0.,.22))+poolHeight(p-vec2(0.,.22)))*2.0;
+  h+=poolHeight(p+vec2(.16,.16))+poolHeight(p-vec2(.16,.16))+poolHeight(p+vec2(-.16,.16))+poolHeight(p+vec2(.16,-.16));
+  return h/16.0;
 }
 `;
+// Live-tunable surface parameters, wired to the pause-menu water sliders.
+export type WaterSettings={waveHeight:number;rippleGain:number;normalBoost:number;distortion:number;impact:number;ringWaves:number;wavePush:number;waveSpeed:number};
+export const WATER_SETTINGS_DEFAULT:WaterSettings={waveHeight:1,rippleGain:1,normalBoost:1.35,distortion:.55,impact:1,ringWaves:12,wavePush:1,waveSpeed:1};
+// Surface-shader micro detail: solver texels are 12.5cm and the render mesh is
+// 25cm, so capillary-scale detail is synthesised analytically instead of
+// simulated. Three ripple trains add fine slopes on top of the solver normal,
+// weighted purely by solver activity (elevation and momentum): an undisturbed
+// pool stays exactly flat — no wind, no ambient churn.
+const RIPPLE_DETAIL=/* glsl */`
+uniform float poolTime;uniform float rippleGain;uniform float normalBoost;
+float poolActivity(vec2 p){
+  vec4 s=texture2D(poolSurface,(p+vec2(48.0))/96.0);
+  return clamp(length(s.gb)*2.6+abs(s.r)*5.5,0.0,1.0);
+}
+vec2 rippleSlope(vec2 p){
+  float t=poolTime;
+  vec2 s=vec2(19.7,11.3)*cos(dot(p,vec2(19.7,11.3))+t*26.0)*.0032;
+  s+=vec2(-14.1,23.9)*cos(dot(p,vec2(-14.1,23.9))+t*31.0)*.0026;
+  s+=vec2(27.3,-16.8)*cos(dot(p,vec2(27.3,-16.8))+t*41.0)*.0019;
+  return s;
+}
+`;
+// Normal probe offset (0.8 solver texels); normalBoost defaults to the tuned
+// value and is adjustable live from the settings menu.
+const RIPPLE_EPS=(SW_CELL*.8).toFixed(2);
 
 export function rayBlocked(start:T.Vector3,end:T.Vector3,solids:Solid[]) {
   const dx=end.x-start.x,dy=end.y-start.y,dz=end.z-start.z;
@@ -97,11 +72,20 @@ export function rayBlocked(start:T.Vector3,end:T.Vector3,solids:Solid[]) {
  * wave surface through Snell's law, accumulate transmitted irradiance scaled by
  * the source/receiver area Jacobian into HDR atlases. The 2048² floor target
  * and a 2048×1024 wall atlas (four strips, +X/-X/+Z/-Z) let refracted light
- * climb the tiled walls below the waterline. */
+ * climb the tiled walls below the waterline. Wave heights come from the
+ * shallow-water state texture, so every splash, reflection and diffraction the
+ * solver produces is traced. */
 export class InteractiveWater {
   static WALL_LOW=-.75; static WALL_HIGH=14.5;
-  uniforms={waterTime:{value:0},impacts:{value:Array.from({length:12},()=>new T.Vector4(0,0,-100,0))},
-    blocks:{value:Array.from({length:16},()=>new T.Vector4(0,0,0,0))},blockCount:{value:0}};
+  /** The shallow-water solver; exposed for diagnostics and tests. */
+  swe=new ShallowWater();
+  uniforms={poolSurface:this.swe.uniforms.poolSurface,blockCount:{value:0}};
+  private tuning:{waveHeight:{value:number};rippleGain:{value:number};normalBoost:{value:number}}={
+    waveHeight:{value:WATER_SETTINGS_DEFAULT.waveHeight},
+    rippleGain:{value:WATER_SETTINGS_DEFAULT.rippleGain},
+    normalBoost:{value:WATER_SETTINGS_DEFAULT.normalBoost}};
+  private wavePush=WATER_SETTINGS_DEFAULT.wavePush;
+  private waterRef:Water|null=null;
   causticUniforms={poolCaustics:{value:null as T.Texture|null},poolCausticsWalls:{value:null as T.Texture|null},causticGain:{value:1.5},waterLightPower:{value:1}};
   target=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter,magFilter:T.LinearFilter});
   wallTarget=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter,magFilter:T.LinearFilter});
@@ -125,9 +109,9 @@ export class InteractiveWater {
   private wallGeometries:T.PlaneGeometry[]=[];
   private materials:T.ShaderMaterial[]=[];
   private masks:T.DataTexture[]=[];
-  private cursor=0;
   private dirty=true;
   private lastActive=false;
+  private lastTime:number|null=null;
   private tracingReady:{value:number}|null=null;
   private lastReady=-1;
   interactionCount=0;
@@ -151,7 +135,7 @@ export class InteractiveWater {
         vertexShader:WATER_WAVES+/* glsl */`
           uniform vec3 lampPosition;uniform float lampPower;varying vec2 sourcePoint;varying float powerAtSurface;
           void main(){
-            vec2 p=position.xy;float height=.28+poolHeight(p);
+            vec2 p=position.xy;float height=.32+poolHeight(p);
             vec3 incoming=normalize(vec3(p.x,height,p.y)-lampPosition);
             vec3 n=poolNormal(p);
             vec3 transmitted=refract(incoming,n,1.0/1.333);
@@ -192,7 +176,7 @@ export class InteractiveWater {
             varying vec2 sourcePoint;varying float powerAtSurface;varying vec2 wallCell;
             void main(){
               vec2 p=(modelMatrix*vec4(position,1.0)).xz;
-              float height=.28+poolHeight(p);
+              float height=.32+poolHeight(p);
               vec3 S=vec3(p.x,height,p.y);
               vec3 incoming=normalize(S-lampPosition);
               vec3 n=poolNormal(p);
@@ -232,14 +216,26 @@ export class InteractiveWater {
     }
   }
   attach(water:Water){
-    Object.assign(water.material.uniforms,this.uniforms);
+    this.waterRef=water;
+    // poolTime aliases the Water shader's own time uniform, so the ripple
+    // phase advances with the existing per-frame update for free.
+    Object.assign(water.material.uniforms,this.uniforms,this.tuning,{poolTime:water.material.uniforms.time});
     water.material.vertexShader=WATER_WAVES+water.material.vertexShader;
-    water.material.vertexShader=water.material.vertexShader.replace('void main() {',`void main() {
+    water.material.vertexShader=water.material.vertexShader.replace('void main() {',`uniform float waveHeight;
+      void main() {
       vec3 displacedPosition=position;
-      displacedPosition.z+=poolHeight((modelMatrix*vec4(position,1.0)).xz);
+      displacedPosition.z+=poolHeightSmooth((modelMatrix*vec4(position,1.0)).xz)*waveHeight;
     `).replaceAll('vec4( position, 1.0 )','vec4( displacedPosition, 1.0 )');
-    water.material.fragmentShader=WATER_WAVES+water.material.fragmentShader;
-    water.material.fragmentShader=water.material.fragmentShader.replace(/vec3 surfaceNormal = normalize\( noise.xzy \* vec3\([^;]+;/,'vec3 surfaceNormal = poolNormal(worldPosition.xz);');
+    water.material.fragmentShader=WATER_WAVES+RIPPLE_DETAIL+water.material.fragmentShader;
+    // Solver normals plus analytic capillary shimmer replace the scrolling
+    // noise texture; the now-unused four-tap fetch is dropped.
+    water.material.fragmentShader=water.material.fragmentShader.replace('vec4 noise = getNoise( worldPosition.xz * size );','vec4 noise = vec4( 0.0 );');
+    water.material.fragmentShader=water.material.fragmentShader.replace(/vec3 surfaceNormal = normalize\( noise.xzy \* vec3\([^;]+;/,`vec2 rippleP=worldPosition.xz;
+      vec2 rippleS=rippleSlope(rippleP)*rippleGain*poolActivity(rippleP);
+      vec3 surfaceNormal=normalize(vec3(
+        (poolHeight(rippleP-vec2(${RIPPLE_EPS},0.0))-poolHeight(rippleP+vec2(${RIPPLE_EPS},0.0)))*normalBoost-2.0*${RIPPLE_EPS}*rippleS.x,
+        2.0*${RIPPLE_EPS},
+        (poolHeight(rippleP-vec2(0.0,${RIPPLE_EPS}))-poolHeight(rippleP+vec2(0.0,${RIPPLE_EPS})))*normalBoost-2.0*${RIPPLE_EPS}*rippleS.y));`);
     // Geometry, reflected image and Fresnel respond to every footstep/click.
     water.material.needsUpdate=true;
   }
@@ -347,65 +343,54 @@ export class InteractiveWater {
     this.job=null;return true;
   }
   rebuildOcclusion(solids:Solid[]){this.beginOcclusion(solids);while(!this.stepOcclusion(1e9));}
-  impact(x:number,z:number,strength=.07){this.uniforms.impacts.value[this.cursor].set(x,z,this.uniforms.waterTime.value,strength);this.cursor=(this.cursor+1)%12;this.interactionCount++;}
-  heightAt(x:number,z:number){
-    const t=this.uniforms.waterTime.value;
-    const wave=(sx:number,sz:number,age:number,power:number)=>{
-      const r=Math.hypot(x-sx,z-sz),front=r-age*1.7;
-      return power*Math.exp(-front*front*3.2)*Math.exp(-age*.32)*(1-T.MathUtils.smoothstep(age,11,14))/Math.sqrt(1+r)*Math.sin(front*10.5);
-    };
-    // Mirrors the shader exactly (poolWave/poolMirror/poolBlockMirror): wall
-    // reflections of the splash's own room, gated across portal gaps, plus the
-    // pillar/step blocks of the central room with edge-faded mirrored sources.
-    let h=0;
-    const blocks=this.uniforms.blocks.value,blockCount=this.uniforms.blockCount.value;
-    for(const p of this.uniforms.impacts.value){
-      const age=t-p.z;if(age<=0||age>=14)continue;
-      h+=wave(p.x,p.y,age,p.w);
-      const cx=32*Math.floor(p.x/32+.5),cz=32*Math.floor(p.y/32+.5);
-      for(const axis of [0,1])for(const side of [1,-1]){
-        const plane=(axis===0?cx:cz)+side*15.7,mirror=2*plane-(axis===0?p.x:p.y),pAxis=axis===0?x:z;
-        if((mirror>plane)===(pAxis>plane))continue;
-        const crossing=(plane-mirror)/(pAxis-mirror),base=axis===0?p.y:p.x;
-        const along=base+crossing*((axis===0?z:x)-base);
-        const gate=T.MathUtils.smoothstep(Math.abs(along-(axis===0?cz:cx)),3.2,4.8);
-        h+=wave(axis===0?mirror:p.x,axis===0?p.y:mirror,age,p.w*1.5*gate);
-      }
-      if(Math.abs(cx)<16.5&&Math.abs(cz)<16.5){
-        for(let k=0;k<blockCount;k++){
-          const blk=blocks[k];
-          for(let edge=0;edge<4;edge++){
-            const plane=edge===0?blk.x:edge===1?blk.z:edge===2?blk.y:blk.w,axis=edge<2?0:1;
-            const sA=axis===0?p.x:p.y,m=2*plane-sA,pA=axis===0?x:z;
-            if((m>plane)===(pA>plane))continue;
-            const crossing=(plane-m)/(pA-m);
-            const other=axis===0?p.y+crossing*(z-p.y):p.x+crossing*(x-p.x);
-            const lo=axis===0?blk.y:blk.x,hi=axis===0?blk.w:blk.z;
-            const fade=T.MathUtils.smoothstep(other,lo-.25,lo)*(1-T.MathUtils.smoothstep(other,hi,hi+.25));
-            if(fade<=0)continue;
-            h+=wave(axis===0?m:p.x,axis===0?p.y:m,age,p.w*.85*fade);
-          }
-        }
-      }
-    }
-    return h;
+  impact(x:number,z:number,strength=.07){if(this.swe.isLand(x,z))return;this.swe.impact(x,z,strength);this.interactionCount++;}
+  /** Moving-body impulses already include elapsed time. */
+  push(x:number,z:number,vx:number,vz:number,sigma:number){this.swe.push(x,z,vx,vz,sigma);}
+  /** Prop drag contributes only momentum lost by the body. */
+  pushWake(x:number,z:number,vx:number,vz:number,sigma:number){this.swe.push(x,z,vx,vz,sigma);}
+  /** Bow/stern pressure dipole that gives a moving hull its crisp wake. */
+  wakeDipole(x:number,z:number,dx:number,dz:number,speed:number,sigma:number){this.swe.wakeDipole(x,z,dx,dz,speed,sigma);}
+  /** Surface flow for buoyancy drag: props ride the current. */
+  flowAt(x:number,z:number){return this.swe.flowAt(x,z);}
+  /** Wave slope push + Stokes drift velocity that carries floating props. */
+  slopeAt(x:number,z:number,r=.38){const w=this.swe.slopeAt(x,z,r);const s=this.wavePush;return {ax:w.ax*s,az:w.az*s,ux:w.ux*s,uz:w.uz*s};}
+  /** Live retune of the surface look, driven by the pause-menu sliders. */
+  applySettings(values:Partial<WaterSettings>){
+    const s={...WATER_SETTINGS_DEFAULT,...values};
+    this.tuning.waveHeight.value=s.waveHeight;
+    this.tuning.rippleGain.value=s.rippleGain;
+    this.tuning.normalBoost.value=s.normalBoost;
+    this.wavePush=s.wavePush;
+    this.swe.impactScale=s.impact;
+    this.swe.ringWaves=s.ringWaves;
+    this.swe.waveSpeed=s.waveSpeed;
+    if(this.waterRef)(this.waterRef.material.uniforms as Record<string,{value:number}>).distortionScale.value=s.distortion;
   }
-  rebase(shift:T.Vector3){this.dirty=true;for(const p of this.uniforms.impacts.value){p.x-=shift.x;p.y-=shift.z;}}
-  /** Waterline-crossing pillars/steps of the central room (XZ boxes), refreshed
-   * after every floating-origin rebase so the shader and JS see local coords. */
+  snapshot():WaterSettings{
+    return {waveHeight:this.tuning.waveHeight.value,rippleGain:this.tuning.rippleGain.value,normalBoost:this.tuning.normalBoost.value,
+      distortion:this.waterRef?(this.waterRef.material.uniforms as Record<string,{value:number}>).distortionScale.value:WATER_SETTINGS_DEFAULT.distortion,
+      impact:this.swe.impactScale,ringWaves:this.swe.ringWaves,wavePush:this.wavePush,waveSpeed:this.swe.waveSpeed};
+  }
+  heightAt(x:number,z:number){return this.swe.heightAt(x,z);}
+  depthAt(x:number,z:number){return this.swe.depthAt(x,z);}
+  rebase(shift:T.Vector3){this.dirty=true;this.swe.rebase(shift.x,shift.z);}
+  /** Waterline-crossing obstacles of every streamed room (XZ boxes), refreshed
+   * after every floating-origin rebase so the solver mask and shader see local
+   * coords. Rasterised into the land mask as reflective cells. */
   setBlocks(blocks:T.Vector4[]){
     this.dirty=true;
-    const list=blocks.slice(0,16);
-    this.uniforms.blocks.value.forEach((slot,i)=>{const b=list[i];if(b)slot.copy(b);else slot.set(0,0,0,0);});
-    this.uniforms.blockCount.value=list.length;
+    this.uniforms.blockCount.value=blocks.length;
+    this.swe.setBlocks(blocks);
   }
+  setTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.swe.setTerrain(colliders);}
   render(renderer:T.WebGLRenderer,time:number){
-    this.uniforms.waterTime.value=time;
-    const active=this.uniforms.impacts.value.some(p=>time>=p.z&&time-p.z<14);
+    const dt=this.lastTime===null?0:Math.max(0,Math.min(time-this.lastTime,.25));
+    this.lastTime=time;
+    const changed=this.swe.frame(renderer,dt),active=!this.swe.settled;
     const ready=this.tracingReady?.value??1;
     // A flat, unchanged pool has unchanged light transport. Reuse it instead of
     // retracing millions of rays every frame while the player is standing still.
-    if(!active&&!this.lastActive&&!this.dirty&&ready===this.lastReady)return;
+    if(!changed&&!active&&!this.lastActive&&!this.dirty&&ready===this.lastReady)return;
     // Moving caustics follow every water frame; only settled transport is cached.
     this.lastActive=active;this.lastReady=ready;this.dirty=false;
     const previous=renderer.getRenderTarget(),clear=renderer.getClearColor(new T.Color()),alpha=renderer.getClearAlpha();
@@ -428,5 +413,5 @@ export class InteractiveWater {
     renderer.setRenderTarget(this.wallTarget);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(previous);renderer.setClearColor(clear,alpha);
   }
-  dispose(){this.target.dispose();this.wallTarget.dispose();this.filterTarget.dispose();this.filterMaterial.dispose();(this.filterScene.children[0] as T.Mesh).geometry.dispose();this.geometry.dispose();for(const g of this.wallGeometries)g.dispose();for(const m of this.materials)m.dispose();for(const m of this.masks)m.dispose();}
+  dispose(){this.swe.dispose();this.target.dispose();this.wallTarget.dispose();this.filterTarget.dispose();this.filterMaterial.dispose();(this.filterScene.children[0] as T.Mesh).geometry.dispose();this.geometry.dispose();for(const g of this.wallGeometries)g.dispose();for(const m of this.materials)m.dispose();for(const m of this.masks)m.dispose();}
 }

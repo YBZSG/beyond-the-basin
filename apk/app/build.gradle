@@ -1,0 +1,33 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.beyondthebasin.poolcore'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.beyondthebasin.poolcore'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.2.0'
+    }
+
+    buildTypes {
+        release {
+            // Debug builds are installed directly; a signed release needs a
+            // keystore added here before assembleRelease will produce one.
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.14.0'
+}

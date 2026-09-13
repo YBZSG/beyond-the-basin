@@ -18,13 +18,24 @@ test('beach ball is smooth, centred and fits its collision sphere across every p
   g.dispose();texture.dispose();
 });
 
-test('room lighting retains two shadow maps and the same light objects through dead/extra lamps',()=>{
+test('room lighting keeps four shadow maps — two here, two next door — and the same light objects',()=>{
   const scene=new T.Scene(),pool=new RoomLights(scene),ids=pool.lights.map(l=>l.uuid);
   const tube=new T.PointLight(0xffdddd,50,36),exit=new T.PointLight(0xff0000,7,7);
-  pool.select([tube,exit],Array.from({length:24},()=>tube));
-  assert.equal(pool.lights[0].intensity,50);assert.equal(pool.lights[1].intensity,0);
-  assert.equal(pool.lights[2].intensity,7);assert.equal(pool.lights.filter(l=>l.castShadow).length,2);
-  pool.select([tube,tube],[]);tube.position.set(32,7,-32);tube.intensity=13;pool.update();
+  exit.position.set(.5,.5,.5);
+  const nearTube=new T.PointLight(0xffdddd,40,36);nearTube.position.set(-12,7,0);
+  const farTube=new T.PointLight(0xffdddd,40,36);farTube.position.set(40,7,0);
+  pool.select([tube,exit],[nearTube,farTube]);
+  // Looking along -z: both neighbour tubes sit square in the view and win the
+  // next-door slots; the exit lamp behind the camera ranks last.
+  pool.update(new T.Vector3(),new T.Vector3(0,0,-1));
+  assert.equal(pool.lights[0].intensity,50);
+  assert.equal(pool.lights.filter(l=>l.castShadow).length,4,'shadow slot count changed');
+  assert.equal(pool.lights[2].shadow.mapSize.x,1024,'next-door slots should use the cheap 1024 maps');
+  assert.equal(pool.lights[1].intensity,40);
+  assert.equal(pool.lights[2].intensity,40);
+  assert.equal(pool.lights[3].intensity,7);
+  assert.equal(pool.lights[4].intensity,0,'lights beyond the shadow slots must stay unlit');
+  pool.select([tube,tube],[]);tube.position.set(32,7,-32);tube.intensity=13;pool.update(new T.Vector3(),new T.Vector3(0,0,-1));
   assert.equal(pool.lights[1].intensity,13);assert.deepEqual(pool.lights[1].position.toArray(),[32,7,-32]);
   assert.deepEqual(pool.lights.map(l=>l.uuid),ids);assert.equal(scene.children.length,27);
   pool.dispose();assert.equal(scene.children.length,0);

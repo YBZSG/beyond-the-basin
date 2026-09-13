@@ -7,16 +7,21 @@ import { stickToKeys } from '../app/pool-vct/touch.ts';
 import { PropPhysics } from '../app/pool-vct/physics.ts';
 import { collapseInterior, doorwayCells, WFC_SIZE } from '../app/pool-vct/wfc.ts';
 
-test('moving floor and wall caustics update each frame and settle into a cache',()=>{
+test('floor and wall caustics retrace while the shallow-water field moves, then settle into a cache',()=>{
   const water=new InteractiveWater();let draws=0,target=null;
   const renderer={getRenderTarget:()=>target,setRenderTarget:t=>{target=t;},
     getClearColor:c=>c.set(0),getClearAlpha:()=>1,setClearColor:()=>{},clear:()=>{},render:()=>{draws++;}};
-  water.render(renderer,0);assert.equal(draws,6);
-  water.render(renderer,.008);assert.equal(draws,6);
+  water.render(renderer,0);const boot=draws;
+  assert.ok(boot>=6); // initial flatten pass plus the six caustics draws
+  water.render(renderer,.008);assert.equal(draws,boot); // settled: no redraws
   water.impact(0,0,.1);
-  for(const t of [.016,.024,.032]){const before=draws;water.render(renderer,t);assert.equal(draws-before,6);}
-  water.render(renderer,15);const settled=draws;
-  water.render(renderer,16);assert.equal(draws,settled);assert.equal(target,null);
+  let moving=0;
+  for(let i=1;i<=3;i++){const before=draws;water.render(renderer,i*.008);if(draws>before)moving++;}
+  assert.ok(moving>0);
+  // Let the simulation settle using its own elapsed-time clock.
+  for(let i=1;i<=24*30;i++)water.render(renderer,.024+i/30);
+  const settled=draws;water.render(renderer,25);assert.equal(draws,settled);assert.equal(target,null);
+  assert.equal(water.heightAt(.4,0),0); // the flattened pool reads exactly level
   water.dispose();
 });
 
@@ -74,82 +79,36 @@ test('caustic light visibility rejects occluders but accepts parallel clear rays
   assert.equal(rayBlocked(new T.Vector3(3,.3,0),new T.Vector3(3,7,0),[pillar]),false);
   assert.equal(rayBlocked(new T.Vector3(0,4,0),new T.Vector3(0,7,0),[pillar]),false);
 });
-test('water impulse ring is bounded and follows floating-origin rebases',()=>{
-  const water=new InteractiveWater();water.uniforms.waterTime.value=12;
-  for(let i=0;i<20;i++)water.impact(i,4,.1);
-  assert.equal(water.uniforms.impacts.value.length,12);assert.equal(water.interactionCount,20);
-  const before=water.uniforms.impacts.value.map(v=>v.clone());
+test('splash queue preserves simultaneous events and follows floating-origin rebases',()=>{
+  const water=new InteractiveWater();
+  for(let i=0;i<20;i++)water.impact(i*.1,4,.1);
+  assert.equal(water.interactionCount,20);
+  const swe=water.swe;
+  assert.equal(swe.pendingSplats.length,20*4);
+  for(let i=0;i<80;i++)water.impact(i*.1,4,.1);
+  assert.equal(swe.pendingSplats.length,100*4);
+  const before=swe.pendingSplats.slice();
   water.rebase(new T.Vector3(32,0,-32));
-  water.uniforms.impacts.value.forEach((v,i)=>{assert.equal(v.x,before[i].x-32);assert.equal(v.y,before[i].y+32);assert.equal(v.z,12);});
+  swe.pendingSplats.forEach((v,i)=>{
+    if(i%4===0)assert.equal(v,before[i]-32);
+    else if(i%4===1)assert.equal(v,before[i]+32);
+    else assert.equal(v,before[i]);
+  });
   water.dispose();
 });
 
-test('enclosed pool stays flat without disturbances and settles after an impact',()=>{
+test('buoyancy reads the readback grid and an undisturbed pool stays flat',()=>{
   const water=new InteractiveWater();
-  for(const t of [0,1,12,100]){water.uniforms.waterTime.value=t;assert.equal(water.heightAt(3,-2),0);}
-  water.impact(0,0,.13);water.uniforms.waterTime.value=100.4;
-  assert.notEqual(water.heightAt(.4,0),0);
-  water.uniforms.waterTime.value=116;
-  assert.equal(water.heightAt(.4,0),0);water.dispose();
-});
-
-test('ripples bounce off solid walls but pass through the portal gaps',()=>{
-  // Splash 10m from the +x wall. By age 6 the direct wavefront has passed the
-  // receiver at (13,6); the only remaining contribution is the wave bouncing
-  // back off the solid wall segment, arriving from the mirrored source.
-  const bounce=new InteractiveWater();
-  bounce.impact(10,0,.13);bounce.uniforms.waterTime.value=6;
-  assert.ok(Math.abs(bounce.heightAt(13,6))>1e-3);
-  // A receiver beyond the same wall, sampled once the direct wavefront has also
-  // passed it, sees nothing: mirrored sources on its side of the wall are
-  // dropped, so ripples do not leak out of the room they belong to.
-  bounce.uniforms.waterTime.value=7.3;
-  assert.ok(Math.abs(bounce.heightAt(18,6))<1e-6);
-  bounce.dispose();
-  // Same geometry, but the mirrored path now crosses the wall inside the eight
-  // metre portal gap: the reflection is gated off and nothing else is in range.
-  const portal=new InteractiveWater();
-  portal.impact(10,-3,.13);portal.uniforms.waterTime.value=7.25;
-  assert.ok(Math.abs(portal.heightAt(13,6))<1e-6);
-  portal.dispose();
-});
-
-test('wall reflections are invariant under floating-origin room rebases',()=>{
-  const water=new InteractiveWater();
-  water.impact(10,0,.13);water.uniforms.waterTime.value=6;
-  const inside=Math.abs(water.heightAt(13,6));
-  const before=water.uniforms.impacts.value.map(v=>v.clone());
-  water.rebase(new T.Vector3(32,0,0));
-  water.uniforms.impacts.value.forEach((v,i)=>{assert.equal(v.x,before[i].x-32);assert.equal(v.y,before[i].y);});
-  // One room west the splash still resolves against its own room's walls, so
-  // the equally shifted receiver sees the identical bounce magnitude.
-  assert.ok(Math.abs(Math.abs(water.heightAt(-19,6))-inside)<1e-9);
+  // The buoyancy grid starts zeroed: an undisturbed pool reads perfectly level.
+  assert.equal(water.heightAt(3,-2),0);
+  // Simulate a GPU readback landing: seed the physics grid the way the async
+  // pixel copy would and confirm heightAt interpolates it bilinearly.
+  const swe=water.swe;
+  for(const row of [191,192]){swe.physicsEta[191+row*384]=.1;swe.physicsEta[192+row*384]=.3;}
+  const h=water.heightAt(0,0);
+  assert.ok(h>.15&&h<.25,`expected a bilinear mix, got ${h}`);
+  assert.equal(water.heightAt(500,0),0);
   water.dispose();
-});
-
-test('ripples bounce off waterline pillars and steps, fading past their edges',()=>{
-  // Splash 5m west of a 2x2 block; by age 3.5 the direct wavefront has passed
-  // the receiver at (-3,0) and only the block-face mirror can still reach it.
-  const water=new InteractiveWater();
-  water.impact(-5,0,.13);water.uniforms.waterTime.value=3.5;
-  assert.ok(Math.abs(water.heightAt(-3,0))<1e-6);
-  water.setBlocks([new T.Vector4(-1,-1,1,1)]);
-  assert.ok(Math.abs(water.heightAt(-3,0))>1e-3);
-  // Beyond the face's ends the mirrored source fades out completely.
-  assert.ok(Math.abs(water.heightAt(-3,2.4))<1e-6);
-  water.dispose();
-  // The same geometry one room east stays silent: splashes from neighbouring
-  // rooms never consult the central room's blocks.
-  const outer=new InteractiveWater();
-  outer.setBlocks([new T.Vector4(29,-1,31,1)]);
-  outer.impact(26,0,.13);outer.uniforms.waterTime.value=2.6;
-  assert.ok(Math.abs(outer.heightAt(27.5,0))<1e-6);
-  outer.dispose();
-  const central=new InteractiveWater();
-  central.setBlocks([new T.Vector4(-3,-1,-1,1)]);
-  central.impact(-6,0,.13);central.uniforms.waterTime.value=2.6;
-  assert.ok(Math.abs(central.heightAt(-4.5,0))>1e-3);
-  central.dispose();
 });
 
 test('three distinct bright rooms and a dark bath are reachable next to the original',()=>{

@@ -12,3 +12,15 @@ work/
 *.tar.gz
 *.rar
 .DS_Store
+apk/build/
+apk/app/build/
+apk/app/src/main/assets/
+apk/stage/
+dist-apk/
+dist-single/
+.mimosa/
+.playwright-cli/
+apk/www/
+hinata_-_naruto_-_bikini.glb
+音效/
+apk/.gradle/

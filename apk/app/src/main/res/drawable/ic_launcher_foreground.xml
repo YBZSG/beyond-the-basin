@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lamp over water: the game's cover motif, sized for the adaptive-icon
+     safe zone (66dp circle inside the 108dp canvas). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M44,42 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0"
+        android:strokeColor="#F6BA6B"
+        android:strokeWidth="3.5"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M26,68 C32,64 38,64 44,68 C50,72 56,72 62,68 C68,64 74,64 82,68"
+        android:strokeColor="#9FD8E8"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M30,78 C36,74 42,74 48,78 C54,82 60,82 66,78 C72,74 76,74 80,78"
+        android:strokeColor="#5FA8BC"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>

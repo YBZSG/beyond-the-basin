@@ -8,7 +8,9 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ROOM, VoxelField, blocked, randomFor, roomLayout, type Solid, type Lamp } from './world';
-import { InteractiveWater } from './water-system';
+import { InteractiveWater, type WaterSettings } from './water-system';
+import { WATER_LEVEL } from './shallow-water';
+import { SplashParticles } from './splash-particles';
 import { PropPhysics, PlayerPhysics, type Collider, type Ladder, type PropBody, type PropKind } from './physics';
 import { ReflectionField, type RtItem } from './rt';
 import { isTouchDevice, stickToKeys } from './touch';
@@ -16,7 +18,9 @@ import { PoolAudio } from './audio';
 import { collapseInterior, WFC_SIZE, WFC_CELL, type WfcTile } from './wfc';
 
 type Flicker={light:T.PointLight;glow:T.MeshBasicMaterial;base:number;seed:number;amp:number};
-type Chunk = { group: T.Group; solids: Solid[]; lamps: Lamp[]; floats: T.Group[]; lights: T.PointLight[]; bodies:PropBody[]; colliders:Collider[]; ladders:Ladder[]; flickers:Flicker[] };
+const roomLightDir=new T.Vector3();
+export type { WaterSettings } from './water-system';
+type Chunk = { group: T.Group; solids: Solid[]; lamps: Lamp[]; floats: T.Group[]; lights: T.PointLight[]; bodies:PropBody[]; colliders:Collider[]; ladders:Ladder[]; flickers:Flicker[]; far?:boolean };
 export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number };
 export function createPool(host: HTMLElement, seed: number, report: (s: Status) => void) {
   const touch=isTouchDevice();
@@ -26,18 +30,23 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFShadowMap;
   renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08;
   host.appendChild(renderer.domElement);
-  const scene = new T.Scene(); scene.background = new T.Color('#08121a'); scene.fog = new T.FogExp2('#10232d', .024);
+  const scene = new T.Scene(); scene.background = new T.Color('#14262f'); scene.fog = new T.FogExp2('#22343d', .036);
   const roomLights=new RoomLights(scene);
   // Per-decay-level mood targets: exponential fog density and backdrop colour.
-  const CORRUPT_FOG=[.024,.031,.042,.055];
-  const CORRUPT_BG=['#08121a','#071016','#050c10','#03080c'].map(c=>new T.Color(c));
+  // The denser base veil is what turns the next room into light haze and the
+  // room after into a heavy silhouette, so distance reads as fog, never black.
+  const CORRUPT_FOG=[.036,.043,.053,.066];
+  const CORRUPT_BG=['#14262f','#101f28','#0c181f','#080f14'].map(c=>new T.Color(c));
   const camera = new T.PerspectiveCamera(62, host.clientWidth / host.clientHeight, .08, 100);
   camera.position.set(10, 1.5, 12); camera.rotation.order = 'YXZ'; camera.lookAt(-4, 1.9, -10);
   const field = new VoxelField();
   const waterSystem=new InteractiveWater();
+  const particles=new SplashParticles();scene.add(particles.points);
   const audio=new PoolAudio();
   const splash=(x:number,z:number,power:number,step=false)=>{
+    if(waterSystem.depthAt(x,z)<=0)return;
     waterSystem.impact(x,z,power);
+    if(power>.1)particles.splash(x,WATER_LEVEL+waterSystem.heightAt(x,z),z,power);
     const dx=x-camera.position.x,dz=z-camera.position.z,distance=Math.hypot(dx,dz);
     audio.splash(power,distance,(dx*Math.cos(camera.rotation.y)-dz*Math.sin(camera.rotation.y))/Math.max(1,distance),step);
   };
@@ -51,10 +60,16 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     else if(b.kind==='ball')audio.ballHit(power,pan,distance);
     else audio.duckHit(power,pan,distance);
   };
-  const props=new PropPhysics(scene,(x,z,power)=>splash(x,z,power),(x,z)=>.32+waterSystem.heightAt(x,z),{impact:propImpact,grab:b=>{if(b.kind==='duck')audio.duckPickup();else if(b.kind==='ball')audio.ballPickup();}});
+  const props=new PropPhysics(scene,(x,z,power)=>splash(x,z,power),(x,z)=>WATER_LEVEL+waterSystem.heightAt(x,z),{impact:propImpact,grab:b=>{if(b.kind==='duck')audio.duckPickup();else if(b.kind==='ball')audio.ballPickup();}},(x,z)=>waterSystem.flowAt(x,z),(x,z,ix,iz,sigma,dx,dz,speed)=>{
+    waterSystem.pushWake(x,z,ix,iz,sigma);
+    // The pressure dipole is what draws the crisp bow crescent; the momentum
+    // blob above carries the current that drifts other floaters.
+    waterSystem.wakeDipole(x,z,dx,dz,speed,sigma);
+  },(x,z,r)=>waterSystem.slopeAt(x,z,r));
   const player=new PlayerPhysics((x,z,power)=>{
     waterSystem.impact(x,z,power);
-    if(power>.22)audio.diveIn();else audio.splash(power,0,0);
+    if(power>.22){audio.diveIn();particles.dive(x,WATER_LEVEL+waterSystem.heightAt(x,z),z,power);}
+    else audio.splash(power,0,0);
   },(x,z)=>.32+waterSystem.heightAt(x,z));
   const tile = new T.MeshStandardMaterial({ color: '#63899d', roughness: .3, metalness: 0 }); field.apply(tile, true);
   const pale = new T.MeshStandardMaterial({ color: '#aab6b0', roughness: .36, metalness: 0 }); field.apply(pale, true);
@@ -94,13 +109,16 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const materials: T.Material[] = [tile, pale, daylightTile,daylightPale,metal, yellow, orange, black, ivory, glow,skylightGlow,lampHousing,chrome,red,grimTile,grimPale,glowOff,skylightDim,exitGlow];
   const cube = new T.BoxGeometry(1, 1, 1), sphere = new T.SphereGeometry(1, 16, 12);
   const cylinder = new T.CylinderGeometry(1, 1, 1, 32);
-  // ---- Prop kinds: eggs sink, ducks bob, beach balls bounce ----
-  // Each kind fixes its collider radius, waterline bias and display name; the
-  // visual is assembled per kind below (procedural duck/egg and smooth beach ball).
-  const PROP_SPEC: Record<PropKind, { radius: number; floatBias: number; name: string; sink: number }> = {
-    egg: { radius: .17, floatBias: 0, name: '鸡蛋', sink: 0 },
-    duck: { radius: .2, floatBias: .125, name: '小黄鸭', sink: .125 },
-    ball: { radius: BEACH_BALL_RADIUS, floatBias: .05, name: '海滩球', sink: 0 },
+  // ---- Prop kinds: dense eggs bottom out and refloat slowly, light ducks and
+  // beach balls pop straight back up and ride waves farther ----
+  // Each kind fixes its collider radius, waterline bias, display name and
+  // density tuning: buoyancy spring/damping/cap shape the dive, the low
+  // flowRate lets bodies skim and glide instead of sticking in the water, and
+  // splashBoost scales hard-entry splashes.
+  const PROP_SPEC: Record<PropKind, { radius: number; floatBias: number; name: string; sink: number; buoyK: number; buoyZeta: number; buoyMax: number; flowRate: number; splashBoost: number }> = {
+    egg: { radius: .17, floatBias: 0, name: '鸡蛋', sink: 0, buoyK: 16, buoyZeta: .5, buoyMax: 4, flowRate: 3, splashBoost: 1.6 },
+    duck: { radius: .2, floatBias: .125, name: '小黄鸭', sink: .125, buoyK: 90, buoyZeta: .32, buoyMax: 30, flowRate: 2, splashBoost: 1 },
+    ball: { radius: BEACH_BALL_RADIUS, floatBias: .05, name: '海滩球', sink: 0, buoyK: 110, buoyZeta: .35, buoyMax: 34, flowRate: 1.6, splashBoost: 1 },
   };
   const ballGeometry=createBeachBallGeometry(),ballTexture=createBeachBallTexture();
   ballTexture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
@@ -432,7 +450,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const batches=new Map<string,{geometry:T.BufferGeometry;mat:T.Material;entries:{body:PropBody;local:T.Matrix4}[]}>();
     for(const g of c.floats){
       const kind=g.userData.kind as PropKind,spec=PROP_SPEC[kind];
-      const body:PropBody={position:g.position.clone(),velocity:new T.Vector3(),rotation:g.quaternion.clone(),radius:spec.radius,floatBias:spec.floatBias,name:spec.name,kind,visual:g,parts:[],promoted:false,splashCooldown:0,hitCooldown:0};
+      const body:PropBody={position:g.position.clone(),velocity:new T.Vector3(),rotation:g.quaternion.clone(),radius:spec.radius,floatBias:spec.floatBias,name:spec.name,kind,visual:g,parts:[],promoted:false,splashCooldown:0,hitCooldown:0,buoyK:spec.buoyK,buoyZeta:spec.buoyZeta,buoyMax:spec.buoyMax,flowRate:spec.flowRate,splashBoost:spec.splashBoost};
       c.bodies.push(body);props.add(body);
       for(const part of g.children){const m=part as T.Mesh;m.updateMatrix();const key=`${m.geometry.uuid}|${(m.material as T.Material).uuid}`;
         if(!batches.has(key))batches.set(key,{geometry:m.geometry,mat:m.material as T.Material,entries:[]});
@@ -453,43 +471,33 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     cx=nx;cz=nz;visited.add(`${cx},${cz}`);
     for(const [key,c] of chunks) {
       const [x,z]=key.split(',').map(Number);
-      if(Math.abs(x-cx)>1||Math.abs(z-cz)>1) {scene.remove(c.group);props.remove(c.bodies);c.group.traverse(o=>{if(o instanceof T.InstancedMesh)o.dispose();});for(const l of c.lights)l.dispose();chunks.delete(key);}
+      if(Math.abs(x-cx)>2||Math.abs(z-cz)>2) {scene.remove(c.group);props.remove(c.bodies);c.group.traverse(o=>{if(o instanceof T.InstancedMesh)o.dispose();});for(const l of c.lights)l.dispose();chunks.delete(key);}
     }
     const shift=new T.Vector3((cx-originX)*ROOM,0,(cz-originZ)*ROOM);
     camera.position.sub(shift);
     waterSystem.rebase(shift);
+    particles.rebase(shift);
     props.rebase(shift);
     for(const c of chunks.values()){for(const child of c.group.children)child.position.sub(shift);for(const b of c.solids){b.min.sub(shift);b.max.sub(shift);}for(const l of c.lamps)l.position.sub(shift);for(const l of c.lights)l.position.sub(shift);for(const col of c.colliders)col.center.sub(shift);for(const l of c.ladders){l.base.sub(shift);l.top.sub(shift);l.exit.sub(shift);}}
     originX=cx;originZ=cz;
-    for(let x=cx-1;x<=cx+1;x++)for(let z=cz-1;z<=cz+1;z++)if(!chunks.has(`${x},${z}`))chunks.set(`${x},${z}`,generate(x,z));
+    // 5×5 streaming: the outer ring exists as geometry only — no lights, no GI,
+    // no reflection BVH — because the room-distance fog buries it anyway. It
+    // gives doorways a heavily fogged "next-next room" silhouette instead of
+    // hard void, at a fraction of a full load.
+    for(let x=cx-2;x<=cx+2;x++)for(let z=cz-2;z<=cz+2;z++)if(!chunks.has(`${x},${z}`))chunks.set(`${x},${z}`,generate(x,z));
+    for(const [key,c] of chunks){const [x,z]=key.split(',').map(Number);c.far=Math.max(Math.abs(x-cx),Math.abs(z-cz))>1;}
     allSolids=[...chunks.values()].flatMap(c=>c.solids);
     allColliders=allSolids.map(b=>({center:b.min.clone().add(b.max).multiplyScalar(.5),half:b.max.clone().sub(b.min).multiplyScalar(.5)})).concat([...chunks.values()].flatMap(c=>c.colliders));
     allLadders=[...chunks.values()].flatMap(c=>c.ladders);
-    roomLights.select(chunks.get(`${cx},${cz}`)!.lights,[...chunks.entries()].filter(([key])=>key!==`${cx},${cz}`).flatMap(([,c])=>c.lights));
-    field.begin(allSolids,[...chunks.values()].flatMap(c=>c.lamps),0,0);
+    const innerLamps=[...chunks.values()].flatMap(c=>c.far?[]:c.lamps);
+    const innerLights=[...chunks.entries()].filter(([key,c])=>key!==`${cx},${cz}`&&!c.far).flatMap(([,c])=>c.lights);
+    roomLights.select(chunks.get(`${cx},${cz}`)!.lights,innerLights);
+    field.begin(allSolids,innerLamps,0,0);
     waterSystem.setLamps(chunks.get(`${cx},${cz}`)!.lamps);
     waterSystem.beginOcclusion(allSolids);
-    // Ripples bounce off pillars and steps too: gather the waterline-crossing
-    // obstacles of the central room as XZ boxes. Walls are excluded (the wall
-    // mirrors already reflect) and anything below 10cm thick is visual clutter.
-    const roomChunk=chunks.get(`${cx},${cz}`)!;
-    const blocks:T.Vector4[]=[];
-    for(const b of roomChunk.solids){
-      if((b.max.x-b.min.x)/2>=8||(b.max.z-b.min.z)/2>=8)continue;
-      if(b.min.x<-15.9||b.max.x>15.9||b.min.z<-15.9||b.max.z>15.9)continue;
-      if(b.min.y>=.32||b.max.y<=.32)continue;
-      blocks.push(new T.Vector4(b.min.x,b.min.z,b.max.x,b.max.z));
-    }
-    for(const c of roomChunk.colliders){
-      if(c.radius===undefined||c.radius<.1||c.rotation)continue;
-      if(c.center.y-c.half.y>=.32||c.center.y+c.half.y<=.32)continue;
-      blocks.push(new T.Vector4(c.center.x-c.radius,c.center.z-c.radius,c.center.x+c.radius,c.center.z+c.radius));
-    }
-    if(blocks.length>16){
-      blocks.sort((a,b)=>Math.hypot((a.x+a.z)/2,(a.y+a.w)/2)-Math.hypot((b.x+b.z)/2,(b.y+b.w)/2));
-      blocks.length=16;
-    }
-    waterSystem.setBlocks(blocks);
+    // Share all loaded collision geometry, including submerged steps and round
+    // columns. The water solver derives depth and closed faces from it.
+    waterSystem.setTerrain(allColliders);
     // The old BVH no longer matches the rebased world; reflections drop to the
     // faint probe until the deferred rebuild swaps in.
     rt.invalidate();
@@ -510,7 +518,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const collectRtItems=()=>{
     scene.updateMatrixWorld(true);
     const items:RtItem[]=[];
-    for(const c of chunks.values())c.group.traverse(o=>{
+    for(const c of chunks.values())if(!c.far)c.group.traverse(o=>{
       if(o instanceof T.InstancedMesh){
         o.updateWorldMatrix(true,false);
         const color=(o.material as T.MeshStandardMaterial).color;
@@ -534,11 +542,10 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   };
   stream(); scene.add(new T.AmbientLight('#9dbacb',.095));
   const normals=new T.TextureLoader().load('/assets/textures/waternormals.jpg');normals.wrapS=normals.wrapT=T.RepeatWrapping;textures.push(normals);
-  const water=new Water(new T.PlaneGeometry(96,96,384,384),{textureWidth:768,textureHeight:768,waterNormals:normals,sunDirection:new T.Vector3(-.3,1,-.3),sunColor:'#a1bdc3',waterColor:'#327c80',distortionScale:.42,alpha:.48,fog:true});
-  water.material.fragmentShader=water.material.fragmentShader.replace('vec3( 1.5, 1.0, 1.5 )','vec3( 0.5, 1.0, 0.5 )');
+  // Stronger distortion sells the sharpened wave normals in the reflection.
+  const water=new Water(new T.PlaneGeometry(96,96,384,384),{textureWidth:768,textureHeight:768,waterNormals:normals,sunDirection:new T.Vector3(-.3,1,-.3),sunColor:'#a1bdc3',waterColor:'#327c80',distortionScale:.55,alpha:.48,fog:true});
   waterSystem.attach(water);
-  water.rotation.x=-Math.PI/2;water.position.y=.28;water.material.transparent=true;water.material.depthWrite=false;
-  water.material.uniforms.size.value=5;
+  water.rotation.x=-Math.PI/2;water.position.y=.32;water.material.transparent=true;water.material.depthWrite=false;
   // Water owns its reflection target in a closure; retain it for full teardown.
   let reflectionTarget:Parameters<typeof renderer.setRenderTarget>[0]=null;
   const renderWater=water.onBeforeRender;
@@ -552,6 +559,16 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     try{renderWater.apply(this,args);}finally{renderer.setRenderTarget=setTarget;}
   };
   scene.add(water);
+  // The streamed world is a 5×5 room block; beyond its edge is nothing. Fog
+  // caps seal the four block faces so the last ring fades into fog-tinted
+  // depth instead of a hard void cutout. Block edges sit at local ±80 for any
+  // origin, so four static planes track every rebase for free.
+  const fogCapMaterial=new T.MeshBasicMaterial({color:'#1a2b34',fog:true,side:T.DoubleSide});
+  materials.push(fogCapMaterial);
+  for(const [x,z,ry] of [[79.9,0,-Math.PI/2],[-79.9,0,Math.PI/2],[0,79.9,Math.PI],[0,-79.9,0]] as const){
+    const cap=new T.Mesh(new T.PlaneGeometry(160.6,15.4),fogCapMaterial);
+    cap.position.set(x,6.9,z);cap.rotation.y=ry;scene.add(cap);
+  }
   const probeTarget=new T.WebGLCubeRenderTarget(1024,{type:T.HalfFloatType});
   const probe=new T.CubeCamera(.1,65,probeTarget);const pmrem=new T.PMREMGenerator(renderer);
   probe.position.set(0,3.4,0);
@@ -583,6 +600,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     field.finish();
   };
   const composer=new EffectComposer(renderer);
+  // 4× MSAA inside the post pipeline: every visible pixel is rasterised into
+  // these offscreen targets, so this — not the canvas context flag — is what
+  // smooths tile edges, arch silhouettes and prop outlines.
+  composer.renderTarget1.samples=4;
+  composer.renderTarget2.samples=4;
   // The Tyndall pass reads the scene's own depth so sun shafts stop at walls,
   // arches and columns instead of shining through them. RenderPass draws into
   // renderTarget1, so its depth attachment is the one to sample.
@@ -619,7 +641,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
         for(int i=0;i<STEPS;i++){
           vec3 p=camPos+dir*((float(i)+jitter)*dt);
           // Shafts live between the clerestory and the water surface only.
-          if(p.y<.28)break;
+          if(p.y<.32)break;
           // Occlusion: geometry already drawn in front of this sample blocks it.
           vec4 clip=proj*viewMat*vec4(p,1.);
           if(clip.w<=0.)continue;
@@ -679,8 +701,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const picked=props.pick(camera,allColliders);if(picked){props.grab(picked);dragging=true;return;}
     if(props.held)return;
     const direction=camera.getWorldDirection(new T.Vector3());
-    const distance=(.28-camera.position.y)/direction.y;
-    if(distance>0&&distance<12){const hit=camera.position.clone().addScaledVector(direction,distance);if(!blocked(hit,allSolids)){waterSystem.impact(hit.x,hit.z,.13);const dx=hit.x-camera.position.x,dz=hit.z-camera.position.z,d=Math.hypot(dx,dz);audio.tapWater((dx*Math.cos(camera.rotation.y)-dz*Math.sin(camera.rotation.y))/Math.max(1,d),d);}}
+    const distance=(WATER_LEVEL-camera.position.y)/direction.y;
+    if(distance>0&&distance<12){const hit=camera.position.clone().addScaledVector(direction,distance);if(!blocked(hit,allSolids)){waterSystem.impact(hit.x,hit.z,.13);particles.splash(hit.x,.32,hit.z,.13);const dx=hit.x-camera.position.x,dz=hit.z-camera.position.z,d=Math.hypot(dx,dz);audio.tapWater((dx*Math.cos(camera.rotation.y)-dz*Math.sin(camera.rotation.y))/Math.max(1,d),d);}}
   };
   const strike=(e:MouseEvent)=>{
     if(!active)return;
@@ -715,6 +737,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const touchLook={x:0,y:0};
   let touchUI:HTMLDivElement|null=null;
   const touchCleanups:(()=>void)[]=[];
+  // Shared by the on-screen ☰ pad and the Android back button (window.__poolPause).
+  const pauseGame=()=>{active=false;keys.clear();stickToKeys(0,0,keys);releaseDrag();charging=false;if(touchUI)touchUI.style.display='none';};
   if(touch){
     touchUI=document.createElement('div');
     touchUI.className='vct-touch';
@@ -740,8 +764,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     pad('jump',()=>keys.add('Space'),()=>keys.delete('Space'));
     pad('interact',()=>{if(active)interactAction();},()=>{});
     pad('throw',()=>{if(active&&props.held&&!charging){charging=true;chargeStart=performance.now();}},()=>{if(charging){charging=false;dragging=false;if(props.held&&active){const charge=T.MathUtils.clamp((performance.now()-chargeStart)/1100,0,1);props.release(camera,6+charge*11);}}});
-    const pauseTouch=()=>{active=false;keys.clear();stickToKeys(0,0,keys);releaseDrag();charging=false;touchUI!.style.display='none';};
-    on(touchUI.querySelector<HTMLElement>('.vct-touch-menu')!,'touchstart',e=>{e.preventDefault();pauseTouch();});
+    on(touchUI.querySelector<HTMLElement>('.vct-touch-menu')!,'touchstart',e=>{e.preventDefault();pauseGame();});
   }
   const keydown=(e:KeyboardEvent)=>{if(['KeyW','KeyA','KeyS','KeyD','ShiftLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyV','KeyR'].includes(e.code)&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();keys.add(e.code);if(e.code==='KeyV'&&!e.repeat){vct=!vct;field.uniforms.vctStrength.value=vct?1.8:0;}if(e.code==='KeyR'){props.release();charging=false;player.climbing=null;player.vertical=0;camera.position.set(10-originX*ROOM,1.5,12-originZ*ROOM);stream();camera.lookAt(-4,1.9,-10);}}};
   const keyup=(e:KeyboardEvent)=>keys.delete(e.code);
@@ -754,10 +777,17 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     if(disposed)return;const now=performance.now(),dt=Math.min((now-last)/1000,.2);elapsed+=(now-last)/1000;last=now;time+=dt;frames++;
     if(active){const beforeMove=camera.position.clone();player.update(dt,camera,keys,allColliders);
       const travelled=Math.hypot(camera.position.x-beforeMove.x,camera.position.z-beforeMove.z);
-      const wading=travelled>.0001&&camera.position.y<1.7&&Math.abs(player.vertical)<1&&!player.climbing;
+      const surface=WATER_LEVEL+waterSystem.heightAt(camera.position.x,camera.position.z);
+      const wading=travelled>.0001&&camera.position.y-1.64<surface&&waterSystem.depthAt(camera.position.x,camera.position.z)>0&&Math.abs(player.vertical)<1&&!player.climbing;
       if(wading){stepDistance+=travelled;const power=keys.has('ShiftLeft')?.095:.055;
         audio.updateWading(power,.55*dt/travelled,stepDistance/.55);
-        if(stepDistance>.55){waterSystem.impact(camera.position.x,camera.position.z,power);stepDistance%=.55;}
+        // Integrate a continuous moving pressure/momentum source along the
+        // travelled segment. Its total impulse depends on distance, not FPS.
+        const dx=camera.position.x-beforeMove.x,dz=camera.position.z-beforeMove.z;
+        const pieces=Math.max(1,Math.ceil(travelled/.2));
+        for(let i=0;i<pieces;i++){const t=(i+.5)/pieces;
+          waterSystem.push(beforeMove.x+dx*t,beforeMove.z+dz*t,dx*.45/pieces,dz*.45/pieces,.3);}
+        if(stepDistance>.55){waterSystem.impact(camera.position.x,camera.position.z,power*.4);stepDistance%=.55;}
       }else if(travelled>.0001&&player.grounded&&Math.abs(player.vertical)<1&&!player.climbing){
         audio.stopWading();
         // Dry ground: hard-soled steps land every stride; sprinting swaps in the
@@ -773,8 +803,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // The slice scales with the measured frame time (clamped) so slow machines finish
     // the transition in bounded wall-clock time while fast ones barely notice it.
     if(transition){
-      const budget=T.MathUtils.clamp(dt*350,8,24);
-      if(!transition.bvhDone)transition.bvhDone=rt.rebuild(collectRtItems(),[...chunks.values()].flatMap(c=>c.lamps));
+      const budget=T.MathUtils.clamp(dt*500,10,30);
+      if(!transition.bvhDone)transition.bvhDone=rt.rebuild(collectRtItems(),[...chunks.values()].flatMap(c=>c.far?[]:c.lamps));
       else if(!transition.radianceDone)transition.radianceDone=field.stepRadiance(budget);
       else if(!transition.occlusionDone)transition.occlusionDone=waterSystem.stepOcclusion(budget*.5);
     }
@@ -788,7 +818,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       f.light.intensity=f.base*v;
       f.glow.color.setRGB(3.4*v,3.6*v,3.5*v);
     }
-    roomLights.update();
+    roomLights.update(camera.position,camera.getWorldDirection(roomLightDir));
     // Global mood eases toward the current room's decay: denser fog, darker water.
     const mood=Math.min(1,dt*.6),fog=scene.fog as T.FogExp2|null;
     if(fog)fog.density+=(CORRUPT_FOG[currentCorrupt]-fog.density)*mood;
@@ -810,6 +840,9 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       tyndall.uniforms.time.value=time;
     }
     props.update(dt,camera,allColliders,time,active);
+    // Prop wakes are emitted inside PropPhysics substeps as paired momentum
+    // exchange (bounded by the initial relative velocity) - see physics.ts.
+    particles.update(Math.min(dt,.05),(x,z)=>.32+waterSystem.heightAt(x,z),(x,z,s)=>waterSystem.impact(x,z,s));
     waterSystem.render(renderer,time);
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;composer.render();
     if(transition&&transition.occlusionDone){
@@ -826,8 +859,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       stream();camera.lookAt(0,3,-8);
     },
     setSound:(enabled:boolean)=>audio.setEnabled(enabled),
+    waterSettings:(values:Partial<WaterSettings>)=>waterSystem.applySettings(values),
+    waterSettingsSnapshot:()=>waterSystem.snapshot(),
     setMusic:(enabled:boolean)=>audio.setMusic(enabled),
     enter:()=>{audio.unlock();if(touch){active=true;keys.clear();if(touchUI)touchUI.style.display='';}else renderer.domElement.requestPointerLock();},
+    pause:pauseGame,
     cycleFilter:()=>{film.uniforms.filterMode.value=(film.uniforms.filterMode.value+1)%4;},
     // Local automated physics/visual acceptance only; never exposed by production UI.
     qa:process.env.NODE_ENV!=='production'?{
@@ -836,9 +872,15 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       simulate:(enabled:boolean)=>{active=enabled;keys.clear();},
       placeProp:(kind:PropKind,position:number[])=>{const body=props.bodies.find(b=>b.kind===kind);if(body){props.grab(body);props.release();body.position.fromArray(position);body.rotation.identity();}},
       water:(x:number,z:number,power:number)=>splash(x,z,power),
+      waterLine:(x:number,z:number)=>WATER_LEVEL+waterSystem.heightAt(x,z),
+      waterFlow:(x:number,z:number)=>waterSystem.flowAt(x,z),
+      waterSlope:(x:number,z:number)=>waterSystem.slopeAt(x,z),
+      waterDepth:(x:number,z:number)=>waterSystem.depthAt(x,z),
+      pushWater:(x:number,z:number,u:number,v:number,r=.4)=>waterSystem.push(x,z,u,v,r),
+      swDebug:()=>waterSystem.swe.debug(),
       grab:(index=0)=>{const near=props.bodies.filter(b=>b.position.distanceTo(camera.position)<15);if(near[index])props.grab(near[index]);},
       throw:(speed=11)=>{if(props.held)props.release(camera,speed);},
     }:undefined,
-    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
+    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
   };
 }
