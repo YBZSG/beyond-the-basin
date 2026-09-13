@@ -856,6 +856,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     props.update(dt,camera,allColliders,time,active);
     // Prop wakes are emitted inside PropPhysics substeps as paired momentum
     // exchange (bounded by the initial relative velocity) - see physics.ts.
+    waterSystem.crestSpray(Math.min(dt,.05),(x,z,power)=>particles.crest(x,WATER_LEVEL+waterSystem.heightAt(x,z),z,power));
     particles.update(Math.min(dt,.05),(x,z)=>.32+waterSystem.heightAt(x,z),(x,z,s)=>waterSystem.impact(x,z,s));
     waterSystem.render(renderer,time);
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;

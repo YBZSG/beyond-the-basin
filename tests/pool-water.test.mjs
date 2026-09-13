@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
-import {ShallowWater,poolWallAt,SW_SIZE,SW_PHYS,SW_HALF,SW_DOMAIN,SW_CELL,SW_STEP} from '../app/pool-vct/shallow-water.ts';
+import {ShallowWater,poolWallAt,crestPower,SW_SIZE,SW_PHYS,SW_HALF,SW_DOMAIN,SW_CELL,SW_STEP} from '../app/pool-vct/shallow-water.ts';
+import {InteractiveWater} from '../app/pool-vct/water-system.ts';
 import {WATER_SETTINGS_DEFAULT,sanitizeWaterSettings} from '../app/pool-vct/water-settings.ts';
 
 // These checks exercise terrain, scheduling and CPU/GPU exchange. Numerical
@@ -99,9 +100,42 @@ test('Ultra at maximum wave speed shortens the timestep and never leaves a backl
   const before=sw.debug().simulated;sw.frame(r,0);assert.equal(sw.debug().simulated,before);sw.dispose();
 });
 test('persisted water settings reject nonfinite values, invalid flags and unknown quality',()=>{
-  const s=sanitizeWaterSettings({quality:'Extreme',damping:NaN,waveSpeed:100,viscosity:-4,ripples:'false',debugView:100});
+  const s=sanitizeWaterSettings({quality:'Extreme',damping:NaN,waveSpeed:100,viscosity:-4,ripples:'false',foam:false,spray:99,foamLife:-2,foamStrength:NaN,debugView:100});
   assert.equal(s.quality,'High');assert.equal(s.damping,WATER_SETTINGS_DEFAULT.damping);assert.equal(s.waveSpeed,3);
-  assert.equal(s.viscosity,0);assert.equal(s.ripples,true);assert.equal(s.debugView,10);
+  assert.equal(s.viscosity,0);assert.equal(s.ripples,true);assert.equal(s.foam,false);assert.equal(s.spray,2);
+  assert.equal(s.foamLife,.5);assert.equal(s.foamStrength,WATER_SETTINGS_DEFAULT.foamStrength);assert.equal(s.debugView,11);
+});
+test('foam uniforms expose gain, decay, diffusion and splash deposit each step',()=>{
+  const sw=new ShallowWater(),r=renderer();sw.frame(r,0);sw.impact(0,0,.1);sw.frame(r,SW_STEP);
+  for(const key of ['poolFoamGain','poolFoamDecay','poolFoamDiff','poolFoamSplash'])assert.ok(key in sw.height.uniforms,key);
+  sw.foamGain=1.5;sw.foamDecay=.5;sw.foamDiff=.05;sw.foamSplash=2;sw.frame(r,SW_STEP);
+  assert.equal(sw.height.uniforms.poolFoamGain.value,1.5);assert.equal(sw.height.uniforms.poolFoamDecay.value,.5);
+  assert.equal(sw.height.uniforms.poolFoamDiff.value,.05);assert.equal(sw.height.uniforms.poolFoamSplash.value,2);
+  sw.dispose();
+});
+test('crest spray fires only on Froude-critical or strongly converging cells',()=>{
+  // Gentle slosh in deep water: sub-critical, no convergence, flat enough.
+  assert.equal(crestPower(.05,.3,0,0,1.04,9.81),0);
+  // A fast shelf flow over .12 m of water breaks: sqrt(9.81*.12)≈1.08 m/s.
+  assert.ok(crestPower(.05,1.2,0,0,.12,9.81)>.4,'shelf Froude breaking');
+  // A colliding front: strong convergence throws spray even in deep water.
+  assert.ok(crestPower(.05,2,0,-4,1.04,9.81)>.4,'converging front');
+  // Dead-flat water never sprays regardless of readback noise.
+  assert.equal(crestPower(.001,2,0,-4,1.04,9.81),0);
+  // Nonfinite readback samples stay silent.
+  assert.equal(crestPower(NaN,2,0,-4,1.04,9.81),0);
+});
+test('crest spray respects the spray slider, quality tier and a settled pool',()=>{
+  const water=new InteractiveWater();let n=0;
+  const emit=()=>n++;
+  water.crestSpray(1/60,emit);assert.equal(n,0,'settled pool must stay quiet');
+  water.applySettings({spray:0,quality:'High'});water.swe.settled=false;water.swe.peak=.1;
+  water.crestSpray(1/60,emit);assert.equal(n,0,'spray slider 0 disables emission');
+  water.applySettings({spray:1,quality:'Low'});water.crestSpray(1/60,emit);assert.equal(n,0,'Low quality disables emission');
+  water.applySettings({spray:1,quality:'Ultra'});water.crestSpray(1/60,emit);assert.equal(n,0,'zero readback fields emit nothing');
+  // Wire the foam lifetime through the decay rate.
+  water.applySettings({foamLife:4});assert.ok(Math.abs(water.swe.foamDecay-.25)<1e-9);
+  water.dispose();
 });
 test('splash amplitude and ring fineness are live-tunable',()=>{
   const sw=new ShallowWater(),r=renderer();sw.frame(r,0);

@@ -5,8 +5,8 @@ export const WATER_QUALITY={
   Ultra:{simulation:1152,surface:512,ripple:1152,caustics:2048,photons:384,wallPhotons:192,reflection:1536,refraction:1},
 } as const;
 export type WaterQuality=keyof typeof WATER_QUALITY;
-export const WATER_DEBUG=['完整水面','浅水高度','速度场','模拟法线','细波纹','最终法线','水深','Fresnel','折射','焦散','反射'] as const;
-export const WATER_LAYERS={simulation:'浅水表面',ripples:'交互细波纹',microNormals:'微表面法线',refraction:'屏幕折射',absorption:'深度吸收',caustics:'动态焦散',reflection:'平面反射',fresnel:'Fresnel',waterline:'接触水线'} as const;
+export const WATER_DEBUG=['完整水面','浅水高度','速度场','模拟法线','细波纹','最终法线','水深','Fresnel','折射','焦散','反射','浮沫'] as const;
+export const WATER_LAYERS={simulation:'浅水表面',ripples:'交互细波纹',microNormals:'微表面法线',refraction:'屏幕折射',absorption:'深度吸收',caustics:'动态焦散',reflection:'平面反射',fresnel:'Fresnel',waterline:'接触水线',foam:'表面浮沫'} as const;
 export const WATER_SLIDERS=[
   {key:'waveHeight',label:'波浪起伏',min:0,max:2,step:.01,def:1},
   {key:'waveSpeed',label:'波速',min:.3,max:3,step:.05,def:1},
@@ -25,7 +25,10 @@ export const WATER_SLIDERS=[
   {key:'causticsIntensity',label:'焦散亮度',min:0,max:3,step:.05,def:1.5},
   {key:'causticsScale',label:'焦散细节尺度',min:.5,max:2,step:.05,def:1},
   {key:'causticsSpeed',label:'焦散微动速度',min:0,max:2,step:.05,def:.6},
+  {key:'foamStrength',label:'泡沫浓度',min:0,max:2,step:.01,def:1},
+  {key:'foamLife',label:'泡沫存留',min:.5,max:12,step:.1,def:4},
   {key:'impact',label:'交互强度',min:.2,max:3,step:.05,def:1},
+  {key:'spray',label:'浪尖飞沫',min:0,max:2,step:.05,def:1},
   {key:'ringWaves',label:'物理波频率',min:6,max:20,step:1,def:10},
   {key:'wavePush',label:'随波推力',min:0,max:2,step:.05,def:1},
 ] as const;

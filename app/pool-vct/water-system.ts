@@ -3,7 +3,7 @@ import type { Water } from 'three/addons/objects/Water.js';
 import type { Solid, Lamp } from './world';
 import { shaderStructs, shaderIntersectFunction } from 'three-mesh-bvh';
 import type { ReflectionField } from './rt';
-import { ShallowWater } from './shallow-water.ts';
+import { ShallowWater, SW_PHYS, SW_PHYS_CELL, SW_HALF, crestPower } from './shallow-water.ts';
 import { RippleDetail } from './ripple-detail.ts';
 import { WATER_WAVES, WATER_FRAGMENT } from './water-optics.ts';
 import { WATER_SETTINGS_DEFAULT, WATER_QUALITY, sanitizeWaterSettings, type WaterSettings } from './water-settings.ts';
@@ -43,7 +43,7 @@ export class InteractiveWater {
   uniforms={poolSurface:{value:this.swe.uniforms.poolSurface.value},poolDepth:this.detailDepth,poolDetail:{value:this.detail.uniform.value},
     poolCell:{value:this.swe.cell},detailCell:{value:this.detail.cell},poolTime:{value:0},microOrigin:{value:new T.Vector2()},blockCount:{value:0},causticResolution:{value:1024}};
   private tuning:Record<string,{value:number}>=Object.fromEntries(Object.entries(WATER_SETTINGS_DEFAULT).filter(([,v])=>typeof v==='number').map(([k,v])=>[k,{value:v as number}]));
-  private layers:Record<string,{value:number}>=Object.fromEntries(['simulation','ripples','micro','refraction','reflection','absorption','fresnel','waterline'].map(k=>[k+'On',{value:1}]));
+  private layers:Record<string,{value:number}>=Object.fromEntries(['simulation','ripples','micro','refraction','reflection','absorption','fresnel','waterline','foam'].map(k=>[k+'On',{value:1}]));
   private terrain:Collider[]=[];
   private blocks:T.Vector4[]|null=null;
   private opaque=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,depthBuffer:true});
@@ -348,6 +348,27 @@ export class InteractiveWater {
   flowAt(x:number,z:number){return this.swe.flowAt(x,z);}
   /** Wave slope push + Stokes drift velocity that carries floating props. */
   slopeAt(x:number,z:number,r=.38){const w=this.swe.slopeAt(x,z,r);const s=this.wavePush;return {ax:w.ax*s,az:w.az*s,ux:w.ux*s,uz:w.uz*s};}
+  private sprayBudget=0;
+  /** Breaking crests and colliding fronts throw a little spray. The physics
+   * readback already lands every frame or two for buoyancy; sample it for
+   * Froude-critical or converging cells and emit a few droplets per hit, so
+   * spray rides the same field the render and physics use. */
+  crestSpray(dt:number,emit:(x:number,z:number,power:number)=>void){
+    const s=this.settings;
+    if(s.spray<=0||s.quality==='Low')return;
+    const swe=this.swe;
+    if(swe.settled||swe.peak<.015)return;
+    this.sprayBudget=Math.min(this.sprayBudget+dt*26*s.spray,64);
+    let tries=Math.floor(this.sprayBudget);this.sprayBudget-=tries;
+    for(;tries>0;tries--){
+      const ix=1+(Math.random()*(SW_PHYS-2)|0),iz=1+(Math.random()*(SW_PHYS-2)|0),i=ix+iz*SW_PHYS;
+      const x=-SW_HALF+(ix+.5)*SW_PHYS_CELL,z=-SW_HALF+(iz+.5)*SW_PHYS_CELL;
+      const div=(swe.physicsU[i+1]-swe.physicsU[i-1]+swe.physicsV[i+SW_PHYS]-swe.physicsV[i-SW_PHYS])/(2*SW_PHYS_CELL);
+      const power=crestPower(swe.physicsEta[i],swe.physicsU[i],swe.physicsV[i],div,swe.depthAt(x,z),9.81*swe.waveSpeed);
+      if(power<=0)continue;
+      emit(x,z,power*s.spray);tries-=4;
+    }
+  }
   /** Live retune of the surface look, driven by the pause-menu sliders. */
   applySettings(values:Partial<WaterSettings>){
     const s=sanitizeWaterSettings(values,this.settings);this.settings=s;this.dirty=true;
@@ -356,10 +377,12 @@ export class InteractiveWater {
     this.layers.ripplesOn.value=+(s.ripples&&s.quality!=='Low');
     this.layers.microOn.value=+(s.microNormals&&(s.quality==='High'||s.quality==='Ultra'));
     for(const key of ['refraction','reflection','absorption','fresnel','waterline'] as const)this.layers[key+'On'].value=+s[key];
+    this.layers.foamOn.value=+(s.foam&&s.quality!=='Low');
     this.causticUniforms.causticGain.value=s.caustics&&s.quality!=='Low'?s.causticsIntensity:0;
     this.wavePush=s.wavePush;
     this.swe.impactScale=s.impact;this.swe.ringWaves=s.ringWaves;this.swe.waveSpeed=s.waveSpeed;
     this.swe.damping=s.damping;this.swe.viscosity=s.viscosity;this.swe.wallLoss=s.wallLoss;
+    this.swe.foamDecay=1/Math.max(s.foamLife,.25);
     this.detail.frequency=s.rippleFrequency;
     this.optics.reflectionSize.value=this.reflectionResolution;
     if(this.waterRef)this.waterRef.material.uniforms.distortionScale.value=s.distortion;

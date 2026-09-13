@@ -13,9 +13,9 @@ async (page) => {
       const target=field.current??field.target,size=target.width,data=new Uint16Array(size*size*4);
       renderer.readRenderTargetPixels(target,0,0,size,size,data);
       const at=(x,z,k=0)=>T.DataUtils.fromHalfFloat(data[(Math.floor((x/domain+.5)*size)+Math.floor((z/domain+.5)*size)*size)*4+k]);
-      let peak=0,energy=0,finite=true;
-      for(let i=0;i<data.length;i+=4){const h=T.DataUtils.fromHalfFloat(data[i]);peak=Math.max(peak,Math.abs(h));energy+=h*h;for(let k=0;k<3;k++)finite&&=Number.isFinite(T.DataUtils.fromHalfFloat(data[i+k]));}
-      return {at,peak,energy,finite};
+      let peak=0,energy=0,finite=true,alphaPeak=0;
+      for(let i=0;i<data.length;i+=4){const h=T.DataUtils.fromHalfFloat(data[i]);peak=Math.max(peak,Math.abs(h));energy+=h*h;alphaPeak=Math.max(alphaPeak,T.DataUtils.fromHalfFloat(data[i+3]));for(let k=0;k<4;k++)finite&&=Number.isFinite(T.DataUtils.fromHalfFloat(data[i+k]));}
+      return {at,peak,energy,finite,alphaPeak};
     };
     for(const size of [384,768,1152]){
       const sw=new ShallowWater(size);sw.setTerrain([]);sw.waveSpeed=3;sw.damping=.05;sw.viscosity=.012;sw.frame(renderer,0);
@@ -46,7 +46,18 @@ async (page) => {
     const ripple=read(water,32);let change=0;
     for(let z=-2;z<2;z+=.1)for(let x=-2;x<2;x+=.1)change+=Math.abs(flat.at(x,z)-ripple.at(x,z));
     check('computed caustics change with the shared wave normal',change>.01,{change});
-    water.dispose();renderer.dispose();
+    water.dispose();
+    // Foam: repeated splashes must deposit into the state alpha channel, stay
+    // bounded in [0,1], and decay away once the pool goes quiet again.
+    sw=new ShallowWater();sw.setTerrain([]);sw.frame(renderer,0);
+    for(let i=0;i<90;i++){if(i%30===0)for(let j=0;j<4;j++)sw.impact(Math.sin(j*2)*1.5,Math.cos(j*2)*1.5,.3);sw.frame(renderer,1/60);}
+    const foamy=read(sw);
+    check('splash deposits bounded foam into the state alpha channel',foamy.alphaPeak>.02&&foamy.alphaPeak<=1&&foamy.finite,{alphaPeak:foamy.alphaPeak});
+    for(let i=0;i<600;i++)sw.frame(renderer,1/60);
+    const cleared=read(sw);
+    check('foam decays away on a quiet pool',cleared.alphaPeak<foamy.alphaPeak*.5&&cleared.alphaPeak<.01,{before:foamy.alphaPeak,after:cleared.alphaPeak});
+    sw.dispose();
+    renderer.dispose();
     if(results.some(r=>!r.pass))throw new Error(JSON.stringify(results));
     return {passed:results.length,total:results.length,results};
   });

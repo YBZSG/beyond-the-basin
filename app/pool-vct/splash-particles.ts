@@ -72,6 +72,18 @@ export class SplashParticles {
     }
   }
 
+  /** A few droplets torn off a breaking crest - far lighter than an impact
+   * crown, since crest events fire continuously along a moving wave front. */
+  crest(x: number, y: number, z: number, power: number) {
+    const n = 1 + Math.round(power * 5);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = (.2 + .9 * power) * (.4 + .6 * Math.random());
+      this.add({ x, y, z, vx: Math.cos(a) * sp, vz: Math.sin(a) * sp,
+        vy: (.4 + .9 * power) * (.5 + .7 * Math.random()),
+        life: 0, max: 1.6, kind: 0, seed: Math.random() * 7, size: .03 + .05 * Math.random() });
+    }
+  }
+
   /** A dive: droplet crown above, bubble burst dragged below. */
   dive(x: number, y: number, z: number, power: number) {
     this.splash(x, y, z, power);

@@ -14,6 +14,18 @@ export function poolWallAt(x:number,z:number){
   return (band(x)<=.3&&mid(z)>=4)||(band(z)<=.3&&mid(x)>=4);
 }
 
+/** Crest-spray criterion for the CPU readback: flow at Froude-critical speed
+ * for the local depth or a strongly converging front tears droplets loose.
+ * Returns droplet power in [0,1]; 0 means the cell throws no spray. */
+export function crestPower(eta:number,u:number,v:number,div:number,depth:number,gravity:number){
+  if(![eta,u,v,div,depth,gravity].every(Number.isFinite))return 0;
+  if(Math.abs(eta)<.015)return 0;
+  const speed=Math.hypot(u,v);
+  const critical=Math.sqrt(gravity*Math.max(depth,.05));
+  if(speed<critical*.72&&-div<2.2)return 0;
+  return Math.min(1,(speed+.5*Math.max(0,-div))/2.2);
+}
+
 // Variable-depth shallow water on a staggered C grid. Upwind momentum
 // advection transports wakes; hydrostatic pressure and face water depths
 // preserve still water over submerged steps. Dry cells stay fixed (no flooding).
@@ -60,10 +72,12 @@ void main(){
   float advV=(crossU*(crossU>=0.0?s.b-west.b:east.b-s.b)+s.b*(s.b>=0.0?s.b-south.b:north.b-s.b))/DX;
   float u=depth(c-ivec2(1,0))>0.0?s.g-poolDt*(poolGravity*(s.r-west.r)/DX+advU)+force.g:0.0;
   float v=depth(c-ivec2(0,1))>0.0?s.b-poolDt*(poolGravity*(s.r-south.r)/DX+advV)+force.b:0.0;
-  outState=vec4(s.r,clamp(vec2(u,v)*damping(c),vec2(-${MAX_FLOW}.0),vec2(${MAX_FLOW}.0)),0.0);
+  // Foam rides in alpha: the velocity pass must carry it untouched.
+  outState=vec4(s.r,clamp(vec2(u,v)*damping(c),vec2(-${MAX_FLOW}.0),vec2(${MAX_FLOW}.0)),s.a);
 }`;
 const HEIGHT=PREAMBLE+/* glsl */`
 out vec4 outState;
+uniform float poolFoamGain,poolFoamDecay,poolFoamDiff,poolFoamSplash;
 void main(){
   ivec2 c=ivec2(gl_FragCoord.xy);float h=depth(c);
   if(h<=0.0){outState=vec4(0.0);return;}
@@ -75,7 +89,21 @@ void main(){
   float eta=s.r-poolDt*(fluxX+fluxZ)/DX+poolDt*poolViscosity*lap/(DX*DX);
   eta+=texelFetch(poolSource,c,0).r*poolSourceOn;
   float limit=min(${MAX_HEIGHT},h*.45);
-  outState=vec4(clamp(eta,-limit,limit),s.gb,0.0);
+  // Foam: advected by the surface flow. Sources stay selective so ambient
+  // sloshing never milks the pool: Froude-critical breaking, strongly
+  // converging wave fronts (inflow raises eta; outflow is no foam), and a
+  // direct deposit from splash sources. Decays and diffuses, so a quiet
+  // pool always clears itself. Half-float alpha in [0,1].
+  vec2 back=clamp((gl_FragCoord.xy-vec2(s.g,s.b)*poolDt/DX)/float(SIZE),vec2(.5/float(SIZE)),vec2(1.0-.5/float(SIZE)));
+  float foam=texture(poolState,back).a;
+  float critical=poolGravity*min(h,.6);
+  float breaking=smoothstep(.64*critical,1.44*critical,dot(s.gb,s.gb));
+  float inflow=max(0.0,-(fluxX+fluxZ))/DX;
+  foam+=poolDt*poolFoamGain*(breaking+1.2*smoothstep(.25,.7,inflow));
+  foam+=abs(texelFetch(poolSource,c,0).r)*poolFoamSplash*poolSourceOn;
+  foam*=exp(-poolDt*poolFoamDecay);
+  float lapFoam=state(c+ivec2(1,0)).a+state(c-ivec2(1,0)).a+state(c+ivec2(0,1)).a+state(c-ivec2(0,1)).a-4.0*foam;
+  outState=vec4(clamp(eta,-limit,limit),s.gb,clamp(foam+poolDt*poolFoamDiff*lapFoam/(DX*DX),0.0,1.0));
 }`;
 const COPY=/* glsl */`
 precision highp float;
@@ -114,6 +142,10 @@ export class ShallowWater {
    * number (higher = finer rings, stable above ~4 cells per wavelength), and
    * waveSpeed scales gravity — propagation speed is sqrt(waveSpeed*g*depth). */
   impactScale=1;ringWaves=12;waveSpeed=1;damping=.28;viscosity=.0015;wallLoss=1.1;
+  /** Foam field tuning: gain scales breaking/convergence deposits, decay is
+   * the exponential rate (1/lifetime), diff is metres²/second of spreading,
+   * splash multiplies the direct deposit from impact sources. */
+  foamGain=1;foamDecay=.25;foamDiff=.02;foamSplash=1.2;
   readonly size:number;readonly cell:number;
   private depthData:Float32Array;
   private depthTexture:T.DataTexture;
@@ -130,7 +162,8 @@ export class ShallowWater {
   pendingSplats:number[]=[];
   pendingPushes:number[]=[];
   energy=0;
-  private peak=0;private acc=0;private clock=0;private quiet=0;private calm=0;
+  /** Peak wave intensity of the last landed readback; crest spray gates on it. */
+  peak=0;private acc=0;private clock=0;private quiet=0;private calm=0;
   private booted=false;private disposed=false;private generation=0;
   private pendingShift=new T.Vector2();private terrainDirty=false;
   private readback:Readback|null=null;private readbackLanded=-Infinity;
@@ -156,7 +189,7 @@ export class ShallowWater {
     const make=(fragmentShader:string,uniforms:T.ShaderMaterialParameters['uniforms'])=>new T.ShaderMaterial({
       glslVersion:T.GLSL3,vertexShader,fragmentShader,uniforms,depthTest:false,depthWrite:false,toneMapped:false,
     });
-    const state=()=>({...shared,poolState:{value:this.current.texture},poolDt:{value:SW_STEP},poolFriction:{value:this.damping},poolSourceOn:{value:0},poolGravity:{value:9.81},poolViscosity:{value:this.viscosity},poolWallLoss:{value:this.wallLoss}});
+    const state=()=>({...shared,poolState:{value:this.current.texture},poolDt:{value:SW_STEP},poolFriction:{value:this.damping},poolSourceOn:{value:0},poolGravity:{value:9.81},poolViscosity:{value:this.viscosity},poolWallLoss:{value:this.wallLoss},poolFoamGain:{value:this.foamGain},poolFoamDecay:{value:this.foamDecay},poolFoamDiff:{value:this.foamDiff},poolFoamSplash:{value:this.foamSplash}});
     this.velocity=make(VELOCITY,state());this.height=make(HEIGHT,state());
     this.copy=make(COPY,{...shared,poolState:{value:this.current.texture},shift:{value:new T.Vector2()}});
     this.down=make(DOWNSAMPLE,{poolState:{value:this.current.texture}});
@@ -303,7 +336,8 @@ export class ShallowWater {
       if(this.acc+1e-10<step)return changed;
       const sources=this.inject(renderer);let steps=0;
       while(this.acc+1e-10>=step&&steps<MAX_STEPS){
-        for(const material of [this.velocity,this.height]){material.uniforms.poolSourceOn.value=sources&&steps===0?1:0;material.uniforms.poolFriction.value=this.damping+1.5*T.MathUtils.smoothstep(this.quiet,8,14);material.uniforms.poolDt.value=step;material.uniforms.poolViscosity.value=this.viscosity;material.uniforms.poolWallLoss.value=this.wallLoss;}
+        for(const material of [this.velocity,this.height]){material.uniforms.poolSourceOn.value=sources&&steps===0?1:0;material.uniforms.poolFriction.value=this.damping+1.5*T.MathUtils.smoothstep(this.quiet,8,14);material.uniforms.poolDt.value=step;material.uniforms.poolViscosity.value=this.viscosity;material.uniforms.poolWallLoss.value=this.wallLoss;
+          material.uniforms.poolFoamGain.value=this.foamGain;material.uniforms.poolFoamDecay.value=this.foamDecay;material.uniforms.poolFoamDiff.value=this.foamDiff;material.uniforms.poolFoamSplash.value=this.foamSplash;}
         // Gravity scales linearly: wave speed goes with sqrt(waveSpeed*g*depth).
         this.velocity.uniforms.poolGravity.value=9.81*this.waveSpeed;
         const other=this.current===this.stateA?this.stateB:this.stateA;
