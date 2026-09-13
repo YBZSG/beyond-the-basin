@@ -9,6 +9,7 @@ import { collapseInterior, doorwayCells, WFC_SIZE } from '../app/pool-vct/wfc.ts
 
 test('floor and wall caustics retrace while the shallow-water field moves, then settle into a cache',()=>{
   const water=new InteractiveWater();let draws=0,target=null;
+  water.applySettings({microStrength:0,environmentalStrength:0});
   const renderer={getRenderTarget:()=>target,setRenderTarget:t=>{target=t;},
     getClearColor:c=>c.set(0),getClearAlpha:()=>1,setClearColor:()=>{},clear:()=>{},render:()=>{draws++;}};
   water.render(renderer,0);const boot=draws;

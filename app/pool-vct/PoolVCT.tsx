@@ -3,28 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 import type { createPool, Status, WaterSettings } from './engine';
 import { isTouchDevice } from './touch';
 import './pool.css';
+import { WATER_SETTINGS_DEFAULT as WATER_DEFAULT, WATER_SLIDERS, WATER_QUALITY, WATER_LAYERS, WATER_DEBUG, sanitizeWaterSettings, type WaterQuality } from './water-settings';
 
-// Water surface tuning, exposed in the pause menu and persisted locally.
-// Keys mirror WaterSettings in water-system.ts.
-const WATER_SLIDERS=[
-  {key:'waveHeight',label:'波浪起伏',min:0,max:2,step:.01,def:1},
-  {key:'rippleGain',label:'细波纹',min:0,max:3,step:.01,def:1},
-  {key:'normalBoost',label:'波浪反光',min:.5,max:3,step:.05,def:1.35},
-  {key:'distortion',label:'倒影晃动',min:0,max:1.5,step:.01,def:.55},
-  {key:'impact',label:'水花大小',min:.2,max:3,step:.05,def:1},
-  {key:'ringWaves',label:'波纹细腻',min:6,max:20,step:1,def:12},
-  {key:'wavePush',label:'随波推力',min:0,max:2,step:.05,def:1},
-  {key:'waveSpeed',label:'波速',min:.3,max:3,step:.05,def:1},
-] as const;
-const WATER_DEFAULT=Object.fromEntries(WATER_SLIDERS.map(s=>[s.key,s.def])) as WaterSettings;
 const WATER_STORE='pool-water-settings';
 const WATER_PRESETS:[string,WaterSettings][]=[
   ['恢复默认',{...WATER_DEFAULT}],
-  ['细腻明显',{waveHeight:.8,rippleGain:1.6,normalBoost:1.7,distortion:.75,impact:1.3,ringWaves:15,wavePush:1.1,waveSpeed:1.15}],
-  ['平静如镜',{waveHeight:.2,rippleGain:.5,normalBoost:1,distortion:.3,impact:.6,ringWaves:9,wavePush:.5,waveSpeed:.75}],
+  ['细腻明显',{...WATER_DEFAULT,waveHeight:.8,rippleGain:1.6,normalBoost:1.7,distortion:.75,impact:1.3,ringWaves:15,wavePush:1.1,waveSpeed:1.15}],
+  ['平静如镜',{...WATER_DEFAULT,waveHeight:.2,rippleGain:.5,normalBoost:1,distortion:.3,impact:.6,ringWaves:9,wavePush:.5,waveSpeed:.75}],
 ];
 const loadWater=():WaterSettings=>{
-  try{const raw=localStorage.getItem(WATER_STORE);if(raw)return {...WATER_DEFAULT,...JSON.parse(raw)};}catch{}
+  try{const raw=localStorage.getItem(WATER_STORE);if(raw)return sanitizeWaterSettings({...JSON.parse(raw),debugView:0});}catch{}
   return {...WATER_DEFAULT};
 };
 export default function PoolVCT() {
@@ -37,6 +25,8 @@ export default function PoolVCT() {
   // Start from the defaults so server and client render identical markup;
   // persisted values load right after hydration (localStorage is client-only).
   const [water,setWater]=useState<WaterSettings>(WATER_DEFAULT);
+  const [debugOpen,setDebugOpen]=useState(false),[waterStats,setWaterStats]=useState('');
+  useEffect(()=>{if(!debugOpen)return;const timer=window.setInterval(()=>{const d=engine.current?.waterDebug();if(d)setWaterStats(`${d.grid}² 浅水 · ${d.detailGrid}² 细波 · ${d.causticSize}² 焦散\n峰值 ${d.peak.toFixed(4)} m · ${d.settled?'物理已平静':'波场传播中'} · 读回异常 ${d.rejected}`);},500);return()=>clearInterval(timer);},[debugOpen]);
   useEffect(()=>{
     const id=requestAnimationFrame(()=>setWater(loadWater()));
     return()=>cancelAnimationFrame(id);
@@ -66,10 +56,12 @@ export default function PoolVCT() {
       <button className="vct-filter" onClick={()=>engine.current?.cycleFilter()}>镜头：{['原始','CCD 摄像机','VHS 录像','冷色纪实'][status.filter]} <span>F 切换 ↻</span></button>
       <section className="vct-water" aria-label="水面设置">
         <span>水面设置 · 实时生效 · 自动保存</span>
+        <label className="vct-water-select">水体质量<select aria-label="水体质量" value={water.quality} onChange={e=>setWater(w=>({...w,quality:e.target.value as WaterQuality}))}>{Object.keys(WATER_QUALITY).map(q=><option key={q}>{q}</option>)}</select></label>
+        <button className="vct-filter" onClick={()=>setDebugOpen(v=>!v)}>Water Debug Panel <span>{debugOpen?'收起':'展开分层视图 ↗'}</span></button>
         {WATER_SLIDERS.map(s=><label key={s.key} className="vct-water-row">
           <span>{s.label}</span>
           <input type="range" min={s.min} max={s.max} step={s.step} value={water[s.key]} onChange={e=>setWater(w=>({...w,[s.key]:Number(e.target.value)}))}/>
-          <output>{water[s.key].toFixed(s.step>=1?0:2)}</output>
+          <output>{water[s.key].toFixed(s.step>=1?0:s.step<.001?4:2)}</output>
         </label>)}
         <div className="vct-water-actions">
           {WATER_PRESETS.map(([label,values])=><button key={label} onClick={()=>setWater({...values})}>{label}</button>)}
@@ -81,6 +73,13 @@ export default function PoolVCT() {
       </nav>
       {error&&<p role="alert" className="vct-error">渲染初始化失败：{error}</p>}
     </section>}
+    {debugOpen&&<aside className="vct-water-debug" aria-label="Water Debug Panel">
+      <div className="vct-water-debug-head"><strong>Water Debug Panel</strong><button aria-label="关闭水体调试" onClick={()=>{setDebugOpen(false);setWater(w=>({...w,debugView:0}));}}>×</button></div>
+      <label className="vct-water-select">实时视图<select aria-label="水体调试视图" value={water.debugView} onChange={e=>setWater(w=>({...w,debugView:Number(e.target.value)}))}>{WATER_DEBUG.map((label,i)=><option key={label} value={i}>{label}</option>)}</select></label>
+      <div className="vct-water-layers">{Object.entries(WATER_LAYERS).map(([key,label])=><label key={key}><input type="checkbox" checked={water[key as keyof typeof WATER_LAYERS]} onChange={e=>setWater(w=>({...w,[key]:e.target.checked}))}/>{label}</label>)}</div>
+      <pre aria-live="off">{waterStats}</pre>
+      <p>Low：基础水面；Medium：细波、折射与池底焦散；High / Ultra：加入微法线与池壁焦散。质量档位决定可用层。</p>
+    </aside>}
     {entered&&<><div className="vct-crosshair">{status.held?'◉':'·'}</div>{status.charge>0&&<div className="vct-charge" role="progressbar" aria-label="投掷蓄力" aria-valuenow={Math.round(status.charge*100)}><span style={{transform:`scaleX(${status.charge})`}}/></div>}<div className="vct-hint">{status.hint}</div></>}
     <footer className="vct-footer"><div><span>SECTOR {String(status.x).padStart(2,'0')} / {String(status.z).padStart(2,'0')}</span><small>已探索 {status.discovered} 个区域 · {status.rooms} 个驻留区块 · 崩坏 {['完好','渐衰','显著','严重'][status.corrupt]}</small></div><div className="vct-tech">{status.vct?'体素锥追踪 GI':'GI 对照：关闭'} · {status.caustics?'水光焦散':'焦散关闭'}<small>{status.fps} FPS · SEED {seed} · 水面交互 {status.impacts}</small></div><time aria-label="摄像机本地时间">{cameraTime}</time></footer>
   </main>;

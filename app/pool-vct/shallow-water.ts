@@ -4,7 +4,7 @@ import type { Collider } from './physics';
 export const WATER_LEVEL=.32, POOL_BOTTOM=-.72;
 export const SW_SIZE=768, SW_DOMAIN=96, SW_HALF=SW_DOMAIN/2, SW_CELL=SW_DOMAIN/SW_SIZE;
 export const SW_PHYS=384, SW_PHYS_CELL=SW_DOMAIN/SW_PHYS, SW_STEP=1/120;
-const REST_DEPTH=WATER_LEVEL-POOL_BOTTOM, MAX_STEPS=8, FRICTION=.45;
+const REST_DEPTH=WATER_LEVEL-POOL_BOTTOM, MAX_STEPS=8;
 const MAX_HEIGHT=.35, MAX_FLOW=2, SOURCE_BATCH=128;
 export type SwBox=[number,number,number,number];
 
@@ -18,10 +18,12 @@ export function poolWallAt(x:number,z:number){
 // advection transports wakes; hydrostatic pressure and face water depths
 // preserve still water over submerged steps. Dry cells stay fixed (no flooding).
 // RGBA16F: eta at cell centres, u/v at the west/south faces.
+function shaders(size:number){
+const SW_SIZE=size,SW_CELL=SW_DOMAIN/size;
 const PREAMBLE=/* glsl */`
 precision highp float;
 uniform sampler2D poolState,poolDepth,poolSource;
-uniform float poolDt,poolFriction,poolSourceOn,poolGravity;
+uniform float poolDt,poolFriction,poolSourceOn,poolGravity,poolViscosity,poolWallLoss;
 const int SIZE=${SW_SIZE};
 const float DX=${SW_CELL};
 bool inside(ivec2 c){return c.x>=0&&c.y>=0&&c.x<SIZE&&c.y<SIZE;}
@@ -35,7 +37,14 @@ float waterFace(ivec2 a,ivec2 b,float speed){
 }
 float damping(ivec2 c){
   float edge=float(min(min(c.x,c.y),min(SIZE-1-c.x,SIZE-1-c.y)))*DX;
-  return exp(-poolDt*(poolFriction+3.0*(1.0-smoothstep(0.0,5.0,edge))));
+  // Closed faces still reflect. A thin lossy wall band absorbs part of the
+  // returning wave without draining surface height or opening a wall flux.
+  float wall=0.0;
+  for(int i=1;i<=2;i++){
+    float wet=min(min(depth(c+ivec2(i,0)),depth(c-ivec2(i,0))),min(depth(c+ivec2(0,i)),depth(c-ivec2(0,i))));
+    wall=max(wall,wet<=0.0?1.0/float(i):0.0);
+  }
+  return exp(-poolDt*(poolFriction+poolWallLoss*wall+3.0*(1.0-smoothstep(0.0,5.0,edge))));
 }
 `;
 const VELOCITY=PREAMBLE+/* glsl */`
@@ -63,7 +72,7 @@ void main(){
   float fluxX=waterFace(c,c+ivec2(1,0),uR)*uR-waterFace(c-ivec2(1,0),c,s.g)*s.g;
   float fluxZ=waterFace(c,c+ivec2(0,1),vU)*vU-waterFace(c-ivec2(0,1),c,s.b)*s.b;
   float lap=neighbour(c+ivec2(1,0),s.r)+neighbour(c-ivec2(1,0),s.r)+neighbour(c+ivec2(0,1),s.r)+neighbour(c-ivec2(0,1),s.r)-4.0*s.r;
-  float eta=s.r-poolDt*(fluxX+fluxZ)/DX+poolDt*.004*lap/(DX*DX);
+  float eta=s.r-poolDt*(fluxX+fluxZ)/DX+poolDt*poolViscosity*lap/(DX*DX);
   eta+=texelFetch(poolSource,c,0).r*poolSourceOn;
   float limit=min(${MAX_HEIGHT},h*.45);
   outState=vec4(clamp(eta,-limit,limit),s.gb,0.0);
@@ -94,6 +103,8 @@ void main(){
   // Preserve weak currents; byte quantization erased flow below 1.6 cm/s.
   outState=vec4(s.rgb,1.0);
 }`;
+return {VELOCITY,HEIGHT,COPY,DOWNSAMPLE};
+}
 const vertexShader='void main(){gl_Position=vec4(position.xy,0.0,1.0);}';
 type Readback={buffer:Uint16Array;generation:number;started:number;done:boolean;failed:boolean};
 
@@ -102,15 +113,16 @@ export class ShallowWater {
    * impactScale multiplies splash amplitude, ringWaves is the packet wave
    * number (higher = finer rings, stable above ~4 cells per wavelength), and
    * waveSpeed scales gravity — propagation speed is sqrt(waveSpeed*g*depth). */
-  impactScale=1;ringWaves=12;waveSpeed=1;
-  private depthData=new Float32Array(SW_SIZE*SW_SIZE);
-  private depthTexture=new T.DataTexture(this.depthData,SW_SIZE,SW_SIZE,T.RedFormat,T.FloatType);
-  private stateA=this.target(SW_SIZE,T.HalfFloatType);
-  private stateB=this.target(SW_SIZE,T.HalfFloatType);
-  private sourceTarget=this.target(SW_SIZE,T.HalfFloatType);
+  impactScale=1;ringWaves=12;waveSpeed=1;damping=.28;viscosity=.0015;wallLoss=1.1;
+  readonly size:number;readonly cell:number;
+  private depthData:Float32Array;
+  private depthTexture:T.DataTexture;
+  private stateA:T.WebGLRenderTarget;
+  private stateB:T.WebGLRenderTarget;
+  private sourceTarget:T.WebGLRenderTarget;
   private physTarget=this.target(SW_PHYS,T.HalfFloatType);
-  private current=this.stateA;
-  uniforms={poolSurface:{value:this.current.texture},poolDepth:{value:this.depthTexture}};
+  private current:T.WebGLRenderTarget;
+  uniforms:{poolSurface:{value:T.Texture};poolDepth:{value:T.DataTexture}};
   settled=true;
   physicsEta=new Float32Array(SW_PHYS*SW_PHYS);
   physicsU=new Float32Array(SW_PHYS*SW_PHYS);
@@ -130,14 +142,21 @@ export class ShallowWater {
   private sourceGeometry=new T.InstancedBufferGeometry();private sourceScene=new T.Scene();private sourceMaterial:T.ShaderMaterial;
   private sources=new Float32Array(SOURCE_BATCH*4);private momenta=new Float32Array(SOURCE_BATCH*2);
 
-  constructor(){
+  constructor(size=SW_SIZE){
+    if(![384,768,1152].includes(size))throw new Error('Unsupported shallow-water grid');
+    this.size=size;this.cell=SW_DOMAIN/size;
+    this.depthData=new Float32Array(size*size);
+    this.depthTexture=new T.DataTexture(this.depthData,size,size,T.RedFormat,T.FloatType);
+    this.stateA=this.target(size,T.HalfFloatType);this.stateB=this.target(size,T.HalfFloatType);this.sourceTarget=this.target(size,T.HalfFloatType);
+    this.current=this.stateA;this.uniforms={poolSurface:{value:this.current.texture},poolDepth:{value:this.depthTexture}};
+    const {VELOCITY,HEIGHT,COPY,DOWNSAMPLE}=shaders(size);
     this.depthTexture.minFilter=this.depthTexture.magFilter=T.NearestFilter;
     this.mesh.frustumCulled=false;this.scene.add(this.mesh);
     const shared={poolDepth:this.uniforms.poolDepth,poolSource:{value:this.sourceTarget.texture}};
     const make=(fragmentShader:string,uniforms:T.ShaderMaterialParameters['uniforms'])=>new T.ShaderMaterial({
       glslVersion:T.GLSL3,vertexShader,fragmentShader,uniforms,depthTest:false,depthWrite:false,toneMapped:false,
     });
-    const state=()=>({...shared,poolState:{value:this.current.texture},poolDt:{value:SW_STEP},poolFriction:{value:FRICTION},poolSourceOn:{value:0},poolGravity:{value:9.81}});
+    const state=()=>({...shared,poolState:{value:this.current.texture},poolDt:{value:SW_STEP},poolFriction:{value:this.damping},poolSourceOn:{value:0},poolGravity:{value:9.81},poolViscosity:{value:this.viscosity},poolWallLoss:{value:this.wallLoss}});
     this.velocity=make(VELOCITY,state());this.height=make(HEIGHT,state());
     this.copy=make(COPY,{...shared,poolState:{value:this.current.texture},shift:{value:new T.Vector2()}});
     this.down=make(DOWNSAMPLE,{poolState:{value:this.current.texture}});
@@ -149,9 +168,9 @@ export class ShallowWater {
       vertexShader:`attribute vec4 splat;attribute vec2 momentum;varying vec2 q;varying vec3 power;varying vec2 origin;varying float radius;
         void main(){q=position.xy*4.0;power=vec3(splat.z,momentum);origin=splat.xy;radius=splat.w;gl_Position=vec4((splat.xy+q*splat.w)/${SW_HALF}.0,0.0,1.0);}`,
       fragmentShader:`uniform sampler2D poolDepth;uniform float poolRingW;varying vec2 q;varying vec3 power;varying vec2 origin;varying float radius;
-        void main(){if(texture2D(poolDepth,gl_FragCoord.xy/${SW_SIZE}.0).r<=0.0)discard;
-          vec2 p=gl_FragCoord.xy*${SW_CELL}-${SW_HALF}.0;
-          int steps=int(ceil(length(p-origin)/${SW_CELL}));
+        void main(){if(texture2D(poolDepth,gl_FragCoord.xy/${this.size}.0).r<=0.0)discard;
+          vec2 p=gl_FragCoord.xy*${this.cell}-${SW_HALF}.0;
+          int steps=int(ceil(length(p-origin)/${this.cell}));
           for(int i=1;i<96;i++){if(i>=steps)break;
             vec2 probe=mix(origin,p,float(i)/float(steps));
             if(texture2D(poolDepth,(probe+${SW_HALF}.0)/${SW_DOMAIN}.0).r<=0.0)discard;}
@@ -171,6 +190,20 @@ export class ShallowWater {
   }
   private target(size:number,type:T.TextureDataType){return new T.WebGLRenderTarget(size,size,{type,depthBuffer:false,generateMipmaps:false});}
 
+  /** Resample only on quality changes. Preserve the live field and prop
+   * readback rather than flattening the pool when a slider preset changes. */
+  inherit(renderer:T.WebGLRenderer,other:ShallowWater){
+    this.frame(renderer,0);
+    const material=new T.ShaderMaterial({uniforms:{previous:{value:other.current.texture},poolDepth:this.uniforms.poolDepth},
+      vertexShader,fragmentShader:`uniform sampler2D previous,poolDepth;void main(){vec2 uv=gl_FragCoord.xy/${this.size}.0;gl_FragColor=texture2D(poolDepth,uv).r>0.0?texture2D(previous,uv):vec4(0);}`,
+      depthTest:false,depthWrite:false,toneMapped:false});
+    const target=renderer.getRenderTarget();
+    try{this.draw(renderer,material,this.current);}finally{renderer.setRenderTarget(target);material.dispose();}
+    this.physicsEta.set(other.physicsEta);this.physicsU.set(other.physicsU);this.physicsV.set(other.physicsV);
+    this.pendingSplats.push(...other.pendingSplats);this.pendingPushes.push(...other.pendingPushes);
+    this.settled=other.settled;this.quiet=other.quiet;this.clock=other.clock;this.energy=other.energy;this.peak=other.peak;
+  }
+
   /** Sample actual pool columns: submerged treads, round pillars and tilted
    * colliders contribute; overhead bridges leave water beneath them open. */
   setTerrain(colliders:Collider[]){
@@ -180,11 +213,11 @@ export class ShallowWater {
       box.set(c.half.clone().negate(),c.half.clone());
       if(c.rotation)box.applyMatrix4(new T.Matrix4().makeRotationFromQuaternion(c.rotation));box.translate(c.center);
       if(box.min.y>WATER_LEVEL||box.max.y<=POOL_BOTTOM)continue;
-      const ix0=Math.max(0,Math.ceil((box.min.x+SW_HALF)/SW_CELL-.5)),iz0=Math.max(0,Math.ceil((box.min.z+SW_HALF)/SW_CELL-.5));
-      const ix1=Math.min(SW_SIZE-1,Math.floor((box.max.x+SW_HALF)/SW_CELL-.5)),iz1=Math.min(SW_SIZE-1,Math.floor((box.max.z+SW_HALF)/SW_CELL-.5));
+      const ix0=Math.max(0,Math.ceil((box.min.x+SW_HALF)/this.cell-.5)),iz0=Math.max(0,Math.ceil((box.min.z+SW_HALF)/this.cell-.5));
+      const ix1=Math.min(this.size-1,Math.floor((box.max.x+SW_HALF)/this.cell-.5)),iz1=Math.min(this.size-1,Math.floor((box.max.z+SW_HALF)/this.cell-.5));
       inverse.copy(c.rotation??new T.Quaternion()).invert();direction.set(0,-1,0).applyQuaternion(inverse);
       for(let z=iz0;z<=iz1;z++)for(let x=ix0;x<=ix1;x++){
-        const wx=(x+.5)*SW_CELL-SW_HALF,wz=(z+.5)*SW_CELL-SW_HALF;let top=box.max.y;
+        const wx=(x+.5)*this.cell-SW_HALF,wz=(z+.5)*this.cell-SW_HALF;let top=box.max.y;
         if(c.radius!==undefined&&!c.rotation){if((wx-c.center.x)**2+(wz-c.center.z)**2>c.radius**2)continue;}
         else if(c.rotation){
           p.set(wx,WATER_LEVEL,wz).sub(c.center).applyQuaternion(inverse);let near=-Infinity,far=Infinity;
@@ -194,7 +227,7 @@ export class ShallowWater {
           }
           if(near>far||far<0)continue;top=WATER_LEVEL-near;
         }
-        const d=Math.max(0,WATER_LEVEL-top),i=x+z*SW_SIZE;this.depthData[i]=Math.min(this.depthData[i],d<.04?0:d);
+        const d=Math.max(0,WATER_LEVEL-top),i=x+z*this.size;this.depthData[i]=Math.min(this.depthData[i],d<.04?0:d);
       }
     }
     this.depthTexture.needsUpdate=true;this.terrainDirty=true;this.generation++;
@@ -205,10 +238,10 @@ export class ShallowWater {
     for(const b of boxes){const [x0,z0,x1,z1]=b instanceof T.Vector4?[b.x,b.y,b.z,b.w]:b;
       colliders.push({center:new T.Vector3((x0+x1)/2,0,(z0+z1)/2),half:new T.Vector3((x1-x0)/2,1,(z1-z0)/2)});}
     this.setTerrain(colliders);
-    for(let z=0;z<SW_SIZE;z++)for(let x=0;x<SW_SIZE;x++)if(poolWallAt((x+.5)*SW_CELL-SW_HALF,(z+.5)*SW_CELL-SW_HALF))this.depthData[x+z*SW_SIZE]=0;
+    for(let z=0;z<this.size;z++)for(let x=0;x<this.size;x++)if(poolWallAt((x+.5)*this.cell-SW_HALF,(z+.5)*this.cell-SW_HALF))this.depthData[x+z*this.size]=0;
     this.depthTexture.needsUpdate=true;
   }
-  depthAt(x:number,z:number){const i=Math.floor((x+SW_HALF)/SW_CELL),j=Math.floor((z+SW_HALF)/SW_CELL);return i>=0&&j>=0&&i<SW_SIZE&&j<SW_SIZE?this.depthData[i+j*SW_SIZE]:0;}
+  depthAt(x:number,z:number){const i=Math.floor((x+SW_HALF)/this.cell),j=Math.floor((z+SW_HALF)/this.cell);return i>=0&&j>=0&&i<this.size&&j<this.size?this.depthData[i+j*this.size]:0;}
   isLand(x:number,z:number){return this.depthAt(x,z)<=0;}
   impact(x:number,z:number,strength:number){
     if(![x,z,strength].every(Number.isFinite)||strength<=0||this.isLand(x,z))return;
@@ -238,7 +271,7 @@ export class ShallowWater {
   private clear(renderer:T.WebGLRenderer,target:T.WebGLRenderTarget){renderer.setRenderTarget(target);renderer.clear();}
   private inject(renderer:T.WebGLRenderer){
     this.clear(renderer,this.sourceTarget);
-    this.sourceMaterial.uniforms.poolRingW.value=this.ringWaves;
+    this.sourceMaterial.uniforms.poolRingW.value=Math.min(this.ringWaves,Math.PI/(2*this.cell));
     const count=this.pendingSplats.length/4+this.pendingPushes.length/5;
     for(let start=0;start<count;start+=SOURCE_BATCH){
       const n=Math.min(SOURCE_BATCH,count-start);
@@ -259,22 +292,24 @@ export class ShallowWater {
     try{
       if(!this.booted){this.clear(renderer,this.stateA);this.clear(renderer,this.stateB);this.clear(renderer,this.sourceTarget);this.booted=true;}
       if(this.terrainDirty||this.pendingShift.lengthSq()>0){
-        this.copy.uniforms.poolState.value=this.current.texture;this.copy.uniforms.shift.value.copy(this.pendingShift).divideScalar(SW_CELL).round();
+        this.copy.uniforms.poolState.value=this.current.texture;this.copy.uniforms.shift.value.copy(this.pendingShift).divideScalar(this.cell).round();
         const other=this.current===this.stateA?this.stateB:this.stateA;this.draw(renderer,this.copy,other);this.current=other;
         this.pendingShift.set(0,0);this.terrainDirty=false;changed=true;
       }
       if(this.settled)return changed;
-      const elapsed=Math.min(dt,MAX_STEPS*SW_STEP);this.droppedTime+=dt-elapsed;this.acc=Math.min(this.acc+elapsed,MAX_STEPS*SW_STEP);
-      if(this.acc+1e-10<SW_STEP)return changed;
+      // Conservative bound includes the velocity cap and diagonal propagation.
+      const step=Math.min(SW_STEP,.7*this.cell/(Math.SQRT2*(Math.sqrt(9.81*this.waveSpeed*(REST_DEPTH+MAX_HEIGHT))+MAX_FLOW)));
+      const elapsed=Math.min(dt,MAX_STEPS*step);this.droppedTime+=dt-elapsed;this.acc=Math.min(this.acc+elapsed,MAX_STEPS*step);
+      if(this.acc+1e-10<step)return changed;
       const sources=this.inject(renderer);let steps=0;
-      while(this.acc+1e-10>=SW_STEP&&steps<MAX_STEPS){
-        for(const material of [this.velocity,this.height]){material.uniforms.poolSourceOn.value=sources&&steps===0?1:0;material.uniforms.poolFriction.value=FRICTION+1.5*T.MathUtils.smoothstep(this.quiet,8,14);}
+      while(this.acc+1e-10>=step&&steps<MAX_STEPS){
+        for(const material of [this.velocity,this.height]){material.uniforms.poolSourceOn.value=sources&&steps===0?1:0;material.uniforms.poolFriction.value=this.damping+1.5*T.MathUtils.smoothstep(this.quiet,8,14);material.uniforms.poolDt.value=step;material.uniforms.poolViscosity.value=this.viscosity;material.uniforms.poolWallLoss.value=this.wallLoss;}
         // Gravity scales linearly: wave speed goes with sqrt(waveSpeed*g*depth).
         this.velocity.uniforms.poolGravity.value=9.81*this.waveSpeed;
         const other=this.current===this.stateA?this.stateB:this.stateA;
         this.velocity.uniforms.poolState.value=this.current.texture;this.draw(renderer,this.velocity,other);
         this.height.uniforms.poolState.value=other.texture;this.draw(renderer,this.height,this.current);
-        this.acc=Math.max(0,this.acc-SW_STEP);this.simulated+=SW_STEP;steps++;changed=true;
+        this.acc=Math.max(0,this.acc-step);this.simulated+=step;steps++;changed=true;
       }
       const fresh=this.clock-this.readbackLanded<.5;this.calm=fresh&&this.peak<.0003&&this.quiet>2?this.calm+elapsed:0;
       if(!sources&&(this.calm>1||this.quiet>22)){
@@ -354,7 +389,7 @@ export class ShallowWater {
       }
     }
   }
-  debug(){return {grid:SW_SIZE,cell:SW_CELL,clock:this.clock,simulated:this.simulated,droppedTime:this.droppedTime,
+  debug(){return {grid:this.size,cell:this.cell,clock:this.clock,simulated:this.simulated,droppedTime:this.droppedTime,
     landed:Number.isFinite(this.readbackLanded)?this.readbackLanded:null,pending:!!this.readback,energy:this.energy,peak:this.peak,settled:this.settled,
     asyncLands:this.asyncLands,syncReads:this.syncReads,rejected:this.rejected,pendingSplats:this.pendingSplats.length/4,pendingPushes:this.pendingPushes.length/5};}
   dispose(){

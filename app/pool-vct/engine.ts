@@ -317,7 +317,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       for(const dx of [-10,0,10])for(const dz of [-9,3]){
         box(c,x+dx,2.5,z+dz,1.25,6.56,1.25,pale);
         box(c,x+dx,-.07,z+dz,5.8,1.42,5.8,pale);
-        for(let i=0;i<3;i++)box(c,x+dx,-.58+i*.18,z+dz+3.1+i*.5,3,.28,.52,pale);
+        // 入水台阶：离岛最近的一级最高，向深水逐级降低。
+        for(let i=0;i<3;i++)box(c,x+dx,-.58+(2-i)*.18,z+dz+3.1+i*.5,3,.28,.52,pale);
       }
       for(const dz of [-9,3])box(c,x,.59,z+dz,26,.12,1.5,pale);
       sign(c,x+10,3,z-15.65,decayText(rng,'夜间\n浴场',corrupt));
@@ -550,10 +551,15 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   let reflectionTarget:Parameters<typeof renderer.setRenderTarget>[0]=null;
   const renderWater=water.onBeforeRender;
   water.onBeforeRender=function(...args){
+    water.material.uniforms.eye.value.copy(camera.position);
+    if(!waterSystem.reflectionEnabled)return;
     const setTarget=renderer.setRenderTarget;
     renderer.setRenderTarget=function(target,...rest){
       const uniforms=water.material.uniforms as Record<string,{value:unknown}>|undefined;
-      if(uniforms&&target?.texture===uniforms.mirrorSampler?.value)reflectionTarget=target;
+      if(uniforms&&target&&target.texture===uniforms.mirrorSampler?.value){
+        reflectionTarget=target;const size=waterSystem.reflectionResolution;
+        if(target.width!==size)target.setSize(size,size);
+      }
       return setTarget.call(this,target,...rest);
     };
     try{renderWater.apply(this,args);}finally{renderer.setRenderTarget=setTarget;}
@@ -731,7 +737,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     if(e.code==='KeyE'&&active)interactAction();
   };
   window.addEventListener('mouseup',releaseDrag);window.addEventListener('mouseup',releaseThrow);window.addEventListener('wheel',wheel,{passive:false});window.addEventListener('contextmenu',noContext);window.addEventListener('keydown',interactKey);
-  const causticKey=(e:KeyboardEvent)=>{if(e.code==='Escape'&&document.pointerLockElement)document.exitPointerLock();if(e.code==='KeyC'&&!e.repeat&&document.activeElement?.tagName!=='INPUT'){caustics=!caustics;waterSystem.causticUniforms.causticGain.value=caustics?1.5:0;}};
+  const causticKey=(e:KeyboardEvent)=>{if(e.code==='Escape'&&document.pointerLockElement)document.exitPointerLock();if(e.code==='KeyC'&&!e.repeat&&document.activeElement?.tagName!=='INPUT'){caustics=!caustics;waterSystem.applySettings({caustics});}};
   window.addEventListener('mousedown',strike);window.addEventListener('keydown',causticKey);
   // ---- Mobile touch layer: virtual stick + look/tpad + action pads ----
   const touchLook={x:0,y:0};
@@ -779,15 +785,23 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       const travelled=Math.hypot(camera.position.x-beforeMove.x,camera.position.z-beforeMove.z);
       const surface=WATER_LEVEL+waterSystem.heightAt(camera.position.x,camera.position.z);
       const wading=travelled>.0001&&camera.position.y-1.64<surface&&waterSystem.depthAt(camera.position.x,camera.position.z)>0&&Math.abs(player.vertical)<1&&!player.climbing;
-      if(wading){stepDistance+=travelled;const power=keys.has('ShiftLeft')?.095:.055;
+      if(wading){stepDistance+=travelled;
+        const speed=travelled/Math.max(dt,.001),depth=waterSystem.depthAt(camera.position.x,camera.position.z);
+        const immersion=T.MathUtils.clamp(depth/.7,.1,1),power=(.026+speed*.012)*immersion;
         audio.updateWading(power,.55*dt/travelled,stepDistance/.55);
         // Integrate a continuous moving pressure/momentum source along the
         // travelled segment. Its total impulse depends on distance, not FPS.
         const dx=camera.position.x-beforeMove.x,dz=camera.position.z-beforeMove.z;
         const pieces=Math.max(1,Math.ceil(travelled/.2));
         for(let i=0;i<pieces;i++){const t=(i+.5)/pieces;
-          waterSystem.push(beforeMove.x+dx*t,beforeMove.z+dz*t,dx*.45/pieces,dz*.45/pieces,.3);}
-        if(stepDistance>.55){waterSystem.impact(camera.position.x,camera.position.z,power*.4);stepDistance%=.55;}
+          waterSystem.push(beforeMove.x+dx*t,beforeMove.z+dz*t,dx*.45*immersion/pieces,dz*.45*immersion/pieces,.22+.08*immersion);}
+        if(stepDistance>.55){
+          const side=(Math.floor(time*speed/.55)%2?1:-1),nx=-dz/Math.max(travelled,.001),nz=dx/Math.max(travelled,.001);
+          const px=camera.position.x+nx*.12*side,pz=camera.position.z+nz*.12*side;
+          waterSystem.impact(px,pz,power*.5);
+          waterSystem.wakeDipole(px,pz,dx/travelled,dz/travelled,speed*.45,.22);
+          stepDistance%=.55;
+        }
       }else if(travelled>.0001&&player.grounded&&Math.abs(player.vertical)<1&&!player.climbing){
         audio.stopWading();
         // Dry ground: hard-soled steps land every stride; sprinting swaps in the
@@ -844,7 +858,10 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // exchange (bounded by the initial relative velocity) - see physics.ts.
     particles.update(Math.min(dt,.05),(x,z)=>.32+waterSystem.heightAt(x,z),(x,z,s)=>waterSystem.impact(x,z,s));
     waterSystem.render(renderer,time);
-    field.uniforms.poolTime.value=time;film.uniforms.time.value=time;composer.render();
+    field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
+    const captured=waterSystem.captureScene(renderer,scene,camera),shadows=renderer.shadowMap.autoUpdate;
+    if(captured)renderer.shadowMap.autoUpdate=false;
+    try{composer.render();}finally{renderer.shadowMap.autoUpdate=shadows;}
     if(transition&&transition.occlusionDone){
       if(transition.probeFace<6)captureProbeFace(transition.probeFace++);
       else{finishTransition();transition=null;}
@@ -859,7 +876,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       stream();camera.lookAt(0,3,-8);
     },
     setSound:(enabled:boolean)=>audio.setEnabled(enabled),
-    waterSettings:(values:Partial<WaterSettings>)=>waterSystem.applySettings(values),
+    waterSettings:(values:Partial<WaterSettings>)=>{waterSystem.applySettings(values);caustics=waterSystem.snapshot().caustics;},
+    waterDebug:()=>waterSystem.debug(),
     waterSettingsSnapshot:()=>waterSystem.snapshot(),
     setMusic:(enabled:boolean)=>audio.setMusic(enabled),
     enter:()=>{audio.unlock();if(touch){active=true;keys.clear();if(touchUI)touchUI.style.display='';}else renderer.domElement.requestPointerLock();},
@@ -878,6 +896,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       waterDepth:(x:number,z:number)=>waterSystem.depthAt(x,z),
       pushWater:(x:number,z:number,u:number,v:number,r=.4)=>waterSystem.push(x,z,u,v,r),
       swDebug:()=>waterSystem.swe.debug(),
+      waterDebug:()=>waterSystem.debug(),
+      waterSettings:(values:Partial<WaterSettings>)=>waterSystem.applySettings(values),
       grab:(index=0)=>{const near=props.bodies.filter(b=>b.position.distanceTo(camera.position)<15);if(near[index])props.grab(near[index]);},
       throw:(speed=11)=>{if(props.held)props.release(camera,speed);},
     }:undefined,

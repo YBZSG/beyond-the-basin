@@ -24,3 +24,5 @@ apk/www/
 hinata_-_naruto_-_bikini.glb
 音效/
 apk/.gradle/
+
+.tmp-*

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
 import {ShallowWater,poolWallAt,SW_SIZE,SW_PHYS,SW_HALF,SW_DOMAIN,SW_CELL,SW_STEP} from '../app/pool-vct/shallow-water.ts';
+import {WATER_SETTINGS_DEFAULT,sanitizeWaterSettings} from '../app/pool-vct/water-settings.ts';
 
 // These checks exercise terrain, scheduling and CPU/GPU exchange. Numerical
 // propagation is checked against the real shaders by pool-water-gpu.mjs.
@@ -90,13 +91,25 @@ test('render and physics grids preserve whole texels across room shifts',()=>{
   assert.equal(SW_SIZE*SW_CELL,SW_DOMAIN);assert.equal(SW_SIZE%3,0);assert.equal(SW_SIZE%SW_PHYS,0);
   assert.equal(32/SW_CELL,Math.round(32/SW_CELL));assert.equal(SW_HALF,SW_DOMAIN/2);
 });
+test('Ultra at maximum wave speed shortens the timestep and never leaves a backlog',()=>{
+  const sw=new ShallowWater(1152),r=renderer();sw.waveSpeed=3;sw.impact(0,0,.2);sw.frame(r,.2);
+  const step=sw.velocity.uniforms.poolDt.value;
+  assert.ok(step<SW_STEP);assert.ok(step*(Math.sqrt(9.81*3*1.39)+2)*Math.SQRT2/sw.cell<=.70001);
+  assert.ok(sw.debug().simulated<=8*step+1e-9);
+  const before=sw.debug().simulated;sw.frame(r,0);assert.equal(sw.debug().simulated,before);sw.dispose();
+});
+test('persisted water settings reject nonfinite values, invalid flags and unknown quality',()=>{
+  const s=sanitizeWaterSettings({quality:'Extreme',damping:NaN,waveSpeed:100,viscosity:-4,ripples:'false',debugView:100});
+  assert.equal(s.quality,'High');assert.equal(s.damping,WATER_SETTINGS_DEFAULT.damping);assert.equal(s.waveSpeed,3);
+  assert.equal(s.viscosity,0);assert.equal(s.ripples,true);assert.equal(s.debugView,10);
+});
 test('splash amplitude and ring fineness are live-tunable',()=>{
   const sw=new ShallowWater(),r=renderer();sw.frame(r,0);
   sw.impact(0,0,.1);const amp=sw.pendingSplats[2];
   sw.impactScale=2.5;sw.impact(0,0,.1);
   assert.ok(Math.abs(sw.pendingSplats[6]-amp*2.5)<1e-6,'impact scale did not multiply amplitude');
   sw.impactScale=1;sw.ringWaves=16;sw.impact(0,0,.1);sw.frame(r,SW_STEP);
-  assert.equal(sw.sourceMaterial.uniforms.poolRingW.value,16,'ringWaves did not reach the GPU source shader');
+  assert.equal(sw.sourceMaterial.uniforms.poolRingW.value,Math.min(16,Math.PI/(2*sw.cell)),'source must honour the four-cell wavelength limit');
   sw.dispose();
 });
 test('slope push reads -g*slope, Stokes drift follows eta*flow, land reads zero',()=>{
