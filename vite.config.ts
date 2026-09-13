@@ -6,8 +6,9 @@ export default defineConfig({
   server: {
     watch: {
       // The APK pipeline stages audio/assets into apk/stage and holds the
-      // files locked; watching them crashes the dev server with EBUSY.
-      ignored: ['**/apk/**'],
+      // files locked; the mimosa audit and playwright tooling churn their own
+      // state directories. Watching any of them crashes the server with EBUSY.
+      ignored: ['**/apk/**', '**/.mimosa/**', '**/.playwright-cli/**'],
     },
   },
 });
