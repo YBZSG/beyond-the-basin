@@ -17,13 +17,26 @@ export function poolWallAt(x:number,z:number){
 /** Crest-spray criterion for the CPU readback: flow at Froude-critical speed
  * for the local depth or a strongly converging front tears droplets loose.
  * Returns droplet power in [0,1]; 0 means the cell throws no spray. */
-export function crestPower(eta:number,u:number,v:number,div:number,depth:number,gravity:number){
-  if(![eta,u,v,div,depth,gravity].every(Number.isFinite))return 0;
-  if(Math.abs(eta)<.015)return 0;
+export function crestPower(eta:number,u:number,v:number,div:number,depth:number,gravity:number,curvature=1){
+  if(![eta,u,v,div,depth,gravity,curvature].every(Number.isFinite)||depth<=0||gravity<=0)return 0;
+  if(eta<.015)return 0;
   const speed=Math.hypot(u,v);
   const critical=Math.sqrt(gravity*Math.max(depth,.05));
-  if(speed<critical*.72&&-div<2.2)return 0;
-  return Math.min(1,(speed+.5*Math.max(0,-div))/2.2);
+  // Grid adaptation of energy * (trapped-air + convex-crest potential).
+  // Compression alone or a sharp stationary shape cannot emit whitewater.
+  const energy=T.MathUtils.smoothstep(speed*speed,.16,1.44);
+  const trapped=T.MathUtils.smoothstep(-div,1.8,4);
+  const crest=T.MathUtils.smoothstep(speed/critical,.65,1.25)*T.MathUtils.smoothstep(curvature,.08,.8);
+  return energy*Math.max(trapped,crest)*T.MathUtils.smoothstep(eta,.015,.045);
+}
+
+/** Surface air can collect on a moving convex crest before it is energetic
+ * enough to eject droplets. Keep this separate from the spray threshold. */
+export function crestFoamPower(eta:number,u:number,v:number,curvature:number){
+  if(![eta,u,v,curvature].every(Number.isFinite))return 0;
+  return T.MathUtils.smoothstep(eta,.008,.05)
+    *T.MathUtils.smoothstep(u*u+v*v,.0025,.09)
+    *T.MathUtils.smoothstep(curvature,.035,.45);
 }
 
 // Variable-depth shallow water on a staggered C grid. Upwind momentum
@@ -89,21 +102,29 @@ void main(){
   float eta=s.r-poolDt*(fluxX+fluxZ)/DX+poolDt*poolViscosity*lap/(DX*DX);
   eta+=texelFetch(poolSource,c,0).r*poolSourceOn;
   float limit=min(${MAX_HEIGHT},h*.45);
-  // Foam: advected by the surface flow. Sources stay selective so ambient
-  // sloshing never milks the pool: Froude-critical breaking, strongly
-  // converging wave fronts (inflow raises eta; outflow is no foam), and a
-  // direct deposit from splash sources. Decays and diffuses, so a quiet
-  // pool always clears itself. Half-float alpha in [0,1].
-  vec2 back=clamp((gl_FragCoord.xy-vec2(s.g,s.b)*poolDt/DX)/float(SIZE),vec2(.5/float(SIZE)),vec2(1.0-.5/float(SIZE)));
+  // Advect aeration with cell-centred velocity. Ordinary compression is a
+  // travelling wave, not breaking water: require a raised, energetic crest.
+  vec2 flow=vec2(s.g+uR,s.b+vU)*.5;
+  vec2 back=clamp((gl_FragCoord.xy-flow*poolDt/DX)/float(SIZE),vec2(.5/float(SIZE)),vec2(1.0-.5/float(SIZE)));
   float foam=texture(poolState,back).a;
-  float critical=poolGravity*min(h,.6);
-  float breaking=smoothstep(.64*critical,1.44*critical,dot(s.gb,s.gb));
-  float inflow=max(0.0,-(fluxX+fluxZ))/DX;
-  foam+=poolDt*poolFoamGain*(breaking+1.2*smoothstep(.25,.7,inflow));
-  foam+=abs(texelFetch(poolSource,c,0).r)*poolFoamSplash*poolSourceOn;
+  float critical=poolGravity*max(h+s.r,.05);
+  float breaking=smoothstep(.72*critical,1.35*critical,dot(flow,flow));
+  float convergence=max(0.0,-(uR-s.g+vU-s.b)/DX);
+  float front=smoothstep(1.8,4.0,convergence)*smoothstep(.12,.7,length(flow));
+  float crest=smoothstep(.018,.075,s.r);
+  vec2 slope=vec2(neighbour(c+ivec2(1,0),s.r)-neighbour(c-ivec2(1,0),s.r),neighbour(c+ivec2(0,1),s.r)-neighbour(c-ivec2(0,1),s.r))/(2.0*DX);
+  float vertical=abs((fluxX+fluxZ)/DX);
+  float convex=smoothstep(.04,.55,-lap/(DX*DX))*smoothstep(.009,.05,s.r);
+  float activity=smoothstep(.012,.28,dot(flow,flow)+vertical*vertical);
+  float crestAir=convex*activity*max(smoothstep(.03,.18,length(slope)),smoothstep(.06,.55,vertical));
+  // Mix towards neighbours before adding fresh aeration. This cannot amplify
+  // new foam via a Laplacian that uses a different (already decayed) centre.
+  float neighbours=(state(c+ivec2(1,0)).a+state(c-ivec2(1,0)).a+state(c+ivec2(0,1)).a+state(c-ivec2(0,1)).a)*.25;
+  foam=mix(foam,neighbours,clamp(4.0*poolDt*poolFoamDiff/(DX*DX),0.0,.24));
+  foam+=poolDt*poolFoamGain*max(crest*max(breaking,front),crestAir*2.8);
+  foam+=texelFetch(poolSource,c,0).a*poolFoamSplash*poolSourceOn;
   foam*=exp(-poolDt*poolFoamDecay);
-  float lapFoam=state(c+ivec2(1,0)).a+state(c-ivec2(1,0)).a+state(c+ivec2(0,1)).a+state(c-ivec2(0,1)).a-4.0*foam;
-  outState=vec4(clamp(eta,-limit,limit),s.gb,clamp(foam+poolDt*poolFoamDiff*lapFoam/(DX*DX),0.0,1.0));
+  outState=vec4(clamp(eta,-limit,limit),s.gb,clamp(foam,0.0,1.0));
 }`;
 const COPY=/* glsl */`
 precision highp float;
@@ -145,7 +166,7 @@ export class ShallowWater {
   /** Foam field tuning: gain scales breaking/convergence deposits, decay is
    * the exponential rate (1/lifetime), diff is metres²/second of spreading,
    * splash multiplies the direct deposit from impact sources. */
-  foamGain=1;foamDecay=.25;foamDiff=.02;foamSplash=1.2;
+  foamGain=.7;foamDecay=.5;foamDiff=.003;foamSplash=1;
   readonly size:number;readonly cell:number;
   private depthData:Float32Array;
   private depthTexture:T.DataTexture;
@@ -214,7 +235,10 @@ export class ShallowWater {
           float r2=dot(q,q),r=sqrt(r2),a=poolRingW*radius,w=exp(-.5*r2);
           float sinc=r>.0001?sin(a*r)/r:a;
           float ring=((2.0+a*a-r2)*cos(a*r)+(a-2.0*a*r2)*sinc)/(2.0+2.0*a*a);
-          gl_FragColor=vec4(power.x*ring*w,power.yz*w,0.0);}`,
+          // Aeration is local to a forceful entry. Tiny droplet ripples and
+          // negative stern pressure must not continually replenish foam.
+          float aeration=smoothstep(.025,.095,power.x)*.65*exp(-2.8*r2);
+          gl_FragColor=vec4(power.x*ring*w,power.yz*w,aeration);}`,
       transparent:true,blending:T.CustomBlending,blendSrc:T.OneFactor,blendDst:T.OneFactor,blendEquation:T.AddEquation,
       depthTest:false,depthWrite:false,toneMapped:false,
     });
@@ -340,6 +364,7 @@ export class ShallowWater {
           material.uniforms.poolFoamGain.value=this.foamGain;material.uniforms.poolFoamDecay.value=this.foamDecay;material.uniforms.poolFoamDiff.value=this.foamDiff;material.uniforms.poolFoamSplash.value=this.foamSplash;}
         // Gravity scales linearly: wave speed goes with sqrt(waveSpeed*g*depth).
         this.velocity.uniforms.poolGravity.value=9.81*this.waveSpeed;
+        this.height.uniforms.poolGravity.value=9.81*this.waveSpeed;
         const other=this.current===this.stateA?this.stateB:this.stateA;
         this.velocity.uniforms.poolState.value=this.current.texture;this.draw(renderer,this.velocity,other);
         this.height.uniforms.poolState.value=other.texture;this.draw(renderer,this.height,this.current);

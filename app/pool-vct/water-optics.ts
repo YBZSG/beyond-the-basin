@@ -53,33 +53,18 @@ export const WATER_FRAGMENT=WATER_WAVES+/* glsl */`
 uniform sampler2D mirrorSampler,sceneColor,sceneDepth,poolCaustics;
 uniform float refractionOn,reflectionOn,absorptionOn,fresnelOn,waterlineOn,sceneReady,debugView;
 uniform float refractionStrength,fresnelStrength,absorptionStrength,distortionScale,causticGain;
-uniform float cameraNear,cameraFar,reflectionSize,foamOn,foamStrength;
+uniform float cameraNear,cameraFar,reflectionSize;
+uniform float foamOn,foamStrength;
 uniform vec3 eye,sunColor,sunDirection,waterColor;
 varying vec4 mirrorCoord,worldPosition,screenPosition;
 #include <common>
 #include <packing>
 #include <fog_pars_fragment>
 float foamField(vec2 p){return texture2D(poolSurface,(p+48.0)/96.0).a;}
-float foamHash(vec2 k){return fract(sin(dot(k,vec2(127.1,311.7)))*43758.5453);}
-vec2 foamHash2(vec2 k){return fract(sin(vec2(dot(k,vec2(127.1,311.7)),dot(k,vec2(269.5,183.3))))*43758.5453);}
-// Worley F1: near zero at feature points, so the pattern reads as a bright
-// foam mass with dark air holes at the cell centres (two octaves of holes).
-float foamWorley(vec2 p){
-  vec2 n=floor(p),f=fract(p);
-  float d=1.0;
-  for(int j=-1;j<=1;j++)for(int i=-1;i<=1;i++){
-    vec2 g=vec2(float(i),float(j));
-    d=min(d,length(g+foamHash2(n+g)-f));
-  }
-  return d;
-}
-float foamPattern(vec2 q){
-  float holes=foamWorley(q)*.6+foamWorley(q*2.7+17.7)*.4;
-  return 1.0-smoothstep(.1,.55,holes);
-}
-float foamClump(vec2 p){
-  vec2 q=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
-  return mix(mix(foamHash(q),foamHash(q+vec2(1.,0.)),f.x),mix(foamHash(q+vec2(0.,1.)),foamHash(q+vec2(1.,1.)),f.x),f.y);
+float foamNoise(vec2 p){
+  vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+  vec4 h=fract(sin(vec4(dot(i,vec2(127.1,311.7)),dot(i+vec2(1,0),vec2(127.1,311.7)),dot(i+vec2(0,1),vec2(127.1,311.7)),dot(i+vec2(1,1),vec2(127.1,311.7))))*43758.5453);
+  return mix(mix(h.x,h.y,f.x),mix(h.z,h.w,f.x),f.y);
 }
 void main(){
   vec2 p=worldPosition.xz;
@@ -123,25 +108,22 @@ void main(){
   if(sceneReady<.5){alpha=clamp(fresnel*reflectionOn+(1.0-absorption.g)*.3,.025,.98);color=mix(waterColor*.25,reflected,fresnel*reflectionOn/max(alpha,.001));}
   float shore=min(min(poolRestDepth(p+vec2(poolCell,0)),poolRestDepth(p-vec2(poolCell,0))),min(poolRestDepth(p+vec2(0,poolCell)),poolRestDepth(p-vec2(0,poolCell))));
   color+=vec3(.018,.024,.023)*(1.0-smoothstep(0.0,.07,shore))*waterlineOn;
-  // Foam whitens diffusely and kills the specular sheen under it. The ~25 cm
-  // sim field masks a Worley bubble pattern that rides the surface current
-  // with the classic flow-map dual-phase blend: two phase-offset samples
-  // along the velocity vector crossfade through a triangle weight, so the
-  // pattern travels with the water, never stretches, and never strobes at
-  // the phase wrap. A low-frequency value noise desyncs the phase and breaks
-  // the macro coverage into drifting patches.
-  float foam=foamField(p);
-  if(foam>.001&&foamOn>.5){
+  // Whitewater is a continuous transported density on this exact water
+  // surface. Small pores break up only the field's edge, with footprint
+  // filtering; they never draw cells or separate white spheres.
+  float density=foamField(p)*foamStrength*foamOn;
+  if(density>.015){
     vec2 flow=texture2D(poolSurface,(p+48.0)/96.0).gb;
-    float phaseNoise=foamClump(p*.33)*3.0;
-    float t1=fract(poolTime*.85+phaseNoise),t2=fract(poolTime*.85+phaseNoise+.5);
-    vec2 q=p*2.6;
-    float pat=mix(foamPattern(q-flow*t2*.55),foamPattern(q-flow*t1*.55),1.0-abs(1.0-2.0*t1));
-    float clump=foamClump(p*.9+vec2(poolTime*.021,-poolTime*.013));
-    foam=clamp(foam*foamStrength*(.15+1.5*pat)*(.45+.8*clump),0.0,1.0);
-    foam*=1.0-.5*smoothstep(10.0,30.0,distanceToEye);
-    color=mix(color,sunColor*.42+vec3(.6,.67,.72),foam*.9);
-    alpha=max(alpha,foam);
+    float phase=fract(poolTime*.5),other=fract(phase+.5),weight=abs(phase*2.0-1.0);
+    vec2 materialP=p-flow*phase*2.0,materialQ=p-flow*other*2.0;
+    float coarse=mix(foamNoise(materialP*19.0),foamNoise(materialQ*19.0),weight);
+    float fine=mix(foamNoise(materialP*79.0),foamNoise(materialQ*79.0),weight);
+    float pores=mix(coarse,coarse*.55+fine*.45,1.0-smoothstep(.004,.018,footprint));
+    float crestAffinity=.28+.72*smoothstep(.005,.035,poolHeight(p));
+    float cover=smoothstep(.03,.36,density+(pores-.5)*.18)*(1.0-exp(-density*1.8))*crestAffinity;
+    float illumination=clamp(.65+sqrt(max(dot(reflected,vec3(.2126,.7152,.0722)),0.0))*.35,.65,1.1);
+    vec3 whitewater=vec3(.65,.73,.74)*illumination*(.74+.26*max(N.y,0.0));
+    color=mix(color,whitewater,cover*.93);alpha=mix(alpha,1.0,cover);
   }
   if(debugView>.5){
     alpha=1.0;

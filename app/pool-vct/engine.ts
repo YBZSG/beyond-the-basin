@@ -2,6 +2,7 @@ import * as T from 'three';
 import { Water } from 'three/addons/objects/Water.js';
 import { createBeachBallGeometry, createBeachBallTexture, BEACH_BALL_RADIUS } from './beach-ball';
 import { RoomLights } from './room-lights';
+import { batchArchitecture } from './static-geometry';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -11,6 +12,9 @@ import { ROOM, VoxelField, blocked, randomFor, roomLayout, type Solid, type Lamp
 import { InteractiveWater, type WaterSettings } from './water-system';
 import { WATER_LEVEL } from './shallow-water';
 import { SplashParticles } from './splash-particles';
+import { LiquidMPM, type LiquidImpact } from './liquid-mpm';
+import { LiquidSurfacePass } from './liquid-surface-pass';
+import { WhitewaterPass } from './whitewater-pass';
 import { PropPhysics, PlayerPhysics, type Collider, type Ladder, type PropBody, type PropKind } from './physics';
 import { ReflectionField, type RtItem } from './rt';
 import { isTouchDevice, stickToKeys } from './touch';
@@ -41,12 +45,17 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   camera.position.set(10, 1.5, 12); camera.rotation.order = 'YXZ'; camera.lookAt(-4, 1.9, -10);
   const field = new VoxelField();
   const waterSystem=new InteractiveWater();
-  const particles=new SplashParticles();scene.add(particles.points);
+  const particles=new SplashParticles();scene.add(particles.aboveWater,particles.submerged);
+  const liquid=new LiquidMPM();
+  let whitewaterRate=1;
   const audio=new PoolAudio();
-  const splash=(x:number,z:number,power:number,step=false)=>{
+  const splash=(x:number,z:number,power:number,step=false,direction?:LiquidImpact)=>{
     if(waterSystem.depthAt(x,z)<=0)return;
     waterSystem.impact(x,z,power);
-    if(power>.1)particles.splash(x,WATER_LEVEL+waterSystem.heightAt(x,z),z,power);
+    const flow=waterSystem.flowAt(x,z);
+    if(direction){flow.u+=T.MathUtils.clamp(direction.u*.22,-1.5,1.5);flow.v+=T.MathUtils.clamp(direction.v*.22,-1.5,1.5);}
+    liquid.impact(x,z,power,direction?{...direction,u:direction.u+flow.u*.2,v:direction.v+flow.v*.2}:flow);
+    if(power>.25)particles.bubbles(x,waterSystem.surfaceAt(x,z),z,Math.round(power*10),flow);
     const dx=x-camera.position.x,dz=z-camera.position.z,distance=Math.hypot(dx,dz);
     audio.splash(power,distance,(dx*Math.cos(camera.rotation.y)-dz*Math.sin(camera.rotation.y))/Math.max(1,distance),step);
   };
@@ -60,7 +69,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     else if(b.kind==='ball')audio.ballHit(power,pan,distance);
     else audio.duckHit(power,pan,distance);
   };
-  const props=new PropPhysics(scene,(x,z,power)=>splash(x,z,power),(x,z)=>WATER_LEVEL+waterSystem.heightAt(x,z),{impact:propImpact,grab:b=>{if(b.kind==='duck')audio.duckPickup();else if(b.kind==='ball')audio.ballPickup();}},(x,z)=>waterSystem.flowAt(x,z),(x,z,ix,iz,sigma,dx,dz,speed)=>{
+  const props=new PropPhysics(scene,(x,z,power,direction)=>splash(x,z,power,false,direction),(x,z)=>WATER_LEVEL+waterSystem.heightAt(x,z),{impact:propImpact,grab:b=>{if(b.kind==='duck')audio.duckPickup();else if(b.kind==='ball')audio.ballPickup();}},(x,z)=>waterSystem.flowAt(x,z),(x,z,ix,iz,sigma,dx,dz,speed)=>{
     waterSystem.pushWake(x,z,ix,iz,sigma);
     // The pressure dipole is what draws the crisp bow crescent; the momentum
     // blob above carries the current that drifts other floaters.
@@ -68,7 +77,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   },(x,z,r)=>waterSystem.slopeAt(x,z,r));
   const player=new PlayerPhysics((x,z,power)=>{
     waterSystem.impact(x,z,power);
-    if(power>.22){audio.diveIn();particles.dive(x,WATER_LEVEL+waterSystem.heightAt(x,z),z,power);}
+    if(power>.22){audio.diveIn();liquid.impact(x,z,power,waterSystem.flowAt(x,z));}
     else audio.splash(power,0,0);
   },(x,z)=>.32+waterSystem.heightAt(x,z));
   const tile = new T.MeshStandardMaterial({ color: '#63899d', roughness: .3, metalness: 0 }); field.apply(tile, true);
@@ -288,6 +297,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       // upright box, well within the tilt, so nothing falls or clips.
       if(corrupt>=2){m.rotation.z=(rng()-.5)*.15;m.rotation.x=(rng()-.5)*.15;}
       m.castShadow=m.receiveShadow=true;c.group.add(m);
+      c.solids.push({min:new T.Vector3(x-8-.65,GROUND,z+dz-.65),max:new T.Vector3(x-8+.65,8.9,z+dz+.65),color:tile.color,radius:.65});
       c.colliders.push({center:m.position.clone(),half:new T.Vector3(.65,(8.9-GROUND)/2,.65),radius:.65});
     }
     // A walkable chute, side rails and a ladder/platform at its high end.
@@ -464,6 +474,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       if(corrupt>=2&&o.material===skylightGlow)o.material=skylightDim;}});
     // Non-daylit deep rooms swap the clean ceramic for a damp, mossy set.
     else if(corrupt>=2)c.group.traverse(o=>{if(o instanceof T.Mesh){if(o.material===tile)o.material=grimTile;else if(o.material===pale)o.material=grimPale;}});
+    batchArchitecture(c.group);
     scene.add(c.group);return c;
   }
   function stream() {
@@ -472,12 +483,13 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     cx=nx;cz=nz;visited.add(`${cx},${cz}`);
     for(const [key,c] of chunks) {
       const [x,z]=key.split(',').map(Number);
-      if(Math.abs(x-cx)>2||Math.abs(z-cz)>2) {scene.remove(c.group);props.remove(c.bodies);c.group.traverse(o=>{if(o instanceof T.InstancedMesh)o.dispose();});for(const l of c.lights)l.dispose();chunks.delete(key);}
+      if(Math.abs(x-cx)>2||Math.abs(z-cz)>2) {scene.remove(c.group);props.remove(c.bodies);c.group.traverse(o=>{if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.Mesh&&o.userData.batchedArchitecture)o.geometry.dispose();});for(const l of c.lights)l.dispose();chunks.delete(key);}
     }
     const shift=new T.Vector3((cx-originX)*ROOM,0,(cz-originZ)*ROOM);
     camera.position.sub(shift);
     waterSystem.rebase(shift);
     particles.rebase(shift);
+    liquid.rebase(shift);
     props.rebase(shift);
     for(const c of chunks.values()){for(const child of c.group.children)child.position.sub(shift);for(const b of c.solids){b.min.sub(shift);b.max.sub(shift);}for(const l of c.lamps)l.position.sub(shift);for(const l of c.lights)l.position.sub(shift);for(const col of c.colliders)col.center.sub(shift);for(const l of c.ladders){l.base.sub(shift);l.top.sub(shift);l.exit.sub(shift);}}
     originX=cx;originZ=cz;
@@ -546,6 +558,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // Stronger distortion sells the sharpened wave normals in the reflection.
   const water=new Water(new T.PlaneGeometry(96,96,384,384),{textureWidth:768,textureHeight:768,waterNormals:normals,sunDirection:new T.Vector3(-.3,1,-.3),sunColor:'#a1bdc3',waterColor:'#327c80',distortionScale:.55,alpha:.48,fog:true});
   waterSystem.attach(water);
+  particles.attachSurface(water.material.uniforms,camera);
   water.rotation.x=-Math.PI/2;water.position.y=.32;water.material.transparent=true;water.material.depthWrite=false;
   // Water owns its reflection target in a closure; retain it for full teardown.
   let reflectionTarget:Parameters<typeof renderer.setRenderTarget>[0]=null;
@@ -616,6 +629,10 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // renderTarget1, so its depth attachment is the one to sample.
   composer.renderTarget1.depthTexture=new T.DepthTexture(composer.renderTarget1.width,composer.renderTarget1.height);
   composer.addPass(new RenderPass(scene,camera));
+  composer.addPass(new LiquidSurfacePass(scene,camera,liquid.mesh,water.material.uniforms));
+  const whitewaterPass=new WhitewaterPass(scene,camera,[particles.drops]);
+  particles.attachTransmission(whitewaterPass.color,whitewaterPass.ready);
+  composer.addPass(whitewaterPass);
   // Real volumetric light scattering: a screen-space raymarch through the
   // slanted shaft the clerestory casts, with forward-scattering phase (look
   // toward the skylight and the beams brighten), occlusion-tested per step
@@ -708,7 +725,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     if(props.held)return;
     const direction=camera.getWorldDirection(new T.Vector3());
     const distance=(WATER_LEVEL-camera.position.y)/direction.y;
-    if(distance>0&&distance<12){const hit=camera.position.clone().addScaledVector(direction,distance);if(!blocked(hit,allSolids)){waterSystem.impact(hit.x,hit.z,.13);particles.splash(hit.x,.32,hit.z,.13);const dx=hit.x-camera.position.x,dz=hit.z-camera.position.z,d=Math.hypot(dx,dz);audio.tapWater((dx*Math.cos(camera.rotation.y)-dz*Math.sin(camera.rotation.y))/Math.max(1,d),d);}}
+    if(distance>0&&distance<12){const hit=camera.position.clone().addScaledVector(direction,distance);if(!blocked(hit,allSolids)){waterSystem.impact(hit.x,hit.z,.13);liquid.impact(hit.x,hit.z,.13,waterSystem.flowAt(hit.x,hit.z));const dx=hit.x-camera.position.x,dz=hit.z-camera.position.z,d=Math.hypot(dx,dz);audio.tapWater((dx*Math.cos(camera.rotation.y)-dz*Math.sin(camera.rotation.y))/Math.max(1,d),d);}}
   };
   const strike=(e:MouseEvent)=>{
     if(!active)return;
@@ -800,6 +817,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
           const px=camera.position.x+nx*.12*side,pz=camera.position.z+nz*.12*side;
           waterSystem.impact(px,pz,power*.5);
           waterSystem.wakeDipole(px,pz,dx/travelled,dz/travelled,speed*.45,.22);
+          if(speed>2)liquid.crest(px,pz,Math.min(.22,(speed-2)*.1),waterSystem.flowAt(px,pz));
           stepDistance%=.55;
         }
       }else if(travelled>.0001&&player.grounded&&Math.abs(player.vertical)<1&&!player.climbing){
@@ -856,11 +874,12 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     props.update(dt,camera,allColliders,time,active);
     // Prop wakes are emitted inside PropPhysics substeps as paired momentum
     // exchange (bounded by the initial relative velocity) - see physics.ts.
-    waterSystem.crestSpray(Math.min(dt,.05),(x,z,power)=>particles.crest(x,WATER_LEVEL+waterSystem.heightAt(x,z),z,power));
-    particles.update(Math.min(dt,.05),(x,z)=>.32+waterSystem.heightAt(x,z),(x,z,s)=>waterSystem.impact(x,z,s));
+    waterSystem.crestSpray(Math.min(dt,.05)*whitewaterRate,(x,z,power)=>liquid.crest(x,z,power,waterSystem.flowAt(x,z)),camera.position);
+    liquid.update(dt*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z)=>waterSystem.depthAt(x,z),(x,y,z,vx,vy,vz,size)=>particles.release(x,y,z,vx,vy,vz,size),(x,z,s)=>waterSystem.dropRipple(x,z,s));
+    particles.update(Math.min(dt,.05)*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z,s)=>waterSystem.dropRipple(x,z,s),(x,z)=>waterSystem.flowAt(x,z),(x,z)=>waterSystem.depthAt(x,z));
     waterSystem.render(renderer,time);
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
-    const captured=waterSystem.captureScene(renderer,scene,camera),shadows=renderer.shadowMap.autoUpdate;
+    const captured=waterSystem.captureScene(renderer,scene,camera,[particles.aboveWater]),shadows=renderer.shadowMap.autoUpdate;
     if(captured)renderer.shadowMap.autoUpdate=false;
     try{composer.render();}finally{renderer.shadowMap.autoUpdate=shadows;}
     if(transition&&transition.occlusionDone){
@@ -890,18 +909,22 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       view:(position:number[],target:number[])=>{player.climbing=null;player.vertical=0;const ox=originX,oz=originZ;camera.position.fromArray(position);stream();camera.lookAt(new T.Vector3(target[0]-(originX-ox)*ROOM,target[1],target[2]-(originZ-oz)*ROOM));},
       simulate:(enabled:boolean)=>{active=enabled;keys.clear();},
       placeProp:(kind:PropKind,position:number[])=>{const body=props.bodies.find(b=>b.kind===kind);if(body){props.grab(body);props.release();body.position.fromArray(position);body.rotation.identity();}},
-      water:(x:number,z:number,power:number)=>splash(x,z,power),
+      water:(x:number,z:number,power:number,direction?:LiquidImpact)=>splash(x,z,power,false,direction),
       waterLine:(x:number,z:number)=>WATER_LEVEL+waterSystem.heightAt(x,z),
       waterFlow:(x:number,z:number)=>waterSystem.flowAt(x,z),
       waterSlope:(x:number,z:number)=>waterSystem.slopeAt(x,z),
       waterDepth:(x:number,z:number)=>waterSystem.depthAt(x,z),
       pushWater:(x:number,z:number,u:number,v:number,r=.4)=>waterSystem.push(x,z,u,v,r),
       swDebug:()=>waterSystem.swe.debug(),
+      whitewater:()=>particles.stats,
+      whitewaterSecondary:(visible:boolean)=>{particles.aboveWater.visible=visible;particles.submerged.visible=visible;},
+      whitewaterTime:(rate:number)=>{whitewaterRate=T.MathUtils.clamp(rate,0,1);},
+      whitewaterGeometry:()=>({...liquid.stats,drops:particles.drops.count,bubbles:particles.submerged.count,instanced:particles.drops.isInstancedMesh,vertices:particles.drops.geometry.attributes.position.count,ripples:particles.ripples+liquid.ripples,crestPatches:waterSystem.crestPatches}),
       waterDebug:()=>waterSystem.debug(),
       waterSettings:(values:Partial<WaterSettings>)=>waterSystem.applySettings(values),
       grab:(index=0)=>{const near=props.bodies.filter(b=>b.position.distanceTo(camera.position)<15);if(near[index])props.grab(near[index]);},
       throw:(speed=11)=>{if(props.held)props.release(camera,speed);},
     }:undefined,
-    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
+    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();liquid.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
   };
 }

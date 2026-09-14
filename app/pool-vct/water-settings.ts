@@ -26,7 +26,7 @@ export const WATER_SLIDERS=[
   {key:'causticsScale',label:'焦散细节尺度',min:.5,max:2,step:.05,def:1},
   {key:'causticsSpeed',label:'焦散微动速度',min:0,max:2,step:.05,def:.6},
   {key:'foamStrength',label:'泡沫浓度',min:0,max:2,step:.01,def:1},
-  {key:'foamLife',label:'泡沫存留',min:.5,max:12,step:.1,def:4},
+  {key:'foamLife',label:'泡沫存留',min:.5,max:12,step:.1,def:2},
   {key:'impact',label:'交互强度',min:.2,max:3,step:.05,def:1},
   {key:'spray',label:'浪尖飞沫',min:0,max:2,step:.05,def:1},
   {key:'ringWaves',label:'物理波频率',min:6,max:20,step:1,def:10},

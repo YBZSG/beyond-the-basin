@@ -3,7 +3,7 @@ import type { Water } from 'three/addons/objects/Water.js';
 import type { Solid, Lamp } from './world';
 import { shaderStructs, shaderIntersectFunction } from 'three-mesh-bvh';
 import type { ReflectionField } from './rt';
-import { ShallowWater, SW_PHYS, SW_PHYS_CELL, SW_HALF, crestPower } from './shallow-water.ts';
+import { ShallowWater, SW_PHYS, SW_PHYS_CELL, SW_HALF, crestPower, crestFoamPower } from './shallow-water.ts';
 import { RippleDetail } from './ripple-detail.ts';
 import { WATER_WAVES, WATER_FRAGMENT } from './water-optics.ts';
 import { WATER_SETTINGS_DEFAULT, WATER_QUALITY, sanitizeWaterSettings, type WaterSettings } from './water-settings.ts';
@@ -202,7 +202,7 @@ export class InteractiveWater {
   }
   /** Capture the opaque scene in linear HDR before the water pass. It has its
    * own depth attachment, so water never samples its current render target. */
-  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera){
+  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]){
     const q=WATER_QUALITY[this.settings.quality];
     const needed=q.refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
     this.optics.sceneReady.value=needed?1:0;
@@ -211,9 +211,9 @@ export class InteractiveWater {
     const width=Math.max(1,Math.round(this.renderSize.x*q.refraction)),height=Math.max(1,Math.round(this.renderSize.y*q.refraction));
     if(this.opaque.width!==width||this.opaque.height!==height)this.opaque.setSize(width,height);
     this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
-    const target=renderer.getRenderTarget(),visible=this.waterRef.visible;
-    try{this.waterRef.visible=false;renderer.setRenderTarget(this.opaque);renderer.clear();renderer.render(scene,camera);}
-    finally{this.waterRef.visible=visible;renderer.setRenderTarget(target);}
+    const target=renderer.getRenderTarget(),visible=this.waterRef.visible,visibility=excluded.map(o=>o.visible);
+    try{this.waterRef.visible=false;for(const object of excluded)object.visible=false;renderer.setRenderTarget(this.opaque);renderer.clear();renderer.render(scene,camera);}
+    finally{this.waterRef.visible=visible;excluded.forEach((o,i)=>{o.visible=visibility[i];});renderer.setRenderTarget(target);}
     return true;
   }
   get reflectionResolution(){return WATER_QUALITY[this.settings.quality].reflection;}
@@ -333,6 +333,12 @@ export class InteractiveWater {
       if(!this.swe.isLand(px,pz))this.detail.impact(px,pz,.0014*depth*this.settings.impact,.12);
     }
   }
+  /** Returning drops feed the fine wave solver directly. Their millimetre
+   * displacement must not be scaled as another body impact or seed foam. */
+  dropRipple(x:number,z:number,amplitude:number){
+    if(![x,z,amplitude].every(Number.isFinite)||amplitude<=0||this.swe.isLand(x,z))return;
+    this.detail.impact(x,z,amplitude*this.settings.impact,.075);
+  }
   /** Moving-body impulses already include elapsed time. */
   push(x:number,z:number,vx:number,vz:number,sigma:number){
     this.swe.push(x,z,vx*this.settings.impact,vz*this.settings.impact,sigma);
@@ -348,25 +354,40 @@ export class InteractiveWater {
   flowAt(x:number,z:number){return this.swe.flowAt(x,z);}
   /** Wave slope push + Stokes drift velocity that carries floating props. */
   slopeAt(x:number,z:number,r=.38){const w=this.swe.slopeAt(x,z,r);const s=this.wavePush;return {ax:w.ax*s,az:w.az*s,ux:w.ux*s,uz:w.uz*s};}
-  private sprayBudget=0;
-  /** Breaking crests and colliding fronts throw a little spray. The physics
-   * readback already lands every frame or two for buoyancy; sample it for
-   * Froude-critical or converging cells and emit a few droplets per hit, so
-   * spray rides the same field the render and physics use. */
-  crestSpray(dt:number,emit:(x:number,z:number,power:number)=>void){
-    const s=this.settings;
-    if(s.spray<=0||s.quality==='Low')return;
-    const swe=this.swe;
-    if(swe.settled||swe.peak<.015)return;
-    this.sprayBudget=Math.min(this.sprayBudget+dt*26*s.spray,64);
-    let tries=Math.floor(this.sprayBudget);this.sprayBudget-=tries;
-    for(;tries>0;tries--){
-      const ix=1+(Math.random()*(SW_PHYS-2)|0),iz=1+(Math.random()*(SW_PHYS-2)|0),i=ix+iz*SW_PHYS;
-      const x=-SW_HALF+(ix+.5)*SW_PHYS_CELL,z=-SW_HALF+(iz+.5)*SW_PHYS_CELL;
+  private crestClock=0;
+  private crestScan=0;
+  crestPatches=0;
+  /** Scan every nearby cell at 30 Hz so a narrow travelling ridge cannot be
+   * missed by sparse random probes. Only emit on a local convex maximum;
+   * refine its position inside the cell and scatter along its tangent. */
+  crestSpray(dt:number,emit:(x:number,z:number,power:number,foam:number)=>void,focus={x:0,z:0}){
+    const s=this.settings,swe=this.swe,foamOn=s.foam&&s.foamStrength>0;
+    if(s.quality==='Low'||!s.simulation||(!foamOn&&s.spray<=0)||swe.settled||swe.peak<.008){this.crestClock=0;return;}
+    if(!Number.isFinite(dt)||dt<=0)return;
+    this.crestClock+=Math.min(dt,.05);if(this.crestClock<1/30)return;
+    const elapsed=Math.min(this.crestClock,.1);this.crestClock=0;
+    const start=(centre:number)=>Math.max(1,Math.min(SW_PHYS-65,Math.floor((centre-8+SW_HALF)/SW_PHYS_CELL)));
+    const x0=start(focus.x),z0=start(focus.z),eta=swe.physicsEta,cell2=SW_PHYS_CELL*SW_PHYS_CELL;
+    const offset=(this.crestScan++*1597)%4096;let emitted=0;
+    for(let j=0;j<4096&&emitted<12;j++){
+      const k=(j+offset)%4096,ix=x0+k%64,iz=z0+Math.floor(k/64),i=ix+iz*SW_PHYS;
+      const h=eta[i],w=eta[i-1],e=eta[i+1],b=eta[i-SW_PHYS],n=eta[i+SW_PHYS];
+      if(h<.008)continue;
+      const cx=(2*h-w-e)/cell2,cz=(2*h-b-n)/cell2,alongX=cx>=cz;
+      const a=alongX?w:b,c=alongX?e:n;
+      if(h<a||h<c||Math.max(cx,cz)<=.035)continue;
+      const curvature=cx+cz,u=swe.physicsU[i],v=swe.physicsV[i];
+      const foam=foamOn?crestFoamPower(h,u,v,curvature):0;
       const div=(swe.physicsU[i+1]-swe.physicsU[i-1]+swe.physicsV[i+SW_PHYS]-swe.physicsV[i-SW_PHYS])/(2*SW_PHYS_CELL);
-      const power=crestPower(swe.physicsEta[i],swe.physicsU[i],swe.physicsV[i],div,swe.depthAt(x,z),9.81*swe.waveSpeed);
-      if(power<=0)continue;
-      emit(x,z,power*s.spray);tries-=4;
+      const centreX=-SW_HALF+(ix+.5)*SW_PHYS_CELL,centreZ=-SW_HALF+(iz+.5)*SW_PHYS_CELL;
+      const power=crestPower(h,u,v,div,swe.depthAt(centreX,centreZ),9.81*swe.waveSpeed,curvature)*s.spray;
+      const rate=Math.max(foam,power)*12;
+      if(rate<=0||Math.random()>1-Math.exp(-rate*elapsed))continue;
+      const ridge=T.MathUtils.clamp(.5*(a-c)/(a-2*h+c),-.5,.5)*SW_PHYS_CELL;
+      const tangent=(Math.random()-.5)*SW_PHYS_CELL;
+      const x=centreX+(alongX?ridge:tangent),z=centreZ+(alongX?tangent:ridge);
+      if(swe.isLand(x,z))continue;
+      emit(x,z,power,foam);emitted++;this.crestPatches++;
     }
   }
   /** Live retune of the surface look, driven by the pause-menu sliders. */
@@ -415,6 +436,14 @@ export class InteractiveWater {
     this.dirty=true;
   }
   heightAt(x:number,z:number){return this.swe.heightAt(x,z);}
+  /** Match the visible macro-surface filter. The GPU adds sub-centimetre
+   * detail; contact uses the already available asynchronous physics field. */
+  surfaceAt(x:number,z:number){
+    if(!this.settings.simulation)return .32;
+    const h=(dx:number,dz:number)=>this.swe.heightAt(x+dx,z+dz);
+    return .32+(4*h(0,0)+2*(h(.22,0)+h(-.22,0)+h(0,.22)+h(0,-.22))
+      +h(.16,.16)+h(-.16,-.16)+h(-.16,.16)+h(.16,-.16))/16*this.settings.waveHeight;
+  }
   depthAt(x:number,z:number){return this.swe.depthAt(x,z);}
   rebase(shift:T.Vector3){this.dirty=true;this.swe.rebase(shift.x,shift.z);this.detail.rebase(shift.x,shift.z);this.uniforms.microOrigin.value.add(new T.Vector2(shift.x,shift.z));}
   /** Waterline-crossing obstacles of every streamed room (XZ boxes), refreshed

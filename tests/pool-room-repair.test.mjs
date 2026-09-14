@@ -74,3 +74,22 @@ test('dry-ground jump is higher than the restrained water jump',()=>{
   assert.ok(dry>1.15&&dry<1.35,`dry rise ${dry}`);
   assert.ok(dry>wet+.4);
 });
+
+
+test('architecture batching preserves world-space triangles and excludes moving props and light fixtures',async()=>{
+  const {batchArchitecture}=await import('../app/pool-vct/static-geometry.ts');
+  const root=new T.Group(),material=new T.MeshStandardMaterial(),geometry=new T.BoxGeometry(1,1,1);
+  const a=new T.Mesh(geometry,material),b=new T.Mesh(geometry,material);
+  a.position.set(1,2,3);b.position.set(-2,1,4);b.rotation.y=.4;a.castShadow=b.castShadow=true;
+  root.add(a,b);
+  const moving=new T.InstancedMesh(geometry,material,1),fixture=new T.Mesh(geometry,material);fixture.userData.luminaire=true;
+  root.add(moving,fixture);root.position.set(32,0,-32);root.updateMatrixWorld(true);
+  const expected=[];
+  for(const mesh of [a,b]){const g=mesh.geometry.toNonIndexed(),point=new T.Vector3();for(let i=0;i<g.attributes.position.count;i++){point.fromBufferAttribute(g.attributes.position,i).applyMatrix4(mesh.matrixWorld);expected.push(...point.toArray());}g.dispose();}
+  batchArchitecture(root);root.updateMatrixWorld(true);
+  assert.equal(moving.parent,root);assert.equal(fixture.parent,root);
+  const batch=root.children.find(o=>o.userData.batchedArchitecture);assert.ok(batch&&batch.castShadow);assert.equal(batch.material,material);
+  const actual=[],point=new T.Vector3();for(let i=0;i<batch.geometry.attributes.position.count;i++){point.fromBufferAttribute(batch.geometry.attributes.position,i).applyMatrix4(batch.matrixWorld);actual.push(...point.toArray());}
+  assert.equal(actual.length,expected.length);assert.ok(actual.every((n,i)=>Math.abs(n-expected[i])<.000002));
+  batch.geometry.dispose();moving.dispose();geometry.dispose();material.dispose();
+});

@@ -63,13 +63,13 @@ export class PropPhysics {
   bodies:PropBody[]=[];held:PropBody|null=null;distance=1.7;throws=0;grabs=0;
   private accumulator=0;
   private scene:T.Scene;
-  private splash:(x:number,z:number,power:number)=>void;
+  private splash:(x:number,z:number,power:number,direction?:{u:number;v:number;vertical?:number;radius?:number})=>void;
   private surface:(x:number,z:number,time:number)=>number;
   private flow?:(x:number,z:number)=>{u:number;v:number};
   private slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number};
   private wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void;
   private impactEvent?:PropEvents['impact'];private grabEvent?:PropEvents['grab'];
-  constructor(scene:T.Scene,splash:(x:number,z:number,power:number)=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents,flow?:(x:number,z:number)=>{u:number;v:number},wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void,slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number}){this.scene=scene;this.splash=splash;this.surface=surface;this.flow=flow;this.slope=slope;this.wave=wave;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
+  constructor(scene:T.Scene,splash:(x:number,z:number,power:number,direction?:{u:number;v:number;vertical?:number;radius?:number})=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents,flow?:(x:number,z:number)=>{u:number;v:number},wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void,slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number}){this.scene=scene;this.splash=splash;this.surface=surface;this.flow=flow;this.slope=slope;this.wave=wave;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
   add(body:PropBody){body.hitCooldown=0;this.bodies.push(body);}
   remove(bodies:PropBody[]){const removed=new Set(bodies.filter(b=>!b.promoted));this.bodies=this.bodies.filter(b=>!removed.has(b));}
   pick(camera:T.Camera,colliders:Collider[]){
@@ -163,7 +163,7 @@ export class PropPhysics {
           // Dense bodies (eggs) announce the entry: a boosted splash power
           // scales the particle burst, water impact and audio together.
           const boost=b.splashBoost??1;
-          this.splash(b.position.x,b.position.z,Math.min(.5*boost,(.06+b.velocity.length()*.028)*boost));
+          this.splash(b.position.x,b.position.z,Math.min(.5*boost,(.06+b.velocity.length()*.028)*boost),{u:b.velocity.x,v:b.velocity.z,vertical:b.velocity.y,radius:b.radius});
           b.splashCooldown=.7;
         }
         if(b!==this.held&&subm>0&&b.kind!=='ball'){

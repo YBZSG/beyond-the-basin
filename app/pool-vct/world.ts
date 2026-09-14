@@ -1,7 +1,7 @@
 import * as T from 'three';
 
 export const ROOM = 32;
-export type Solid = { min: T.Vector3; max: T.Vector3; color: T.Color };
+export type Solid = { min: T.Vector3; max: T.Vector3; color: T.Color; radius?: number };
 export type Lamp = { position: T.Vector3; color: T.Color; power: number };
 export function randomFor(x: number, z: number, seed: number) {
   let s = (Math.imul(x, 73856093) ^ Math.imul(z, 19349663) ^ seed) >>> 0;

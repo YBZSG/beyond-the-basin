@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
-import {ShallowWater,poolWallAt,crestPower,SW_SIZE,SW_PHYS,SW_HALF,SW_DOMAIN,SW_CELL,SW_STEP} from '../app/pool-vct/shallow-water.ts';
+import {ShallowWater,poolWallAt,crestPower,crestFoamPower,SW_SIZE,SW_PHYS,SW_HALF,SW_DOMAIN,SW_CELL,SW_STEP} from '../app/pool-vct/shallow-water.ts';
 import {InteractiveWater} from '../app/pool-vct/water-system.ts';
 import {WATER_SETTINGS_DEFAULT,sanitizeWaterSettings} from '../app/pool-vct/water-settings.ts';
 
@@ -129,12 +129,45 @@ test('crest spray respects the spray slider, quality tier and a settled pool',()
   const water=new InteractiveWater();let n=0;
   const emit=()=>n++;
   water.crestSpray(1/60,emit);assert.equal(n,0,'settled pool must stay quiet');
-  water.applySettings({spray:0,quality:'High'});water.swe.settled=false;water.swe.peak=.1;
+  water.applySettings({spray:0,foam:false,quality:'High'});water.swe.settled=false;water.swe.peak=.1;
   water.crestSpray(1/60,emit);assert.equal(n,0,'spray slider 0 disables emission');
   water.applySettings({spray:1,quality:'Low'});water.crestSpray(1/60,emit);assert.equal(n,0,'Low quality disables emission');
   water.applySettings({spray:1,quality:'Ultra'});water.crestSpray(1/60,emit);assert.equal(n,0,'zero readback fields emit nothing');
   // Wire the foam lifetime through the decay rate.
   water.applySettings({foamLife:4});assert.ok(Math.abs(water.swe.foamDecay-.25)<1e-9);
+  water.dispose();
+});
+
+test('moving convex crests carry foam before they can break into spray',()=>{
+  assert.ok(crestFoamPower(.05,.3,0,.5)>.8);
+  assert.equal(crestPower(.05,.3,0,0,1.04,9.81,.5),0);
+  assert.equal(crestFoamPower(.05,.3,0,-.5),0,'troughs do not whiten');
+  assert.equal(crestFoamPower(.05,0,0,.5),0,'stationary slopes do not whiten');
+  assert.equal(crestFoamPower(.001,.3,0,.5),0,'rest noise stays clear');
+});
+
+test('local crest scan finds a narrow ridge and keeps foam independent of the spray slider',()=>{
+  const water=new InteractiveWater(),sw=water.swe;
+  water.applySettings({foam:true,spray:0,quality:'High'});sw.settled=false;sw.peak=.06;
+  const centre=SW_PHYS/2;
+  for(let z=centre-5;z<=centre+5;z++){
+    sw.physicsEta[centre+z*SW_PHYS]=.06;sw.physicsU[centre+z*SW_PHYS]=.3;
+    sw.physicsEta[centre-1+z*SW_PHYS]=.02;sw.physicsEta[centre+1+z*SW_PHYS]=.02;
+  }
+  const hits=[],random=Math.random;
+  try{Math.random=()=>.05;water.crestSpray(1/30,(x,z,power,foam)=>hits.push({x,z,power,foam}),{x:0,z:0});}
+  finally{Math.random=random;}
+  assert.ok(hits.length>0&&hits.length<=12);
+  assert.ok(hits.every(h=>Math.abs(h.x-.125)<.001&&h.power===0&&h.foam>0),'foam lies along the actual ridge');
+  water.dispose();
+});
+
+test('return ripples drive the fine field without generating body-impact foam',()=>{
+  const water=new InteractiveWater(),before=water.interactionCount;
+  water.dropRipple(0,0,.0008);
+  assert.equal(water.interactionCount,before);
+  assert.equal(water.swe.pendingSplats.length,0);
+  assert.ok(water.detail.queued[2]>=.0008,'drop displacement must not be attenuated twice');
   water.dispose();
 });
 test('splash amplitude and ring fineness are live-tunable',()=>{

@@ -57,6 +57,18 @@ async (page) => {
     const cleared=read(sw);
     check('foam decays away on a quiet pool',cleared.alphaPeak<foamy.alphaPeak*.5&&cleared.alphaPeak<.01,{before:foamy.alphaPeak,after:cleared.alphaPeak});
     sw.dispose();
+    // Gentle interaction and returning droplets cannot seed endless white
+    // patches. A forceful entry must remain local even as its wave travels.
+    sw=new ShallowWater();sw.setTerrain([]);sw.frame(renderer,0);
+    for(let i=0;i<180;i++){if(i%6===0)sw.impact(0,0,.02);sw.frame(renderer,1/60);}
+    const gentle=read(sw);
+    check('returning droplets do not regenerate surface foam',gentle.alphaPeak<.001,{peak:gentle.alphaPeak});
+    sw.dispose();sw=new ShallowWater();sw.setTerrain([]);sw.frame(renderer,0);
+    sw.impact(0,0,.5);for(let i=0;i<30;i++)sw.frame(renderer,1/60);
+    const local=read(sw);let distant=0;
+    for(let x=2;x<12;x+=.25)distant=Math.max(distant,local.at(x,0,3));
+    check('entry aeration stays near the impact instead of whitening the wave train',local.alphaPeak>.03&&distant<.01,{peak:local.alphaPeak,distant});
+    sw.dispose();
     renderer.dispose();
     if(results.some(r=>!r.pass))throw new Error(JSON.stringify(results));
     return {passed:results.length,total:results.length,results};
