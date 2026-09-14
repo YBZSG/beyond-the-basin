@@ -6,6 +6,20 @@ uniform float poolCell,detailCell,poolTime,waveHeight,rippleGain,normalBoost,mic
 uniform float simulationOn,ripplesOn,microOn,causticsScale,causticsSpeed;
 uniform vec2 microOrigin;
 float poolRestDepth(vec2 p){return texture2D(poolDepth,(p+48.0)/96.0).r;}
+// poolDepth is nearest-filtered: the solver needs a hard land mask. Sampling
+// it directly quantises anything derived from depth to the 0.125m cell grid,
+// which is what tiled the waterline into screen-space blocks hugging columns
+// and step edges. Bilinear it by hand for shading use only.
+float poolRestDepthSmooth(vec2 p){
+  vec2 g=(p+48.0)/poolCell-.5;
+  vec2 i=floor(g),f=fract(g);
+  float inv=poolCell/96.0;
+  float d00=texture2D(poolDepth,(i+vec2(.5,.5))*inv).r;
+  float d10=texture2D(poolDepth,(i+vec2(1.5,.5))*inv).r;
+  float d01=texture2D(poolDepth,(i+vec2(.5,1.5))*inv).r;
+  float d11=texture2D(poolDepth,(i+vec2(1.5,1.5))*inv).r;
+  return mix(mix(d00,d10,f.x),mix(d01,d11,f.x),f.y);
+}
 float poolHeight(vec2 p){return texture2D(poolSurface,(p+48.0)/96.0).r;}
 float detailHeight(vec2 p){
   if(ripplesOn<.5)return 0.0;
@@ -60,7 +74,30 @@ varying vec4 mirrorCoord,worldPosition,screenPosition;
 #include <common>
 #include <packing>
 #include <fog_pars_fragment>
-float foamField(vec2 p){return texture2D(poolSurface,(p+48.0)/96.0).a;}
+float foamField(vec2 p){
+  vec2 uv=(p+48.0)/96.0,g=(p+48.0)/poolCell-.5,cell=floor(g),f=fract(g);
+  float inv=poolCell/96.0;
+  vec2 origin=(cell+.5)*inv;
+  float wet=min(min(textureLod(poolDepth,origin,0.0).r,textureLod(poolDepth,origin+vec2(inv,0),0.0).r),
+                min(textureLod(poolDepth,origin+vec2(0,inv),0.0).r,textureLod(poolDepth,origin+vec2(inv),0.0).r));
+  float density=textureLod(poolSurface,uv,0.0).a;
+  if(wet<=0.0){
+    // Normalize wet samples across cut cells. Solid zeros must not erode foam
+    // before it reaches the wall; geometry depth supplies the visible contour.
+    // Explicit LOD avoids undefined derivatives inside this varying branch.
+    vec2 a=1.0-f;
+    vec4 wx=vec4(a.x*a.x*a.x,3.0*f.x*f.x*f.x-6.0*f.x*f.x+4.0,-3.0*f.x*f.x*f.x+3.0*f.x*f.x+3.0*f.x+1.0,f.x*f.x*f.x)/6.0;
+    vec4 wz=vec4(a.y*a.y*a.y,3.0*f.y*f.y*f.y-6.0*f.y*f.y+4.0,-3.0*f.y*f.y*f.y+3.0*f.y*f.y+3.0*f.y+1.0,f.y*f.y*f.y)/6.0;
+    float sum=0.0,weight=0.0;
+    for(int z=0;z<4;z++)for(int x=0;x<4;x++){
+      vec2 q=origin+vec2(float(x-1),float(z-1))*inv;
+      float w=wx[x]*wz[z]*step(.0001,textureLod(poolDepth,q,0.0).r);
+      sum+=textureLod(poolSurface,q,0.0).a*w;weight+=w;
+    }
+    density=sum/max(weight,.00001);
+  }
+  return density;
+}
 float foamNoise(vec2 p){
   vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
   vec4 h=fract(sin(vec4(dot(i,vec2(127.1,311.7)),dot(i+vec2(1,0),vec2(127.1,311.7)),dot(i+vec2(0,1),vec2(127.1,311.7)),dot(i+vec2(1,1),vec2(127.1,311.7))))*43758.5453);
@@ -68,7 +105,9 @@ float foamNoise(vec2 p){
 }
 void main(){
   vec2 p=worldPosition.xz;
-  float bed=poolRestDepth(p);if(bed<=0.0)discard;
+  // The simulation's binary land cells constrain flux, not silhouettes.
+  // Opaque depth clips the water against the true curved/rotated geometry.
+  float bed=max(.005,poolRestDepthSmooth(p));
   vec3 V=normalize(eye-worldPosition.xyz);float distanceToEye=length(eye-worldPosition.xyz);
   float footprint=max(length(dFdx(p)),length(dFdy(p)));
   float detailFade=(1.0-smoothstep(8.0,26.0,distanceToEye))*(1.0-smoothstep(.09,.24,footprint));
@@ -106,8 +145,9 @@ void main(){
   // Low quality uses regular alpha transmission without an opaque-scene pass.
   float alpha=1.0;
   if(sceneReady<.5){alpha=clamp(fresnel*reflectionOn+(1.0-absorption.g)*.3,.025,.98);color=mix(waterColor*.25,reflected,fresnel*reflectionOn/max(alpha,.001));}
-  float shore=min(min(poolRestDepth(p+vec2(poolCell,0)),poolRestDepth(p-vec2(poolCell,0))),min(poolRestDepth(p+vec2(0,poolCell)),poolRestDepth(p-vec2(0,poolCell))));
-  color+=vec3(.018,.024,.023)*(1.0-smoothstep(0.0,.07,shore))*waterlineOn;
+  // Optical contact follows geometry depth, rather than the binary grid's
+  // staircase. Do not paint a cell-wide bright collar around obstacles.
+  color+=vec3(.018,.024,.023)*(1.0-smoothstep(0.0,.025,thickness))*waterlineOn;
   // Whitewater is a continuous transported density on this exact water
   // surface. Small pores break up only the field's edge, with footprint
   // filtering; they never draw cells or separate white spheres.

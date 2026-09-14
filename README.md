@@ -1,10 +1,12 @@
 # BEYOND THE BASIN | PoolCore
 
-**深水之外** — 一座没有出口的室内泳池。第一人称探索、种子地图、釉面瓷砖、静水与交互波纹，以及带本地时间戳的 CCD 镜头。
+**深水之外** — 一座没有出口的室内泳池。第一人称探索、种子地图、釉面瓷砖、随流漂浮的道具、交互浪花与浮沫，以及带本地时间戳的 CCD 镜头。
 
 ## 本地运行
 
 需要 Node.js 22.13 或更新版本，以及启用硬件加速、支持 WebGL2 的桌面浏览器。开发验收使用 Microsoft Edge；画质与帧率依赖 GPU 和分辨率。
+
+局部三维浪花还需要 WebGPU，建议通过 localhost 或 HTTPS 在 Edge 中运行。不支持 WebGPU 时，仍保留浅水水面、波纹与浮沫。
 
 ```sh
 npm ci
@@ -38,7 +40,7 @@ npm run apk          # vite 打包 web → 写入 APK assets → gradle assemble
 npm run single
 ```
 
-产物为 `dist-single/BEYOND-THE-BASIN-PoolCore-single.html`（约 3.2MB），本地 file:// 或任意静态托管均可运行。音效为 OGG 格式，Safari 不支持解码，建议 Chrome / Edge / Firefox；桌面端仍以键鼠操作，手机浏览器打开则自动启用触屏。
+产物为 `dist-single/BEYOND-THE-BASIN-PoolCore-single.html`。桌面端使用键鼠，手机浏览器自动启用触屏；实际音频和 WebGPU 支持取决于浏览器及运行环境，推荐 Edge。
 
 ## 操作
 
@@ -53,18 +55,23 @@ npm run single
 | 镜头、焦散、间接光 | F / C / V |
 | 返回起点 | R |
 
-暂停菜单可直接前往旧泳池、高拱门大厅、连通浴池、跳台高廊和夜间浴场；它们也通过门洞相连。周围常驻 3×3 个区块，远处按种子生成、回收。
+暂停菜单可直接前往旧泳池、高拱门大厅、连通浴池、跳台高廊和夜间浴场；它们也通过门洞相连。周围加载 5×5 个区块，近处 3×3 区块参与主要灯光更新；远处按种子生成、回收。
 
 ## 画面与实现
 
 - Three.js / WebGL2、React、Vinext / Vite。
 - 瓷砖按非金属釉面着色，粗糙反射采用预过滤环境探针；金属物体另有 BVH 反射。
 - 体素锥追踪提供近似静态间接光，区块加载分阶段更新。
-- 水面没有常驻风浪。交互产生传播波，约 14 秒内逐渐衰减到平静。
+- 主水体保留 GPU 浅水求解器，计算传播波、柱子绕流、道具浮力与尾流；独立细波场表现脚步和水滴回落的涟漪。平静时仅保留克制的微表面细节。
+- 强冲击产生局部 WebGPU MLS-MPM / APIC 液体域，通过各向异性表面核和 Narrow-Range 深度过滤重建浪花；压力、重力与碰撞决定形状，没有固定数量的模板突起。
+- 次级水滴采用真实实例椭球几何，回水产生一次微小涟漪。浮沫是随流平流、扩散和衰减的连续密度场，贴着物体轮廓显示，避免按方形网格排开。
+- 水体具有 Low / Medium / High / Ultra 四档质量，以及波高、波速、泡沫存留和光学层调节；静态建筑按材质合批，减少实时阴影的绘制开销。
 - 焦散由波面反射、Snell 折射和光束面积变化实时计算，使用渲染目标积累并平滑；不是播放焦散纹样图片。入射段采用建筑遮挡掩码，出射段检查场景三角形。
 - CCD 模式包含适度桶形畸变、暗角、轻微偏色与本机实时日期时间。
 
-当前焦散接收范围以所在区块池底及四面边界墙为主，尚非任意物体、多次反弹的完整光传输。水波是交互高度场，包含墙体、门洞及部分水线障碍物的反射近似，尚非完整双向刚体耦合的流体模拟。区块切换时存在光照、探针更新成本。
+当前是高度场与有预算的局部三维液体混合模拟，不是全池三维流体求解。局部液体最多同时运行 3 个域，每域最多 18,000 粒子；屏幕空间重建仍受可见内容和分辨率限制。焦散接收范围以所在区块池底及边界墙为主，区块切换存在光照与探针更新成本，帧率依赖设备。
+
+水体结构见 [水体增量升级](docs/water-upgrade.md)，浪花算法、泡沫边界及来源见 [浪花与浮沫](docs/whitewater.md)。MLS-MPM 参考并改编自 [Splash](https://github.com/matsuoka-601/Splash)，[MIT 许可](docs/licenses/Splash-MIT.txt)随仓库保留。
 
 ## 检查
 
@@ -75,13 +82,16 @@ npm test
 npm run build
 ```
 
-测试覆盖地图复现与固定邻区、碰撞、抓取投掷相关物理、体素更新、遮挡、静水和波纹衰减。
+单元测试覆盖地图复现、碰撞、抓取投掷、浮力随流、水滴回水、体素更新和波纹衰减。`tests/pool-water-boundary-gpu.mjs` 检查圆柱与斜墙边的泡沫保持和渲染覆盖；`tests/pool-liquid-gpu.mjs` 检查实际 WebGPU 的重力、惯性与压力。这些 GPU 脚本通过本地 headed Edge 的 Playwright CLI 执行，独立于 `npm test`。
 
 ## 目录
 
 - `app/pool-vct/engine.ts`：场景、地图、输入、灯光与后处理
 - `app/pool-vct/world.ts`：种子布局、体素场、瓷砖着色
 - `app/pool-vct/water-system.ts`：交互波面、焦散与光线遮挡
+- `app/pool-vct/shallow-water.ts`、`water-optics.ts`：浅水求解、连续浮沫与水面光学
+- `app/pool-vct/liquid-mpm.ts`、`liquid-mpm-shader.ts`：局部三维液体计算
+- `app/pool-vct/liquid-surface-pass.ts`、`splash-particles.ts`：液体表面重建与次级水滴
 - `app/pool-vct/physics.ts`：玩家与道具物理
 - `app/pool-vct/rt.ts`：BVH 反射
 - `app/pool-vct/PoolVCT.tsx`：菜单与摄像机界面

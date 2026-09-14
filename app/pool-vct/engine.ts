@@ -354,7 +354,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
           // 楼梯柱保持笔直（踏步要贴着它绕），其余柱子在深处照旧倾斜。
           if(corrupt>=2&&!(stair&&stair[0]===i&&stair[1]===j)){m.rotation.z=(rng()-.5)*.15;m.rotation.x=(rng()-.5)*.15;}
           m.castShadow=m.receiveShadow=true;c.group.add(m);
-          c.solids.push({min:new T.Vector3(wx-.65,GROUND,wz-.65),max:new T.Vector3(wx+.65,ceiling,wz+.65),color:tile.color});
+          c.solids.push({min:new T.Vector3(wx-.65,GROUND,wz-.65),max:new T.Vector3(wx+.65,ceiling,wz+.65),color:tile.color,radius:.65});
         }else if(wfcGrid[j][i]==='S'&&(corrupt<3||rng()>=.3))box(c,wx,(.64+GROUND)/2,wz,2.25,.64-GROUND,2.25,pale);
       }
       if(stair&&corrupt<3){
@@ -500,7 +500,9 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     for(let x=cx-2;x<=cx+2;x++)for(let z=cz-2;z<=cz+2;z++)if(!chunks.has(`${x},${z}`))chunks.set(`${x},${z}`,generate(x,z));
     for(const [key,c] of chunks){const [x,z]=key.split(',').map(Number);c.far=Math.max(Math.abs(x-cx),Math.abs(z-cz))>1;}
     allSolids=[...chunks.values()].flatMap(c=>c.solids);
-    allColliders=allSolids.map(b=>({center:b.min.clone().add(b.max).multiplyScalar(.5),half:b.max.clone().sub(b.min).multiplyScalar(.5)})).concat([...chunks.values()].flatMap(c=>c.colliders));
+    // Retain round footprints: adding a box beside the explicit cylindrical
+    // collider closes its wet corners and cuts triangular holes into foam.
+    allColliders=allSolids.map<Collider>(b=>({center:b.min.clone().add(b.max).multiplyScalar(.5),half:b.max.clone().sub(b.min).multiplyScalar(.5),radius:b.radius})).concat([...chunks.values()].flatMap(c=>c.colliders));
     allLadders=[...chunks.values()].flatMap(c=>c.ladders);
     const innerLamps=[...chunks.values()].flatMap(c=>c.far?[]:c.lamps);
     const innerLights=[...chunks.entries()].filter(([key,c])=>key!==`${cx},${cz}`&&!c.far).flatMap(([,c])=>c.lights);

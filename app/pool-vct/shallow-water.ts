@@ -91,6 +91,17 @@ void main(){
 const HEIGHT=PREAMBLE+/* glsl */`
 out vec4 outState;
 uniform float poolFoamGain,poolFoamDecay,poolFoamDiff,poolFoamSplash;
+float foamNeighbour(ivec2 c,float centre){return depth(c)>0.0?state(c).a:centre;}
+float advectedFoam(vec2 uv,float centre){
+  vec2 g=uv*float(SIZE)-.5,f=fract(g);ivec2 base=ivec2(floor(g));
+  float value=0.0,weight=0.0;
+  for(int z=0;z<2;z++)for(int x=0;x<2;x++){
+    ivec2 c=base+ivec2(x,z);
+    float w=(x==0?1.0-f.x:f.x)*(z==0?1.0-f.y:f.y);
+    if(depth(c)>0.0){value+=state(c).a*w;weight+=w;}
+  }
+  return weight>.00001?value/weight:centre;
+}
 void main(){
   ivec2 c=ivec2(gl_FragCoord.xy);float h=depth(c);
   if(h<=0.0){outState=vec4(0.0);return;}
@@ -106,7 +117,7 @@ void main(){
   // travelling wave, not breaking water: require a raised, energetic crest.
   vec2 flow=vec2(s.g+uR,s.b+vU)*.5;
   vec2 back=clamp((gl_FragCoord.xy-flow*poolDt/DX)/float(SIZE),vec2(.5/float(SIZE)),vec2(1.0-.5/float(SIZE)));
-  float foam=texture(poolState,back).a;
+  float foam=advectedFoam(back,s.a);
   float critical=poolGravity*max(h+s.r,.05);
   float breaking=smoothstep(.72*critical,1.35*critical,dot(flow,flow));
   float convergence=max(0.0,-(uR-s.g+vU-s.b)/DX);
@@ -119,8 +130,10 @@ void main(){
   float crestAir=convex*activity*max(smoothstep(.03,.18,length(slope)),smoothstep(.06,.55,vertical));
   // Mix towards neighbours before adding fresh aeration. This cannot amplify
   // new foam via a Laplacian that uses a different (already decayed) centre.
-  float neighbours=(state(c+ivec2(1,0)).a+state(c-ivec2(1,0)).a+state(c+ivec2(0,1)).a+state(c-ivec2(0,1)).a)*.25;
+  float neighbours=(foamNeighbour(c+ivec2(1,0),s.a)+foamNeighbour(c-ivec2(1,0),s.a)+foamNeighbour(c+ivec2(0,1),s.a)+foamNeighbour(c-ivec2(0,1),s.a))*.25;
   foam=mix(foam,neighbours,clamp(4.0*poolDt*poolFoamDiff/(DX*DX),0.0,.24));
+  // No-flux foam boundary: material reaches the wall, advects tangentially
+  // and decays normally. A dry neighbour is not a sink or a foam exclusion band.
   foam+=poolDt*poolFoamGain*max(crest*max(breaking,front),crestAir*2.8);
   foam+=texelFetch(poolSource,c,0).a*poolFoamSplash*poolSourceOn;
   foam*=exp(-poolDt*poolFoamDecay);
