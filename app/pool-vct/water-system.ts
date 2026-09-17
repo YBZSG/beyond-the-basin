@@ -11,6 +11,17 @@ export { WATER_WAVES, WATER_SETTINGS_DEFAULT };
 export type { WaterSettings };
 import type { Collider } from './physics';
 
+/**
+ * Camera-motion gate for the refraction capture. A stale capture is only
+ * visible through the *relative* shift between the frame it was taken from and
+ * the frame it is reused in, so a purely positional threshold is enough for
+ * translation (0.02 m ~ one frame of a slow walk at 60 Hz) and a cosine test
+ * catches rotation (0.9995 ~ 1.8 degrees of turn). Standing still, the capture
+ * is skipped; turning the head forces a fresh one.
+ */
+const REFRACTION_MOVE_EPS=0.02*0.02;
+const REFRACTION_TURN_COS=0.9995;
+
 export function rayBlocked(start:T.Vector3,end:T.Vector3,solids:Solid[]) {
   const dx=end.x-start.x,dy=end.y-start.y,dz=end.z-start.z;
   for(const b of solids){
@@ -97,6 +108,12 @@ export class InteractiveWater {
   private refractionAge=Infinity;
   /** Last value of `refractionRefresh`, so a change can invalidate the cache. */
   private lastRefractionRefresh=-1;
+  /** Camera pose at the last capture, for the motion gate in `captureScene`. */
+  private capturePos=new T.Vector3(NaN,NaN,NaN);
+  private captureDir=new T.Vector3();
+  private captureDirScratch=new T.Vector3();
+  /** Total frames the refraction buffer was reused instead of re-captured. */
+  private captureSkips=0;
   interactionCount=0;
   private static wallDefs=[
     {normal:new T.Vector3(-1,0,0),strip:0,rotY:-Math.PI/2,shift:[16,0]},
@@ -233,10 +250,21 @@ export class InteractiveWater {
     renderer.getDrawingBufferSize(this.renderSize);
     const width=Math.max(1,Math.round(this.renderSize.x*q.refraction)),height=Math.max(1,Math.round(this.renderSize.y*q.refraction));
     if(this.opaque.width!==width||this.opaque.height!==height){this.opaque.setSize(width,height);this.refractionAge=Infinity;}
-    // A held/thrown prop is excluded from the capture so it does not appear twice;
-    // if one is moving the stale buffer would smear it, so force a refresh then.
+    // A held/thrown prop is excluded from the capture so it does not appear
+    // twice. The previous gate here was `excluded.some(o=>o.visible)`, which was
+    // almost always true (the whitewater mesh is basically always visible), so
+    // the interval never engaged and a turning camera paid a full scene render
+    // on 2 of every 3 frames. The thing that actually makes a stale refraction
+    // buffer visible is *camera motion* - parallax between the captured frame
+    // and the current one - so gate on that instead.
     const every=Math.max(0,Math.round(this.settings.refractionRefresh));
-    if(every>0&&this.refractionAge<every&&!excluded.some(o=>o.visible)){this.refractionAge++;this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;return true;}
+    const moved=this.capturePos.distanceToSquared(camera.position)>REFRACTION_MOVE_EPS
+      ||this.captureDir.dot(camera.getWorldDirection(this.captureDirScratch))<REFRACTION_TURN_COS;
+    if(every>0&&this.refractionAge<every&&!moved){
+      this.refractionAge++;this.captureSkips++;this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;return true;
+    }
+    this.captureDir.copy(this.captureDirScratch);
+    this.capturePos.copy(camera.position);
     this.refractionAge=0;
     this.captureFrames++;
     this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
@@ -445,7 +473,7 @@ export class InteractiveWater {
   snapshot():WaterSettings{return {...this.settings};}
   debug(){return {...this.swe.debug(),quality:this.settings.quality,detailGrid:this.detail.size,detailActive:this.detail.active,
     causticSize:this.target.width,filterGrid:this.filterTarget.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
-    captureFrames:this.captureFrames,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
+    captureFrames:this.captureFrames,captureSkips:this.captureSkips,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
     refractionTargetSize:[this.opaque.width,this.opaque.height],settings:this.snapshot()};}
   private updateQuality(renderer:T.WebGLRenderer){
     const q=WATER_QUALITY[this.settings.quality];

@@ -35,7 +35,7 @@ export default function PoolVCT() {
   // you cannot watch the frame rate. G opens it mid-game so the numbers can be
   // read while actually walking.
   useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if(e.code==='KeyG'&&!e.repeat&&!e.metaKey&&!e.ctrlKey&&!e.altKey){e.preventDefault();setDebugOpen(v=>!v);}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey);},[]);
-  useEffect(()=>{if(!debugOpen)return;const timer=window.setInterval(()=>{const d=engine.current?.waterDebug();if(d)setWaterStats(`${d.grid}² 浅水 · ${d.detailGrid}² 细波 · ${d.causticSize}² 焦散 · ${d.filterGrid}² 滤波\n峰值 ${d.peak.toFixed(4)} m · ${d.settled?'物理已平静':'波场传播中'} · 读回异常 ${d.rejected}\n焦散重绘 ${d.causticFrames} 次 · 求解丢时 ${d.droppedTime.toFixed(2)}s\n质量 ${d.quality} · 反射 ${d.reflectionSize}² · 细波 ${d.detailActive?'启用':'停用'}\n折射抓帧 ${d.captureFrames} 次 · 缓存龄 ${d.refractionAge} 帧`);},500);return()=>clearInterval(timer);},[debugOpen]);
+  useEffect(()=>{if(!debugOpen)return;const timer=window.setInterval(()=>{const d=engine.current?.waterDebug();if(d)setWaterStats(`${d.grid}² 浅水 · ${d.detailGrid}² 细波 · ${d.causticSize}² 焦散 · ${d.filterGrid}² 滤波\n峰值 ${d.peak.toFixed(4)} m · ${d.settled?'物理已平静':'波场传播中'} · 读回异常 ${d.rejected}\n焦散重绘 ${d.causticFrames} 次 · 求解丢时 ${d.droppedTime.toFixed(2)}s\n质量 ${d.quality} · 反射 ${d.reflectionSize}² · 细波 ${d.detailActive?'启用':'停用'}\n折射抓帧 ${d.captureFrames} 次 · 复用 ${d.captureSkips} 次 · 缓存龄 ${d.refractionAge} 帧`);},500);return()=>clearInterval(timer);},[debugOpen]);
   useEffect(()=>{
     const id=requestAnimationFrame(()=>setWater(loadWater()));
     return()=>cancelAnimationFrame(id);
