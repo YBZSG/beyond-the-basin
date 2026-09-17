@@ -25,4 +25,17 @@ hinata_-_naruto_-_bikini.glb
 音效/
 apk/.gradle/
 
+# Original DCC source for the egg-boy asset: a 1.5 GB Maya project. The shipped
+# form is public/assets/models/egg-boy (converted glTF + downscaled textures).
+# Keep the source local; see ATTRIBUTIONS.md for provenance and licensing.
+蛋小黄/
+
+# Agent scratch: memory notes and one-off conversion scripts. Not part of the app.
+.workbuddy/
+
+# This project is npm-based (package-lock.json is the source of truth). Stray
+# pnpm artefacts appeared from an accidental `pnpm` invocation; not tracked.
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
 .tmp-*

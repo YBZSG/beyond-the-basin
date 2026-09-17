@@ -176,6 +176,11 @@ export class ShallowWater {
    * number (higher = finer rings, stable above ~4 cells per wavelength), and
    * waveSpeed scales gravity — propagation speed is sqrt(waveSpeed*g*depth). */
   impactScale=1;ringWaves=12;waveSpeed=1;damping=.28;viscosity=.0015;wallLoss=1.1;
+  /** Ceiling on solver sub-steps per frame. The cost is linear in this number
+   * (each step is two full-grid passes), so it is the single biggest lever on
+   * frame time. Lower values hold the same wave solution but let fast flow lag
+   * a frame or two behind real time instead of dropping the frame. */
+  maxSteps=MAX_STEPS;
   /** Foam field tuning: gain scales breaking/convergence deposits, decay is
    * the exponential rate (1/lifetime), diff is metres²/second of spreading,
    * splash multiplies the direct deposit from impact sources. */
@@ -369,10 +374,11 @@ export class ShallowWater {
       if(this.settled)return changed;
       // Conservative bound includes the velocity cap and diagonal propagation.
       const step=Math.min(SW_STEP,.7*this.cell/(Math.SQRT2*(Math.sqrt(9.81*this.waveSpeed*(REST_DEPTH+MAX_HEIGHT))+MAX_FLOW)));
-      const elapsed=Math.min(dt,MAX_STEPS*step);this.droppedTime+=dt-elapsed;this.acc=Math.min(this.acc+elapsed,MAX_STEPS*step);
+      const budget=Math.max(1,Math.min(MAX_STEPS,Math.round(this.maxSteps)));
+      const elapsed=Math.min(dt,budget*step);this.droppedTime+=dt-elapsed;this.acc=Math.min(this.acc+elapsed,budget*step);
       if(this.acc+1e-10<step)return changed;
       const sources=this.inject(renderer);let steps=0;
-      while(this.acc+1e-10>=step&&steps<MAX_STEPS){
+      while(this.acc+1e-10>=step&&steps<budget){
         for(const material of [this.velocity,this.height]){material.uniforms.poolSourceOn.value=sources&&steps===0?1:0;material.uniforms.poolFriction.value=this.damping+1.5*T.MathUtils.smoothstep(this.quiet,8,14);material.uniforms.poolDt.value=step;material.uniforms.poolViscosity.value=this.viscosity;material.uniforms.poolWallLoss.value=this.wallLoss;
           material.uniforms.poolFoamGain.value=this.foamGain;material.uniforms.poolFoamDecay.value=this.foamDecay;material.uniforms.poolFoamDiff.value=this.foamDiff;material.uniforms.poolFoamSplash.value=this.foamSplash;}
         // Gravity scales linearly: wave speed goes with sqrt(waveSpeed*g*depth).

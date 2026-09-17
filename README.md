@@ -93,6 +93,7 @@ npm run build
 - `app/pool-vct/liquid-mpm.ts`、`liquid-mpm-shader.ts`：局部三维液体计算
 - `app/pool-vct/liquid-surface-pass.ts`、`splash-particles.ts`：液体表面重建与次级水滴
 - `app/pool-vct/physics.ts`：玩家与道具物理
+- `app/pool-vct/egg-boy.ts`：蛋小黄 glTF 模板加载与缩放，以及无骨骼的程序化rig（触角、四肢、眼睛各自绕铰链转动）
 - `app/pool-vct/rt.ts`：BVH 反射
 - `app/pool-vct/PoolVCT.tsx`：菜单与摄像机界面
 - `tests/`：自动化检查

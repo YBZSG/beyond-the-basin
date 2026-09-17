@@ -52,6 +52,7 @@ export class InteractiveWater {
   private clearColor=new T.Color();
   private renderSize=new T.Vector2();
   private causticFrames=0;
+  private captureFrames=0;
   private wavePush=WATER_SETTINGS_DEFAULT.wavePush;
   private waterRef:Water|null=null;
   causticUniforms={poolCaustics:{value:null as T.Texture|null},poolCausticsWalls:{value:null as T.Texture|null},causticGain:{value:1.5},waterLightPower:{value:1}};
@@ -82,6 +83,11 @@ export class InteractiveWater {
   private lastTime:number|null=null;
   private tracingReady:{value:number}|null=null;
   private lastReady=-1;
+  private causticAge=0;
+  /** Frames since the last refraction (opaque-scene) capture, for throttling. */
+  private refractionAge=Infinity;
+  /** Last value of `refractionRefresh`, so a change can invalidate the cache. */
+  private lastRefractionRefresh=-1;
   interactionCount=0;
   private static wallDefs=[
     {normal:new T.Vector3(-1,0,0),strip:0,rotY:-Math.PI/2,shift:[16,0]},
@@ -201,7 +207,15 @@ export class InteractiveWater {
     this.applySettings(this.settings);
   }
   /** Capture the opaque scene in linear HDR before the water pass. It has its
-   * own depth attachment, so water never samples its current render target. */
+   * own depth attachment, so water never samples its current render target.
+   *
+   * This re-renders the entire scene, so it is the most expensive single stage
+   * while walking. `refractionRefresh` throttles it: 0 = every frame, N = reuse
+   * the previous capture for N frames. The camera moves slowly relative to a
+   * 60 Hz frame, so a one-frame-old refraction buffer is essentially invisible,
+   * and skipping halves the scene's draw cost. The buffer is always refreshed
+   * on the first frame after a resize or a quality change so the stale image
+   * can never come from a differently sized target. */
   captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]){
     const q=WATER_QUALITY[this.settings.quality];
     const needed=q.refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
@@ -209,7 +223,13 @@ export class InteractiveWater {
     if(!needed||!this.waterRef)return;
     renderer.getDrawingBufferSize(this.renderSize);
     const width=Math.max(1,Math.round(this.renderSize.x*q.refraction)),height=Math.max(1,Math.round(this.renderSize.y*q.refraction));
-    if(this.opaque.width!==width||this.opaque.height!==height)this.opaque.setSize(width,height);
+    if(this.opaque.width!==width||this.opaque.height!==height){this.opaque.setSize(width,height);this.refractionAge=Infinity;}
+    // A held/thrown prop is excluded from the capture so it does not appear twice;
+    // if one is moving the stale buffer would smear it, so force a refresh then.
+    const every=Math.max(0,Math.round(this.settings.refractionRefresh));
+    if(every>0&&this.refractionAge<every&&!excluded.some(o=>o.visible)){this.refractionAge++;this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;return true;}
+    this.refractionAge=0;
+    this.captureFrames++;
     this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
     const target=renderer.getRenderTarget(),visible=this.waterRef.visible,visibility=excluded.map(o=>o.visible);
     try{this.waterRef.visible=false;for(const object of excluded)object.visible=false;renderer.setRenderTarget(this.opaque);renderer.clear();renderer.render(scene,camera);}
@@ -403,15 +423,20 @@ export class InteractiveWater {
     this.wavePush=s.wavePush;
     this.swe.impactScale=s.impact;this.swe.ringWaves=s.ringWaves;this.swe.waveSpeed=s.waveSpeed;
     this.swe.damping=s.damping;this.swe.viscosity=s.viscosity;this.swe.wallLoss=s.wallLoss;
+    this.swe.maxSteps=s.solverSteps;
     this.swe.foamDecay=1/Math.max(s.foamLife,.25);
     this.detail.frequency=s.rippleFrequency;
     this.optics.reflectionSize.value=this.reflectionResolution;
     if(this.waterRef)this.waterRef.material.uniforms.distortionScale.value=s.distortion;
+    // Force a fresh capture whenever the setting changes so the interval takes
+    // effect immediately instead of after up to N stale frames.
+    if(this.lastRefractionRefresh!==s.refractionRefresh){this.lastRefractionRefresh=s.refractionRefresh;this.refractionAge=Infinity;}
   }
   snapshot():WaterSettings{return {...this.settings};}
   debug(){return {...this.swe.debug(),quality:this.settings.quality,detailGrid:this.detail.size,detailActive:this.detail.active,
     causticSize:this.target.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
-    refractionSize:[this.opaque.width,this.opaque.height],settings:this.snapshot()};}
+    captureFrames:this.captureFrames,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
+    refractionTargetSize:[this.opaque.width,this.opaque.height],settings:this.snapshot()};}
   private updateQuality(renderer:T.WebGLRenderer){
     const q=WATER_QUALITY[this.settings.quality];
     if(this.waterRef&&(this.waterRef.geometry as T.PlaneGeometry).parameters.widthSegments!==q.surface){
@@ -475,6 +500,16 @@ export class InteractiveWater {
     // A flat, unchanged pool has unchanged light transport. Reuse it instead of
     // retracing millions of rays every frame while the player is standing still.
     if(!changed&&!active&&!this.lastActive&&!this.dirty&&ready===this.lastReady)return;
+    // The water field changes on almost every frame, so requiring a *still* pool
+    // meant this cache never hit: the 2048² floor + 2048² wall retrace plus the
+    // 2048² filter ran in full every frame. Retrace only on the configured
+    // cadence; the waves move slowly enough that a few frames of latency is
+    // invisible, and 0 restores per-frame tracing.
+    const every=Math.max(0,Math.round(this.settings.causticsRefresh));
+    if(every>0&&!this.dirty&&ready===this.lastReady&&this.causticAge<every){
+      this.causticAge++;return;
+    }
+    this.causticAge=0;
     // Moving caustics follow every water frame; only settled transport is cached.
     this.lastActive=active;this.lastReady=ready;this.dirty=false;this.causticFrames++;
     const previous=renderer.getRenderTarget(),clear=renderer.getClearColor(this.clearColor),alpha=renderer.getClearAlpha();

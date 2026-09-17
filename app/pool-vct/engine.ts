@@ -1,8 +1,10 @@
 import * as T from 'three';
 import { Water } from 'three/addons/objects/Water.js';
 import { createBeachBallGeometry, createBeachBallTexture, BEACH_BALL_RADIUS } from './beach-ball';
+import { loadEggBoyTemplate, createEggRig, tickEggRig, type EggBoyTemplate, type EggRig } from './egg-boy';
 import { RoomLights } from './room-lights';
 import { batchArchitecture } from './static-geometry';
+import { createFrameProbe, type Stage } from './frame-probe';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -25,9 +27,14 @@ type Flicker={light:T.PointLight;glow:T.MeshBasicMaterial;base:number;seed:numbe
 const roomLightDir=new T.Vector3();
 export type { WaterSettings } from './water-system';
 type Chunk = { group: T.Group; solids: Solid[]; lamps: Lamp[]; floats: T.Group[]; lights: T.PointLight[]; bodies:PropBody[]; colliders:Collider[]; ladders:Ladder[]; flickers:Flicker[]; far?:boolean };
-export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number };
+export type FrameTimings = { [stage: string]: number };
+export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number; timings?: FrameTimings };
 export function createPool(host: HTMLElement, seed: number, report: (s: Status) => void) {
   const touch=isTouchDevice();
+  // Frame stage profiler. Enabled only while a debug consumer asks for it, so
+  // the branch cost is the entire overhead in normal play.
+  const profiler=createFrameProbe();
+  const probeTick=(stage:Stage,fn:()=>void)=>{if(!profiler.enabled){fn();return;}const t=profiler.begin(stage);try{fn();}finally{profiler.end(stage,t);}};
   const renderer = new T.WebGLRenderer({ antialias: !touch, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, touch?1.25:1.5));
   renderer.setSize(host.clientWidth, host.clientHeight);
@@ -69,7 +76,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     else if(b.kind==='ball')audio.ballHit(power,pan,distance);
     else audio.duckHit(power,pan,distance);
   };
-  const props=new PropPhysics(scene,(x,z,power,direction)=>splash(x,z,power,false,direction),(x,z)=>WATER_LEVEL+waterSystem.heightAt(x,z),{impact:propImpact,grab:b=>{if(b.kind==='duck')audio.duckPickup();else if(b.kind==='ball')audio.ballPickup();}},(x,z)=>waterSystem.flowAt(x,z),(x,z,ix,iz,sigma,dx,dz,speed)=>{
+  const props=new PropPhysics(scene,(x,z,power,direction)=>splash(x,z,power,false,direction),(x,z)=>WATER_LEVEL+waterSystem.heightAt(x,z),{impact:propImpact,grab:b=>{if(b.kind==='duck'||b.kind==='eggboy')audio.duckPickup();else if(b.kind==='ball')audio.ballPickup();}},(x,z)=>waterSystem.flowAt(x,z),(x,z,ix,iz,sigma,dx,dz,speed)=>{
     waterSystem.pushWake(x,z,ix,iz,sigma);
     // The pressure dipole is what draws the crisp bow crescent; the momentum
     // blob above carries the current that drifts other floaters.
@@ -128,11 +135,27 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     egg: { radius: .17, floatBias: 0, name: '鸡蛋', sink: 0, buoyK: 16, buoyZeta: .5, buoyMax: 4, flowRate: 3, splashBoost: 1.6 },
     duck: { radius: .2, floatBias: .125, name: '小黄鸭', sink: .125, buoyK: 90, buoyZeta: .32, buoyMax: 30, flowRate: 2, splashBoost: 1 },
     ball: { radius: BEACH_BALL_RADIUS, floatBias: .05, name: '海滩球', sink: 0, buoyK: 110, buoyZeta: .35, buoyMax: 34, flowRate: 1.6, splashBoost: 1 },
+    // 蛋小黄：一只齐腰高的泡澡玩偶。中等浮力弹簧让它慢慢下潜再弹回，
+    // 低阻力让水波能推着它滑动；碰撞球包住蛋形身体，头露在水面上。
+    eggboy: { radius: .42, floatBias: .08, name: '蛋小黄', sink: 0, buoyK: 70, buoyZeta: .36, buoyMax: 26, flowRate: 2.2, splashBoost: 1.1 },
   };
   const ballGeometry=createBeachBallGeometry(),ballTexture=createBeachBallTexture();
   ballTexture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
   const ballMaterial=new T.MeshStandardMaterial({map:ballTexture,roughness:.27,metalness:0,envMapIntensity:.7});
   field.apply(ballMaterial);materials.push(ballMaterial);
+  // 蛋小黄模板异步加载：就绪前任何房间都不会刷出它（随机数照常消耗，
+  // 房间生成保持确定性）；就绪后先给当前房间补一只保底，之后按种子概率出现。
+  let eggBoy:EggBoyTemplate|null=null;
+  const eggBoyWelcome=()=>{const c=chunks.get(`${cx},${cz}`);if(!c||c.bodies.some(b=>b.kind==='eggboy'))return;
+    for(let t=0;t<8;t++){const px=2.5+(Math.random()-.5)*5,pz=1+(Math.random()-.5)*5;
+      if(blocked(new T.Vector3(px,1,pz),c.solids))continue;
+      prop(c,px,pz,Math.random()*Math.PI*2,'eggboy');batchFloaters(c);return;}};
+  loadEggBoyTemplate(Math.min(8,renderer.capabilities.getMaxAnisotropy())).then(t=>{
+    eggBoy=t;
+    const seen=new Set<T.Material>();
+    for(const p of t.parts)if(!seen.has(p.material)){seen.add(p.material);field.apply(p.material);p.material.shadowSide=T.FrontSide;materials.push(p.material);if(p.material.map)textures.push(p.material.map);}
+    eggBoyWelcome();
+  }).catch(()=>{});
   // Closed solids cast their front surface; back-face depth creates a visible
   // gap under small props and along thin wall bases.
   for(const material of materials)material.shadowSide=T.FrontSide;
@@ -215,6 +238,21 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     };
     if(kind==='ball') {
       const m=new T.Mesh(ballGeometry,ballMaterial);m.castShadow=m.receiveShadow=true;g.add(m);
+    } else if(kind==='eggboy') {
+      // Real glTF parts (baked node transforms) hung so the shell centre rides
+      // on the collider sphere; the feet dip below, the head stays dry.
+      if(eggBoy){
+        for(const p of eggBoy.parts){
+          const m=new T.Mesh(p.geometry,p.material);m.position.y=-eggBoy.center;m.castShadow=m.receiveShadow=true;
+          // The rig overwrites this matrix every frame, and nothing else ever
+          // touches the part's transform, so stop three from recomputing it.
+          m.matrixAutoUpdate=false;m.updateMatrix();g.add(m);
+        }
+        // Phase offset from the spawn position: deterministic per room, and it
+        // keeps a pool full of egg-boys from paddling in lockstep.
+        g.userData.eggRig=createEggRig(eggBoy,(x*.73+z*1.31)%(Math.PI*2));
+      }
+      else part(ivory,0,0,0,.19,.28,.19);
     } else if(kind==='egg') part(ivory,0,0,0,.145,.205,.145);
     else {
       part(yellow,0,.04-sink,0,.16,.105,.235);part(yellow,0,.19-sink,-.1,.11,.12,.115);part(orange,0,.17-sink,-.222,.075,.026,.06);
@@ -222,6 +260,31 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       part(yellow,-.125,.07-sink,.025,.052,.055,.13);part(yellow,.125,.07-sink,.025,.052,.055,.13);
     }
     g.userData.phase=yaw;g.userData.kind=kind; c.group.add(g);c.floats.push(g);
+  }
+  // Shared geometry/materials keep the floaters at one draw call per material
+  // per room. Runs after a room spawns its props, and again when a late模板
+  // (蛋小黄 glb) has to join an already-built room.
+  function batchFloaters(c: Chunk) {
+    const batches=new Map<string,{geometry:T.BufferGeometry;mat:T.Material;entries:{body:PropBody;local:T.Matrix4}[]}>();
+    for(const g of c.floats){
+      const kind=g.userData.kind as PropKind,spec=PROP_SPEC[kind];
+      const body:PropBody={position:g.position.clone(),velocity:new T.Vector3(),rotation:g.quaternion.clone(),radius:spec.radius,floatBias:spec.floatBias,name:spec.name,kind,visual:g,parts:[],promoted:false,splashCooldown:0,hitCooldown:0,buoyK:spec.buoyK,buoyZeta:spec.buoyZeta,buoyMax:spec.buoyMax,flowRate:spec.flowRate,splashBoost:spec.splashBoost};
+      c.bodies.push(body);props.add(body);
+      const eggRig=g.userData.eggRig as EggRig|undefined;
+      if(eggRig){
+        // Animated props stay a real Group: instancing would freeze the rig,
+        // and at one egg-boy per room the extra draw calls cost less than
+        // losing per-mesh frustum culling on a non-cullable instanced batch.
+        const targets=g.children.map(m=>(m as T.Mesh).matrix);
+        body.rig=(b,time)=>tickEggRig(eggRig,time,b.velocity.length(),targets);
+        continue; // leaves g parented to c.group
+      }
+      for(const part of g.children){const m=part as T.Mesh;m.updateMatrix();const key=`${m.geometry.uuid}|${(m.material as T.Material).uuid}`;
+        if(!batches.has(key))batches.set(key,{geometry:m.geometry,mat:m.material as T.Material,entries:[]});
+        batches.get(key)!.entries.push({body,local:m.matrix.clone()});}
+      c.group.remove(g);}
+    c.floats=[];
+    for(const {geometry,mat,entries} of batches.values()){const mesh=new T.InstancedMesh(geometry,mat,entries.length);entries.forEach(({body,local},index)=>{body.parts.push({mesh,index,local});mesh.setMatrixAt(index,new T.Matrix4().compose(body.position,body.rotation,new T.Vector3(1,1,1)).multiply(local));});mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;c.group.add(mesh);}
   }
   function generate(rx: number, rz: number): Chunk {
     const c:Chunk={group:new T.Group(),solids:[],lamps:[],floats:[],lights:[],bodies:[],colliders:[],ladders:[],flickers:[]};
@@ -444,6 +507,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const duckCount=corrupt>=3?Math.ceil(layout.ducks/2):layout.ducks;
     // 海滩球是稀客：多数房间漂着一个，偶尔成对，剩下的没有。
     const ballCount=Math.floor(rng()*2.4);
+    // 蛋小黄更稀客：约三分之一的房间漂着一只（模板就绪后才真的生成）。
+    const eggboyCount=eggBoy&&rng()<.34?1:0;
     const spawn=(px:number,pz:number,yaw:number,kind:PropKind)=>{if(!blocked(new T.Vector3(px,1,pz),c.solids))prop(c,px,pz,yaw,kind);};
     if(wfcGrid){
       // WFC 房间：道具只落在坍缩出的空水格上，不会卡进柱子或平台。
@@ -452,23 +517,14 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       const pick=()=>{const [ci,cj]=empties[Math.floor(rng()*empties.length)];return [x+(ci-(WFC_SIZE-1)/2)*WFC_CELL+(rng()-.5)*1.1,z+(cj-(WFC_SIZE-1)/2)*WFC_CELL+(rng()-.5)*1.1] as [number,number];};
       for(let i=0;i<duckCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,i%3!==0?'egg':'duck');}
       for(let i=0;i<ballCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'ball');}
+      for(let i=0;i<eggboyCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'eggboy');}
     }else{
       const pick=()=>[x+(rng()-.5)*28,z+(rng()-.5)*27] as [number,number];
       for(let i=0;i<duckCount*2;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,i%3!==0?'egg':'duck');}
       for(let i=0;i<ballCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'ball');}
+      for(let i=0;i<eggboyCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'eggboy');}
     }
-    // Shared geometry/materials keep the smooth balls at one draw call per room.
-    const batches=new Map<string,{geometry:T.BufferGeometry;mat:T.Material;entries:{body:PropBody;local:T.Matrix4}[]}>();
-    for(const g of c.floats){
-      const kind=g.userData.kind as PropKind,spec=PROP_SPEC[kind];
-      const body:PropBody={position:g.position.clone(),velocity:new T.Vector3(),rotation:g.quaternion.clone(),radius:spec.radius,floatBias:spec.floatBias,name:spec.name,kind,visual:g,parts:[],promoted:false,splashCooldown:0,hitCooldown:0,buoyK:spec.buoyK,buoyZeta:spec.buoyZeta,buoyMax:spec.buoyMax,flowRate:spec.flowRate,splashBoost:spec.splashBoost};
-      c.bodies.push(body);props.add(body);
-      for(const part of g.children){const m=part as T.Mesh;m.updateMatrix();const key=`${m.geometry.uuid}|${(m.material as T.Material).uuid}`;
-        if(!batches.has(key))batches.set(key,{geometry:m.geometry,mat:m.material as T.Material,entries:[]});
-        batches.get(key)!.entries.push({body,local:m.matrix.clone()});}
-      c.group.remove(g);}
-    c.floats=[];
-    for(const {geometry,mat,entries} of batches.values()){const mesh=new T.InstancedMesh(geometry,mat,entries.length);entries.forEach(({body,local},index)=>{body.parts.push({mesh,index,local});mesh.setMatrixAt(index,new T.Matrix4().compose(body.position,body.rotation,new T.Vector3(1,1,1)).multiply(local));});mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;c.group.add(mesh);}
+    batchFloaters(c);
     if(bright)c.group.traverse(o=>{if(o instanceof T.Mesh){if(o.material===tile)o.material=daylightTile;else if(o.material===pale)o.material=daylightPale;
       // Decayed wings keep their skylight geometry, but the glass has gone dark.
       if(corrupt>=2&&o.material===skylightGlow)o.material=skylightDim;}});
@@ -873,23 +929,26 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       tyndall.uniforms.projInv.value.copy(camera.projectionMatrixInverse);
       tyndall.uniforms.time.value=time;
     }
-    props.update(dt,camera,allColliders,time,active);
+    probeTick('props',()=>props.update(dt,camera,allColliders,time,active));
     // Prop wakes are emitted inside PropPhysics substeps as paired momentum
     // exchange (bounded by the initial relative velocity) - see physics.ts.
-    waterSystem.crestSpray(Math.min(dt,.05)*whitewaterRate,(x,z,power)=>liquid.crest(x,z,power,waterSystem.flowAt(x,z)),camera.position);
-    liquid.update(dt*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z)=>waterSystem.depthAt(x,z),(x,y,z,vx,vy,vz,size)=>particles.release(x,y,z,vx,vy,vz,size),(x,z,s)=>waterSystem.dropRipple(x,z,s));
-    particles.update(Math.min(dt,.05)*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z,s)=>waterSystem.dropRipple(x,z,s),(x,z)=>waterSystem.flowAt(x,z),(x,z)=>waterSystem.depthAt(x,z));
-    waterSystem.render(renderer,time);
+    probeTick('liquid',()=>{waterSystem.crestSpray(Math.min(dt,.05)*whitewaterRate,(x,z,power)=>liquid.crest(x,z,power,waterSystem.flowAt(x,z)),camera.position);
+    liquid.update(dt*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z)=>waterSystem.depthAt(x,z),(x,y,z,vx,vy,vz,size)=>particles.release(x,y,z,vx,vy,vz,size),(x,z,s)=>waterSystem.dropRipple(x,z,s));});
+    probeTick('particles',()=>particles.update(Math.min(dt,.05)*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z,s)=>waterSystem.dropRipple(x,z,s),(x,z)=>waterSystem.flowAt(x,z),(x,z)=>waterSystem.depthAt(x,z)));
+    probeTick('water',()=>waterSystem.render(renderer,time));
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
-    const captured=waterSystem.captureScene(renderer,scene,camera,[particles.aboveWater]),shadows=renderer.shadowMap.autoUpdate;
+    let captured=false,shadows=renderer.shadowMap.autoUpdate;
+    probeTick('capture',()=>{captured=!!waterSystem.captureScene(renderer,scene,camera,[particles.aboveWater]);shadows=renderer.shadowMap.autoUpdate;});
     if(captured)renderer.shadowMap.autoUpdate=false;
-    try{composer.render();}finally{renderer.shadowMap.autoUpdate=shadows;}
+    probeTick('composer',()=>{try{composer.render();}finally{renderer.shadowMap.autoUpdate=shadows;}});
     if(transition&&transition.occlusionDone){
       if(transition.probeFace<6)captureProbeFace(transition.probeFace++);
       else{finishTransition();transition=null;}
     }
     const charge=chargeNow();
-    if(elapsed>.35||(charge>0&&elapsed>.06)){fps=Math.round(frames/elapsed);frames=0;elapsed=0;const aimed=props.pick(camera,allColliders);const ladder=player.nearest(camera,allLadders);const hint=charge>0?(touch?`蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`:`右键蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`):props.held?(touch?'按住「投掷」蓄力 · 「拿起」放下':'右键按住蓄力投掷 · 滚轮调整距离 · E 放下'):player.climbing?(touch?'摇杆上/下攀爬 · 「拿起」松开':'W / S 攀爬 · E 松开'):aimed?`${aimed.name} · ${touch?'轻点屏幕拿起':'左键拖动 / E 拿起'}`:ladder?(touch?'靠近梯子按「拿起」攀爬':'E 攀爬梯子'):(touch?'轻点水面泛起涟漪':'低头点击水面 · F 切换镜头');report({x:cx,z:cz,rooms:chunks.size,discovered:visited.size,fps,vct,impacts:waterSystem.interactionCount,caustics,hint,filter:film.uniforms.filterMode.value,held:props.held?.name??'',throws:props.throws,grabs:props.grabs,height:camera.position.y,climbing:!!player.climbing,slides:player.slides,charge,paused:!active,corrupt:currentCorrupt});}
+    // Smoothed over ~0.5s: a per-interval average swings wildly and makes it
+    // impossible to tell whether a settings change actually helped.
+    if(elapsed>.35||(charge>0&&elapsed>.06)){fps=fps?Math.round(fps*.45+(frames/elapsed)*.55):Math.round(frames/elapsed);frames=0;elapsed=0;const aimed=props.pick(camera,allColliders);const ladder=player.nearest(camera,allLadders);const hint=charge>0?(touch?`蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`:`右键蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`):props.held?(touch?'按住「投掷」蓄力 · 「拿起」放下':'右键按住蓄力投掷 · 滚轮调整距离 · E 放下'):player.climbing?(touch?'摇杆上/下攀爬 · 「拿起」松开':'W / S 攀爬 · E 松开'):aimed?`${aimed.name} · ${touch?'轻点屏幕拿起':'左键拖动 / E 拿起'}`:ladder?(touch?'靠近梯子按「拿起」攀爬':'E 攀爬梯子'):(touch?'轻点水面泛起涟漪':'低头点击水面 · F 切换镜头');report(profiler.merge({x:cx,z:cz,rooms:chunks.size,discovered:visited.size,fps,vct,impacts:waterSystem.interactionCount,caustics,hint,filter:film.uniforms.filterMode.value,held:props.held?.name??'',throws:props.throws,grabs:props.grabs,height:camera.position.y,climbing:!!player.climbing,slides:player.slides,charge,paused:!active,corrupt:currentCorrupt}));}
   });
   return {
     visitRoom:(x:number,z:number)=>{
@@ -900,6 +959,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     setSound:(enabled:boolean)=>audio.setEnabled(enabled),
     waterSettings:(values:Partial<WaterSettings>)=>{waterSystem.applySettings(values);caustics=waterSystem.snapshot().caustics;},
     waterDebug:()=>waterSystem.debug(),
+    /** Toggle the per-stage frame profiler; returns the new state. */
+    setProfiling:(on:boolean)=>{profiler.enabled=on;return profiler.enabled;},
     waterSettingsSnapshot:()=>waterSystem.snapshot(),
     setMusic:(enabled:boolean)=>audio.setMusic(enabled),
     enter:()=>{audio.unlock();if(touch){active=true;keys.clear();if(touchUI)touchUI.style.display='';}else renderer.domElement.requestPointerLock();},
