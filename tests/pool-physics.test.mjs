@@ -190,3 +190,68 @@ test('moving floaters exchange momentum with the water on a cadence; resting one
   for(let i=0;i<180;i++)physics.update(1/60,camera,[],i/60);
   assert.equal(events.length,0,'resting floater churned the pool');
 });
+test('update() reports movement only when a shadow-casting prop actually moves',()=>{
+  const physics=new PropPhysics(new T.Scene(),()=>{});
+  // Rest a prop at the tuned waterline so buoyancy holds it essentially still.
+  const duck={position:new T.Vector3(0,.445,0),velocity:new T.Vector3(),rotation:new T.Quaternion(),radius:.2,floatBias:.125,name:'小黄鸭',kind:'duck',visual:new T.Group(),parts:[],promoted:true,splashCooldown:0,hitCooldown:0};
+  physics.add(duck);
+  const camera=new T.PerspectiveCamera();camera.position.set(0,2,4);
+  // Settle first: the very first call seeds the tracked position, and the
+  // waterline equilibrium then has to be reached before "still" is meaningful.
+  for(let i=0;i<600;i++)physics.update(1/60,camera,[],i/60);
+  let still=0;
+  for(let i=0;i<180;i++)if(physics.update(1/60,camera,[],(600+i)/60))still++;
+  assert.ok(still/180<.15,`a resting prop should report almost no movement, got ${still}/180`);
+  // Now throw it: every frame it travels must report movement.
+  const egg=body(new T.Vector3(0,2,0));physics.add(egg);
+  camera.position.set(-1,2,0);camera.lookAt(2,2,0);camera.updateMatrixWorld();
+  physics.grab(egg);physics.release(camera);
+  let moving=0;
+  for(let i=0;i<60;i++)if(physics.update(1/60,camera,[],(780+i)/60))moving++;
+  assert.ok(moving>40,`a thrown prop must report movement, got ${moving}/60`);
+});
+test('a prop beyond shadow range does not invalidate the shadow cache',()=>{
+  const physics=new PropPhysics(new T.Scene(),()=>{});
+  const far=body(new T.Vector3(200,2,200));physics.add(far);
+  const camera=new T.PerspectiveCamera();camera.position.set(0,2,0);
+  physics.update(1/60,camera,[],0);            // seed
+  far.position.x+=1;                            // move it, but stay far away
+  assert.equal(physics.update(1/60,camera,[],1/60),false,'distant props are outside every shadow light');
+});
+test('shadow cube maps are only rebuilt when a slot is handed a different light',async()=>{
+  const {RoomLights}=await import('../app/pool-vct/room-lights.ts');
+  const scene=new T.Scene();
+  const lights=new RoomLights(scene);
+  // Four shadow slots at a modest resolution: a point light shadow is 6 faces,
+  // so 1024^2 keeps the per-pass cost sane.
+  for(const l of lights.lights.slice(0,4)){
+    assert.equal(l.castShadow,true);
+    assert.equal(l.shadow.mapSize.x,1024);
+    assert.equal(l.shadow.autoUpdate,false,'cached shadows must not re-render every frame');
+  }
+  // Build the real composition: one current-room tube, one exit lamp, and two
+  // next-door tubes. Only the current-room tube lands in `tubes` (the sequence
+  // with a fixed order); everything else goes through the direction-ranked
+  // `rest`, which is what makes the shadow slots follow the view.
+  const tube=new T.PointLight(0xffdddd,50,36);tube.position.set(0,7,0);
+  const exit=new T.PointLight(0xff0000,7,7);exit.position.set(.5,.5,.5);
+  const nearTube=new T.PointLight(0xffdddd,40,36);nearTube.position.set(-12,7,0);
+  const farTube=new T.PointLight(0xffdddd,40,36);farTube.position.set(40,7,0);
+  for(const l of [tube,exit,nearTube,farTube])scene.add(l);
+  lights.select([tube,exit],[nearTube,farTube]);
+  const dirtySlots=lights.lights.slice(0,4).filter(l=>l.shadow.needsUpdate).length;
+  assert.equal(dirtySlots,4,'first update must invalidate every slot');
+  // Same camera pose again: nothing moved, so nothing may be marked dirty.
+  for(const l of lights.lights)l.shadow.needsUpdate=false;
+  lights.update(new T.Vector3(0,2,0),new T.Vector3(0,0,-1));
+  assert.equal(lights.lights.filter(l=>l.shadow.needsUpdate).length,0,'a stable view must keep the cache');
+  // Turn around: re-ranking pulls different lights into the next-door shadow
+  // slots, so the affected slots must rebuild.
+  lights.update(new T.Vector3(0,2,0),new T.Vector3(0,0,1));
+  assert.ok(lights.lights.some(l=>l.shadow.needsUpdate),'re-ranking must invalidate reassigned slots');
+  // An explicit invalidate (a prop moved) must dirty the whole set.
+  for(const l of lights.lights)l.shadow.needsUpdate=false;
+  lights.invalidate();
+  lights.update(new T.Vector3(0,2,0),new T.Vector3(0,0,1));
+  assert.equal(lights.lights.filter(l=>l.shadow.needsUpdate).length,4,'invalidate() must rebuild every slot');
+});

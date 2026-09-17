@@ -144,6 +144,9 @@ export class PropPhysics {
   private nearby:PropBody[]=[];
   private targetScratch=new T.Vector3();
   private dirScratch=new T.Vector3();
+  /** True when any shadow-casting prop moved this frame - see `update`. */
+  private moved=false;
+  private lastPos=new Map<PropBody,T.Vector3>();
   constructor(scene:T.Scene,splash:(x:number,z:number,power:number,direction?:{u:number;v:number;vertical?:number;radius?:number})=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents,flow?:(x:number,z:number)=>{u:number;v:number},wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void,slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number}){this.scene=scene;this.splash=splash;this.surface=surface;this.flow=flow;this.slope=slope;this.wave=wave;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
   add(body:PropBody){body.hitCooldown=0;this.bodies.push(body);}
   remove(bodies:PropBody[]){const removed=new Set(bodies.filter(b=>!b.promoted));this.bodies=this.bodies.filter(b=>!removed.has(b));}
@@ -161,6 +164,11 @@ export class PropPhysics {
   update(dt:number,camera:T.Camera,colliders:Collider[],time:number,enabled=true){
     if(enabled)this.accumulator+=Math.min(dt,.2);
     const h=1/120;
+    // Shadow-cache invalidation flag. Every physics prop casts a shadow, so a
+    // prop that moved invalidates the cached shadow cube maps. Compare against
+    // last frame's position rather than testing velocity: a body resting in the
+    // water has a noisy non-zero velocity but a visually stationary position.
+    this.moved=false;
     // The collider set is static for the life of a room; rebuild the broad-phase
     // grid only when the caller hands us a different array (a room transition or
     // a settings change that regenerates geometry). Comparing the reference is
@@ -288,6 +296,23 @@ export class PropPhysics {
     let removed=false;
     for(const b of this.bodies)if(b.promoted&&b!==this.held&&b.position.distanceTo(camera.position)>80){this.scene.remove(b.visual);removed=true;}
     if(removed)this.bodies=this.bodies.filter(b=>b.promoted&&b!==this.held?b.position.distanceTo(camera.position)<=80:true);
+    // Report whether any shadow caster actually moved, for shadow-cache
+    // invalidation. Only bodies near the camera matter: the shadow-casting
+    // lights reach 36m and the camera sits inside that sphere, so anything
+    // beyond 40m casts no visible shadow. Comparing full positions (not just
+    // y) catches horizontal drift too.
+    for(const b of this.bodies){
+      const prev=this.lastPos.get(b);
+      if(prev===undefined)this.lastPos.set(b,b.position.clone());
+      else{
+        if(!this.moved&&prev.distanceToSquared(b.position)>1e-6&&b.position.distanceToSquared(camera.position)<40*40)this.moved=true;
+        prev.copy(b.position);
+      }
+    }
+    // Drop stale keys (despawned or un-promoted bodies) so the map cannot grow
+    // without bound over a long session.
+    if(this.lastPos.size>this.bodies.length)for(const key of [...this.lastPos.keys()])if(!this.bodies.includes(key))this.lastPos.delete(key);
+    return this.moved;
   }
 }
 

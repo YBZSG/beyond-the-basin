@@ -929,7 +929,12 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       tyndall.uniforms.projInv.value.copy(camera.projectionMatrixInverse);
       tyndall.uniforms.time.value=time;
     }
-    probeTick('props',()=>props.update(dt,camera,allColliders,time,active));
+    let propsMoved=false;
+    probeTick('props',()=>{propsMoved=props.update(dt,camera,allColliders,time,active);});
+    // Every physics prop casts a shadow, so a prop that moved invalidates the
+    // cached shadow cube maps. Resting props report no movement, which is what
+    // lets the shadow pass be skipped entirely on a still frame.
+    if(propsMoved)roomLights.invalidate();
     // Prop wakes are emitted inside PropPhysics substeps as paired momentum
     // exchange (bounded by the initial relative velocity) - see physics.ts.
     probeTick('liquid',()=>{waterSystem.crestSpray(Math.min(dt,.05)*whitewaterRate,(x,z,power)=>liquid.crest(x,z,power,waterSystem.flowAt(x,z)),camera.position);
