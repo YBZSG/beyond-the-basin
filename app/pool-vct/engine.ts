@@ -937,18 +937,24 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     probeTick('particles',()=>particles.update(Math.min(dt,.05)*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z,s)=>waterSystem.dropRipple(x,z,s),(x,z)=>waterSystem.flowAt(x,z),(x,z)=>waterSystem.depthAt(x,z)));
     probeTick('water',()=>waterSystem.render(renderer,time));
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
-    // Shadow maps must be frozen BEFORE the refraction capture, not after it.
-    // `captureScene` is a full `render(scene, camera)` pass; with autoUpdate on
-    // it happily re-runs every point light's 6 cube faces. With 2 lamps per room
-    // over a 3x3 resident grid that is 6 lights x 6 faces x 2048² = 151M px of
-    // shadow work, and because turning the camera changes which lights pass the
-    // frustum test, the cost swung between ~5 ms and ~20 ms. The main pass
-    // already produced this frame's shadows, so both the capture and the
-    // composer pass are purely consumers.
+    // Shadow update ordering. The FIRST scene render in the frame is the one
+    // that must be allowed to populate the shadow maps; every later one is a
+    // pure consumer and should reuse them.
+    //
+    // The capture runs before the composer, so the capture is the producer and
+    // the composer's RenderPass is the consumer. This ordering is load-bearing:
+    // WebGLShadowMap.render() opens with
+    //   if ( scope.autoUpdate === false && scope.needsUpdate === false ) return;
+    // so if the maps are frozen *before* any scene render happens this frame,
+    // nothing ever populates them and every shadowed surface renders black.
+    // Freeze only after a render has already refreshed the maps.
+    let captured=false;
     const shadows=renderer.shadowMap.autoUpdate;
-    renderer.shadowMap.autoUpdate=false;
-    probeTick('capture',()=>{waterSystem.captureScene(renderer,scene,camera,[particles.aboveWater]);});
-    probeTick('composer',()=>{try{composer.render();}finally{renderer.shadowMap.autoUpdate=shadows;}});
+    probeTick('capture',()=>{captured=!!waterSystem.captureScene(renderer,scene,camera,[particles.aboveWater]);});
+    // The capture re-rendered the scene this frame, so the maps are current; the
+    // composer can reuse them instead of repeating 6 lights x 6 cube faces.
+    if(captured)renderer.shadowMap.autoUpdate=false;
+    try{probeTick('composer',()=>{composer.render();});}finally{renderer.shadowMap.autoUpdate=shadows;}
     if(transition&&transition.occlusionDone){
       if(transition.probeFace<6)captureProbeFace(transition.probeFace++);
       else{finishTransition();transition=null;}
