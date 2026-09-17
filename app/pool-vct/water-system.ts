@@ -62,7 +62,16 @@ export class InteractiveWater {
   private wallScene=new T.Scene();
   private camera=new T.Camera();
   private geometry=new T.PlaneGeometry(32,32,384,384);
-  private filterTarget=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false});
+  /**
+   * Ping-pong pair for the separable caustic blur. Kept at a fraction of the
+   * trace resolution: the filter is a soft 9-tap blur, so its own resolution is
+   * not what the eye reads — the *tracing* resolution is what carries the
+   * caustic detail. At Ultra the filter ran 2048² and cost 16.8M px/frame, two
+   * thirds of the entire caustic budget and 12x the main canvas. Dropping it to
+   * half resolution cuts that by 4x with no visible change.
+   * The trace targets keep their mipmaps; the filter reads them at LOD 0.
+   */
+  private filterTarget=new T.WebGLRenderTarget(512,512,{type:T.HalfFloatType,depthBuffer:false});
   private filterScene=new T.Scene();
   private filterMaterial=new T.ShaderMaterial({
     uniforms:{source:{value:null as T.Texture|null},stepSize:{value:new T.Vector2()},strips:{value:1}},
@@ -424,6 +433,7 @@ export class InteractiveWater {
     this.swe.impactScale=s.impact;this.swe.ringWaves=s.ringWaves;this.swe.waveSpeed=s.waveSpeed;
     this.swe.damping=s.damping;this.swe.viscosity=s.viscosity;this.swe.wallLoss=s.wallLoss;
     this.swe.maxSteps=s.solverSteps;
+    this.detail.maxSteps=s.rippleSteps;
     this.swe.foamDecay=1/Math.max(s.foamLife,.25);
     this.detail.frequency=s.rippleFrequency;
     this.optics.reflectionSize.value=this.reflectionResolution;
@@ -434,7 +444,7 @@ export class InteractiveWater {
   }
   snapshot():WaterSettings{return {...this.settings};}
   debug(){return {...this.swe.debug(),quality:this.settings.quality,detailGrid:this.detail.size,detailActive:this.detail.active,
-    causticSize:this.target.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
+    causticSize:this.target.width,filterGrid:this.filterTarget.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
     captureFrames:this.captureFrames,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
     refractionTargetSize:[this.opaque.width,this.opaque.height],settings:this.snapshot()};}
   private updateQuality(renderer:T.WebGLRenderer){
@@ -450,9 +460,14 @@ export class InteractiveWater {
       this.detailDepth.value=next.uniforms.poolDepth.value;this.uniforms.poolCell.value=next.cell;
       this.applySettings(this.settings);
     }
-    if(this.detail.size!==q.ripple){this.detail.dispose();this.detail=new RippleDetail(q.ripple,this.detailDepth);this.detail.frequency=this.settings.rippleFrequency;this.uniforms.detailCell.value=this.detail.cell;}
+    if(this.detail.size!==q.ripple){this.detail.dispose();this.detail=new RippleDetail(q.ripple,this.detailDepth);this.detail.frequency=this.settings.rippleFrequency;this.detail.maxSteps=this.settings.rippleSteps;this.uniforms.detailCell.value=this.detail.cell;}
     if(this.target.width===q.caustics)return;
-    for(const target of [this.target,this.wallTarget,this.filterTarget])target.setSize(q.caustics,q.caustics);
+    // The trace targets carry the caustic detail at full resolution; the blur
+    // ping-pong runs at half, because a 9-tap Gaussian's own sampling grid is
+    // not what the eye resolves. See the filterTarget declaration.
+    for(const target of [this.target,this.wallTarget])target.setSize(q.caustics,q.caustics);
+    const f=Math.max(256,Math.round(q.caustics/2));
+    this.filterTarget.setSize(f,f);
     this.uniforms.causticResolution.value=q.caustics;
     this.geometry.dispose();this.geometry=new T.PlaneGeometry(32,32,q.photons,q.photons);
     for(const mesh of this.scene.children as T.Mesh[])mesh.geometry=this.geometry;
@@ -514,21 +529,26 @@ export class InteractiveWater {
     this.lastActive=active;this.lastReady=ready;this.dirty=false;this.causticFrames++;
     const previous=renderer.getRenderTarget(),clear=renderer.getClearColor(this.clearColor),alpha=renderer.getClearAlpha();
     renderer.setRenderTarget(this.target);renderer.setClearColor(0,0);renderer.clear();renderer.render(this.scene,this.camera);
+    // Separable blur, run at the filter's own resolution. Each pass steps in
+    // *texels of its output*, not of the trace target: the H pass writes the
+    // 1024² filterTarget, the V pass writes back to the 2048² trace target and
+    // must therefore step in 2048² texels to cover the same world-space width.
+    const fw=this.filterTarget.width,fh=this.filterTarget.height;
     // Integrate neighbouring computed photon footprints; no image/pattern input.
     this.filterMaterial.uniforms.source.value=this.target.texture;
     this.filterMaterial.uniforms.strips.value=1;
-    this.filterMaterial.uniforms.stepSize.value.set(1.4/this.target.width,0);
+    this.filterMaterial.uniforms.stepSize.value.set(1.4/fw,0);
     renderer.setRenderTarget(this.filterTarget);renderer.render(this.filterScene,this.camera);
     this.filterMaterial.uniforms.source.value=this.filterTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(0,1.4/this.target.width);
+    this.filterMaterial.uniforms.stepSize.value.set(0,1.4/fh);
     renderer.setRenderTarget(this.target);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(this.wallTarget);renderer.setClearColor(0,0);renderer.clear();if(this.settings.quality!=='Medium')renderer.render(this.wallScene,this.camera);
     this.filterMaterial.uniforms.strips.value=4;
     this.filterMaterial.uniforms.source.value=this.wallTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(1.6/this.target.width,0);
+    this.filterMaterial.uniforms.stepSize.value.set(1.6/fw,0);
     renderer.setRenderTarget(this.filterTarget);renderer.render(this.filterScene,this.camera);
     this.filterMaterial.uniforms.source.value=this.filterTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(0,1.2/this.target.width);
+    this.filterMaterial.uniforms.stepSize.value.set(0,1.2/fh);
     renderer.setRenderTarget(this.wallTarget);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(previous);renderer.setClearColor(clear,alpha);
   }
