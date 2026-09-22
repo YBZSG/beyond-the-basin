@@ -23,7 +23,11 @@ for(const [scenario,records] of groups){
   for(const stage of new Set(trace.flatMap(f=>Object.keys(f.cpu)))){
     const values=trace.map(f=>f.cpu[stage]??0);cpu[stage]={allFrames:distribution(values),activeFrames:distribution(values.filter(v=>v>0))};
   }
-  const queries=records.flatMap(r=>(r.performance?.gpuSamples??[]).map(s=>({...s,repeat:r.repeat})));
+  // A query can arrive after recording starts while belonging to a warmup frame.
+  const queries=records.flatMap(r=>{
+    const recordedFrames=new Set((r.performance?.frames??[]).map(f=>f.frame));
+    return (r.performance?.gpuSamples??[]).filter(s=>recordedFrames.has(s.frame)).map(s=>({...s,repeat:r.repeat}));
+  });
   for(const stage of new Set(queries.map(s=>s.stage))){
     const frameTotals=new Map();
     for(const s of queries.filter(s=>s.stage===stage)){const key=`${s.repeat}/${s.frame}`;frameTotals.set(key,(frameTotals.get(key)??0)+s.ms);}

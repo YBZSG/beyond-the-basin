@@ -22,7 +22,7 @@ const server = createServer(async (req,res) => {
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const url=`http://127.0.0.1:${server.address().port}/?qa&benchmark`;
-const browser=await chromium.launch({channel:'msedge',headless:false,args:['--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows','--window-size=1920,1080']});
+const browser=await chromium.launch({channel:'msedge',headless:false,args:['--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows','--disable-features=CalculateNativeWinOcclusion','--window-size=1920,1080']});
 const context=await browser.newContext({viewport:{width:1920,height:1080},deviceScaleFactor:1});
 const page=await context.newPage();
 const errors=[];page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -32,6 +32,7 @@ const results=[];
 try {
   for(let repeat=0;repeat<repeats;repeat++)for(const scenario of scenarios){
     await page.goto(url,{waitUntil:'load',timeout:120000});
+    await page.bringToFront();
     await page.waitForFunction(()=>window.__poolQA?.inspect().vctReady,null,{timeout:180000});
     await page.addStyleTag({content:'.vct-menu,.vct-top,.vct-footer,.vct-perf{display:none!important}'});
     await page.evaluate(({scenario,gpu})=>{const q=window.__poolQA;q.waterSettings({quality:'High'});q.simulate(scenario==='interaction');q.view([2,1.5,6],[2,.5,-4]);q.forceShafts(scenario==='shafts');q.performance?.gpu(gpu);}, {scenario,gpu:process.env.BENCH_GPU!=='off'});
@@ -39,7 +40,8 @@ try {
     if(scenario==='interaction')await page.evaluate(()=>{const q=window.__poolQA;q.water(2,2,.65);});
     await page.waitForTimeout(warmup*1000);
     const data=await page.evaluate(async({seconds,scenario})=>{
-      const q=window.__poolQA,frames=[],longTasks=[];
+      const q=window.__poolQA,frames=[],longTasks=[],visibility=[{at:performance.now(),hidden:document.hidden}];
+      const visible=()=>visibility.push({at:performance.now(),hidden:document.hidden});document.addEventListener('visibilitychange',visible);
       const observer=new PerformanceObserver(list=>longTasks.push(...list.getEntries().map(e=>({start:e.startTime,duration:e.duration}))));observer.observe({type:'longtask'});
       const canvas=document.querySelector('canvas'),gl=canvas.getContext('webgl2'),ext=gl.getExtension('WEBGL_debug_renderer_info');
       const machine={gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),userAgent:navigator.userAgent,viewport:[innerWidth,innerHeight],dpr:devicePixelRatio,buffer:[canvas.width,canvas.height]};
@@ -58,11 +60,12 @@ try {
         }
         requestAnimationFrame(tick);
       }requestAnimationFrame(tick);});
-      observer.disconnect();const sorted=[...frames].sort((a,b)=>a-b),at=p=>sorted[Math.min(sorted.length-1,Math.floor(sorted.length*p))];
+      observer.disconnect();document.removeEventListener('visibilitychange',visible);const sorted=[...frames].sort((a,b)=>a-b),at=p=>sorted[Math.min(sorted.length-1,Math.floor(sorted.length*p))];
       const mean=frames.reduce((a,b)=>a+b,0)/frames.length;
-      return {machine,frames,longTasks,stats:{mean,fps:1000/mean,p50:at(.5),p95:at(.95),p99:at(.99),worst:sorted.at(-1),over33:frames.filter(x=>x>33.3).length,over50:frames.filter(x=>x>50).length},performance:q.performance?.stop(),state:q.inspect()};
+      return {machine,frames,longTasks,visibility,stats:{mean,fps:1000/mean,p50:at(.5),p95:at(.95),p99:at(.99),worst:sorted.at(-1),over33:frames.filter(x=>x>33.3).length,over50:frames.filter(x=>x>50).length},performance:q.performance?.stop(),state:q.inspect()};
     },{seconds,scenario});
     const name=`${scenario}-${repeat+1}`;
+    if(data.visibility.some(e=>e.hidden))errors.push(`${name}: document was hidden during recording`);
     await page.screenshot({path:resolve(output,`${name}.png`)});
     await writeFile(resolve(output,`${name}.json`),JSON.stringify({...data,scenario,repeat,errors},null,2));
     results.push({scenario,repeat,...data.stats,machine:data.machine,valid:errors.length===0});

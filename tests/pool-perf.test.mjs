@@ -190,3 +190,21 @@ test('unresolved queries are bounded and preserve issuing frame and stage',()=>{
     profiler.begin(101,'frame');profiler.dispose();assert.equal(live.size,0,'active queries are freed too');
   }finally{if(original===undefined)delete globalThis.WebGL2RenderingContext;else globalThis.WebGL2RenderingContext=original;}
 });
+test('benchmark report attributes delayed GPU samples to recorded issuing frames',async()=>{
+  const {mkdtemp,writeFile,rm}=await import('node:fs/promises');
+  const {tmpdir}=await import('node:os');
+  const {join}=await import('node:path');
+  const {execFileSync}=await import('node:child_process');
+  const {fileURLToPath}=await import('node:url');
+  const root=await mkdtemp(join(tmpdir(),'pool-report-'));
+  try{
+    const record={scenario:'test',repeat:0,frames:[16],longTasks:[],performance:{
+      frames:[{frame:10,cpu:{},cpuMs:4}],gpuSamples:[
+        {frame:9,stage:'post',ms:625},{frame:10,stage:'post',ms:2},
+        {frame:10,stage:'post',ms:3},{frame:11,stage:'post',ms:700}],events:[]}};
+    await writeFile(join(root,'test-1.json'),JSON.stringify(record));
+    const report=JSON.parse(execFileSync(process.execPath,[fileURLToPath(new URL('./pool-benchmark-report.mjs',import.meta.url)),root],{encoding:'utf8'}));
+    assert.equal(report.test.gpu.post.samples,1);
+    assert.equal(report.test.gpu.post.mean,5,'sum only work issued in the recording, including repeated passes');
+  }finally{await rm(root,{recursive:true,force:true});}
+});
