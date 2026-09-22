@@ -110,6 +110,19 @@ export function rayOccluded(origin:T.Vector3,target:T.Vector3,colliders:Collider
 }
 
 export type PropKind = 'egg' | 'duck' | 'ball' | 'eggboy';
+
+/** A shadow-casting prop that crossed the movement epsilon this frame. Used by
+ * RoomLights to invalidate only the shadow slots the prop can actually reach,
+ * instead of re-rasterizing all 4 x 6 cube faces. Instances are pooled per
+ * body so a bobbing pool of props does not allocate on the hot path. */
+export type MovedShadowCaster = {
+  body: PropBody;
+  /** Position at the previous frame's check (owned by the pooled instance). */
+  previous: T.Vector3;
+  current: T.Vector3;
+  radius: number;
+};
+
 export type PropBody = {
   position:T.Vector3;velocity:T.Vector3;rotation:T.Quaternion;radius:number;floatBias:number;name:string;kind:PropKind;
   visual:T.Group;parts:{mesh:T.InstancedMesh;index:number;local:T.Matrix4}[];
@@ -147,6 +160,14 @@ export class PropPhysics {
   /** True when any shadow-casting prop moved this frame - see `update`. */
   private moved=false;
   private lastPos=new Map<PropBody,T.Vector3>();
+  /** Pooled caster records, one entry per body that has ever moved. */
+  private casterPool=new Map<PropBody,MovedShadowCaster>();
+  /** Casters that crossed the movement epsilon in the last `update()` call. */
+  readonly movedCasters:MovedShadowCaster[]=[];
+  /** Squared displacement a body must travel before its shadow is stale.
+   * Matches the old whole-set invalidation threshold (1mm) so the visual
+   * result is unchanged; only the set of rebuilt slots shrinks. */
+  private static SHADOW_MOVE_EPSILON_SQ=1e-6;
   constructor(scene:T.Scene,splash:(x:number,z:number,power:number,direction?:{u:number;v:number;vertical?:number;radius?:number})=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents,flow?:(x:number,z:number)=>{u:number;v:number},wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void,slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number}){this.scene=scene;this.splash=splash;this.surface=surface;this.flow=flow;this.slope=slope;this.wave=wave;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
   add(body:PropBody){body.hitCooldown=0;this.bodies.push(body);}
   remove(bodies:PropBody[]){const removed=new Set(bodies.filter(b=>!b.promoted));this.bodies=this.bodies.filter(b=>!removed.has(b));}
@@ -296,22 +317,32 @@ export class PropPhysics {
     let removed=false;
     for(const b of this.bodies)if(b.promoted&&b!==this.held&&b.position.distanceTo(camera.position)>80){this.scene.remove(b.visual);removed=true;}
     if(removed)this.bodies=this.bodies.filter(b=>b.promoted&&b!==this.held?b.position.distanceTo(camera.position)<=80:true);
-    // Report whether any shadow caster actually moved, for shadow-cache
+    // Report the casters that actually moved, for per-slot shadow-cache
     // invalidation. Only bodies near the camera matter: the shadow-casting
     // lights reach 36m and the camera sits inside that sphere, so anything
     // beyond 40m casts no visible shadow. Comparing full positions (not just
-    // y) catches horizontal drift too.
+    // y) catches horizontal drift too. Entries are pooled per body so this
+    // loop stays allocation-free; `previous`/`current` are refreshed in place
+    // and the array is rebuilt (not appended) every frame.
+    this.movedCasters.length=0;
     for(const b of this.bodies){
       const prev=this.lastPos.get(b);
-      if(prev===undefined)this.lastPos.set(b,b.position.clone());
-      else{
-        if(!this.moved&&prev.distanceToSquared(b.position)>1e-6&&b.position.distanceToSquared(camera.position)<40*40)this.moved=true;
-        prev.copy(b.position);
+      if(prev===undefined){this.lastPos.set(b,b.position.clone());continue;}
+      const dx=b.position.x-prev.x,dy=b.position.y-prev.y,dz=b.position.z-prev.z;
+      if(dx*dx+dy*dy+dz*dz>PropPhysics.SHADOW_MOVE_EPSILON_SQ&&b.position.distanceToSquared(camera.position)<40*40){
+        this.moved=true;
+        let caster=this.casterPool.get(b);
+        if(!caster){caster={body:b,previous:new T.Vector3(),current:new T.Vector3(),radius:b.radius};this.casterPool.set(b,caster);}
+        caster.previous.copy(prev);caster.current.copy(b.position);caster.radius=b.radius;
+        this.movedCasters.push(caster);
       }
+      prev.copy(b.position);
     }
-    // Drop stale keys (despawned or un-promoted bodies) so the map cannot grow
+    // Drop stale keys (despawned or un-promoted bodies) so the maps cannot grow
     // without bound over a long session.
-    if(this.lastPos.size>this.bodies.length)for(const key of [...this.lastPos.keys()])if(!this.bodies.includes(key))this.lastPos.delete(key);
+    if(this.lastPos.size>this.bodies.length){
+      for(const key of [...this.lastPos.keys()])if(!this.bodies.includes(key)){this.lastPos.delete(key);this.casterPool.delete(key);}
+    }
     return this.moved;
   }
 }

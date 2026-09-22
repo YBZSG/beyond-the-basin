@@ -218,6 +218,37 @@ test('a prop beyond shadow range does not invalidate the shadow cache',()=>{
   far.position.x+=1;                            // move it, but stay far away
   assert.equal(physics.update(1/60,camera,[],1/60),false,'distant props are outside every shadow light');
 });
+test('movedCasters carries the swept volume per-slot invalidation needs, and is cleared every frame',()=>{
+  const physics=new PropPhysics(new T.Scene(),()=>{});
+  const duck=body(new T.Vector3(0,2,0));physics.add(duck);
+  const camera=new T.PerspectiveCamera();camera.position.set(0,2,6);
+  // Seed frame: last position is recorded, nothing has moved yet.
+  physics.update(1/60,camera,[],0);
+  // Seed frame also integrates one step of buoyancy, so compare against the
+  // settled position rather than the one we asked for.
+  const seeded=duck.position.clone();
+  assert.equal(physics.movedCasters.length,0);
+  duck.position.set(3,2,0);
+  physics.update(1/60,camera,[],1/60);
+  assert.equal(physics.movedCasters.length,1);
+  const [caster]=physics.movedCasters;
+  assert.equal(caster.body,duck);
+  assert.deepEqual(caster.previous.toArray(),seeded.toArray(),'previous must be last frame, not the live vector');
+  assert.ok(caster.current.distanceTo(new T.Vector3(3,2,0))<1e-2);
+  assert.equal(caster.radius,duck.radius);
+  // The entries are pooled, so a second move reuses the same object rather than
+  // allocating - this loop runs every frame for every visible prop.
+  const afterMove=duck.position.clone();
+  duck.position.set(6,2,0);
+  physics.update(1/60,camera,[],2/60);
+  assert.equal(physics.movedCasters.length,1);
+  assert.equal(physics.movedCasters[0],caster,'caster records must be pooled per body');
+  assert.deepEqual(caster.previous.toArray(),afterMove.toArray());
+  // Far props are excluded even when they move: beyond 40m they cast nothing.
+  duck.position.set(300,2,300);duck.velocity.set(0,0,0);
+  physics.update(1/60,camera,[],4/60);
+  assert.equal(physics.movedCasters.length,0);
+});
 test('shadow cube maps are only rebuilt when a slot is handed a different light',async()=>{
   const {RoomLights}=await import('../app/pool-vct/room-lights.ts');
   const scene=new T.Scene();

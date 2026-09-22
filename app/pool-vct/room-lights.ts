@@ -1,4 +1,5 @@
 import * as T from 'three';
+import type { MovedShadowCaster } from './physics';
 
 // Nine resident rooms, each with two tubes and at most one exit lamp. Keeping
 // both counts fixed avoids recompiling every lit material when crossing rooms.
@@ -33,23 +34,51 @@ export class RoomLights {
   private shadowSources:(T.PointLight|undefined)[]=[];
   /**
    * Shadow cube maps are cached between updates (`shadow.autoUpdate=false`) and
-   * only rebuilt when something they depend on changes:
+   * only rebuilt when something the slot depends on changes:
    *
    *  - a slot was handed a different source light (lights are stationary
    *    fixtures, so the same source in the same slot means it has not moved);
-   *  - a dynamic shadow caster moved (props, beach balls and the egg-boy all
-   *    cast shadows and are driven by physics every frame).
+   *  - a dynamic shadow caster that can actually reach that slot's light moved
+   *    (props, beach balls and the egg-boy all cast shadows and are driven by
+   *    physics every frame).
    *
-   * `invalidate()` is the escape hatch for the second case; the engine calls it
-   * when any physics prop within shadow range has actually moved. Rebuilding on
-   * *any* propagation would defeat the cache, so callers should only report a
-   * real displacement.
+   * Invalidation is tracked PER SLOT: a duck bobbing next to one tube must not
+   * re-rasterize the 24 cube faces of the other three shadow lights.
+   * `invalidate()` remains the rebuild-everything escape hatch (room
+   * transitions, quality changes); `invalidateBodies()` is the precise path
+   * the engine feeds with the props that actually moved.
    */
-  private dirty=true;
+  private shadowDirty=[true,true,true,true];
   constructor(scene:T.Scene){scene.add(...this.lights);}
   /** Force every shadow slot to rebuild on the next shadow pass. */
-  invalidate(){this.dirty=true;}
+  invalidate(){for(let i=0;i<4;i++)this.shadowDirty[i]=true;}
   select(current:T.PointLight[],others:T.PointLight[]){this.current=current;this.others=others;this.tubes=current.filter(l=>l.distance===36);this.update(this.focus,this.dir);}
+  /**
+   * Invalidate only the shadow slots a moved caster can influence. A light at
+   * 36m reach sees the caster if the caster's bounding sphere intersects the
+   * light sphere either before OR after the move, so a prop crossing the range
+   * edge is caught in both directions.
+   */
+  invalidateBodies(moved:readonly MovedShadowCaster[]){
+    if(!moved.length)return;
+    for(let i=0;i<4;i++){
+      if(!this.shadowDirty[i]){
+        const light=this.lights[i];
+        for(const caster of moved){
+          if(this.affectsLight(caster,light)){this.shadowDirty[i]=true;break;}
+        }
+      }
+    }
+  }
+  /** Whether the caster's swept volume overlaps the light's reach. */
+  private affectsLight(caster:MovedShadowCaster,light:T.PointLight){
+    const range=light.distance+caster.radius,rangeSq=range*range;
+    const lightX=light.position.x,lightY=light.position.y,lightZ=light.position.z;
+    const oldDx=caster.previous.x-lightX,oldDy=caster.previous.y-lightY,oldDz=caster.previous.z-lightZ;
+    if(oldDx*oldDx+oldDy*oldDy+oldDz*oldDz<=rangeSq)return true;
+    const newDx=caster.current.x-lightX,newDy=caster.current.y-lightY,newDz=caster.current.z-lightZ;
+    return newDx*newDx+newDy*newDy+newDz*newDz<=rangeSq;
+  }
   update(focus:T.Vector3,direction:T.Vector3){
     this.focus.copy(focus);this.dir.copy(direction).normalize();
     // Rank by how directly a light sits in the view, penalising lights behind
@@ -67,16 +96,17 @@ export class RoomLights {
     // which is exactly what used to re-rasterize everything on every frame.
     const shadowCount=this.lights[0]?.castShadow?4:0;
     for(let i=0;i<shadowCount;i++){
-      if(this.shadowSources[i]!==this.sources[i]){this.dirty=true;break;}
+      if(this.shadowSources[i]!==this.sources[i])this.shadowDirty[i]=true;
     }
-    if(this.dirty){
-      this.dirty=false;
-      for(let i=0;i<shadowCount;i++){
-        this.shadowSources[i]=this.sources[i];
-        // Invalidate the slot's cube map so the next shadow pass rebuilds it.
-        this.lights[i].shadow.needsUpdate=true;
-      }
+    let updated=0;
+    for(let i=0;i<shadowCount;i++){
+      if(!this.shadowDirty[i])continue;
+      this.shadowSources[i]=this.sources[i];
+      // Invalidate the slot's cube map so the next shadow pass rebuilds it.
+      this.lights[i].shadow.needsUpdate=true;
+      this.shadowDirty[i]=false;updated++;
     }
+    this.lastShadowUpdates=updated;
     this.lights.forEach((light,i)=>{
       const source=this.sources[i];
       light.intensity=source?.intensity??0;
@@ -84,5 +114,8 @@ export class RoomLights {
       else light.position.set(0,7,0);
     });
   }
+  /** How many shadow slots asked for a rebuild in the last update (0..4). */
+  get shadowSlotsUpdated(){return this.lastShadowUpdates;}
+  private lastShadowUpdates=0;
   dispose(){for(const light of this.lights){light.removeFromParent();light.dispose();}}
 }

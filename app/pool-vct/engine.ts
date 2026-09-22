@@ -5,6 +5,10 @@ import { loadEggBoyTemplate, createEggRig, tickEggRig, type EggBoyTemplate, type
 import { RoomLights } from './room-lights';
 import { batchArchitecture } from './static-geometry';
 import { createFrameProbe, type Stage } from './frame-probe';
+import { createCpuProfiler, readRendererMetrics } from './perf/cpu-profiler';
+import { createGpuProfiler } from './perf/webgl-gpu-profiler';
+import { createBudgetCalibrator, createFillProbeScene, FILL_PROBE_FRAMES, FILL_PROBE_SIDE } from './perf/budget';
+import type { PerfSnapshot } from './perf/perf-types';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -28,18 +32,45 @@ const roomLightDir=new T.Vector3();
 export type { WaterSettings } from './water-system';
 type Chunk = { group: T.Group; solids: Solid[]; lamps: Lamp[]; floats: T.Group[]; lights: T.PointLight[]; bodies:PropBody[]; colliders:Collider[]; ladders:Ladder[]; flickers:Flicker[]; far?:boolean };
 export type FrameTimings = { [stage: string]: number };
-export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number; timings?: FrameTimings };
+export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number; timings?: FrameTimings; perf?: PerfSnapshot };
 export function createPool(host: HTMLElement, seed: number, report: (s: Status) => void) {
   const touch=isTouchDevice();
   // Frame stage profiler. Enabled only while a debug consumer asks for it, so
   // the branch cost is the entire overhead in normal play.
   const profiler=createFrameProbe();
   const probeTick=(stage:Stage,fn:()=>void)=>{if(!profiler.enabled){fn();return;}const t=profiler.begin(stage);try{fn();}finally{profiler.end(stage,t);}};
+  // Whole-frame measurement: frame-interval percentiles (jank, not mean), the
+  // draw-call/triangle totals the renderer actually submitted, and - where the
+  // browser exposes it - real GPU time. All of it is preallocated, so it can
+  // stay on in normal play without becoming part of the problem it measures.
+  const cpuProfiler=createCpuProfiler();
   const renderer = new T.WebGLRenderer({ antialias: !touch, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, touch?1.25:1.5));
   renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFShadowMap;
   renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08;
+  // `info` resets itself at the top of every render() call, which in a composer
+  // chain means it only ever describes the last pass. Take manual control so
+  // draw calls are reported for the whole frame instead.
+  renderer.info.autoReset=false;
+  const gpuProfiler=createGpuProfiler(renderer.getContext());
+  // Stage budget: "how many ms should a full-screen pass at this resolution
+  // cost?" Used to colour HUD bars. It starts as a crude fill-rate model and is
+  // replaced by a real measurement on the first idle frame (see the calibration
+  // job below) so the threshold is the machine's, not a guess.
+  const budget=createBudgetCalibrator();
+  let fillProbeDone=!gpuProfiler.supported;
+  // GPU timing runs in bursts, not continuously. See the frame loop.
+  const GPU_BURST=8;
+  let gpuBurst=GPU_BURST;
+  /** Frames to keep trying to calibrate while the camera never settles (~2 s). */
+  const CALIB_WAIT_LIMIT=120;
+  const calibTarget=new T.WebGLRenderTarget(FILL_PROBE_SIDE,FILL_PROBE_SIDE,{depthBuffer:false,stencilBuffer:false});
+  const calibCamera=new T.Camera();
+  const lastCalibPos=new T.Vector3(1e9,1e9,1e9);
+  let calibWait=0;
+  /** QA-only: force the Tyndall shafts on so their depth test can be verified. */
+  let shaftsForced=0;
   host.appendChild(renderer.domElement);
   const scene = new T.Scene(); scene.background = new T.Color('#14262f'); scene.fog = new T.FogExp2('#22343d', .036);
   const roomLights=new RoomLights(scene);
@@ -683,11 +714,29 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   composer.renderTarget1.samples=4;
   composer.renderTarget2.samples=4;
   // The Tyndall pass reads the scene's own depth so sun shafts stop at walls,
-  // arches and columns instead of shining through them. RenderPass draws into
-  // renderTarget1, so its depth attachment is the one to sample.
-  composer.renderTarget1.depthTexture=new T.DepthTexture(composer.renderTarget1.width,composer.renderTarget1.height);
+  // arches and columns instead of shining through them.
+  //
+  // Which buffer holds that depth is NOT editable once and forgotten: the depth
+  // texture lives on one target, while `RenderPass` draws into `readBuffer`,
+  // and `readBuffer` flips every time a pass with `needsSwap` runs ahead of it.
+  // Attaching to `renderTarget1` by name only happens to work while an even
+  // number of swaps precedes the scene render; adding or removing a swapping
+  // pass silently points this at a target nothing renders depth into, and the
+  // shafts then march through solid walls. So the texture is attached to
+  // whichever target the scene will actually land in, and re-attached on resize
+  // (which recreates both targets).
+  const sceneDepth=new T.DepthTexture(composer.renderTarget2.width,composer.renderTarget2.height);
+  const bindSceneDepth=()=>{
+    for(const target of [composer.renderTarget1,composer.renderTarget2]){
+      if(target.depthTexture&&target.depthTexture!==sceneDepth)target.depthTexture.dispose();
+      target.depthTexture=null;
+    }
+    composer.readBuffer.depthTexture=sceneDepth;
+  };
+  bindSceneDepth();
   composer.addPass(new RenderPass(scene,camera));
-  composer.addPass(new LiquidSurfacePass(scene,camera,liquid.mesh,water.material.uniforms));
+  const liquidPass=new LiquidSurfacePass(scene,camera,liquid.mesh,water.material.uniforms,sceneDepth);
+  composer.addPass(liquidPass);
   const whitewaterPass=new WhitewaterPass(scene,camera,[particles.drops]);
   particles.attachTransmission(whitewaterPass.color,whitewaterPass.ready);
   composer.addPass(whitewaterPass);
@@ -697,7 +746,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // against the depth buffer, and drifting humid-air density. The sun matches
   // the water caustics' direction.
   const tyndall=new ShaderPass({
-    uniforms:{tDiffuse:{value:null},tDepth:{value:composer.renderTarget1.depthTexture},lightPos:{value:new T.Vector3(0,15,0)},
+    uniforms:{tDiffuse:{value:null},tDepth:{value:sceneDepth},lightPos:{value:new T.Vector3(0,15,0)},
       camPos:{value:new T.Vector3()},camMat:{value:new T.Matrix4()},viewMat:{value:new T.Matrix4()},
       proj:{value:new T.Matrix4()},projInv:{value:new T.Matrix4()},intensity:{value:0},time:{value:0}},
     vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
@@ -853,9 +902,21 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const lock=()=>{active=document.pointerLockElement===renderer.domElement;keys.clear();if(!active){releaseDrag();charging=false;}};
   const blur=()=>{keys.clear();};
   window.addEventListener('keydown',keydown);window.addEventListener('keyup',keyup);window.addEventListener('mousemove',mouse);window.addEventListener('blur',blur);document.addEventListener('pointerlockchange',lock);
-  const resize=()=>{camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);composer.setSize(host.clientWidth,host.clientHeight);};window.addEventListener('resize',resize);
+  const resize=()=>{camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);composer.setSize(host.clientWidth,host.clientHeight);bindSceneDepth();};window.addEventListener('resize',resize);
   renderer.setAnimationLoop(()=>{
-    if(disposed)return;const now=performance.now(),dt=Math.min((now-last)/1000,.2);elapsed+=(now-last)/1000;last=now;time+=dt;frames++;
+    if(disposed)return;const now=performance.now(),rawFrameMs=now-last,dt=Math.min(rawFrameMs/1000,.2);elapsed+=(now-last)/1000;last=now;time+=dt;frames++;
+    // Sample the raw interval, not the clamped dt: a 400 ms hitch is exactly
+    // the sample worth seeing. Anything past half a second is not a frame at
+    // all (tab resume, debugger pause) and would pollute p99 for 4 seconds.
+    if(frames>1&&rawFrameMs<500)cpuProfiler.sample(rawFrameMs);
+    renderer.info.reset();
+    // An open timer query is not a CPU branch, but it does serialise GPU work:
+    // the driver refuses to reorder anything past a query that has no result
+    // yet. Left on permanently it cost ~15 ms of frame time. So the profiler
+    // runs in short BURSTS (see `gpuBurst`), and the reading between bursts is
+    // the last one measured rather than "interrupted".
+    if(gpuBurst>0){gpuProfiler.begin();gpuBurst--;}
+    else if(gpuBurst===0&&!gpuProfiler.supported)gpuBurst=-1;
     if(active){const beforeMove=camera.position.clone();player.update(dt,camera,keys,allColliders);
       const travelled=Math.hypot(camera.position.x-beforeMove.x,camera.position.z-beforeMove.z);
       const surface=WATER_LEVEL+waterSystem.heightAt(camera.position.x,camera.position.z);
@@ -908,15 +969,17 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       f.light.intensity=f.base*v;
       f.glow.color.setRGB(3.4*v,3.6*v,3.5*v);
     }
-    roomLights.update(camera.position,camera.getWorldDirection(roomLightDir));
+    // (Light ranking moved below the physics step - see the props block.)
     // Global mood eases toward the current room's decay: denser fog, darker water.
     const mood=Math.min(1,dt*.6),fog=scene.fog as T.FogExp2|null;
     if(fog)fog.density+=(CORRUPT_FOG[currentCorrupt]-fog.density)*mood;
     (scene.background as T.Color).lerp(CORRUPT_BG[currentCorrupt],mood);
     // Tyndall shafts follow the room: lit only under clerestories that have
     // not gone dark, easing in and out as the player crosses doorways.
+    // `shaftsForced` is the QA override, so the depth-occlusion path can be
+    // exercised in rooms that would not normally light it.
     const roomNow=roomLayout(cx,cz,seed);
-    const shafts=(roomNow.variant===3||roomNow.variant===5||roomNow.variant===6)&&currentCorrupt<2?1:0;
+    const shafts=shaftsForced||((roomNow.variant===3||roomNow.variant===5||roomNow.variant===6)&&currentCorrupt<2?1:0);
     tyndallLevel+=(shafts-tyndallLevel)*Math.min(1,dt*1.4);
     tyndall.enabled=tyndallLevel>.004;
     if(tyndall.enabled){
@@ -929,12 +992,20 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       tyndall.uniforms.projInv.value.copy(camera.projectionMatrixInverse);
       tyndall.uniforms.time.value=time;
     }
+    // Physics runs BEFORE the light ranking so that this frame's prop movement
+    // can dirty shadow slots that RoomLights.update() then consumes. Running it
+    // afterwards would push every rebuild out by one frame.
     let propsMoved=false;
     probeTick('props',()=>{propsMoved=props.update(dt,camera,allColliders,time,active);});
     // Every physics prop casts a shadow, so a prop that moved invalidates the
     // cached shadow cube maps. Resting props report no movement, which is what
     // lets the shadow pass be skipped entirely on a still frame.
-    if(propsMoved)roomLights.invalidate();
+    //
+    // The invalidation is PER SLOT: `movedCasters` carries each mover's swept
+    // volume, so a duck bobbing under one tube rebuilds that tube's cube map
+    // (6 faces) instead of all four (24 faces).
+    if(propsMoved)roomLights.invalidateBodies(props.movedCasters);
+    roomLights.update(camera.position,camera.getWorldDirection(roomLightDir));
     // Prop wakes are emitted inside PropPhysics substeps as paired momentum
     // exchange (bounded by the initial relative velocity) - see physics.ts.
     probeTick('liquid',()=>{waterSystem.crestSpray(Math.min(dt,.05)*whitewaterRate,(x,z,power)=>liquid.crest(x,z,power,waterSystem.flowAt(x,z)),camera.position);
@@ -960,6 +1031,36 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // composer can reuse them instead of repeating 6 lights x 6 cube faces.
     if(captured)renderer.shadowMap.autoUpdate=false;
     try{probeTick('composer',()=>{composer.render();});}finally{renderer.shadowMap.autoUpdate=shadows;}
+    if(gpuBurst>=0)gpuProfiler.end();
+    // One-shot fill-rate calibration. It renders a single triangle to a 1024²
+    // offscreen target FILL_PROBE_FRAMES times and reads the GPU timer that is
+    // already running, so it needs no readback and no extra plumbing.
+    //
+    // It prefers a frame where the camera is perfectly still, because the
+    // reading is only meaningful if nothing else lands between the timer marks.
+    // Insisting on stillness forever would strand a player who never stops
+    // walking with the crude model, so `calibWait` fires anyway after a second
+    // or so: a slightly polluted reading still beats a hardcoded guess.
+    if(!fillProbeDone&&gpuBurst<GPU_BURST-2&&!transition&&!props.held){
+      const still=camera.position.distanceToSquared(lastCalibPos)<1e-4;
+      calibWait=still?0:calibWait+1;
+      if(still||calibWait>=CALIB_WAIT_LIMIT){
+        fillProbeDone=true;
+        const saved=gpuProfiler.snapshot().last;
+        const {scene:probeScene,camera:probeCamera}=createFillProbeScene(calibCamera);
+        for(let i=0;i<FILL_PROBE_FRAMES;i++){
+          gpuProfiler.begin();
+          renderer.setRenderTarget(calibTarget);
+          renderer.render(probeScene,probeCamera);
+          gpuProfiler.end();
+          budget.sample(gpuProfiler.snapshot().last||saved);
+        }
+        renderer.setRenderTarget(null);
+        for(const child of [...probeScene.children]){if(child instanceof T.Mesh){child.geometry.dispose();(child.material as T.Material).dispose();}}
+        probeScene.clear();
+      }
+    }
+    lastCalibPos.copy(camera.position);
     if(transition&&transition.occlusionDone){
       if(transition.probeFace<6)captureProbeFace(transition.probeFace++);
       else{finishTransition();transition=null;}
@@ -967,7 +1068,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const charge=chargeNow();
     // Smoothed over ~0.5s: a per-interval average swings wildly and makes it
     // impossible to tell whether a settings change actually helped.
-    if(elapsed>.35||(charge>0&&elapsed>.06)){fps=fps?Math.round(fps*.45+(frames/elapsed)*.55):Math.round(frames/elapsed);frames=0;elapsed=0;const aimed=props.pick(camera,allColliders);const ladder=player.nearest(camera,allLadders);const hint=charge>0?(touch?`蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`:`右键蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`):props.held?(touch?'按住「投掷」蓄力 · 「拿起」放下':'右键按住蓄力投掷 · 滚轮调整距离 · E 放下'):player.climbing?(touch?'摇杆上/下攀爬 · 「拿起」松开':'W / S 攀爬 · E 松开'):aimed?`${aimed.name} · ${touch?'轻点屏幕拿起':'左键拖动 / E 拿起'}`:ladder?(touch?'靠近梯子按「拿起」攀爬':'E 攀爬梯子'):(touch?'轻点水面泛起涟漪':'低头点击水面 · F 切换镜头');report(profiler.merge({x:cx,z:cz,rooms:chunks.size,discovered:visited.size,fps,vct,impacts:waterSystem.interactionCount,caustics,hint,filter:film.uniforms.filterMode.value,held:props.held?.name??'',throws:props.throws,grabs:props.grabs,height:camera.position.y,climbing:!!player.climbing,slides:player.slides,charge,paused:!active,corrupt:currentCorrupt}));}
+    if(elapsed>.35||(charge>0&&elapsed>.06)){fps=fps?Math.round(fps*.45+(frames/elapsed)*.55):Math.round(frames/elapsed);frames=0;elapsed=0;const aimed=props.pick(camera,allColliders);const ladder=player.nearest(camera,allLadders);const hint=charge>0?(touch?`蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`:`右键蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`):props.held?(touch?'按住「投掷」蓄力 · 「拿起」放下':'右键按住蓄力投掷 · 滚轮调整距离 · E 放下'):player.climbing?(touch?'摇杆上/下攀爬 · 「拿起」松开':'W / S 攀爬 · E 松开'):aimed?`${aimed.name} · ${touch?'轻点屏幕拿起':'左键拖动 / E 拿起'}`:ladder?(touch?'靠近梯子按「拿起」攀爬':'E 攀爬梯子'):(touch?'轻点水面泛起涟漪':'低头点击水面 · F 切换镜头');report(profiler.merge({x:cx,z:cz,rooms:chunks.size,discovered:visited.size,fps,vct,impacts:waterSystem.interactionCount,caustics,hint,filter:film.uniforms.filterMode.value,held:props.held?.name??'',throws:props.throws,grabs:props.grabs,height:camera.position.y,climbing:!!player.climbing,slides:player.slides,charge,paused:!active,corrupt:currentCorrupt,perf:{frame:cpuProfiler.stats(),gpu:gpuProfiler.snapshot(),render:readRendererMetrics(renderer),shadowSlots:roomLights.shadowSlotsUpdated,budget:budget.forCanvas(host.clientWidth,host.clientHeight)}}));}
   });
   return {
     visitRoom:(x:number,z:number)=>{
@@ -979,7 +1080,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     waterSettings:(values:Partial<WaterSettings>)=>{waterSystem.applySettings(values);caustics=waterSystem.snapshot().caustics;},
     waterDebug:()=>waterSystem.debug(),
     /** Toggle the per-stage frame profiler; returns the new state. */
-    setProfiling:(on:boolean)=>{profiler.enabled=on;return profiler.enabled;},
+    setProfiling:(on:boolean)=>{profiler.enabled=on;if(on)cpuProfiler.reset();return profiler.enabled;},
     waterSettingsSnapshot:()=>waterSystem.snapshot(),
     setMusic:(enabled:boolean)=>audio.setMusic(enabled),
     enter:()=>{audio.unlock();if(touch){active=true;keys.clear();if(touchUI)touchUI.style.display='';}else renderer.domElement.requestPointerLock();},
@@ -990,6 +1091,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       inspect:()=>({room:[cx,cz],variant:roomLayout(cx,cz,seed).variant,programs:renderer.info.programs?.length,waterVisible:water.visible,vertical:player.vertical,grounded:player.grounded,impacts:waterSystem.interactionCount,audio:audio.inspect(),position:camera.position.toArray(),time,held:props.held?.name??'',charge:chargeNow(),grabs:props.grabs,throws:props.throws,climbing:!!player.climbing,slides:player.slides,filter:film.uniforms.filterMode.value,environment:!!scene.environment,transition:!!transition,vctReady:field.uniforms.vctReady.value>0,blocks:waterSystem.uniforms.blockCount.value,props:props.bodies.filter(b=>b.position.distanceTo(camera.position)<15).map(b=>({name:b.name,kind:b.kind,position:b.position.toArray(),velocity:b.velocity.toArray(),promoted:b.promoted})),ladders:allLadders.filter(l=>l.base.distanceTo(camera.position)<30).map(l=>({base:l.base.toArray(),top:l.top.toArray(),exit:l.exit.toArray()}))}),
       view:(position:number[],target:number[])=>{player.climbing=null;player.vertical=0;const ox=originX,oz=originZ;camera.position.fromArray(position);stream();camera.lookAt(new T.Vector3(target[0]-(originX-ox)*ROOM,target[1],target[2]-(originZ-oz)*ROOM));},
       simulate:(enabled:boolean)=>{active=enabled;keys.clear();},
+      forceShafts:(on:boolean)=>{shaftsForced=on?1:0;},
       placeProp:(kind:PropKind,position:number[])=>{const body=props.bodies.find(b=>b.kind===kind);if(body){props.grab(body);props.release();body.position.fromArray(position);body.rotation.identity();}},
       water:(x:number,z:number,power:number,direction?:LiquidImpact)=>splash(x,z,power,false,direction),
       waterLine:(x:number,z:number)=>WATER_LEVEL+waterSystem.heightAt(x,z),
@@ -1007,6 +1109,6 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       grab:(index=0)=>{const near=props.bodies.filter(b=>b.position.distanceTo(camera.position)<15);if(near[index])props.grab(near[index]);},
       throw:(speed=11)=>{if(props.held)props.release(camera,speed);},
     }:undefined,
-    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();liquid.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
+    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();liquid.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();gpuProfiler.dispose();budget.dispose();calibTarget.dispose();renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
   };
 }

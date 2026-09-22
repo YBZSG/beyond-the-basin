@@ -3,7 +3,14 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** Batch immutable architecture per room/material. Point-light shadows draw
  * six views each; batching preserves the exact triangles and live materials
- * while avoiding thousands of repeated draw submissions every frame. */
+ * while avoiding thousands of repeated draw submissions every frame.
+ *
+ * Batches are additionally split by indexed state: indexed meshes keep their
+ * index (BoxGeometry reuses its 8 corners across 36 indices; expanding to
+ * non-indexed triples the vertex buffer, the vertex shader invocations and
+ * the shadow-pass vertex workload for every room). Merging stays legal
+ * because mergeGeometries only requires a consistent indexed state within
+ * one batch; the cost is at most one extra batch per material. */
 export function batchArchitecture(root:T.Group){
   root.updateMatrixWorld(true);
   const inverse=root.matrixWorld.clone().invert();
@@ -11,13 +18,15 @@ export function batchArchitecture(root:T.Group){
   root.traverse(object=>{
     if(!(object instanceof T.Mesh)||object instanceof T.InstancedMesh||Array.isArray(object.material)||!object.visible)return;
     if(object.userData.luminaire||object.customDepthMaterial||object.customDistanceMaterial||object.geometry.morphAttributes.position)return;
-    const key=[object.material.uuid,object.castShadow,object.receiveShadow,object.renderOrder,object.layers.mask].join('/');
+    const key=[object.material.uuid,object.castShadow,object.receiveShadow,object.renderOrder,object.layers.mask,object.geometry.index?1:0].join('/');
     if(!batches.has(key))batches.set(key,[]);batches.get(key)!.push(object);
   });
   for(const meshes of batches.values()){
     if(meshes.length<2)continue;
     const parts=meshes.map(mesh=>{
-      const geometry=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone();
+      // Clone as-is: indexed inputs stay indexed so shared vertices survive
+      // the merge instead of being fanned out into per-triangle copies.
+      const geometry=mesh.geometry.clone();
       geometry.applyMatrix4(inverse.clone().multiply(mesh.matrixWorld));
       // Architecture uses position/normal/UV only; preserve these attributes
       // for both the lit material and the triangle-based reflection BVH.
@@ -34,4 +43,20 @@ export function batchArchitecture(root:T.Group){
     batch.renderOrder=source.renderOrder;batch.layers.mask=source.layers.mask;
     for(const mesh of meshes)mesh.removeFromParent();root.add(batch);
   }
+}
+
+/** Aggregate vertex/triangle counts for a subtree; used once at room build to
+ * log what batching actually produced (never in the frame loop). */
+export function geometryStats(root:T.Object3D){
+  let vertices=0,triangles=0,meshes=0,indexed=0;
+  root.traverse(o=>{
+    if(!(o instanceof T.Mesh))return;
+    meshes++;
+    const geometry=o.geometry;
+    const count=geometry.attributes.position?.count??0;
+    vertices+=count;
+    triangles+=geometry.index?geometry.index.count/3:count/3;
+    if(geometry.index)indexed++;
+  });
+  return {meshes,vertices,triangles,indexed};
 }

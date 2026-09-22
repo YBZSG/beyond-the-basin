@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import type { createPool, Status, WaterSettings } from './engine';
+import type { PerfSnapshot } from './perf/perf-types';
 import { isTouchDevice } from './touch';
 import './pool.css';
 import { WATER_SETTINGS_DEFAULT as WATER_DEFAULT, WATER_SLIDERS, WATER_QUALITY, WATER_LAYERS, WATER_DEBUG, sanitizeWaterSettings, type WaterQuality } from './water-settings';
@@ -17,6 +18,33 @@ const loadWater=():WaterSettings=>{
   try{const raw=localStorage.getItem(WATER_STORE);if(raw)return sanitizeWaterSettings({...JSON.parse(raw),debugView:0});}catch{}
   return {...WATER_DEFAULT};
 };
+/**
+ * Whole-frame numbers: percentiles rather than a mean (jank lives in p99), the
+ * draw-call count (the CPU cost driver), and GPU time when the browser will
+ * tell us. `shadowSlots` is the payoff of per-slot invalidation - it should sit
+ * at 0/4 on a still frame.
+ */
+function PerfMetrics({perf}:{perf:PerfSnapshot}){
+  const f=perf.frame,g=perf.gpu,b=perf.budget;
+  // "GPU 时间" needs the disambiguation: it is the time the GPU spent on the
+  // last measured burst, so a low value paired with a high p95 means the cost
+  // is CPU-side, not a slow frame the GPU swallowed.
+  return <div className="vct-perf-metrics">
+    <div><span>帧间隔 p50/p95/p99</span><b>{f.p50.toFixed(1)}/{f.p95.toFixed(1)}/{f.p99.toFixed(1)} ms</b></div>
+    <div><span>绘制调用 / 三角形</span><b>{perf.render.calls}c / {Math.round(perf.render.triangles/1000)}k</b></div>
+    <div><span>GPU 时间</span><b>{g.supported?(g.disjoint?'采样中断':`${g.average.toFixed(1)} ms`):'未开放'}</b></div>
+    <div><span>{`单阶段预算 · ${b.measured?'实测':'估算'}`}</span><b>{b.perStage.toFixed(1)} ms</b></div>
+    <div><span>阴影槽重建</span><b>{perf.shadowSlots}/4</b></div>
+  </div>;
+}
+/**
+ * A stage is "hot" when it costs more than one full-screen pass should. The
+ * old rule was a fixed 40% of the frame's own total, which fires on the biggest
+ * row even when the whole frame is fast - it says which is largest, not which
+ * is expensive. Budget-relative is absolute: 1.5 passes is a lot of pixels
+ * whichever frame it lands in.
+ */
+const isHot=(ms:number,budget:number)=>ms>budget*1.5;
 export default function PoolVCT() {
   const host=useRef<HTMLDivElement>(null),engine=useRef<ReturnType<typeof createPool>|null>(null);
   const touch=isTouchDevice();
@@ -50,6 +78,10 @@ export default function PoolVCT() {
   useEffect(()=>{const onLock=()=>setLocked(!!document.pointerLockElement);document.addEventListener('pointerlockchange',onLock);return()=>document.removeEventListener('pointerlockchange',onLock);},[]);
   // Touch sessions have no pointer lock; the engine's paused flag drives the menu instead.
   const entered=touch?!status.paused:locked;
+  // Stage bars are scaled against one full-screen pass, not against the frame
+  // total: the total moves with the frame rate, so a percentage bar reads
+  // "which row is biggest" rather than "which row is expensive".
+  const barBudget=Math.max(status.perf?.budget.perStage??1,1e-6);
   return <main className="vct-page">
     <div className="vct-canvas" ref={host}/>
     <div className="vct-top"><span>POOLCORE <i> / </i> VOL. 02</span><span><b className="vct-dot"/> {ready?'空间已生成':'正在填充体素光照场'}</span></div>
@@ -89,8 +121,8 @@ export default function PoolVCT() {
       <div className="vct-water-layers">{Object.entries(WATER_LAYERS).map(([key,label])=><label key={key}><input type="checkbox" checked={water[key as keyof typeof WATER_LAYERS]} onChange={e=>setWater(w=>({...w,[key]:e.target.checked}))}/>{label}</label>)}</div>
       <pre aria-live="off">{waterStats}</pre>
       {status.timings&&<div className="vct-water-timings" aria-label="逐阶段帧耗时">
-        <div><strong>逐阶段耗时 / ms</strong><small>卡顿时看哪一行最大</small></div>
-        {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,total=Math.max(status.timings!.total,1e-6);return <div key={key} className={ms/total>.4?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/total*100)}%`}}/><b>{ms.toFixed(2)}</b></div>;})}
+        <div><strong>逐阶段耗时 / ms</strong><small>条长相对「单次全屏 pass 预算」</small></div>
+        {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.budget.perStage);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(2)}</b></div>;})}
         <div><span>阶段合计</span><b>{status.timings.total.toFixed(2)}</b></div>
         <div><span>探针开销</span><b>{status.timings.probe.toFixed(3)}</b></div>
         <div><span>理论帧率上限</span><b>{status.timings.total>0?Math.round(1000/status.timings.total):0} FPS</b></div>
@@ -102,7 +134,8 @@ export default function PoolVCT() {
         place you cannot watch the frame rate. G toggles this mid-game. */}
     {debugOpen&&entered&&status.timings&&<aside className="vct-perf-hud" aria-label="实时帧耗时">
       <div className="vct-perf-head"><strong>{status.fps} FPS</strong><span>{status.timings.total.toFixed(1)} ms / 帧</span></div>
-      {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,total=Math.max(status.timings!.total,1e-6);return <div key={key} className={ms/total>.4?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/total*100)}%`}}/><b>{ms.toFixed(1)}</b></div>;})}
+      {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.budget.perStage);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(1)}</b></div>;})}
+      {status.perf&&<PerfMetrics perf={status.perf}/>}
     </aside>}
     <footer className="vct-footer"><div><span>SECTOR {String(status.x).padStart(2,'0')} / {String(status.z).padStart(2,'0')}</span><small>已探索 {status.discovered} 个区域 · {status.rooms} 个驻留区块 · 崩坏 {['完好','渐衰','显著','严重'][status.corrupt]}</small></div><div className="vct-tech">{status.vct?'体素锥追踪 GI':'GI 对照：关闭'} · {status.caustics?'水光焦散':'焦散关闭'}<small>{status.fps} FPS · SEED {seed} · 水面交互 {status.impacts}</small></div><time aria-label="摄像机本地时间">{cameraTime}</time></footer>
   </main>;

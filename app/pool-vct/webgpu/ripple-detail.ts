@@ -4,7 +4,7 @@ import {
   Discard, Fn, If, Loop, clamp, exp, float, ivec2, mix, positionLocal, select,
   smoothstep, texture, textureLoad, uv, varying, vec2, vec4,
 } from 'three/tsl';
-import { floatUniform, vec2Uniform, vec4Attribute, type PoolRenderer, type ScalarUniform, type Vec2Uniform } from '../backend';
+import { floatUniform, vec2Uniform, vec4Attribute, type PoolRenderer, type ScalarUniform, type Vec2Uniform } from '../backend.ts';
 
 export const DETAIL_DOMAIN = 48;
 const STEP = 1 / 120, MAX_SOURCES = 128;
