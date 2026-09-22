@@ -6,9 +6,8 @@
  * the contract between the profilers (below) and whoever displays or logs the
  * numbers - the HUD, the QA hook, an automated acceptance run.
  *
- * Everything here is optional-by-construction: a missing GPU extension or a
- * disabled profiler yields zeroes rather than throwing, so the measurement
- * layer can never take down a frame.
+ * GPU availability is explicit. Numeric placeholders must never be displayed
+ * or accepted as a measured zero when the extension/sample is unavailable.
  */
 
 /** What the renderer actually submitted last frame. */
@@ -61,24 +60,8 @@ export interface PerfSnapshot {
   render: RendererMetrics;
   /** Shadow cube maps rebuilt last frame (0..4 slots). */
   shadowSlots: number;
-  /**
-   * Default budget for a single full-screen stage at this resolution, in ms.
-   *
-   * Derived from a hardcoded 100 Mpx/s fill estimate and the canvas size, so it
-   * is heavily machine-dependent - a software rasterizer will blow through it.
-   * It is only ever used to colour a bar orange, never to make a decision, and
-   * a load-time calibration overwrites it with `measured` when one is
-   * available.
-   */
-  budget: StageBudget;
-}
-
-/** Replace the modelled stage budget with one calibrated on this machine. */
-export interface StageBudget {
-  /** Modelled fill budget for one full-screen stage, in ms. */
-  perStage: number;
-  /** 1080p-equivalent megapixels per millisecond; 0 until calibrated. */
-  fillRate: number;
-  /** True once `fillRate` came from a real measurement instead of the model. */
-  measured: boolean;
+  /** CPU submission and completed GPU stages, with issuing frame identity. */
+  stages: {cpu:Record<string,number>;cpuMs:number;gpu:Record<string,{frame:number;ms:number;ageFrames:number}>};
+  transfer: {readbackBytes:number;uploadBytes:number;shallowReadbackBytes?:number};
+  frameBudgetMs: number;
 }

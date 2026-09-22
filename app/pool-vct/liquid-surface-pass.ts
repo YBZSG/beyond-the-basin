@@ -1,4 +1,5 @@
 import * as T from 'three';
+import type { Measure } from './perf/recording';
 import { Pass, FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 import { WATER_WAVES } from './water-optics.ts';
 
@@ -37,10 +38,11 @@ export class LiquidSurfacePass extends Pass {
   private camera:T.PerspectiveCamera;
   private scene:T.Scene;
   private mesh:T.InstancedMesh;
+  private measure:Measure;
   /** Scene depth, owned by the composer; used for the liquid's occlusion test. */
   private sceneDepth:T.DepthTexture|null;
-  constructor(scene:T.Scene,camera:T.PerspectiveCamera,mesh:T.InstancedMesh,waterUniforms:Record<string,T.IUniform>,sceneDepth:T.DepthTexture|null=null){
-    super();this.needsSwap=true;this.scene=scene;this.camera=camera;this.mesh=mesh;this.sceneDepth=sceneDepth;this.fluidScene.add(mesh);
+  constructor(scene:T.Scene,camera:T.PerspectiveCamera,mesh:T.InstancedMesh,waterUniforms:Record<string,T.IUniform>,sceneDepth:T.DepthTexture|null=null,measure:Measure=(_stage,fn)=>fn()){
+    super();this.measure=measure;this.needsSwap=true;this.scene=scene;this.camera=camera;this.mesh=mesh;this.sceneDepth=sceneDepth;this.fluidScene.add(mesh);
     this.fluidScene.background=new T.Color(10000,0,0);
     this.shade=new T.ShaderMaterial({
       uniforms:{...waterUniforms,fluidDepth:{value:null},background:{value:null},sceneDepth:{value:sceneDepth},texel:{value:new T.Vector2()},
@@ -49,7 +51,7 @@ export class LiquidSurfacePass extends Pass {
       defines:{ENVMAP_TYPE_CUBE_UV:'',CUBEUV_TEXEL_WIDTH:1/768,CUBEUV_TEXEL_HEIGHT:1/1024,CUBEUV_MAX_MIP:'8.0'},
       vertexShader:VERTEX,
       fragmentShader:WATER_WAVES+`
-        uniform sampler2D fluidDepth,background,environment;uniform vec2 texel;
+        uniform sampler2D fluidDepth,background,environment,sceneDepth;uniform vec2 texel;
         uniform mat4 inverseProjection,projection,cameraWorld;uniform float hasEnvironment;
         uniform float cameraNear,cameraFar;
         varying vec2 vUv;
@@ -115,14 +117,14 @@ export class LiquidSurfacePass extends Pass {
     const auto=renderer.autoClear,shadows=renderer.shadowMap.autoUpdate,target=renderer.getRenderTarget();
     try{
       renderer.shadowMap.autoUpdate=false;
-      renderer.autoClear=true;renderer.setRenderTarget(this.depth);renderer.render(this.fluidScene,this.camera);
+      renderer.autoClear=true;renderer.setRenderTarget(this.depth);this.measure('liquid-depth',()=>renderer.render(this.fluidScene,this.camera));
       renderer.autoClear=false;this.quad.material=this.filter;
       this.filter.uniforms.projectionScale.value=this.depth.height*this.camera.projectionMatrix.elements[5]*.5;
       let source=this.depth.texture;
       for(let i=0;i<4;i++){
         const output=i%2===0?this.filterA:this.filterB;
         this.filter.uniforms.source.value=source;this.filter.uniforms.direction.value.set(i%2===0?1:0,i%2===0?0:1);
-        renderer.setRenderTarget(output);this.quad.render(renderer);source=output.texture;
+        renderer.setRenderTarget(output);this.measure('liquid-filter',()=>this.quad.render(renderer));source=output.texture;
       }
       const env=this.scene.environment;
       if(env){
@@ -142,7 +144,7 @@ export class LiquidSurfacePass extends Pass {
       // `sceneDepth` (see there), which is correct on either composer buffer.
       this.shade.uniforms.fluidDepth.value=source;this.shade.uniforms.background.value=read.texture;
       this.quad.material=this.shade;
-      renderer.setRenderTarget(write);this.quad.render(renderer);
+      renderer.setRenderTarget(write);this.measure('liquid-composite',()=>this.quad.render(renderer));
     }finally{renderer.autoClear=auto;renderer.shadowMap.autoUpdate=shadows;renderer.setRenderTarget(target);}
   }
   setSize(width:number,height:number){

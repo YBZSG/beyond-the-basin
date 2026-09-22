@@ -171,6 +171,7 @@ const vertexShader='void main(){gl_Position=vec4(position.xy,0.0,1.0);}';
 type Readback={buffer:Uint16Array;generation:number;started:number;done:boolean;failed:boolean};
 
 export class ShallowWater {
+  readbackBytes=0;
   /** Live-tunable source shaping, driven by the pause-menu water sliders:
    * impactScale multiplies splash amplitude, ringWaves is the packet wave
    * number (higher = finer rings, stable above ~4 cells per wavelength), and
@@ -400,13 +401,13 @@ export class ShallowWater {
   private requestReadback(renderer:T.WebGLRenderer){
     const job:Readback={buffer:new Uint16Array(SW_PHYS*SW_PHYS*4),generation:this.generation,started:this.clock,done:false,failed:false};
     if(!this.asyncFailed&&typeof renderer.readRenderTargetPixelsAsync==='function'){
-      this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;});
+      this.readbackBytes+=job.buffer.byteLength;this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;});
     }else if(typeof renderer.readRenderTargetPixels==='function'&&this.clock-this.syncAt>=1/30){
       this.syncAt=this.clock;
       // Three's pending async reader can leave a pixel-pack buffer bound.
       // A synchronous typed-array read must temporarily unbind it.
       const gl=renderer.getContext?.() as WebGL2RenderingContext|undefined,pack=gl?.getParameter(gl.PIXEL_PACK_BUFFER_BINDING);
-      try{gl?.bindBuffer(gl.PIXEL_PACK_BUFFER,null);renderer.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
+      try{this.readbackBytes+=job.buffer.byteLength;gl?.bindBuffer(gl.PIXEL_PACK_BUFFER,null);renderer.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
       catch{this.rejected++;}finally{if(gl)gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pack??null);}
     }
   }

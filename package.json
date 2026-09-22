@@ -10,6 +10,7 @@
     "build": "vinext build",
     "start": "vinext start",
     "lint": "eslint app tests",
+    "benchmark:build": "vite build --config vite.benchmark.config.ts",
     "typecheck": "tsc -p tsconfig.pool-vct.json",
     "apk:web": "vite build --config vite.apk.config.ts",
     "apk": "powershell -NoProfile -ExecutionPolicy Bypass -File build-apk.ps1",

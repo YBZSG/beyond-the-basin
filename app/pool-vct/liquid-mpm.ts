@@ -18,6 +18,7 @@ type Drop=(x:number,y:number,z:number,vx:number,vy:number,vz:number,size:number)
  * existing height field. Only the simulated positions are reconstructed;
  * no predefined crest count, sheet topology or lifetime-shaped silhouette. */
 export class LiquidMPM {
+  readonly transfer={readbackBytes:0,uploadBytes:0};
   readonly mesh:T.InstancedMesh<T.SphereGeometry,T.ShaderMaterial>;
   status='initializing';error='';released=0;returns=0;ripples=0;
   private device:GPUDevice|null=null;
@@ -110,7 +111,7 @@ export class LiquidMPM {
     values.set([flow.u,Math.min(-1,flow.vertical??-Math.sqrt(power)*4),flow.v,0],12);
     const data=new Float32Array(count*20);
     for(let i=0;i<count;i++){for(let k=0;k<8;k++)data[i*20+k]=raw[i*20+k];data[i*20+8]=data[i*20+13]=data[i*20+18]=.64;}
-    device.queue.writeBuffer(particle,0,raw,0,count*20);
+    device.queue.writeBuffer(particle,0,raw,0,count*20);this.transfer.uploadBytes+=count*80;
     this.patches.push({x,z,base,h,age:0,elapsed:0,count,pending:false,disposed:false,buffers,groups,params:values,data,previous:data.slice(),
       sampleAge:0,sampleDelta:STEP,blendElapsed:0,removed:new Uint8Array(count),emerged:new Uint8Array(count)});
   }
@@ -157,7 +158,7 @@ export class LiquidMPM {
       const steps=Math.min(36,Math.floor(patch.elapsed/STEP));if(!steps)continue;
       patch.elapsed-=steps*STEP;patch.params[3]=patch.age;patch.age+=steps*STEP;
       if(patch.age>1.5){this.destroyPatch(patch);continue;}
-      const device=this.device!;device.queue.writeBuffer(patch.buffers[2],0,patch.params);
+      const device=this.device!;device.queue.writeBuffer(patch.buffers[2],0,patch.params);this.transfer.uploadBytes+=patch.params.byteLength;
       const encoder=device.createCommandEncoder();const pass=encoder.beginComputePass();
       for(let k=0;k<steps;k++)for(let stage=0;stage<5;stage++){
         pass.setPipeline(this.pipelines[stage]);pass.setBindGroup(0,patch.groups[stage]);
@@ -168,7 +169,7 @@ export class LiquidMPM {
         pass.dispatchWorkgroups(stage===5?GRID/128:Math.ceil(patch.count/64));
       }pass.end();
       encoder.copyBufferToBuffer(patch.buffers[3],0,patch.buffers[5],0,patch.count*80);device.queue.submit([encoder.finish()]);
-      patch.pending=true;
+      this.transfer.readbackBytes+=patch.count*80;patch.pending=true;
       void patch.buffers[5].mapAsync(GPUMapMode.READ).then(()=>{
         if(!patch.disposed){
           patch.previous.set(patch.data);patch.data.set(new Float32Array(patch.buffers[5].getMappedRange()));patch.buffers[5].unmap();

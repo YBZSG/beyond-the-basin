@@ -2,13 +2,14 @@
 import { useEffect, useRef, useState } from 'react';
 import type { createPool, Status, WaterSettings } from './engine';
 import type { PerfSnapshot } from './perf/perf-types';
+import { QA_ENABLED } from './benchmark';
 import { isTouchDevice } from './touch';
 import './pool.css';
 import { WATER_SETTINGS_DEFAULT as WATER_DEFAULT, WATER_SLIDERS, WATER_QUALITY, WATER_LAYERS, WATER_DEBUG, sanitizeWaterSettings, type WaterQuality } from './water-settings';
 
 const WATER_STORE='pool-water-settings';
 /** Stage label -> key in `Status.timings`. Shared by the panel and the HUD. */
-const TIMING_ROWS=([['道具物理','props'],['白水/浪花','liquid'],['粒子','particles'],['水体渲染','water'],['反射抓帧','capture'],['后期合成','composer']] as const);
+const TIMING_ROWS=([['道具物理','props'],['白水/浪花','liquid'],['粒子','particles'],['水体渲染','water'],['场景与后处理','composer']] as const);
 const WATER_PRESETS:[string,WaterSettings][]=[
   ['恢复默认',{...WATER_DEFAULT}],
   ['细腻明显',{...WATER_DEFAULT,waveHeight:.8,rippleGain:1.6,normalBoost:1.7,distortion:.75,impact:1.3,ringWaves:15,wavePush:1.1,waveSpeed:1.15}],
@@ -25,26 +26,19 @@ const loadWater=():WaterSettings=>{
  * at 0/4 on a still frame.
  */
 function PerfMetrics({perf}:{perf:PerfSnapshot}){
-  const f=perf.frame,g=perf.gpu,b=perf.budget;
-  // "GPU 时间" needs the disambiguation: it is the time the GPU spent on the
-  // last measured burst, so a low value paired with a high p95 means the cost
-  // is CPU-side, not a slow frame the GPU swallowed.
+  const f=perf.frame,g=perf.gpu;
+  // Show sample age and scope: WebGL timing excludes the separate liquid device.
   return <div className="vct-perf-metrics">
     <div><span>帧间隔 p50/p95/p99</span><b>{f.p50.toFixed(1)}/{f.p95.toFixed(1)}/{f.p99.toFixed(1)} ms</b></div>
     <div><span>绘制调用 / 三角形</span><b>{perf.render.calls}c / {Math.round(perf.render.triangles/1000)}k</b></div>
-    <div><span>GPU 时间</span><b>{g.supported?(g.disjoint?'采样中断':`${g.average.toFixed(1)} ms`):'未开放'}</b></div>
-    <div><span>{`单阶段预算 · ${b.measured?'实测':'估算'}`}</span><b>{b.perStage.toFixed(1)} ms</b></div>
+    <div><span>GPU 时间</span><b>{g.supported?(g.disjoint?'采样中断':(g.last?`${g.average.toFixed(1)} ms · ${perf.stages.gpu.frame?.ageFrames??0} 帧前`:'等待样本')):'不可用'}</b></div>
+    <div><span>60 FPS 帧预算 / CPU</span><b>{perf.frameBudgetMs.toFixed(2)} / {perf.stages.cpuMs.toFixed(1)} ms</b></div>
+    <div><span>GPU 范围</span><b>WebGL · 不含液体 Compute</b></div>
     <div><span>阴影槽重建</span><b>{perf.shadowSlots}/4</b></div>
   </div>;
 }
-/**
- * A stage is "hot" when it costs more than one full-screen pass should. The
- * old rule was a fixed 40% of the frame's own total, which fires on the biggest
- * row even when the whole frame is fast - it says which is largest, not which
- * is expensive. Budget-relative is absolute: 1.5 passes is a lot of pixels
- * whichever frame it lands in.
- */
-const isHot=(ms:number,budget:number)=>ms>budget*1.5;
+/** Compare CPU stage work against the actual 60 FPS frame budget. */
+const isHot=(ms:number,budget:number)=>ms>budget;
 export default function PoolVCT() {
   const host=useRef<HTMLDivElement>(null),engine=useRef<ReturnType<typeof createPool>|null>(null);
   const touch=isTouchDevice();
@@ -63,7 +57,7 @@ export default function PoolVCT() {
   // you cannot watch the frame rate. G opens it mid-game so the numbers can be
   // read while actually walking.
   useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if(e.code==='KeyG'&&!e.repeat&&!e.metaKey&&!e.ctrlKey&&!e.altKey){e.preventDefault();setDebugOpen(v=>!v);}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey);},[]);
-  useEffect(()=>{if(!debugOpen)return;const timer=window.setInterval(()=>{const d=engine.current?.waterDebug();if(d)setWaterStats(`${d.grid}² 浅水 · ${d.detailGrid}² 细波 · ${d.causticSize}² 焦散 · ${d.filterGrid}² 滤波\n峰值 ${d.peak.toFixed(4)} m · ${d.settled?'物理已平静':'波场传播中'} · 读回异常 ${d.rejected}\n焦散重绘 ${d.causticFrames} 次 · 求解丢时 ${d.droppedTime.toFixed(2)}s\n质量 ${d.quality} · 反射 ${d.reflectionSize}² · 细波 ${d.detailActive?'启用':'停用'}\n折射抓帧 ${d.captureFrames} 次 · 复用 ${d.captureSkips} 次 · 缓存龄 ${d.refractionAge} 帧`);},500);return()=>clearInterval(timer);},[debugOpen]);
+  useEffect(()=>{if(!debugOpen)return;const timer=window.setInterval(()=>{const d=engine.current?.waterDebug();if(d)setWaterStats(`${d.grid}² 浅水 · ${d.detailGrid}² 细波 · ${d.causticSize}² 焦散 · ${d.filterGrid}² 滤波\n峰值 ${d.peak.toFixed(4)} m · ${d.settled?'物理已平静':'波场传播中'} · 读回异常 ${d.rejected}\n焦散重绘 ${d.causticFrames} 次 · 求解丢时 ${d.droppedTime.toFixed(2)}s\n质量 ${d.quality} · 反射 ${d.reflectionSize}² · 细波 ${d.detailActive?'启用':'停用'}\n主场景复用 ${d.captureFrames} 帧 · 折射使用当前帧颜色与深度`);},500);return()=>clearInterval(timer);},[debugOpen]);
   useEffect(()=>{
     const id=requestAnimationFrame(()=>setWater(loadWater()));
     return()=>cancelAnimationFrame(id);
@@ -74,14 +68,12 @@ export default function PoolVCT() {
   useEffect(()=>{if(!ready)return;engine.current?.waterSettings(water);try{localStorage.setItem(WATER_STORE,JSON.stringify(water));}catch{}},[ready,water]);
   useEffect(()=>{const update=()=>{const d=new Date(),pad=(v:number)=>String(v).padStart(2,'0');setCameraTime(`’${pad(d.getFullYear()%100)} ${pad(d.getMonth()+1)} ${pad(d.getDate())}  ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`);};update();const timer=window.setInterval(update,1000);return()=>window.clearInterval(timer);},[]);
   const [status,setStatus]=useState<Status>({x:0,z:0,rooms:9,discovered:1,fps:0,vct:true,impacts:0,caustics:true,hint:'',filter:1,held:'',throws:0,grabs:0,height:1.5,climbing:false,slides:0,charge:0,paused:true,corrupt:0});
-  useEffect(()=>{let cancelled=false;import('./engine').then(({createPool})=>{if(cancelled||!host.current)return;try{engine.current=createPool(host.current,seed,setStatus);if(process.env.NODE_ENV!=='production'&&new URLSearchParams(location.search).has('qa')){(window as Window & {__poolQA?:typeof engine.current.qa}).__poolQA=engine.current.qa;}(window as Window & {__poolPause?:()=>void}).__poolPause=()=>engine.current?.pause();setReady(true);}catch(e){setError(String(e));}});return()=>{cancelled=true;engine.current?.dispose();engine.current=null;};},[seed]);
+  useEffect(()=>{let cancelled=false;import('./engine').then(({createPool})=>{if(cancelled||!host.current)return;try{engine.current=createPool(host.current,seed,setStatus);if(QA_ENABLED&&new URLSearchParams(location.search).has('qa')){(window as Window & {__poolQA?:typeof engine.current.qa}).__poolQA=engine.current.qa;}(window as Window & {__poolPause?:()=>void}).__poolPause=()=>engine.current?.pause();setReady(true);}catch(e){setError(String(e));}});return()=>{cancelled=true;engine.current?.dispose();engine.current=null;};},[seed]);
   useEffect(()=>{const onLock=()=>setLocked(!!document.pointerLockElement);document.addEventListener('pointerlockchange',onLock);return()=>document.removeEventListener('pointerlockchange',onLock);},[]);
   // Touch sessions have no pointer lock; the engine's paused flag drives the menu instead.
   const entered=touch?!status.paused:locked;
-  // Stage bars are scaled against one full-screen pass, not against the frame
-  // total: the total moves with the frame rate, so a percentage bar reads
-  // "which row is biggest" rather than "which row is expensive".
-  const barBudget=Math.max(status.perf?.budget.perStage??1,1e-6);
+  // Use the fixed 60 FPS budget so slow frames do not raise the threshold.
+  const barBudget=Math.max(status.perf?.frameBudgetMs??16.67,1e-6);
   return <main className="vct-page">
     <div className="vct-canvas" ref={host}/>
     <div className="vct-top"><span>POOLCORE <i> / </i> VOL. 02</span><span><b className="vct-dot"/> {ready?'空间已生成':'正在填充体素光照场'}</span></div>
@@ -100,7 +92,7 @@ export default function PoolVCT() {
         <label className="vct-water-select">水体质量<select aria-label="水体质量" value={water.quality} onChange={e=>setWater(w=>({...w,quality:e.target.value as WaterQuality}))}>{Object.keys(WATER_QUALITY).map(q=><option key={q}>{q}</option>)}</select></label>
         <button className="vct-filter" onClick={()=>setDebugOpen(v=>!v)}>Water Debug Panel <span>{debugOpen?'收起':'展开分层视图 ↗'}</span></button>
       <p className="vct-keys" style={{margin:'6px 0 0'}}>游戏中按 <b>G</b> 可直接开关帧耗时浮层（走路时看哪一阶段最耗时）</p>
-        {WATER_SLIDERS.map(s=><label key={s.key} className="vct-water-row">
+        {WATER_SLIDERS.filter(s=>s.key!=='refractionRefresh').map(s=><label key={s.key} className="vct-water-row">
           <span>{s.label}</span>
           <input type="range" min={s.min} max={s.max} step={s.step} value={water[s.key]} onChange={e=>setWater(w=>({...w,[s.key]:Number(e.target.value)}))}/>
           <output>{water[s.key].toFixed(s.step>=1?0:s.step<.001?4:2)}</output>
@@ -122,9 +114,9 @@ export default function PoolVCT() {
       <pre aria-live="off">{waterStats}</pre>
       {status.timings&&<div className="vct-water-timings" aria-label="逐阶段帧耗时">
         <div><strong>逐阶段耗时 / ms</strong><small>条长相对「单次全屏 pass 预算」</small></div>
-        {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.budget.perStage);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(2)}</b></div>;})}
+        {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.frameBudgetMs);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(2)}</b></div>;})}
         <div><span>阶段合计</span><b>{status.timings.total.toFixed(2)}</b></div>
-        <div><span>探针开销</span><b>{status.timings.probe.toFixed(3)}</b></div>
+
         <div><span>理论帧率上限</span><b>{status.timings.total>0?Math.round(1000/status.timings.total):0} FPS</b></div>
       </div>}
       <p>Low：基础水面；Medium：细波、折射与池底焦散；High / Ultra：加入微法线与池壁焦散。质量档位决定可用层。</p>
@@ -134,7 +126,7 @@ export default function PoolVCT() {
         place you cannot watch the frame rate. G toggles this mid-game. */}
     {debugOpen&&entered&&status.timings&&<aside className="vct-perf-hud" aria-label="实时帧耗时">
       <div className="vct-perf-head"><strong>{status.fps} FPS</strong><span>{status.timings.total.toFixed(1)} ms / 帧</span></div>
-      {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.budget.perStage);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(1)}</b></div>;})}
+      {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.frameBudgetMs);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(1)}</b></div>;})}
       {status.perf&&<PerfMetrics perf={status.perf}/>}
     </aside>}
     <footer className="vct-footer"><div><span>SECTOR {String(status.x).padStart(2,'0')} / {String(status.z).padStart(2,'0')}</span><small>已探索 {status.discovered} 个区域 · {status.rooms} 个驻留区块 · 崩坏 {['完好','渐衰','显著','严重'][status.corrupt]}</small></div><div className="vct-tech">{status.vct?'体素锥追踪 GI':'GI 对照：关闭'} · {status.caustics?'水光焦散':'焦散关闭'}<small>{status.fps} FPS · SEED {seed} · 水面交互 {status.impacts}</small></div><time aria-label="摄像机本地时间">{cameraTime}</time></footer>

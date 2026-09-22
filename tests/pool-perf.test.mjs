@@ -176,3 +176,17 @@ test('a disjoint event drops the bad batch but does not latch the meter off',()=
     else globalThis.WebGL2RenderingContext=OriginalGlobal;
   }
 });
+
+test('unresolved queries are bounded and preserve issuing frame and stage',()=>{
+  const original=globalThis.WebGL2RenderingContext;class FakeContext{}globalThis.WebGL2RenderingContext=FakeContext;
+  try{
+    const {gl,live,resolve}=fakeGL();Object.setPrototypeOf(gl,FakeContext.prototype);
+    const profiler=createGpuProfiler(gl);
+    for(let i=0;i<100;i++){profiler.begin(i,'opaque',i*16);profiler.end();}
+    assert.equal(live.size,8,'an unavailable GPU must not create unbounded queries');
+    resolve();const samples=profiler.takeSamples();assert.equal(samples.length,8);
+    assert.deepEqual(samples[3],{frame:3,stage:'opaque',issuedAt:48,ms:10});
+    assert.equal(profiler.snapshot().last,0,'stage timings must not overwrite whole-frame time');
+    profiler.begin(101,'frame');profiler.dispose();assert.equal(live.size,0,'active queries are freed too');
+  }finally{if(original===undefined)delete globalThis.WebGL2RenderingContext;else globalThis.WebGL2RenderingContext=original;}
+});

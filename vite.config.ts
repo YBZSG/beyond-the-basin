@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import vinext from 'vinext';
 
 export default defineConfig({
+  define: { __POOL_BENCHMARK__: 'false' },
   plugins: [vinext()],
   server: {
     watch: {

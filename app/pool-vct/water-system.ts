@@ -1,3 +1,4 @@
+import type { Measure } from './perf/recording';
 import * as T from 'three';
 import type { Water } from 'three/addons/objects/Water.js';
 import type { Solid, Lamp } from './world';
@@ -242,11 +243,11 @@ export class InteractiveWater {
    * and skipping halves the scene's draw cost. The buffer is always refreshed
    * on the first frame after a resize or a quality change so the stale image
    * can never come from a differently sized target. */
-  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]){
+  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]):'disabled'|'reused'|'rendered'{
     const q=WATER_QUALITY[this.settings.quality];
     const needed=q.refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
     this.optics.sceneReady.value=needed?1:0;
-    if(!needed||!this.waterRef)return;
+    if(!needed||!this.waterRef)return 'disabled';
     renderer.getDrawingBufferSize(this.renderSize);
     const width=Math.max(1,Math.round(this.renderSize.x*q.refraction)),height=Math.max(1,Math.round(this.renderSize.y*q.refraction));
     if(this.opaque.width!==width||this.opaque.height!==height){this.opaque.setSize(width,height);this.refractionAge=Infinity;}
@@ -261,7 +262,7 @@ export class InteractiveWater {
     const moved=this.capturePos.distanceToSquared(camera.position)>REFRACTION_MOVE_EPS
       ||this.captureDir.dot(camera.getWorldDirection(this.captureDirScratch))<REFRACTION_TURN_COS;
     if(every>0&&this.refractionAge<every&&!moved){
-      this.refractionAge++;this.captureSkips++;this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;return true;
+      this.refractionAge++;this.captureSkips++;this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;return 'reused';
     }
     this.captureDir.copy(this.captureDirScratch);
     this.capturePos.copy(camera.position);
@@ -271,7 +272,14 @@ export class InteractiveWater {
     const target=renderer.getRenderTarget(),visible=this.waterRef.visible,visibility=excluded.map(o=>o.visible);
     try{this.waterRef.visible=false;for(const object of excluded)object.visible=false;renderer.setRenderTarget(this.opaque);renderer.clear();renderer.render(scene,camera);}
     finally{this.waterRef.visible=visible;excluded.forEach((o,i)=>{o.visible=visibility[i];});renderer.setRenderTarget(target);}
-    return true;
+    return 'rendered';
+  }
+  bindOpaqueScene(color:T.Texture,depth:T.DepthTexture,camera:T.PerspectiveCamera){
+    const needed=WATER_QUALITY[this.settings.quality].refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
+    this.optics.sceneReady.value=needed?1:0;
+    this.optics.sceneColor.value=color;this.optics.sceneDepth.value=depth;
+    this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
+    this.captureFrames++;this.refractionAge=0;
   }
   get reflectionResolution(){return WATER_QUALITY[this.settings.quality].reflection;}
   get reflectionEnabled(){return this.settings.reflection;}
@@ -474,7 +482,7 @@ export class InteractiveWater {
   debug(){return {...this.swe.debug(),quality:this.settings.quality,detailGrid:this.detail.size,detailActive:this.detail.active,
     causticSize:this.target.width,filterGrid:this.filterTarget.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
     captureFrames:this.captureFrames,captureSkips:this.captureSkips,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
-    refractionTargetSize:[this.opaque.width,this.opaque.height],settings:this.snapshot()};}
+    refractionTargetSize:[(this.optics.sceneColor.value?.image as {width?:number}|undefined)?.width??this.opaque.width,(this.optics.sceneColor.value?.image as {height?:number}|undefined)?.height??this.opaque.height],settings:this.snapshot()};}
   private updateQuality(renderer:T.WebGLRenderer){
     const q=WATER_QUALITY[this.settings.quality];
     if(this.waterRef&&(this.waterRef.geometry as T.PlaneGeometry).parameters.widthSegments!==q.surface){
@@ -523,7 +531,7 @@ export class InteractiveWater {
     this.blocks=blocks;this.swe.setBlocks(blocks);this.detail.terrainChanged();
   }
   setTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.setTerrain(colliders);this.detail.terrainChanged();}
-  render(renderer:T.WebGLRenderer,time:number){
+  render(renderer:T.WebGLRenderer,time:number,measure:Measure=(_stage,fn)=>fn()){
     this.updateQuality(renderer);
     const dt=this.lastTime===null?0:Math.max(0,Math.min(time-this.lastTime,.25));
     this.lastTime=time;
@@ -533,9 +541,9 @@ export class InteractiveWater {
       const x=Math.sin(time*1.71)*12,z=Math.sin(time*2.39)*12;
       if(!this.swe.isLand(x,z))this.detail.impact(x,z,.0003*this.settings.environmentalStrength,.12);
     }
-    const changed=this.swe.frame(renderer,dt);
+    const changed=measure('water-sim',()=>this.swe.frame(renderer,dt));
     this.uniforms.poolSurface.value=this.swe.uniforms.poolSurface.value;
-    this.detail.frame(renderer,dt,this.layers.ripplesOn.value>0);
+    measure('water-sim',()=>this.detail.frame(renderer,dt,this.layers.ripplesOn.value>0));
     this.uniforms.poolDetail.value=this.detail.uniform.value;
     const active=!this.swe.settled||(this.detail.active&&this.layers.ripplesOn.value>0)||(this.layers.microOn.value>0&&this.settings.microStrength>0&&this.settings.causticsSpeed>0);
     if(this.causticUniforms.causticGain.value<=0)return;
@@ -555,6 +563,7 @@ export class InteractiveWater {
     this.causticAge=0;
     // Moving caustics follow every water frame; only settled transport is cached.
     this.lastActive=active;this.lastReady=ready;this.dirty=false;this.causticFrames++;
+    measure('caustics',()=>{
     const previous=renderer.getRenderTarget(),clear=renderer.getClearColor(this.clearColor),alpha=renderer.getClearAlpha();
     renderer.setRenderTarget(this.target);renderer.setClearColor(0,0);renderer.clear();renderer.render(this.scene,this.camera);
     // Separable blur, run at the filter's own resolution. Each pass steps in
@@ -579,6 +588,7 @@ export class InteractiveWater {
     this.filterMaterial.uniforms.stepSize.value.set(0,1.2/fh);
     renderer.setRenderTarget(this.wallTarget);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(previous);renderer.setClearColor(clear,alpha);
+    });
   }
   dispose(){this.swe.dispose();this.detail.dispose();this.opaque.dispose();this.target.dispose();this.wallTarget.dispose();this.filterTarget.dispose();this.filterMaterial.dispose();(this.filterScene.children[0] as T.Mesh).geometry.dispose();this.geometry.dispose();for(const g of this.wallGeometries)g.dispose();for(const m of this.materials)m.dispose();for(const m of this.masks)m.dispose();}
 }
