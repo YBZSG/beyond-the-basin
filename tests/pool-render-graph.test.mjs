@@ -5,6 +5,20 @@ import { PoolScenePass } from '../app/pool-vct/scene-pass.ts';
 import { InteractiveWater } from '../app/pool-vct/water-system.ts';
 import { advanceTask, backgroundBudget } from '../app/pool-vct/perf/task-budget.ts';
 import { LiquidMPM } from '../app/pool-vct/liquid-mpm.ts';
+import { WhitewaterPass } from '../app/pool-vct/whitewater-pass.ts';
+
+test('droplets retain 4x MSAA without sampling their active render target',()=>{
+  const scene=new T.Scene(),camera=new T.PerspectiveCamera(),depth=new T.DepthTexture(64,64);
+  const drops=new T.InstancedMesh(new T.SphereGeometry(),new T.MeshBasicMaterial(),1);scene.add(drops);
+  const pass=new WhitewaterPass(scene,camera,[drops],depth),read=new T.WebGLRenderTarget(64,64),write=read.clone();
+  const draws=[];const renderer={autoClear:true,shadowMap:{autoUpdate:true},target:null,setRenderTarget(t){this.target=t;},clear(){},
+    render(s){if(s===scene){assert.equal(this.target.samples,4);assert.notEqual(this.target.texture,pass.color.value);assert.equal(pass.color.value,read.texture);draws.push(this.target);}}};
+  try{
+    pass.setSize(64,64);pass.render(renderer,write,read);assert.equal(draws.length,1);
+    assert.equal(pass.depthCopy.uniforms.depthImage.value,depth);assert.equal(pass.depthCopy.uniforms.image.value,read.texture);
+    drops.count=0;pass.render(renderer,read,write);assert.equal(draws.length,1,'no droplets means no fullscreen work');
+  }finally{pass.dispose();read.dispose();write.dispose();depth.dispose();drops.geometry.dispose();drops.material.dispose();drops.dispose();}
+});
 
 test('opaque geometry including held props is drawn once and supplies stable refraction depth',()=>{
   const scene=new T.Scene(),camera=new T.PerspectiveCamera();
