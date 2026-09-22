@@ -11,7 +11,7 @@ import { PerformanceRecording } from './perf/recording';
 import { BENCHMARK_BUILD, QA_ENABLED } from './benchmark';
 import type { PerfSnapshot } from './perf/perf-types';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { PoolScenePass } from './scene-pass';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
@@ -643,9 +643,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // Water owns its reflection target in a closure; retain it for full teardown.
   let reflectionTarget:Parameters<typeof renderer.setRenderTarget>[0]=null;
   const renderWater=water.onBeforeRender;
+  let reflectionFrame=-1;
   water.onBeforeRender=function(...args){
     water.material.uniforms.eye.value.copy(camera.position);
-    if(!waterSystem.reflectionEnabled)return;
+    if(!waterSystem.reflectionEnabled||reflectionFrame===recording.frame)return;
+    reflectionFrame=recording.frame;
     const setTarget=renderer.setRenderTarget;
     renderer.setRenderTarget=function(target,...rest){
       const uniforms=water.material.uniforms as Record<string,{value:unknown}>|undefined;
@@ -655,7 +657,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       }
       return setTarget.call(this,target,...rest);
     };
-    try{renderWater.apply(this,args);}finally{renderer.setRenderTarget=setTarget;}
+    try{measure('reflection',()=>renderWater.apply(this,args));}finally{renderer.setRenderTarget=setTarget;}
   };
   scene.add(water);
   // The streamed world is a 5×5 room block; beyond its edge is nothing. Fog
@@ -699,36 +701,13 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     field.finish();
   };
   const composer=new EffectComposer(renderer);
-  // 4× MSAA inside the post pipeline: every visible pixel is rasterised into
-  // these offscreen targets, so this — not the canvas context flag — is what
-  // smooths tile edges, arch silhouettes and prop outlines.
-  composer.renderTarget1.samples=4;
-  composer.renderTarget2.samples=4;
-  // The Tyndall pass reads the scene's own depth so sun shafts stop at walls,
-  // arches and columns instead of shining through them.
-  //
-  // Which buffer holds that depth is NOT editable once and forgotten: the depth
-  // texture lives on one target, while `RenderPass` draws into `readBuffer`,
-  // and `readBuffer` flips every time a pass with `needsSwap` runs ahead of it.
-  // Attaching to `renderTarget1` by name only happens to work while an even
-  // number of swaps precedes the scene render; adding or removing a swapping
-  // pass silently points this at a target nothing renders depth into, and the
-  // shafts then march through solid walls. So the texture is attached to
-  // whichever target the scene will actually land in, and re-attached on resize
-  // (which recreates both targets).
-  const sceneDepth=new T.DepthTexture(composer.renderTarget2.width,composer.renderTarget2.height);
-  const bindSceneDepth=()=>{
-    for(const target of [composer.renderTarget1,composer.renderTarget2]){
-      if(target.depthTexture&&target.depthTexture!==sceneDepth)target.depthTexture.dispose();
-      target.depthTexture=null;
-    }
-    composer.readBuffer.depthTexture=sceneDepth;
-  };
-  bindSceneDepth();
-  composer.addPass(new RenderPass(scene,camera));
-  const liquidPass=new LiquidSurfacePass(scene,camera,liquid.mesh,water.material.uniforms,sceneDepth);
+  const scenePass=new PoolScenePass(scene,camera,(color,depth,view)=>waterSystem.bindOpaqueScene(color,depth,view),
+    ()=>{water.updateMatrixWorld();water.onBeforeRender(renderer,scene,camera,water.geometry,water.material,null!);},measure);
+  const sceneDepth=scenePass.depth;
+  composer.addPass(scenePass);
+  const liquidPass=new LiquidSurfacePass(scene,camera,liquid.mesh,water.material.uniforms,sceneDepth,measure);
   composer.addPass(liquidPass);
-  const whitewaterPass=new WhitewaterPass(scene,camera,[particles.drops]);
+  const whitewaterPass=new WhitewaterPass(scene,camera,[particles.drops],sceneDepth,measure);
   particles.attachTransmission(whitewaterPass.color,whitewaterPass.ready);
   composer.addPass(whitewaterPass);
   // Real volumetric light scattering: a screen-space raymarch through the
@@ -788,7 +767,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
         gl_FragColor=vec4(base+acc*intensity,1.);
       }`
   });composer.addPass(tyndall);
-  let tyndallLevel=0;
+  let tyndallLevel=0,tyndallWarmed=false;
   const bloom=new UnrealBloomPass(new T.Vector2(host.clientWidth,host.clientHeight),.045,.25,1.6);composer.addPass(bloom);composer.addPass(new OutputPass());
   const film=new ShaderPass({
     uniforms:{tDiffuse:{value:null},time:{value:0},filterMode:{value:1}},
@@ -815,6 +794,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
         gl_FragColor=vec4(c*(filterMode==1?border:1.),1.);
       }`
   });composer.addPass(film);
+  for(const pass of [tyndall,bloom,...composer.passes.filter(p=>p instanceof OutputPass),film]){const render=pass.render.bind(pass);pass.render=(...args)=>measure('post',()=>render(...args));}
   const keys=new Set<string>();let active=false,disposed=false,last=performance.now(),frames=0,elapsed=0,fps=0,time=0,vct=true,stepDistance=0,caustics=true,dragging=false,charging=false,chargeStart=0;
   // Crosshair action shared by desktop left-click and the mobile look-area tap:
   // grab a prop if one is aimed at, otherwise strike the water surface.
@@ -893,7 +873,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const lock=()=>{active=document.pointerLockElement===renderer.domElement;keys.clear();if(!active){releaseDrag();charging=false;}};
   const blur=()=>{keys.clear();};
   window.addEventListener('keydown',keydown);window.addEventListener('keyup',keyup);window.addEventListener('mousemove',mouse);window.addEventListener('blur',blur);document.addEventListener('pointerlockchange',lock);
-  const resize=()=>{camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);composer.setSize(host.clientWidth,host.clientHeight);bindSceneDepth();};window.addEventListener('resize',resize);
+  const resize=()=>{camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);composer.setSize(host.clientWidth,host.clientHeight);};window.addEventListener('resize',resize);
   renderer.setAnimationLoop(()=>{
     if(disposed)return;const now=performance.now(),rawFrameMs=now-last,dt=Math.min(rawFrameMs/1000,.2);elapsed+=(now-last)/1000;last=now;time+=dt;frames++;
     // Keep foreground stalls, regardless of duration; visibility marks resumes.
@@ -966,6 +946,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const shafts=shaftsForced||((roomNow.variant===3||roomNow.variant===5||roomNow.variant===6)&&currentCorrupt<2?1:0);
     tyndallLevel+=(shafts-tyndallLevel)*Math.min(1,dt*1.4);
     tyndall.enabled=tyndallLevel>.004;
+    camera.updateMatrixWorld();
     if(tyndall.enabled){
       tyndall.uniforms.intensity.value=.05*tyndallLevel;
       tyndall.uniforms.lightPos.value.set(0,(roomNow.variant===3?14:9.2)+1,0);
@@ -997,24 +978,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     probeTick('particles',()=>particles.update(Math.min(dt,.05)*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z,s)=>waterSystem.dropRipple(x,z,s),(x,z)=>waterSystem.flowAt(x,z),(x,z)=>waterSystem.depthAt(x,z)));
     probeTick('water',()=>waterSystem.render(renderer,time,measure));
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
-    // Shadow update ordering. The FIRST scene render in the frame is the one
-    // that must be allowed to populate the shadow maps; every later one is a
-    // pure consumer and should reuse them.
-    //
-    // The capture runs before the composer, so the capture is the producer and
-    // the composer's RenderPass is the consumer. This ordering is load-bearing:
-    // WebGLShadowMap.render() opens with
-    //   if ( scope.autoUpdate === false && scope.needsUpdate === false ) return;
-    // so if the maps are frozen *before* any scene render happens this frame,
-    // nothing ever populates them and every shadowed surface renders black.
-    // Freeze only after a render has already refreshed the maps.
-    let captured=false;
-    const shadows=renderer.shadowMap.autoUpdate;
-    probeTick('capture',()=>{captured=waterSystem.captureScene(renderer,scene,camera,[particles.aboveWater])==='rendered';});
-    // The capture re-rendered the scene this frame, so the maps are current; the
-    // composer can reuse them instead of repeating 6 lights x 6 cube faces.
-    if(captured)renderer.shadowMap.autoUpdate=false;
-    try{probeTick('composer',()=>{composer.render();});}finally{renderer.shadowMap.autoUpdate=shadows;}
+    probeTick('composer',()=>composer.render());
     if(transition&&transition.occlusionDone){
       if(transition.probeFace<6)captureProbeFace(transition.probeFace++);
       else{finishTransition();transition=null;}
