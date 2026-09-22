@@ -18,7 +18,9 @@ for(const file of await readdir(root)){
 }
 const report={};
 for(const [scenario,records] of groups){
-  const frames=records.flatMap(r=>r.frames),stats=distribution(frames);
+  // Legacy runners measured their first partial interval against performance.now(),
+  // whereas RAF timestamps describe the start of a frame (and can be earlier).
+  const frames=records.flatMap(r=>r.frameIntervals==='complete-raf'?r.frames:r.frames.slice(1)),stats=distribution(frames);
   const trace=records.flatMap(r=>r.performance?.frames??[]),cpu={},gpu={};
   for(const stage of new Set(trace.flatMap(f=>Object.keys(f.cpu)))){
     const values=trace.map(f=>f.cpu[stage]??0);cpu[stage]={allFrames:distribution(values),activeFrames:distribution(values.filter(v=>v>0))};

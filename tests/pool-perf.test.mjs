@@ -198,12 +198,13 @@ test('benchmark report attributes delayed GPU samples to recorded issuing frames
   const {fileURLToPath}=await import('node:url');
   const root=await mkdtemp(join(tmpdir(),'pool-report-'));
   try{
-    const record={scenario:'test',repeat:0,frames:[16],longTasks:[],performance:{
+    const record={scenario:'test',repeat:0,frames:[-8,16],longTasks:[],performance:{
       frames:[{frame:10,cpu:{},cpuMs:4}],gpuSamples:[
         {frame:9,stage:'post',ms:625},{frame:10,stage:'post',ms:2},
         {frame:10,stage:'post',ms:3},{frame:11,stage:'post',ms:700}],events:[]}};
     await writeFile(join(root,'test-1.json'),JSON.stringify(record));
     const report=JSON.parse(execFileSync(process.execPath,[fileURLToPath(new URL('./pool-benchmark-report.mjs',import.meta.url)),root],{encoding:'utf8'}));
+    assert.equal(report.test.frames.samples,1);assert.equal(report.test.frames.mean,16,'the first legacy partial interval is not a full frame');
     assert.equal(report.test.gpu.post.samples,1);
     assert.equal(report.test.gpu.post.mean,5,'sum only work issued in the recording, including repeated passes');
   }finally{await rm(root,{recursive:true,force:true});}

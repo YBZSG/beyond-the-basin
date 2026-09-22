@@ -45,9 +45,9 @@ try {
       const observer=new PerformanceObserver(list=>longTasks.push(...list.getEntries().map(e=>({start:e.startTime,duration:e.duration}))));observer.observe({type:'longtask'});
       const canvas=document.querySelector('canvas'),gl=canvas.getContext('webgl2'),ext=gl.getExtension('WEBGL_debug_renderer_info');
       const machine={gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),userAgent:navigator.userAgent,viewport:[innerWidth,innerHeight],dpr:devicePixelRatio,buffer:[canvas.width,canvas.height]};
-      q.performance?.start();const start=performance.now();let last=start,action=-1;
+      q.performance?.start();const start=performance.now();let last=null,action=-1;
       await new Promise(done=>{function tick(now){
-        const t=(now-start)/1000;if(t>seconds){done();return;}frames.push(now-last);last=now;
+        const t=(now-start)/1000;if(t>seconds){done();return;}if(last!==null)frames.push(now-last);last=now;
         if(scenario==='turn')q.view([2+Math.sin(t*.6)*2,1.5,6+Math.cos(t*.6)*2],[Math.sin(t*.5)*9,.5,-5]);
         if(scenario==='interaction'){
           const code=t%6<3?'KeyW':'KeyS',old=code==='KeyW'?'KeyS':'KeyW';
@@ -62,7 +62,7 @@ try {
       }requestAnimationFrame(tick);});
       observer.disconnect();document.removeEventListener('visibilitychange',visible);const sorted=[...frames].sort((a,b)=>a-b),at=p=>sorted[Math.min(sorted.length-1,Math.floor(sorted.length*p))];
       const mean=frames.reduce((a,b)=>a+b,0)/frames.length;
-      return {machine,frames,longTasks,visibility,stats:{mean,fps:1000/mean,p50:at(.5),p95:at(.95),p99:at(.99),worst:sorted.at(-1),over33:frames.filter(x=>x>33.3).length,over50:frames.filter(x=>x>50).length},performance:q.performance?.stop(),state:q.inspect()};
+      return {machine,frames,longTasks,visibility,frameIntervals:'complete-raf',stats:{mean,fps:1000/mean,p50:at(.5),p95:at(.95),p99:at(.99),worst:sorted.at(-1),over33:frames.filter(x=>x>33.3).length,over50:frames.filter(x=>x>50).length},performance:q.performance?.stop(),state:q.inspect()};
     },{seconds,scenario});
     const name=`${scenario}-${repeat+1}`;
     if(data.visibility.some(e=>e.hidden))errors.push(`${name}: document was hidden during recording`);
