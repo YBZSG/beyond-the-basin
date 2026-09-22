@@ -530,6 +530,8 @@ export class InteractiveWater {
     this.uniforms.blockCount.value=blocks.length;
     this.blocks=blocks;this.swe.setBlocks(blocks);this.detail.terrainChanged();
   }
+  beginTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.beginTerrain(colliders);}
+  stepTerrain(budgetMs:number){const done=this.swe.stepTerrain(budgetMs);if(done)this.detail.terrainChanged();return done;}
   setTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.setTerrain(colliders);this.detail.terrainChanged();}
   render(renderer:T.WebGLRenderer,time:number,measure:Measure=(_stage,fn)=>fn()){
     this.updateQuality(renderer);

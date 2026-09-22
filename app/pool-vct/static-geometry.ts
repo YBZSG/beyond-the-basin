@@ -11,7 +11,8 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
  * the shadow-pass vertex workload for every room). Merging stays legal
  * because mergeGeometries only requires a consistent indexed state within
  * one batch; the cost is at most one extra batch per material. */
-export function batchArchitecture(root:T.Group){
+export function batchArchitecture(root:T.Group){for(const _ of batchArchitectureSteps(root))void _;}
+export function* batchArchitectureSteps(root:T.Group):Generator<void,void>{
   root.updateMatrixWorld(true);
   const inverse=root.matrixWorld.clone().invert();
   const batches=new Map<string,T.Mesh[]>();
@@ -23,7 +24,8 @@ export function batchArchitecture(root:T.Group){
   });
   for(const meshes of batches.values()){
     if(meshes.length<2)continue;
-    const parts=meshes.map(mesh=>{
+    const parts:T.BufferGeometry[]=[];
+    for(const mesh of meshes){
       // Clone as-is: indexed inputs stay indexed so shared vertices survive
       // the merge instead of being fanned out into per-triangle copies.
       const geometry=mesh.geometry.clone();
@@ -33,15 +35,15 @@ export function batchArchitecture(root:T.Group){
       for(const key of Object.keys(geometry.attributes))if(!['position','normal','uv'].includes(key))geometry.deleteAttribute(key);
       if(!geometry.attributes.normal)geometry.computeVertexNormals();
       if(!geometry.attributes.uv)geometry.setAttribute('uv',new T.BufferAttribute(new Float32Array(geometry.attributes.position.count*2),2));
-      return geometry;
-    });
+      parts.push(geometry);yield;
+    }
     const geometry=mergeGeometries(parts);for(const part of parts)part.dispose();
     if(!geometry)continue;
     const source=meshes[0],batch=new T.Mesh(geometry,source.material);
     batch.name='Batched room architecture';batch.userData.batchedArchitecture=true;
     batch.castShadow=source.castShadow;batch.receiveShadow=source.receiveShadow;
     batch.renderOrder=source.renderOrder;batch.layers.mask=source.layers.mask;
-    for(const mesh of meshes)mesh.removeFromParent();root.add(batch);
+    for(const mesh of meshes)mesh.removeFromParent();root.add(batch);yield;
   }
 }
 

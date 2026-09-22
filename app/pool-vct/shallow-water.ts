@@ -1,3 +1,4 @@
+import { advanceTask } from './perf/task-budget.ts';
 import * as T from 'three';
 import type { Collider } from './physics';
 
@@ -188,6 +189,7 @@ export class ShallowWater {
   foamGain=.7;foamDecay=.5;foamDiff=.003;foamSplash=1;
   readonly size:number;readonly cell:number;
   private depthData:Float32Array;
+  private terrainTask:Generator<void,void>|null=null;
   private depthTexture:T.DataTexture;
   private stateA:T.WebGLRenderTarget;
   private stateB:T.WebGLRenderTarget;
@@ -282,17 +284,20 @@ export class ShallowWater {
 
   /** Sample actual pool columns: submerged treads, round pillars and tilted
    * colliders contribute; overhead bridges leave water beneath them open. */
-  setTerrain(colliders:Collider[]){
-    this.depthData.fill(REST_DEPTH);
+  setTerrain(colliders:Collider[]){this.terrainTask=null;for(const _ of this.buildTerrain(colliders))void _;}
+  beginTerrain(colliders:Collider[]){this.terrainTask=this.buildTerrain(colliders);}
+  stepTerrain(budgetMs:number){if(!this.terrainTask)return true;if(advanceTask(this.terrainTask,budgetMs)?.done){this.terrainTask=null;return true;}return false;}
+  private *buildTerrain(colliders:Collider[]):Generator<void,void>{
+    const data=new Float32Array(this.depthData.length);data.fill(REST_DEPTH);yield;
     const inverse=new T.Quaternion(),p=new T.Vector3(),direction=new T.Vector3(),box=new T.Box3();
-    for(const c of colliders){
+    for(const c of colliders){yield;
       box.set(c.half.clone().negate(),c.half.clone());
       if(c.rotation)box.applyMatrix4(new T.Matrix4().makeRotationFromQuaternion(c.rotation));box.translate(c.center);
       if(box.min.y>WATER_LEVEL||box.max.y<=POOL_BOTTOM)continue;
       const ix0=Math.max(0,Math.ceil((box.min.x+SW_HALF)/this.cell-.5)),iz0=Math.max(0,Math.ceil((box.min.z+SW_HALF)/this.cell-.5));
       const ix1=Math.min(this.size-1,Math.floor((box.max.x+SW_HALF)/this.cell-.5)),iz1=Math.min(this.size-1,Math.floor((box.max.z+SW_HALF)/this.cell-.5));
       inverse.copy(c.rotation??new T.Quaternion()).invert();direction.set(0,-1,0).applyQuaternion(inverse);
-      for(let z=iz0;z<=iz1;z++)for(let x=ix0;x<=ix1;x++){
+      for(let z=iz0;z<=iz1;z++){yield;for(let x=ix0;x<=ix1;x++){
         const wx=(x+.5)*this.cell-SW_HALF,wz=(z+.5)*this.cell-SW_HALF;let top=box.max.y;
         if(c.radius!==undefined&&!c.rotation){if((wx-c.center.x)**2+(wz-c.center.z)**2>c.radius**2)continue;}
         else if(c.rotation){
@@ -303,9 +308,11 @@ export class ShallowWater {
           }
           if(near>far||far<0)continue;top=WATER_LEVEL-near;
         }
-        const d=Math.max(0,WATER_LEVEL-top),i=x+z*this.size;this.depthData[i]=Math.min(this.depthData[i],d<.04?0:d);
+        const d=Math.max(0,WATER_LEVEL-top),i=x+z*this.size;data[i]=Math.min(data[i],d<.04?0:d);
       }
     }
+    }
+    this.depthData=data;this.depthTexture.image.data=data;
     this.depthTexture.needsUpdate=true;this.terrainDirty=true;this.generation++;
   }
   /** Standalone room convenience; the game supplies full geometry instead. */
@@ -472,7 +479,7 @@ export class ShallowWater {
     landed:Number.isFinite(this.readbackLanded)?this.readbackLanded:null,pending:!!this.readback,energy:this.energy,peak:this.peak,settled:this.settled,
     asyncLands:this.asyncLands,syncReads:this.syncReads,rejected:this.rejected,pendingSplats:this.pendingSplats.length/4,pendingPushes:this.pendingPushes.length/5};}
   dispose(){
-    this.disposed=true;this.generation++;this.readback=null;
+    this.disposed=true;this.generation++;this.readback=null;this.terrainTask=null;
     for(const t of [this.stateA,this.stateB,this.sourceTarget,this.physTarget])t.dispose();
     for(const m of [this.velocity,this.height,this.copy,this.down,this.sourceMaterial])m.dispose();
     this.quad.dispose();this.sourceGeometry.dispose();this.depthTexture.dispose();

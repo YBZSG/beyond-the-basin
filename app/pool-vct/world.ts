@@ -1,3 +1,4 @@
+import { advanceTask } from './perf/task-budget.ts';
 import * as T from 'three';
 
 export const ROOM = 32;
@@ -47,12 +48,16 @@ export class VoxelField {
     this.uniforms.vct0.value = empty; this.uniforms.vct1.value = empty;
     this.uniforms.vct2.value = empty; this.uniforms.vct3.value = empty;
   }
-  begin(solids: Solid[], lamps: Lamp[], cx: number, cz: number) {
+  private preparing:Generator<void,void>|null=null;
+  private mipTask:Generator<void,void>|null=null;
+  private mipTextures:T.Data3DTexture[]=[];
+  begin(solids:Solid[],lamps:Lamp[],cx:number,cz:number){this.job=null;this.mipTask=null;for(const t of this.mipTextures)t.dispose();this.mipTextures=[];this.preparing=this.prepare(solids,lamps,cx,cz);}
+  private *prepare(solids: Solid[], lamps: Lamp[], cx: number, cz: number):Generator<void,void> {
     const nx = 128, ny = 32, nz = 128, cell = .75;
     const origin = new T.Vector3(cx * ROOM - 48, -1.5, cz * ROOM - 48);
     const occupancy = new Uint8Array(nx * ny * nz);
     const colors = new Float32Array(occupancy.length * 3);
-    for (const b of solids) {
+    for (const b of solids) {yield;
       const lo = b.min.clone().sub(origin).divideScalar(cell).floor();
       const hi = b.max.clone().sub(origin).divideScalar(cell).floor();
       for (let z = Math.max(0, lo.z); z <= Math.min(nz - 1, hi.z); z++)
@@ -60,18 +65,21 @@ export class VoxelField {
           for (let x = Math.max(0, lo.x); x <= Math.min(nx - 1, hi.x); x++) {
             const i = x + nx * (y + ny * z); occupancy[i] = 1;
             colors[i * 3] = b.color.r; colors[i * 3 + 1] = b.color.g; colors[i * 3 + 2] = b.color.b;
+            if((i&2047)===0)yield;
           }
     }
     let occupied = 0;
-    for (let i = 0; i < occupancy.length; i++) if (occupancy[i]) occupied++;
+    for (let i = 0; i < occupancy.length; i++){if(occupancy[i])occupied++;if((i&8191)===0)yield;}
     const cells = new Int32Array(occupied);
-    for (let i = 0, k = 0; i < occupancy.length; i++) if (occupancy[i]) cells[k++] = i;
+    for (let i = 0, k = 0; i < occupancy.length; i++){if(occupancy[i])cells[k++]=i;if((i&8191)===0)yield;}
     // A new job replaces a half-finished one; the previous levels keep rendering until finish().
     this.job = { data: new Uint8Array(occupancy.length * 4), occupancy, colors, cells, cursor: 0, lamps, origin };
   }
   stepRadiance(budgetMs: number): boolean {
+    if(this.preparing){if(advanceTask(this.preparing,Math.max(.001,budgetMs))?.done)this.preparing=null;return false;}
     const job = this.job; if (!job) return true;
     const { data, colors, cells, occupancy, lamps, origin } = job;
+    if(job.cursor>=cells.length){this.mipTask??=this.prepareMips();return !!advanceTask(this.mipTask,Math.max(.001,budgetMs))?.done;}
     const ox = origin.x, oy = origin.y, oz = origin.z;
     // Flat numeric lamp records avoid property chasing in the hot loop.
     const ls: number[] = [];
@@ -107,21 +115,20 @@ export class VoxelField {
       data[i * 4 + 2] = Math.min(255, b * colors[i * 3 + 2] * 255);
       data[i * 4 + 3] = 255;
       cursor++;
-      if ((cursor & 511) === 0 && performance.now() - start > budgetMs) break;
+      if ((cursor & 15) === 0 && performance.now() - start > budgetMs) break;
     }
     job.cursor = cursor;
-    return cursor >= cells.length;
+    return false;
   }
-  finish(): boolean {
-    const job = this.job; if (!job) return true;
-    this.dispose();
+  private *prepareMips():Generator<void,void>{
+    const job=this.job;if(!job)return;
     const nx = 128, ny = 32, nz = 128;
     let data = job.data, w = nx, h = ny, d = nz;
     for (let level = 0; level < 4; level++) {
       const texture = new T.Data3DTexture(data, w, h, d);
       texture.format = T.RGBAFormat; texture.type = T.UnsignedByteType;
       texture.minFilter = texture.magFilter = T.LinearFilter; texture.unpackAlignment = 1; texture.needsUpdate = true;
-      this.textures.push(texture);
+      this.mipTextures.push(texture);yield;
       if (level === 3) break;
       const next = new Uint8Array(w / 2 * h / 2 * d / 2 * 4);
       for (let z = 0; z < d / 2; z++) for (let y = 0; y < h / 2; y++) for (let x = 0; x < w / 2; x++) {
@@ -130,9 +137,17 @@ export class VoxelField {
           for (let dz = 0; dz < 2; dz++) for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) sum += data[((x * 2 + dx) + w * (y * 2 + dy + h * (z * 2 + dz))) * 4 + c];
           next[(x + w / 2 * (y + h / 2 * z)) * 4 + c] = Math.round(sum / 8);
         }
+        if(((x+w/2*(y+h/2*z))&511)===0)yield;
       }
       data = next; w /= 2; h /= 2; d /= 2;
     }
+  }
+  finish():boolean{
+    const job=this.job;if(!job)return true;
+    // stepRadiance completes the mip preparation before reporting ready.
+    if(this.mipTextures.length!==4)return false;
+    for(const texture of this.textures)texture.dispose();
+    this.textures=this.mipTextures;this.mipTextures=[];this.mipTask=null;
     this.uniforms.vct0.value = this.textures[0]; this.uniforms.vct1.value = this.textures[1];
     this.uniforms.vct2.value = this.textures[2]; this.uniforms.vct3.value = this.textures[3];
     this.uniforms.vctOrigin.value.copy(job.origin);
@@ -145,7 +160,7 @@ export class VoxelField {
     while (!this.stepRadiance(1e9));
     this.finish();
   }
-  dispose() { for (const t of this.textures) t.dispose(); this.textures = []; }
+  dispose() { for (const t of [...this.textures,...this.mipTextures]) t.dispose(); this.textures = [];this.mipTextures=[];this.mipTask=null;this.preparing=null;this.job=null; }
   apply(material: T.MeshStandardMaterial, tiles = false, twoTone = false) {
     material.onBeforeCompile = shader => {
       Object.assign(shader.uniforms, this.uniforms);

@@ -1,9 +1,10 @@
+import { advanceTask, backgroundBudget } from './perf/task-budget';
 import * as T from 'three';
 import { Water } from 'three/addons/objects/Water.js';
 import { createBeachBallGeometry, createBeachBallTexture, BEACH_BALL_RADIUS } from './beach-ball';
 import { loadEggBoyTemplate, createEggRig, tickEggRig, type EggBoyTemplate, type EggRig } from './egg-boy';
 import { RoomLights } from './room-lights';
-import { batchArchitecture } from './static-geometry';
+import { batchArchitectureSteps } from './static-geometry';
 import { createFrameProbe, type Stage } from './frame-probe';
 import { createCpuProfiler, readRendererMetrics } from './perf/cpu-profiler';
 import { createGpuProfiler } from './perf/webgl-gpu-profiler';
@@ -42,8 +43,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const probeTick=(stage:Stage,fn:()=>void)=>{if(!profiler.enabled){measure(stage,fn);return;}const t=profiler.begin(stage);try{measure(stage,fn);}finally{profiler.end(stage,t);}};
   // Whole-frame measurement: frame-interval percentiles (jank, not mean), the
   // draw-call/triangle totals the renderer actually submitted, and - where the
-  // browser exposes it - real GPU time. All of it is preallocated, so it can
-  // stay on in normal play without becoming part of the problem it measures.
+  // browser exposes it - asynchronous GPU time. Ordinary play samples one
+  // GPU frame per second; only explicit benchmark recordings retain all frames.
   const cpuProfiler=createCpuProfiler();
   const renderer = new T.WebGLRenderer({ antialias: !touch, powerPreference: 'high-performance' });
   renderer.setPixelRatio(BENCHMARK_BUILD?1:Math.min(devicePixelRatio, touch?1.25:1.5));
@@ -173,7 +174,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       if(blocked(new T.Vector3(px,1,pz),c.solids))continue;
       prop(c,px,pz,Math.random()*Math.PI*2,'eggboy');batchFloaters(c);return;}};
   loadEggBoyTemplate(Math.min(8,renderer.capabilities.getMaxAnisotropy())).then(t=>{
-    eggBoy=t;
+    if(disposed)return;eggBoy=t;
     const seen=new Set<T.Material>();
     for(const p of t.parts)if(!seen.has(p.material)){seen.add(p.material);field.apply(p.material);p.material.shadowSide=T.FrontSide;materials.push(p.material);if(p.material.map)textures.push(p.material.map);}
     eggBoyWelcome();
@@ -196,7 +197,13 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // blocking one frame: BVH rebuild -> radiance injection slices -> caustic occlusion
   // slices -> one cube probe face per frame -> PMREM swap. Stale GI/probe/reflections keep
   // rendering until each swaps.
-  let transition:null|{bvhDone:boolean;radianceDone:boolean;occlusionDone:boolean;probeFace:number}=null;
+  let worldVersion=0;
+  let transition:null|{version:number;started:number;bvhStarted:boolean;bvhDone:boolean;radianceDone:boolean;occlusionDone:boolean;terrainDone:boolean;giDone:boolean;probeFace:number}=null;
+  let chunkJob:{x:number;z:number;started:number;task:Generator<void,Chunk[]>;teleport:boolean}|null=null;
+  let frameBuilding=false;
+  const stagedChunks=new Set<Chunk>();
+  let prepared:{x:number;z:number;chunks:Chunk[]}|null=null;
+  const discardStaged=()=>{for(const c of stagedChunks){c.group.traverse(o=>{if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.Mesh&&o.userData.batchedArchitecture)o.geometry.dispose();});for(const l of c.lights)l.dispose();}stagedChunks.clear();prepared=null;chunkJob=null;};
   const signMaterials=new Map<string,T.MeshStandardMaterial>();
   const signGeometry=new T.PlaneGeometry(.72,.9);
   function box(chunk: Chunk, x: number, y: number, z: number, w: number, h: number, d: number, mat = tile, solid = true) {
@@ -286,12 +293,12 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // Shared geometry/materials keep the floaters at one draw call per material
   // per room. Runs after a room spawns its props, and again when a late模板
   // (蛋小黄 glb) has to join an already-built room.
-  function batchFloaters(c: Chunk) {
+  function batchFloaters(c: Chunk,register=true) {
     const batches=new Map<string,{geometry:T.BufferGeometry;mat:T.Material;entries:{body:PropBody;local:T.Matrix4}[]}>();
     for(const g of c.floats){
       const kind=g.userData.kind as PropKind,spec=PROP_SPEC[kind];
       const body:PropBody={position:g.position.clone(),velocity:new T.Vector3(),rotation:g.quaternion.clone(),radius:spec.radius,floatBias:spec.floatBias,name:spec.name,kind,visual:g,parts:[],promoted:false,splashCooldown:0,hitCooldown:0,buoyK:spec.buoyK,buoyZeta:spec.buoyZeta,buoyMax:spec.buoyMax,flowRate:spec.flowRate,splashBoost:spec.splashBoost};
-      c.bodies.push(body);props.add(body);
+      c.bodies.push(body);if(register)props.add(body);
       const eggRig=g.userData.eggRig as EggRig|undefined;
       if(eggRig){
         // Animated props stay a real Group: instancing would freeze the rig,
@@ -308,8 +315,13 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     c.floats=[];
     for(const {geometry,mat,entries} of batches.values()){const mesh=new T.InstancedMesh(geometry,mat,entries.length);entries.forEach(({body,local},index)=>{body.parts.push({mesh,index,local});mesh.setMatrixAt(index,new T.Matrix4().compose(body.position,body.rotation,new T.Vector3(1,1,1)).multiply(local));});mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;c.group.add(mesh);}
   }
-  function generate(rx: number, rz: number): Chunk {
+  function generate(rx:number,rz:number):Chunk{
+    const task=buildChunk(rx,rz);let result=task.next();while(!result.done)result=task.next();
+    const c=result.value;stagedChunks.delete(c);scene.add(c.group);for(const body of c.bodies)props.add(body);return c;
+  }
+  function* buildChunk(rx:number,rz:number):Generator<void,Chunk>{
     const c:Chunk={group:new T.Group(),solids:[],lamps:[],floats:[],lights:[],bodies:[],colliders:[],ladders:[],flickers:[]};
+    stagedChunks.add(c);c.group.userData.roomKey=`${rx},${rz}`;
     const x=(rx-originX)*ROOM,z=(rz-originZ)*ROOM,rng=randomFor(rx,rz,seed),layout=roomLayout(rx,rz,seed);
     // Structures reach the flooded floor (top at y=-0.72) and are buried 6cm
     // so nothing reads as hovering above the pool bottom.
@@ -335,6 +347,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
         box(c,x,ceiling+1.08,z+offset,12,.16,.12,lampHousing);
       }
     }else box(c,x,ceiling,z,32,.6,32,pale);
+    yield;
     // Four aligned portals; split walls are owned by each room's north and west edges.
     for(const side of [-1,1]) {
       box(c,x+side*10,(ceiling+GROUND)/2,z-16,12,ceiling-GROUND,.6);
@@ -346,6 +359,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       const adjacentTop=neighbour===3?14:neighbour===7?13:(neighbour===4||neighbour===6)?5.8:9.2;
       if(ceiling>adjacentTop)box(c,x+(axis==='x'?16:0),(ceiling+adjacentTop)/2,z+(axis==='z'?16:0),axis==='x'?.6:32,ceiling-adjacentTop,axis==='x'?32:.6,pale);
     }
+    yield;
     if(layout.variant<3){
     for(const dx of [-10,-3,4,11]) {
       box(c,x+dx,(6+GROUND)/2,z-9,1,6-GROUND,1);
@@ -371,10 +385,12 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       }
       rail(c,x-15.6,.94,z-8,5.6);
     }
+    yield;
     // Lifeguard chair with slanted legs, seat and backrest.
     for(const dx of [-.65,.65])for(const dz of [-.6,.6])rod(c,[x+12+dx,GROUND,z-7+dz],[x+12+dx*.65,2.8,z-7+dz*.65],.045);
     box(c,x+12,2.45,z-7,1,.13,.9,pale);box(c,x+12,2.95,z-7.4,1,.9,.1,pale);ladder(c,x+12,z-6.6,2.2);
     for(const dz of [-3,5]) {box(c,x-13,.72,z+dz,2.4,.12,.65,pale);for(const dx of [-.8,.8])rod(c,[x-13+dx,GROUND,z+dz],[x-13+dx,.7,z+dz]);}
+    yield;
     // Round columns have cylindrical colliders, not oversized square blockers.
     for(const dz of [1,9]){
       const m=new T.Mesh(cylinder,tile);m.position.set(x-8,(8.9+GROUND)/2,z+dz);m.scale.set(.65,8.9-GROUND,.65);
@@ -385,6 +401,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       c.solids.push({min:new T.Vector3(x-8-.65,GROUND,z+dz-.65),max:new T.Vector3(x-8+.65,8.9,z+dz+.65),color:tile.color,radius:.65});
       c.colliders.push({center:m.position.clone(),half:new T.Vector3(.65,(8.9-GROUND)/2,.65),radius:.65});
     }
+    yield;
     // A walkable chute, side rails and a ladder/platform at its high end.
     const slideStart=new T.Vector3(x+10,3.3,z+2),slideEnd=new T.Vector3(x+10,GROUND,z+8);
     const delta=slideEnd.clone().sub(slideStart),slope=Math.atan2(slideStart.y-slideEnd.y,slideEnd.z-slideStart.z);
@@ -392,6 +409,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     c.colliders.push({center:chute.position.clone(),half:new T.Vector3(.825,.08,delta.length()/2),rotation:chute.quaternion.clone(),slide:true});
     for(const side of [-1,1])rod(c,[slideStart.x+side*.86,slideStart.y+.3,slideStart.z],[slideEnd.x+side*.86,slideEnd.y+.3,slideEnd.z],.075);
     box(c,x+10,3.22,z+1.1,2,.16,1.8,pale);ladder(c,x+10,z-.15,3.3,z+.65);
+    yield;
     // A chrome sphere on a grounded pedestal, and a freestanding door leading nowhere.
     box(c,x-5,.21,z+7,1.5,1.98,1.5,pale);
     const odd=new T.Mesh(sphere,chrome);odd.position.set(x-5,1.9,z+7);odd.scale.setScalar(.8);odd.castShadow=odd.receiveShadow=true;c.group.add(odd);
@@ -482,6 +500,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       ladder(c,x+12,z-9.8,5.7,z-11.4);
       tower(c,x-10,z+2);sign(c,x+8,3,z-15.65,decayText(rng,'午后\n无人',corrupt));
     }
+    yield;
     // Lighting decays with the room. The fixtures stay mounted forever; deep
     // out the tubes die one by one (dark glass, no PointLight) and the
     // survivors flicker like failing ballasts. At least one tube per room
@@ -525,6 +544,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
         fixture.castShadow=false;fixture.userData.luminaire=true;
       }
     }
+    yield;
     // Deep-corruption rooms go quiet: half the floaters are simply gone.
     const duckCount=corrupt>=3?Math.ceil(layout.ducks/2):layout.ducks;
     // 海滩球是稀客：多数房间漂着一个，偶尔成对，剩下的没有。
@@ -537,27 +557,58 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       const empties:[number,number][]=[];
       for(let j=0;j<WFC_SIZE;j++)for(let i=0;i<WFC_SIZE;i++)if(wfcGrid[j][i]==='E')empties.push([i,j]);
       const pick=()=>{const [ci,cj]=empties[Math.floor(rng()*empties.length)];return [x+(ci-(WFC_SIZE-1)/2)*WFC_CELL+(rng()-.5)*1.1,z+(cj-(WFC_SIZE-1)/2)*WFC_CELL+(rng()-.5)*1.1] as [number,number];};
-      for(let i=0;i<duckCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,i%3!==0?'egg':'duck');}
-      for(let i=0;i<ballCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'ball');}
-      for(let i=0;i<eggboyCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'eggboy');}
+      for(let i=0;i<duckCount;i++){yield;const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,i%3!==0?'egg':'duck');}
+      for(let i=0;i<ballCount;i++){yield;const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'ball');}
+      for(let i=0;i<eggboyCount;i++){yield;const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'eggboy');}
     }else{
       const pick=()=>[x+(rng()-.5)*28,z+(rng()-.5)*27] as [number,number];
-      for(let i=0;i<duckCount*2;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,i%3!==0?'egg':'duck');}
-      for(let i=0;i<ballCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'ball');}
-      for(let i=0;i<eggboyCount;i++){const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'eggboy');}
+      for(let i=0;i<duckCount*2;i++){yield;const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,i%3!==0?'egg':'duck');}
+      for(let i=0;i<ballCount;i++){yield;const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'ball');}
+      for(let i=0;i<eggboyCount;i++){yield;const [px,pz]=pick();spawn(px,pz,rng()*Math.PI*2,'eggboy');}
     }
-    batchFloaters(c);
+    yield;batchFloaters(c,false);yield;
     if(bright)c.group.traverse(o=>{if(o instanceof T.Mesh){if(o.material===tile)o.material=daylightTile;else if(o.material===pale)o.material=daylightPale;
       // Decayed wings keep their skylight geometry, but the glass has gone dark.
       if(corrupt>=2&&o.material===skylightGlow)o.material=skylightDim;}});
     // Non-daylit deep rooms swap the clean ceramic for a damp, mossy set.
     else if(corrupt>=2)c.group.traverse(o=>{if(o instanceof T.Mesh){if(o.material===tile)o.material=grimTile;else if(o.material===pale)o.material=grimPale;}});
-    batchArchitecture(c.group);
-    scene.add(c.group);return c;
+    yield* batchArchitectureSteps(c.group);
+    return c;
   }
   function stream() {
     const nx=originX+Math.floor((camera.position.x+16)/ROOM),nz=originZ+Math.floor((camera.position.z+16)/ROOM);
-    if(nx===cx&&nz===cz)return;
+    if(Number.isFinite(cx)&&!frameBuilding)return;
+    // Prepare the next outer ring while the existing 5x5 set still covers movement.
+    const prefetch=nx===cx&&nz===cz;
+    const tx=prefetch?cx+(camera.position.x>10?1:camera.position.x< -10?-1:0):nx;
+    const tz=prefetch?cz+(camera.position.z>10?1:camera.position.z< -10?-1:0):nz;
+    if(prefetch&&tx===cx&&tz===cz){if(chunkJob||prepared)discardStaged();return;}
+    if(Number.isFinite(cx)){
+      if(prepared&&(prepared.x!==tx||prepared.z!==tz))discardStaged();
+      if(!prepared&&(!chunkJob||chunkJob.x!==tx||chunkJob.z!==tz)){
+        discardStaged();
+        const task=(function*():Generator<void,Chunk[]>{
+          const built:Chunk[]=[];
+          for(let x=tx-2;x<=tx+2;x++)for(let z=tz-2;z<=tz+2;z++){
+            if(!chunks.has(`${x},${z}`))built.push(yield* buildChunk(x,z));
+            yield;
+          }
+          return built;
+        })();
+        chunkJob={x:tx,z:tz,started:performance.now(),task,teleport:Math.max(Math.abs(tx-cx),Math.abs(tz-cz))>1};
+      }
+      if(!prepared&&chunkJob){
+        const slack=backgroundBudget(recording.cpuMs);
+        const slice=slack||(!prefetch&&recording.frame%8===0?.25:0);
+        const result=advanceTask(chunkJob.task,slice);
+        if(!result?.done)return;
+        prepared={x:tx,z:tz,chunks:result.value};
+        recording.event('rooms-ready',{elapsedMs:performance.now()-chunkJob.started,rooms:result.value.length,prefetch});chunkJob=null;
+      }
+      if(prefetch)return;
+      for(const c of prepared!.chunks){stagedChunks.delete(c);chunks.set(c.group.userData.roomKey,c);scene.add(c.group);for(const body of c.bodies)props.add(body);}
+      prepared=null;
+    }
     cx=nx;cz=nz;visited.add(`${cx},${cz}`);
     for(const [key,c] of chunks) {
       const [x,z]=key.split(',').map(Number);
@@ -584,17 +635,17 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     allLadders=[...chunks.values()].flatMap(c=>c.ladders);
     const innerLamps=[...chunks.values()].flatMap(c=>c.far?[]:c.lamps);
     const innerLights=[...chunks.entries()].filter(([key,c])=>key!==`${cx},${cz}`&&!c.far).flatMap(([,c])=>c.lights);
-    roomLights.select(chunks.get(`${cx},${cz}`)!.lights,innerLights);
+    roomLights.invalidate();roomLights.select(chunks.get(`${cx},${cz}`)!.lights,innerLights);
     field.begin(allSolids,innerLamps,0,0);
     waterSystem.setLamps(chunks.get(`${cx},${cz}`)!.lamps);
     waterSystem.beginOcclusion(allSolids);
     // Share all loaded collision geometry, including submerged steps and round
     // columns. The water solver derives depth and closed faces from it.
-    waterSystem.setTerrain(allColliders);
+    waterSystem.beginTerrain(allColliders);
     // The old BVH no longer matches the rebased world; reflections drop to the
     // faint probe until the deferred rebuild swaps in.
     rt.invalidate();
-    transition={bvhDone:false,radianceDone:false,occlusionDone:false,probeFace:0};
+    transition={version:++worldVersion,started:performance.now(),bvhStarted:false,bvhDone:false,radianceDone:false,occlusionDone:false,terrainDone:false,giDone:false,probeFace:0};
     // The current room's decay drives the global mood: thicker fog, darker
     // backdrop and a slightly detuned ambience bed.
     currentCorrupt=roomLayout(cx,cz,seed).corrupt;
@@ -698,7 +749,6 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const finishTransition=()=>{
     const next=pmrem.fromCubemap(probeTarget.texture);
     environment?.dispose();environment=next;scene.environment=environment.texture;
-    field.finish();
   };
   const composer=new EffectComposer(renderer);
   const scenePass=new PoolScenePass(scene,camera,(color,depth,view)=>waterSystem.bindOpaqueScene(color,depth,view),
@@ -913,15 +963,22 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       if(keys.has('ArrowLeft'))camera.rotation.y+=dt;if(keys.has('ArrowRight'))camera.rotation.y-=dt;
     }
     if(touch&&(touchLook.x||touchLook.y)){camera.rotation.y-=touchLook.x;camera.rotation.x=T.MathUtils.clamp(camera.rotation.x-touchLook.y,-1.3,1.3);touchLook.x=touchLook.y=0;}
-    stream();water.material.uniforms.time.value=time*.38;
-    // Budgeted steps for a pending room transition, ahead of this frame's render.
-    // The slice scales with the measured frame time (clamped) so slow machines finish
-    // the transition in bounded wall-clock time while fast ones barely notice it.
-    if(transition){
-      const budget=T.MathUtils.clamp(dt*500,10,30);
-      if(!transition.bvhDone)transition.bvhDone=rt.rebuild(collectRtItems(),[...chunks.values()].flatMap(c=>c.far?[]:c.lamps));
-      else if(!transition.radianceDone)transition.radianceDone=field.stepRadiance(budget);
-      else if(!transition.occlusionDone)transition.occlusionDone=waterSystem.stepOcclusion(budget*.5);
+    frameBuilding=true;try{measure('stream',stream);}finally{frameBuilding=false;}
+    if(chunkJob?.teleport){recording.end(interval,{transition:'preparing-teleport'});return;}
+    water.material.uniforms.time.value=time*.38;
+    // A fixed ceiling trades longer convergence on slow machines for smaller hitches.
+    if(transition&&!transition.giDone&&!chunkJob){
+      const slack=backgroundBudget(recording.cpuMs);
+      const available=Math.max(0,(slack||(recording.frame%8===0?.25:0))-(recording.cpu.stream??0));
+      if(available>0)measure('transition',()=>{
+        if(!transition)return;
+        if(!transition.bvhStarted){measure('bvh-snapshot',()=>rt.beginRebuild(collectRtItems(),[...chunks.values()].flatMap(c=>c.far?[]:c.lamps)));transition.bvhStarted=true;}
+        else if(!transition.terrainDone)transition.terrainDone=measure('terrain',()=>waterSystem.stepTerrain(available));
+        else if(!transition.bvhDone)transition.bvhDone=measure('bvh-upload',()=>rt.stepRebuild(available,renderer));
+        else if(!transition.radianceDone)transition.radianceDone=measure('voxel-radiance',()=>field.stepRadiance(available));
+        else if(!transition.occlusionDone)transition.occlusionDone=measure('caustic-occlusion',()=>waterSystem.stepOcclusion(available));
+        else if(!transition.giDone)transition.giDone=measure('voxel-commit',()=>field.finish());
+      });
     }
     audio.setActive(active&&!document.hidden);
     // Surviving tubes in decayed rooms flicker like failing ballasts: a fast
@@ -945,9 +1002,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const roomNow=roomLayout(cx,cz,seed);
     const shafts=shaftsForced||((roomNow.variant===3||roomNow.variant===5||roomNow.variant===6)&&currentCorrupt<2?1:0);
     tyndallLevel+=(shafts-tyndallLevel)*Math.min(1,dt*1.4);
-    tyndall.enabled=tyndallLevel>.004;
+    // Compile the zero-intensity pass during startup, before the first skylit room.
+    tyndall.enabled=!tyndallWarmed||tyndallLevel>.004;
     camera.updateMatrixWorld();
     if(tyndall.enabled){
+      tyndallWarmed=true;
       tyndall.uniforms.intensity.value=.05*tyndallLevel;
       tyndall.uniforms.lightPos.value.set(0,(roomNow.variant===3?14:9.2)+1,0);
       tyndall.uniforms.camPos.value.copy(camera.position);
@@ -979,9 +1038,10 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     probeTick('water',()=>waterSystem.render(renderer,time,measure));
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
     probeTick('composer',()=>composer.render());
-    if(transition&&transition.occlusionDone){
-      if(transition.probeFace<6)captureProbeFace(transition.probeFace++);
-      else{finishTransition();transition=null;}
+    if(transition&&transition.giDone&&!(recording.cpu.transition>0)){
+      // Probe rendering and PMREM never share a frame with a CPU upload/commit.
+      if(transition.probeFace<6)measure('probe',()=>captureProbeFace(transition!.probeFace++));
+      else{measure('pmrem',finishTransition);recording.event('transition-complete',{version:transition.version,elapsedMs:performance.now()-transition.started});transition=null;}
     }
     recording.end(interval,{render:readRendererMetrics(renderer),shadowSlots:roomLights.shadowSlotsUpdated,transfer:{...liquid.transfer,shallowReadbackBytes:waterSystem.swe.readbackBytes}});
     const charge=chargeNow();
@@ -1008,8 +1068,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // Local automated physics/visual acceptance only; never exposed by production UI.
     qa:QA_ENABLED?{
       performance:{start:()=>recording.startRecording(),stop:()=>recording.stopRecording(),gpu:(on:boolean)=>{recording.enabled=on;},snapshot:()=>recording.stages},
-
-      inspect:()=>({room:[cx,cz],variant:roomLayout(cx,cz,seed).variant,programs:renderer.info.programs?.length,waterVisible:water.visible,vertical:player.vertical,grounded:player.grounded,impacts:waterSystem.interactionCount,audio:audio.inspect(),position:camera.position.toArray(),time,held:props.held?.name??'',charge:chargeNow(),grabs:props.grabs,throws:props.throws,climbing:!!player.climbing,slides:player.slides,filter:film.uniforms.filterMode.value,environment:!!scene.environment,transition:!!transition,vctReady:field.uniforms.vctReady.value>0,blocks:waterSystem.uniforms.blockCount.value,props:props.bodies.filter(b=>b.position.distanceTo(camera.position)<15).map(b=>({name:b.name,kind:b.kind,position:b.position.toArray(),velocity:b.velocity.toArray(),promoted:b.promoted})),ladders:allLadders.filter(l=>l.base.distanceTo(camera.position)<30).map(l=>({base:l.base.toArray(),top:l.top.toArray(),exit:l.exit.toArray()}))}),
+      inspect:()=>({room:[cx,cz],variant:roomLayout(cx,cz,seed).variant,programs:renderer.info.programs?.length,waterVisible:water.visible,vertical:player.vertical,grounded:player.grounded,impacts:waterSystem.interactionCount,audio:audio.inspect(),position:camera.position.toArray(),time,held:props.held?.name??'',charge:chargeNow(),grabs:props.grabs,throws:props.throws,climbing:!!player.climbing,slides:player.slides,filter:film.uniforms.filterMode.value,environment:!!scene.environment,transition:!!transition||!!chunkJob,workerError:rt.error,vctReady:field.uniforms.vctReady.value>0,blocks:waterSystem.uniforms.blockCount.value,props:props.bodies.filter(b=>b.position.distanceTo(camera.position)<15).map(b=>({name:b.name,kind:b.kind,position:b.position.toArray(),velocity:b.velocity.toArray(),promoted:b.promoted})),ladders:allLadders.filter(l=>l.base.distanceTo(camera.position)<30).map(l=>({base:l.base.toArray(),top:l.top.toArray(),exit:l.exit.toArray()}))}),
       view:(position:number[],target:number[])=>{player.climbing=null;player.vertical=0;const ox=originX,oz=originZ;camera.position.fromArray(position);stream();camera.lookAt(new T.Vector3(target[0]-(originX-ox)*ROOM,target[1],target[2]-(originZ-oz)*ROOM));},
       simulate:(enabled:boolean)=>{active=enabled;keys.clear();},
       forceShafts:(on:boolean)=>{shaftsForced=on?1:0;},
@@ -1030,6 +1089,6 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       grab:(index=0)=>{const near=props.bodies.filter(b=>b.position.distanceTo(camera.position)<15);if(near[index])props.grab(near[index]);},
       throw:(speed=11)=>{if(props.held)props.release(camera,speed);},
     }:undefined,
-    dispose:()=>{disposed=true;audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();liquid.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();gpuProfiler.dispose();document.removeEventListener('visibilitychange',visibility);renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
+    dispose:()=>{disposed=true;discardStaged();audio.dispose();renderer.setAnimationLoop(null);if(document.pointerLockElement===renderer.domElement)document.exitPointerLock();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('mousemove',mouse);window.removeEventListener('blur',blur);document.removeEventListener('pointerlockchange',lock);window.removeEventListener('resize',resize);environment?.dispose();probeTarget.dispose();pmrem.dispose();rt.dispose();rtProxy.dispose();window.removeEventListener('mouseup',releaseDrag);window.removeEventListener('mouseup',releaseThrow);window.removeEventListener('wheel',wheel);window.removeEventListener('contextmenu',noContext);window.removeEventListener('keydown',interactKey);waterSystem.dispose();particles.dispose();liquid.dispose();window.removeEventListener('mousedown',strike);window.removeEventListener('keydown',causticKey);field.dispose();scene.traverse(o=>{if(o instanceof T.Mesh)o.geometry.dispose();if(o instanceof T.InstancedMesh)o.dispose();if(o instanceof T.PointLight)o.dispose();});for(const m of materials)m.dispose();for(const t of textures)t.dispose();ballGeometry.dispose();roomLights.dispose();reflectionTarget?.dispose();water.material.dispose();for(const p of composer.passes)p.dispose();composer.dispose();gpuProfiler.dispose();document.removeEventListener('visibilitychange',visibility);renderer.dispose();renderer.domElement.remove();for(const fn of touchCleanups)fn();touchUI?.remove();},
   };
 }
