@@ -75,6 +75,28 @@ test('timed-out async reads have separate buffers and synchronous fallback keeps
   old.set(encoded(-.2,-.2,0));late();await Promise.resolve();sw.frame(r,SW_STEP);
   assert.ok(sw.heightAt(0,0)>.11,'late data must not alias the current buffer');sw.dispose();
 });
+
+test('readback pool holds a timed-out buffer until its asynchronous write completes',async()=>{
+  const sw=new ShallowWater(),r=renderer();let finish,held;
+  r.readRenderTargetPixelsAsync=(_t,_x,_y,_w,_h,buffer)=>{held=buffer;return new Promise(resolve=>{finish=resolve;});};
+  try{
+    sw.requestReadback(r);sw.clock+=2;sw.flushReadback();
+    assert.equal(sw.readbackPool.includes(held),false);assert.equal(sw.retiredReads.size,1);
+    finish();await Promise.resolve();await Promise.resolve();await Promise.resolve();
+    assert.equal(sw.retiredReads.size,0);assert.equal(sw.readbackPool.includes(held),true);
+  }finally{sw.dispose();}
+});
+
+test('a replaced terrain task keeps the live depth intact until the new world is complete',()=>{
+  const sw=new ShallowWater(),original=sw.depthTexture.image.data;
+  try{
+    sw.beginTerrain([{center:new T.Vector3(0,0,0),half:new T.Vector3(20,1,20)}]);
+    sw.terrainTask.next();sw.terrainTask.next();
+    assert.equal(sw.depthTexture.image.data,original);
+    sw.beginTerrain([]);while(!sw.stepTerrain(.1)){}
+    assert.notEqual(sw.depthTexture.image.data,original);assert.equal(sw.isLand(0,0),false,'obsolete terrain cannot replace the new empty pool');
+  }finally{sw.dispose();}
+});
 test('rebase preserves overlapping buoyancy and flow while clearing newly exposed regions',()=>{
   const sw=new ShallowWater();sw.setTerrain([]);sw.parseReadback(encoded(.1,.2,0));
   sw.impact(10,2,.1);sw.rebase(32,0);sw.rebase(0,-32);

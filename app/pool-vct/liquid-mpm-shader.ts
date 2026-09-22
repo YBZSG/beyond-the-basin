@@ -11,6 +11,10 @@ struct Sample { x:vec4f, v:vec4f, a:vec4f, b:vec4f, c:vec4f }
 @group(0) @binding(2) var<uniform> p:Params;
 @group(0) @binding(3) var<storage,read_write> samples:array<Sample>;
 @group(0) @binding(4) var<storage,read_write> links:array<i32>;
+@group(0) @binding(5) var<storage,read> deletions:array<u32>;
+@compute @workgroup_size(64) fn deleteParticles(@builtin(global_invocation_id) id:vec3u){
+ if(id.x>=deletions[0]){return;}let index=deletions[id.x+1];particles[index].v.w=0.;
+}
 const NX:i32=80; const NY:i32=80; const NZ:i32=80;
 // Sufficient fixed-point precision is essential: truncating tiny node masses
 // at 1/4096 spuriously accelerates sparse liquid during repeated transfers.

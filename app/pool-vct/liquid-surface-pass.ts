@@ -39,7 +39,9 @@ export class LiquidSurfacePass extends Pass {
   private scene:T.Scene;
   private mesh:T.InstancedMesh;
   private measure:Measure;
-  /** Scene depth, owned by the composer; used for the liquid's occlusion test. */
+  private corner=new T.Vector3();
+  private clip=new T.Vector4();
+  /** Stable opaque depth, independent of composer buffer swaps. */
   private sceneDepth:T.DepthTexture|null;
   constructor(scene:T.Scene,camera:T.PerspectiveCamera,mesh:T.InstancedMesh,waterUniforms:Record<string,T.IUniform>,sceneDepth:T.DepthTexture|null=null,measure:Measure=(_stage,fn)=>fn()){
     super();this.measure=measure;this.needsSwap=true;this.scene=scene;this.camera=camera;this.mesh=mesh;this.sceneDepth=sceneDepth;this.fluidScene.add(mesh);
@@ -76,7 +78,7 @@ export class LiquidSurfacePass extends Pass {
           // depend on which buffer the composer happens to be using.
           // Negative p.z is the positive view-space distance to the liquid
           // point, matching how WATER_FRAGMENT compares sceneDepth. A depth of
-          // 0 is the far plane (nothing drawn) and must never occlude.
+          // 1 is the far plane; the legacy zero sentinel is also ignored.
           float sceneZ=texture2D(sceneDepth,vUv).r;
           if(sceneZ>0.&&-perspectiveDepthToViewZ(sceneZ,cameraNear,cameraFar)<-p.z){gl_FragColor=texture2D(background,vUv);return;}
           float dl=texture2D(fluidDepth,vUv-vec2(texel.x,0)).r,dr=texture2D(fluidDepth,vUv+vec2(texel.x,0)).r;
@@ -115,8 +117,17 @@ export class LiquidSurfacePass extends Pass {
       return;
     }
     const auto=renderer.autoClear,shadows=renderer.shadowMap.autoUpdate,target=renderer.getRenderTarget();
+    const region=this.projectRegion();
+    const clearColor=renderer.getClearColor?.(new T.Color()),clearAlpha=renderer.getClearAlpha?.();
     try{
       renderer.shadowMap.autoUpdate=false;
+      if(region&&renderer.setClearColor){
+        renderer.setClearColor(new T.Color(10000,0,0),1);
+        for(const rt of [this.depth,this.filterA,this.filterB]){
+          rt.scissorTest=false;renderer.setRenderTarget(rt);renderer.clear();
+          rt.scissor.copy(region);rt.scissorTest=true;
+        }
+      }
       renderer.autoClear=true;renderer.setRenderTarget(this.depth);this.measure('liquid-depth',()=>renderer.render(this.fluidScene,this.camera));
       renderer.autoClear=false;this.quad.material=this.filter;
       this.filter.uniforms.projectionScale.value=this.depth.height*this.camera.projectionMatrix.elements[5]*.5;
@@ -145,7 +156,23 @@ export class LiquidSurfacePass extends Pass {
       this.shade.uniforms.fluidDepth.value=source;this.shade.uniforms.background.value=read.texture;
       this.quad.material=this.shade;
       renderer.setRenderTarget(write);this.measure('liquid-composite',()=>this.quad.render(renderer));
-    }finally{renderer.autoClear=auto;renderer.shadowMap.autoUpdate=shadows;renderer.setRenderTarget(target);}
+    }finally{for(const rt of [this.depth,this.filterA,this.filterB])rt.scissorTest=false;if(clearColor)renderer.setClearColor(clearColor,clearAlpha);renderer.autoClear=auto;renderer.shadowMap.autoUpdate=shadows;renderer.setRenderTarget(target);}
+  }
+  /** Conservative projection; a box crossing the near plane uses the full viewport. */
+  private projectRegion(){
+    const box=this.mesh.boundingBox;if(!box||box.isEmpty())return null;
+    const w=this.depth.width,h=this.depth.height;let x0=w,y0=h,x1=0,y1=0;
+    for(let i=0;i<8;i++){
+      this.corner.set(i&1?box.max.x:box.min.x,i&2?box.max.y:box.min.y,i&4?box.max.z:box.min.z).applyMatrix4(this.mesh.matrixWorld).applyMatrix4(this.camera.matrixWorldInverse);
+      if(this.corner.z>=-this.camera.near)return null;
+      this.clip.set(this.corner.x,this.corner.y,this.corner.z,1).applyMatrix4(this.camera.projectionMatrix);
+      const x=(this.clip.x/this.clip.w*.5+.5)*w,y=(this.clip.y/this.clip.w*.5+.5)*h;
+      x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);
+    }
+    // Four radius-6 filters plus the normal stencil; border pixels are cleared too.
+    x0=Math.max(0,Math.floor(x0)-26);y0=Math.max(0,Math.floor(y0)-26);
+    x1=Math.min(w,Math.ceil(x1)+26);y1=Math.min(h,Math.ceil(y1)+26);
+    return new T.Vector4(x0,y0,Math.max(0,x1-x0),Math.max(0,y1-y0));
   }
   setSize(width:number,height:number){
     for(const target of [this.depth,this.filterA,this.filterB])target.setSize(width,height);

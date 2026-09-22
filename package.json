@@ -15,7 +15,7 @@
     "apk:web": "vite build --config vite.apk.config.ts",
     "apk": "powershell -NoProfile -ExecutionPolicy Bypass -File build-apk.ps1",
     "single": "vite build --config vite.single.config.ts && node build-single.mjs",
-    "test": "node --experimental-strip-types --test tests/pool-vct.test.mjs tests/pool-physics.test.mjs tests/pool-water.test.mjs tests/pool-particles.test.mjs tests/pool-room-repair.test.mjs tests/pool-perf.test.mjs tests/pool-liquid-pass.test.mjs tests/pool-film-chain.test.mjs tests/pool-liquid-tsl.test.mjs tests/pool-worker.test.mjs"
+    "test": "node --experimental-strip-types --test tests/pool-vct.test.mjs tests/pool-physics.test.mjs tests/pool-water.test.mjs tests/pool-particles.test.mjs tests/pool-room-repair.test.mjs tests/pool-perf.test.mjs tests/pool-liquid-pass.test.mjs tests/pool-film-chain.test.mjs tests/pool-liquid-tsl.test.mjs tests/pool-render-graph.test.mjs tests/pool-worker.test.mjs"
   },
   "dependencies": {
     "@types/three": "^0.185.4",

@@ -8,18 +8,18 @@ type Source={x:number;z:number;power:number;flow:LiquidImpact;crest:boolean;seed
 type Patch={
   x:number;z:number;base:number;h:number;age:number;elapsed:number;count:number;pending:boolean;disposed:boolean;
   buffers:GPUBuffer[];groups:GPUBindGroup[];params:Float32Array<ArrayBuffer>;data:Float32Array;previous:Float32Array;
-  sampleAge:number;sampleDelta:number;blendElapsed:number;removed:Uint8Array;emerged:Uint8Array;
+  sampleAge:number;sampleDelta:number;blendElapsed:number;removed:Uint8Array;emerged:Uint8Array;deletions:Uint32Array<ArrayBuffer>;
 };
 const LIMIT=18000,MAX_PATCHES=3,GRID=80*80*80,STEP=1/720;
-const ENTRIES=['clear','mass','pressure','velocity','gather','resetHeads','link','exportState'];
+const ENTRIES=['clear','mass','pressure','velocity','gather','resetHeads','link','exportState','deleteParticles'];
 type Drop=(x:number,y:number,z:number,vx:number,vy:number,vz:number,size:number)=>void;
 
 /** A bounded three-dimensional liquid domain at an impact, coupled to the
  * existing height field. Only the simulated positions are reconstructed;
  * no predefined crest count, sheet topology or lifetime-shaped silhouette. */
 export class LiquidMPM {
-  readonly transfer={readbackBytes:0,uploadBytes:0};
   readonly mesh:T.InstancedMesh<T.SphereGeometry,T.ShaderMaterial>;
+  readonly transfer={readbackBytes:0,uploadBytes:0};
   status='initializing';error='';released=0;returns=0;ripples=0;
   private device:GPUDevice|null=null;
   private pipelines:GPUComputePipeline[]=[];
@@ -28,6 +28,7 @@ export class LiquidMPM {
   private disposed=false;
   private transform=new T.Matrix4();
   private serial=0;
+  private boundsPoint=new T.Vector3();
   get count(){return this.patches.length;}
   get stats(){return {backend:this.status,error:this.error,domains:this.count,fluidParticles:this.mesh.count,released:this.released,returns:this.returns,ages:this.patches.map(p=>p.age),simulatedParticles:this.patches.reduce((n,p)=>n+p.count,0)};}
   constructor(){
@@ -38,7 +39,7 @@ export class LiquidMPM {
     });
     this.mesh=new T.InstancedMesh(new T.SphereGeometry(1,10,8),material,LIMIT*MAX_PATCHES);
     this.mesh.name='MLS-MPM fluid reconstruction';this.mesh.count=0;this.mesh.frustumCulled=false;
-    this.mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);
+    this.mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);this.mesh.boundingBox=new T.Box3();
     void this.init();
   }
   private async init(){
@@ -102,9 +103,10 @@ export class LiquidMPM {
     const packed=device.createBuffer({size:count*80,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_SRC});
     const staging=device.createBuffer({size:count*80,usage:GPUBufferUsage.MAP_READ|GPUBufferUsage.COPY_DST});
     const links=device.createBuffer({size:(count+1)*4,usage:GPUBufferUsage.STORAGE});
-    const buffers=[particle,grid,params,packed,links,staging];
-    const bindings=[[1],[0,1,2],[0,1,2],[1,2,4],[0,1,2,4],[1],[0,1,2,4],[0,1,2,3,4]];
-    const groups=this.pipelines.map((pipeline,i)=>device.createBindGroup({layout:pipeline.getBindGroupLayout(0),entries:bindings[i].map(binding=>({binding,resource:{buffer:buffers[binding]}}))}));
+    const removed=device.createBuffer({size:(count+1)*4,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
+    const buffers=[particle,grid,params,packed,links,staging,removed];
+    const bindings=[[1],[0,1,2],[0,1,2],[1,2,4],[0,1,2,4],[1],[0,1,2,4],[0,1,2,3,4],[0,5]];
+    const groups=this.pipelines.map((pipeline,i)=>device.createBindGroup({layout:pipeline.getBindGroupLayout(0),entries:bindings[i].map(binding=>({binding,resource:{buffer:buffers[binding===5?6:binding]}}))}));
     const values=new Float32Array(16);new Uint32Array(values.buffer)[0]=count;
     values[1]=h;values[2]=STEP;values[4]=flow.u;values[5]=flow.v;
     values.set([40,12+bodyRadius*.85/h,40,bodyRadius],8);
@@ -113,13 +115,14 @@ export class LiquidMPM {
     for(let i=0;i<count;i++){for(let k=0;k<8;k++)data[i*20+k]=raw[i*20+k];data[i*20+8]=data[i*20+13]=data[i*20+18]=.64;}
     device.queue.writeBuffer(particle,0,raw,0,count*20);this.transfer.uploadBytes+=count*80;
     this.patches.push({x,z,base,h,age:0,elapsed:0,count,pending:false,disposed:false,buffers,groups,params:values,data,previous:data.slice(),
-      sampleAge:0,sampleDelta:STEP,blendElapsed:0,removed:new Uint8Array(count),emerged:new Uint8Array(count)});
+      sampleAge:0,sampleDelta:STEP,blendElapsed:0,removed:new Uint8Array(count),emerged:new Uint8Array(count),deletions:new Uint32Array(count+1)});
   }
   update(dt:number,surface:(x:number,z:number)=>number,depth:(x:number,z:number)=>number,drop:Drop,ripple:(x:number,z:number,s:number)=>void){
     dt=Number.isFinite(dt)?T.MathUtils.clamp(dt,0,.05):0;
     if(this.status==='webgpu'&&dt>0){for(const source of this.sources)this.create(source,surface,depth);this.sources=[];}
     else if(this.status!=='initializing'&&this.status!=='webgpu')this.sources=[];
-    let visible=0;
+    let visible=0,matricesChanged=false;
+    const bounds=this.mesh.boundingBox!;bounds.makeEmpty();
     for(const patch of this.patches){
       if(depth(patch.x,patch.z)<=0){this.destroyPatch(patch);continue;}
       const {data,previous,h}=patch;
@@ -151,7 +154,11 @@ export class LiquidMPM {
           at(j+9)*h,at(j+13)*h,at(j+17)*h,y+at(j+15)*h,
           at(j+10)*h,at(j+14)*h,at(j+18)*h,z+at(j+19)*h,
           0,0,0,1);
-        this.mesh.setMatrixAt(visible++,this.transform);
+        const elements=this.transform.elements,array=this.mesh.instanceMatrix.array;
+        for(let k=0;k<16;k++){const value=Math.fround(elements[k]),index=visible*16+k;if(array[index]!==value){array[index]=value;matricesChanged=true;}}
+        const ex=Math.hypot(elements[0],elements[4],elements[8]),ey=Math.hypot(elements[1],elements[5],elements[9]),ez=Math.hypot(elements[2],elements[6],elements[10]);
+        bounds.expandByPoint(this.boundsPoint.set(elements[12]-ex,elements[13]-ey,elements[14]-ez));
+        bounds.expandByPoint(this.boundsPoint.set(elements[12]+ex,elements[13]+ey,elements[14]+ez));visible++;
       }
       patch.elapsed=Math.min(.05,patch.elapsed+dt);
       if(dt<=0||patch.pending)continue;
@@ -160,6 +167,11 @@ export class LiquidMPM {
       if(patch.age>1.5){this.destroyPatch(patch);continue;}
       const device=this.device!;device.queue.writeBuffer(patch.buffers[2],0,patch.params);this.transfer.uploadBytes+=patch.params.byteLength;
       const encoder=device.createCommandEncoder();const pass=encoder.beginComputePass();
+      const removed=patch.deletions[0];
+      if(removed){
+        device.queue.writeBuffer(patch.buffers[6],0,patch.deletions,0,removed+1);this.transfer.uploadBytes+=(removed+1)*4;
+        pass.setPipeline(this.pipelines[8]);pass.setBindGroup(0,patch.groups[8]);pass.dispatchWorkgroups(Math.ceil(removed/64));patch.deletions[0]=0;
+      }
       for(let k=0;k<steps;k++)for(let stage=0;stage<5;stage++){
         pass.setPipeline(this.pipelines[stage]);pass.setBindGroup(0,patch.groups[stage]);
         pass.dispatchWorkgroups(stage===0||stage===3?GRID/128:Math.ceil(patch.count/64));
@@ -169,7 +181,8 @@ export class LiquidMPM {
         pass.dispatchWorkgroups(stage===5?GRID/128:Math.ceil(patch.count/64));
       }pass.end();
       encoder.copyBufferToBuffer(patch.buffers[3],0,patch.buffers[5],0,patch.count*80);device.queue.submit([encoder.finish()]);
-      this.transfer.readbackBytes+=patch.count*80;patch.pending=true;
+      this.transfer.readbackBytes+=patch.count*80;
+      patch.pending=true;
       void patch.buffers[5].mapAsync(GPUMapMode.READ).then(()=>{
         if(!patch.disposed){
           patch.previous.set(patch.data);patch.data.set(new Float32Array(patch.buffers[5].getMappedRange()));patch.buffers[5].unmap();
@@ -178,9 +191,10 @@ export class LiquidMPM {
         patch.pending=false;
       }).catch(e=>{if(!patch.disposed){this.error=String(e);this.destroyPatch(patch);}});
     }
-    this.patches=this.patches.filter(p=>!p.disposed);this.mesh.count=visible;this.mesh.instanceMatrix.needsUpdate=true;
+    this.patches=this.patches.filter(p=>!p.disposed);this.mesh.count=visible;
+    if(matricesChanged&&visible){this.mesh.instanceMatrix.clearUpdateRanges();this.mesh.instanceMatrix.addUpdateRange(0,visible*16);this.mesh.instanceMatrix.needsUpdate=true;this.transfer.uploadBytes+=visible*64;}
   }
-  private remove(patch:Patch,index:number){patch.removed[index]=1;this.device!.queue.writeBuffer(patch.buffers[0],index*80+28,new Float32Array([0]));}
+  private remove(patch:Patch,index:number){if(patch.removed[index])return;patch.removed[index]=1;patch.deletions[++patch.deletions[0]]=index;}
   private destroyPatch(patch:Patch){patch.disposed=true;for(const buffer of patch.buffers)buffer.destroy();}
   private clear(){for(const patch of this.patches)this.destroyPatch(patch);this.patches=[];this.sources=[];this.mesh.count=0;}
   rebase(shift:T.Vector3){for(const patch of this.patches){patch.x-=shift.x;patch.z-=shift.z;}for(const source of this.sources){source.x-=shift.x;source.z-=shift.z;}}

@@ -1037,6 +1037,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     probeTick('particles',()=>particles.update(Math.min(dt,.05)*whitewaterRate,(x,z)=>waterSystem.surfaceAt(x,z),(x,z,s)=>waterSystem.dropRipple(x,z,s),(x,z)=>waterSystem.flowAt(x,z),(x,z)=>waterSystem.depthAt(x,z)));
     probeTick('water',()=>waterSystem.render(renderer,time,measure));
     field.uniforms.poolTime.value=time;film.uniforms.time.value=time;
+    liquidPass.enabled=liquid.mesh.count>0;
     probeTick('composer',()=>composer.render());
     if(transition&&transition.giDone&&!(recording.cpu.transition>0)){
       // Probe rendering and PMREM never share a frame with a CPU upload/commit.

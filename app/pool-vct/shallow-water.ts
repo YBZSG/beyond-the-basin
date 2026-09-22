@@ -172,7 +172,6 @@ const vertexShader='void main(){gl_Position=vec4(position.xy,0.0,1.0);}';
 type Readback={buffer:Uint16Array;generation:number;started:number;done:boolean;failed:boolean};
 
 export class ShallowWater {
-  readbackBytes=0;
   /** Live-tunable source shaping, driven by the pause-menu water sliders:
    * impactScale multiplies splash amplitude, ringWaves is the packet wave
    * number (higher = finer rings, stable above ~4 cells per wavelength), and
@@ -190,6 +189,9 @@ export class ShallowWater {
   readonly size:number;readonly cell:number;
   private depthData:Float32Array;
   private terrainTask:Generator<void,void>|null=null;
+  private readbackPool:Uint16Array[]=[];
+  private retiredReads=new Set<Readback>();
+  readbackBytes=0;
   private depthTexture:T.DataTexture;
   private stateA:T.WebGLRenderTarget;
   private stateB:T.WebGLRenderTarget;
@@ -406,26 +408,30 @@ export class ShallowWater {
     }finally{this.uniforms.poolSurface.value=this.current.texture;renderer.setRenderTarget(previous);renderer.setClearColor(color,alpha);renderer.autoClear=auto;}
   }
   private requestReadback(renderer:T.WebGLRenderer){
-    const job:Readback={buffer:new Uint16Array(SW_PHYS*SW_PHYS*4),generation:this.generation,started:this.clock,done:false,failed:false};
+    if(this.asyncFailed&&this.clock-this.syncAt<1/30)return;
+    const job:Readback={buffer:this.readbackPool.pop()??new Uint16Array(SW_PHYS*SW_PHYS*4),generation:this.generation,started:this.clock,done:false,failed:false};
     if(!this.asyncFailed&&typeof renderer.readRenderTargetPixelsAsync==='function'){
-      this.readbackBytes+=job.buffer.byteLength;this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;});
+      this.readbackBytes+=job.buffer.byteLength;
+      this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;}).finally(()=>{if(this.retiredReads.delete(job)&&!this.disposed)this.recycleReadback(job);});
     }else if(typeof renderer.readRenderTargetPixels==='function'&&this.clock-this.syncAt>=1/30){
       this.syncAt=this.clock;
       // Three's pending async reader can leave a pixel-pack buffer bound.
       // A synchronous typed-array read must temporarily unbind it.
       const gl=renderer.getContext?.() as WebGL2RenderingContext|undefined,pack=gl?.getParameter(gl.PIXEL_PACK_BUFFER_BINDING);
       try{this.readbackBytes+=job.buffer.byteLength;gl?.bindBuffer(gl.PIXEL_PACK_BUFFER,null);renderer.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
-      catch{this.rejected++;}finally{if(gl)gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pack??null);}
+      catch{this.rejected++;}finally{if(gl)gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pack??null);this.recycleReadback(job);}
     }
   }
   private flushReadback(){
     const job=this.readback;if(!job)return;if(!job.done&&this.clock-job.started<=1)return;this.readback=null;
-    if(!job.done||job.failed){this.asyncFailed=true;return;}
-    if(this.disposed||job.generation!==this.generation)return;this.asyncLands++;this.parseReadback(job.buffer);
+    if(!job.done){this.asyncFailed=true;this.retiredReads.add(job);return;}
+    try{if(job.failed){this.asyncFailed=true;return;}if(this.disposed||job.generation!==this.generation)return;this.asyncLands++;this.parseReadback(job.buffer);}
+    finally{this.recycleReadback(job);}
   }
+  private recycleReadback(job:Readback){if(!this.disposed&&this.readbackPool.length<3)this.readbackPool.push(job.buffer);}
   private parseReadback(bytes:Uint16Array){
     // Half-float alpha=1 marks a completed pixel; reject missing/nonfinite data.
-    for(let i=0;i<bytes.length;i+=4)if(bytes[i+3]!==0x3c00||[bytes[i],bytes[i+1],bytes[i+2]].some(v=>(v&0x7c00)===0x7c00)){this.rejected++;return;}
+    for(let i=0;i<bytes.length;i+=4)if(bytes[i+3]!==0x3c00||(bytes[i]&0x7c00)===0x7c00||(bytes[i+1]&0x7c00)===0x7c00||(bytes[i+2]&0x7c00)===0x7c00){this.rejected++;return;}
     let energy=0,peak=0;
     for(let i=0,j=0;i<this.physicsEta.length;i++,j+=4){
       const h=T.DataUtils.fromHalfFloat(bytes[j]),u=T.DataUtils.fromHalfFloat(bytes[j+1]),v=T.DataUtils.fromHalfFloat(bytes[j+2]);
@@ -479,7 +485,7 @@ export class ShallowWater {
     landed:Number.isFinite(this.readbackLanded)?this.readbackLanded:null,pending:!!this.readback,energy:this.energy,peak:this.peak,settled:this.settled,
     asyncLands:this.asyncLands,syncReads:this.syncReads,rejected:this.rejected,pendingSplats:this.pendingSplats.length/4,pendingPushes:this.pendingPushes.length/5};}
   dispose(){
-    this.disposed=true;this.generation++;this.readback=null;this.terrainTask=null;
+    this.disposed=true;this.generation++;this.readback=null;this.terrainTask=null;this.readbackPool=[];this.retiredReads.clear();
     for(const t of [this.stateA,this.stateB,this.sourceTarget,this.physTarget])t.dispose();
     for(const m of [this.velocity,this.height,this.copy,this.down,this.sourceMaterial])m.dispose();
     this.quad.dispose();this.sourceGeometry.dispose();this.depthTexture.dispose();
