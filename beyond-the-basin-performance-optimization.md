@@ -1,5 +1,7 @@
 # Beyond the Basin 性能优化与 WebGPU 迁移设计
 
+> **2026-09-22 实施状态：** 本轮已完成现有 WebGL 主路径主要优化，实测完整涉水投掷为 52.66 FPS，60 FPS 验收尚未全部达标；完整 WebGPU 迁移随后独立推进。当前实现、真实 Edge 验证、基准命令及未达标项见 [High 60 FPS 实施与验收记录](docs/performance-2026-09-22.md)。手持道具进入折射画面已加入回归；固定 3 ms 调度预算以延长慢机器过渡完成时间换取更小的单帧后台开销。以下 2026-09-17 内容保留为历史设计，不能将其中的建议或预计收益视为已完成或已验证。
+
 > 仓库：`inin-long/beyond-the-basin`  
 > 基线：Three.js `^0.185.1`，React 19，当前主渲染器为 `WebGLRenderer`，局部 MLS-MPM 已直接使用 WebGPU Compute。  
 > 文档日期：2026-09-17  

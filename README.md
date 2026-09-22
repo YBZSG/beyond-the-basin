@@ -20,6 +20,10 @@ npm run build
 npm start
 ```
 
+## 性能验证
+
+本轮先优化 WebGL 主路径，完整 WebGPU 迁移另行推进。实施状态、固定 3 ms 预算的过渡时间取舍、手持道具折射回归及真实 Edge 基准见 [性能验收记录](docs/performance-2026-09-22.md)。`npm run benchmark:build` 显式生成支持本地 QA 与完整数据导出的优化构建；正常生产构建不开放 QA 接口。
+
 ## 手机版（Android APK）
 
 游戏可打包成完全离线的 Android 应用：WebView 壳加载打包进 APK 的静态页面，触屏设备自动启用虚拟摇杆与按键。构建需要 Android SDK（`ANDROID_HOME` 已配置即可）和 JDK 17+（脚本会自动在 `%USERPROFILE%\.jdks` 中寻找，本机已装 `temurin-17`）：
