@@ -109,7 +109,7 @@ export function rayOccluded(origin:T.Vector3,target:T.Vector3,colliders:Collider
   }return false;
 }
 
-export type PropKind = 'egg' | 'duck' | 'ball' | 'eggboy';
+export type PropKind = 'egg' | 'duck' | 'ball';
 
 /** A shadow-casting prop that crossed the movement epsilon this frame. Used by
  * RoomLights to invalidate only the shadow slots the prop can actually reach,
@@ -132,10 +132,6 @@ export type PropBody = {
    * drag rate while submerged (light bodies ride waves farther), and a splash
    * power multiplier for hard entries. */
   buoyK?:number;buoyZeta?:number;buoyMax?:number;flowRate?:number;splashBoost?:number;
-  /** Optional per-frame visual rig (egg-boy). Runs before the transforms are
-   *  flushed so a prop whose parts each live in their own matrix can animate
-   *  without giving up instancing / batching. */
-  rig?:(b:PropBody,time:number)=>void;
 };
 
 export type PropEvents = { impact?: (b: PropBody, strength: number) => void; grab?: (b: PropBody) => void };
@@ -303,11 +299,8 @@ export class PropPhysics {
       }
     }
     for(const b of this.bodies){
-      // A rig is pure cosmetics: skip it for props the player cannot see. The
-      // held one always runs, since it is right in front of the camera.
-      if(b.rig&&(b===this.held||b.position.distanceToSquared(camera.position)<36*36))b.rig(b,time);
-      // Empty `parts` means the prop was never batched (animated props keep
-      // their own Group), so it is driven through the group transform instead.
+      // Empty `parts` means the prop was never batched, so its Group is driven
+      // directly instead.
       if(b.promoted||!b.parts.length){b.visual.position.copy(b.position);b.visual.quaternion.copy(b.rotation);}
       else for(const part of b.parts){const root=new T.Matrix4().compose(b.position.clone().sub(part.mesh.position),b.rotation,new T.Vector3(1,1,1));part.mesh.setMatrixAt(part.index,root.multiply(part.local));part.mesh.instanceMatrix.needsUpdate=true;}
     }

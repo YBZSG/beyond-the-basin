@@ -11,6 +11,12 @@ test('replaced and disposed BVH workers cannot publish stale worlds',()=>{
   const field=new ReflectionField(),geometry=new T.BoxGeometry().toNonIndexed();
   geometry.clearGroups();
   try{
+    const placeholder=field.uniforms.rtBvh.value;
+    assert.equal(field.uniforms.rtReady.value,0);
+    assert.equal(placeholder.index.format,T.RGBAIntegerFormat);
+    assert.equal(placeholder.bvhContents.format,T.RGIntegerFormat);
+    assert.ok(placeholder.index.image.data?.length>0);
+    assert.ok(placeholder.bvhContents.image.data?.length>0);
     field.beginRebuild([],[]);field.stepRebuild(3);
     const old=globalThis.__bvhWorkers.at(-1),oldVersion=old.message.version;
     field.invalidate();field.beginRebuild([],[]);field.stepRebuild(3);

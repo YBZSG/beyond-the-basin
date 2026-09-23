@@ -28,6 +28,16 @@ export class ReflectionField {
   private waiting=false;
   private destroyed=false;
   error='';
+  constructor(){
+    // The Worker may take several frames to publish the real BVH. WebGL still
+    // validates every active sampler while rtReady is zero, so its integer BVH
+    // samplers need correctly typed textures from the first scene draw.
+    const geometry=new T.BufferGeometry();
+    geometry.setAttribute('position',new T.BufferAttribute(new Float32Array([0,0,0,1,0,0,0,1,0]),3));
+    this.uniforms.rtBvh.value.updateFrom(new MeshBVH(geometry));
+    this.uniforms.rtColor.value.updateFrom(new T.BufferAttribute(new Float32Array(12),4));
+    geometry.dispose();
+  }
   beginRebuild(items:RtItem[],lamps:Lamp[]){
     const version=++this.version;this.lamps=lamps;this.ready=null;this.uploading=null;this.waiting=true;this.error='';
     // Cancel obsolete work instead of allowing a queue of full BVH builds.

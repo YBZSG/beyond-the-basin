@@ -39,7 +39,7 @@ export class RoomLights {
    *  - a slot was handed a different source light (lights are stationary
    *    fixtures, so the same source in the same slot means it has not moved);
    *  - a dynamic shadow caster that can actually reach that slot's light moved
-   *    (props, beach balls and the egg-boy all cast shadows and are driven by
+   *    (props and beach balls cast shadows and are driven by
    *    physics every frame).
    *
    * Invalidation is tracked PER SLOT: a duck bobbing next to one tube must not

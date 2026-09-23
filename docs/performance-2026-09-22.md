@@ -2,6 +2,8 @@
 
 本轮先优化并测量现有 **WebGL 主渲染路径**。完整 WebGPU 迁移在此之后独立推进：需要统一计算和渲染设备，才能让液体计算数据直接参与绘制。本轮仍保留 WebGPU → CPU → WebGL 的液体数据传递；仓库现有 TSL 模块不代表主渲染器已经迁移。
 
+以下数值是原 PR 在 RTX 5050 Laptop 上的历史验收记录。合入时已移除蛋小黄模型并修正启动阶段的 BVH 纹理初始化；这些改动后的最终构建需要重新测量，不能直接沿用下文数字作为当前版本的验收结果。
+
 ## 已实施
 
 | 范围 | 实现与边界 |
@@ -92,11 +94,11 @@ node tests/pool-benchmark-report.mjs D:/perf-results/final > D:/perf-results/fin
 
 | 阶段 | 转向 FPS / P99 ms | 涉水投掷 FPS / P99 ms | 截图 |
 | --- | ---: | ---: | --- |
-| 原工作区基线 | 51.47 / 30.5 | 33.51 / 48.6 | [转向](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/baseline/turn-1.png) · [交互](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/baseline/interaction-1.png) |
-| P0 | 59.14 / 30.4 | 43.69 / 48.6 | [转向](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/p0/turn-1.png) · [交互](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/p0/interaction-1.png) |
-| 场景去重 | 74.82 / 24.4 | 54.16 / 36.5 | [转向](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/scene/turn-1.png) · [交互](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/scene/interaction-1.png) |
-| 过渡调度 | 61.83 / 36.3 | 51.05 / 36.4 | [转向](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/stream/turn-1.png) · [交互](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/stream/interaction-1.png) |
-| 液体及最终修正 | 72.41 / 24.4 | 31.68 / 54.7 | [转向](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/liquid/turn-1.png) · [交互](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/phase-foreground/liquid/interaction-1.png) |
+| 原工作区基线 | 51.47 / 30.5 | 33.51 / 48.6 | 原始截图未提交 |
+| P0 | 59.14 / 30.4 | 43.69 / 48.6 | 原始截图未提交 |
+| 场景去重 | 74.82 / 24.4 | 54.16 / 36.5 | 原始截图未提交 |
+| 过渡调度 | 61.83 / 36.3 | 51.05 / 36.4 | 原始截图未提交 |
+| 液体及最终修正 | 72.41 / 24.4 | 31.68 / 54.7 | 原始截图未提交 |
 
 短测存在明显运行间波动，特别是液体阶段这次交互结果恶化，不能宣称 P2 已单独验证出稳定提速。实际粒子覆盖、首次程序使用、系统与驱动等待仍需更细的 trace。完整前后长测显示整组改动改善，但未排除顺序运行的系统噪声。
 
@@ -133,10 +135,10 @@ node tests/pool-benchmark-report.mjs D:/perf-results/final > D:/perf-results/fin
 
 已通过 113 项测试、类型检查、lint、Vinext 生产构建、APK Web 构建和单文件构建。真实 Edge 回归中，浅水 12/12、分层 14/14、边界 7/7 通过；液体与实际涉水 / 投掷脚本通过，控制台无错误。手持折射、四种镜头模式、resize、取消传送及真实 Worker 提交均已检查。
 
-APK Web 与直接打开的单文件 HTML 在 Edge 成功绘制，`?qa` 下 `window.__poolQA` 均为 undefined。修复了单文件产物未内嵌蛋小黄 GLB 及外部纹理的旧问题；修复后 HTML 约 9.31 MB。此处验证的是 APK 的 Web 资产，不声称已在 Android 真机完成 GPU 验收。
+原 PR 的 APK Web 与单文件 HTML 曾在 Edge 绘制并确认生产构建不开放 QA。合入时移除了蛋小黄模型，单文件产物需按当前代码重新验证；此处不声称已在 Android 真机完成 GPU 验收。
 
 分阶段提交：原有工作检查点 `8e4f69c`；P0 `84e4224`；场景去重 `5b46b22`；过渡调度 `fcac215`；液体 `0407d4c`。三个中间版本分别通过类型检查及 104 / 104 / 105 项测试。随后 `538a416` 补齐水滴 MSAA，`ca81285` 修复单文件资源。回退按依赖从后向前执行；分支为 `codex/high-60fps`，未推送远端。
 
-最终性能数据与剩余瓶颈见上节。完整统计已提交为 [结构化验收数据](performance-2026-09-22.json)。[本地原始数据及截图归档](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/performance-evidence-2026-09-22.zip) 包括完整帧序列、GPU 查询、长任务、回归截图与失败的阶段记录；归档内 `EVIDENCE.md` 说明各目录用途。截图链接指向本机，其他机器可解压归档按相同相对目录查看。
+最终性能数据与剩余瓶颈见上节。仓库只提交了[结构化统计](performance-2026-09-22.json)，未提交完整帧序列、GPU 查询原始记录、截图及失败阶段归档。请使用 benchmark runner 在当前机器重新生成这些证据。
 
-手持道具回归证据：[正常画面](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/held-refraction.png)、[折射源调试画面](/C:/Users/35975/.codex/visualizations/2026/09/22/01a0c801-6f82-7a51-beb8-d8d55b313426/perf/held-refraction-debug.png)。依赖已将 `three-mesh-bvh` 精确锁定到整个实现与 GPU 验证实际使用的 0.9.15，避免原锁文件 0.9.14 导致重装后不一致。最终不从 HUD 的短窗口反推长测结果。
+手持道具回归证据：正常画面和折射源调试截图未随仓库提交。依赖已将 `three-mesh-bvh` 精确锁定到整个实现与 GPU 验证实际使用的 0.9.15，避免原锁文件 0.9.14 导致重装后不一致。最终不从 HUD 的短窗口反推长测结果。
