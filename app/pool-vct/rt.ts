@@ -1,6 +1,9 @@
+import BvhWorker from './rt-worker?worker&inline';
+import { advanceTask } from './perf/task-budget';
 import * as T from 'three';
 import { MeshBVH, MeshBVHUniformStruct, FloatVertexAttributeTexture, shaderStructs, shaderIntersectFunction } from 'three-mesh-bvh';
 import type { Lamp } from './world';
+import type { PackedRtTexture, ReflectionTextureFields } from './rt-packing';
 
 export const RT_LAMP_CAP = 18;
 
@@ -16,6 +19,76 @@ export type RtItem = { geometry: T.BufferGeometry; matrix: T.Matrix4; color: T.C
  * is geometrically exact one-bounce ray tracing with approximate hit shading —
  * not a path tracer; held/thrown props snapshot per crossing. */
 export class ReflectionField {
+  private worker:Worker|null=null;
+  private version=0;
+  private packing:Generator<void,void>|null=null;
+  private ready:{version:number;positions?:Float32Array;colors?:Float32Array;serialized:ReturnType<typeof MeshBVH.serialize>;textures?:PackedRtTexture[];error?:string}|null=null;
+  private uploading:PackedRtTexture[]|null=null;
+  private lamps:Lamp[]=[];
+  private waiting=false;
+  private destroyed=false;
+  error='';
+  constructor(){
+    // The Worker may take several frames to publish the real BVH. WebGL still
+    // validates every active sampler while rtReady is zero, so its integer BVH
+    // samplers need correctly typed textures from the first scene draw.
+    const geometry=new T.BufferGeometry();
+    geometry.setAttribute('position',new T.BufferAttribute(new Float32Array([0,0,0,1,0,0,0,1,0]),3));
+    this.uniforms.rtBvh.value.updateFrom(new MeshBVH(geometry));
+    this.uniforms.rtColor.value.updateFrom(new T.BufferAttribute(new Float32Array(12),4));
+    geometry.dispose();
+  }
+  beginRebuild(items:RtItem[],lamps:Lamp[]){
+    const version=++this.version;this.lamps=lamps;this.ready=null;this.uploading=null;this.waiting=true;this.error='';
+    // Cancel obsolete work instead of allowing a queue of full BVH builds.
+    this.worker?.terminate();this.worker=new BvhWorker();
+    this.worker.onmessage=event=>{if(!this.destroyed&&event.data.version===this.version)this.ready=event.data;};
+    this.worker.onerror=event=>{if(version===this.version){this.error=event.message;this.waiting=false;}};
+    const worker=this.worker;
+    this.packing=(function*(){
+      const snapshots=[];const transfers:ArrayBuffer[]=[];
+      for(const item of items){
+        const attribute=item.geometry.getAttribute('position');if(!attribute)continue;
+        const position=new Float32Array(attribute.count*3);
+        for(let i=0;i<attribute.count;i++){position[i*3]=attribute.getX(i);position[i*3+1]=attribute.getY(i);position[i*3+2]=attribute.getZ(i);if((i&2047)===2047)yield;}
+        const source=item.geometry.index,index=source?new Uint32Array(source.array):null;
+        snapshots.push({position,index,matrix:item.matrix.toArray(),color:item.color.toArray(),tile:item.tile});
+        transfers.push(position.buffer);if(index)transfers.push(index.buffer);yield;
+      }
+      worker.postMessage({version,items:snapshots},transfers);
+    })();
+  }
+  stepRebuild(budgetMs:number,renderer?:Pick<T.WebGLRenderer,'initTexture'>){
+    if(this.packing){if(advanceTask(this.packing,budgetMs)?.done)this.packing=null;return false;}
+    if(this.uploading){
+      if(budgetMs<=0)return false;
+      // One native upload per frame; no synchronous repacking of all BVH arrays.
+      const packed=this.uploading.shift()!;
+      const texture=packed.key==='color'?this.uniforms.rtColor.value:(this.uniforms.rtBvh.value as unknown as ReflectionTextureFields)[packed.key];
+      texture.dispose();texture.image={data:packed.data,width:packed.width,height:packed.height};
+      texture.format=packed.format;texture.type=packed.type;texture.internalFormat=packed.internalFormat;
+      texture.minFilter=texture.magFilter=T.NearestFilter;texture.generateMipmaps=false;texture.needsUpdate=true;
+      renderer?.initTexture(texture);
+      if(this.uploading.length)return false;
+      this.uploading=null;this.setLamps(this.lamps);this.uniforms.rtReady.value=1;return true;
+    }
+    if(!this.waiting)return true;
+    if(!this.ready||budgetMs<=0)return false;
+    const result=this.ready;this.ready=null;this.waiting=false;
+    if(result.version!==this.version)return false;
+    if(result.error){this.error=result.error;return true;}
+    if(result.textures){this.uploading=result.textures;return false;}
+    const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(result.positions!,3));
+    const bvh=MeshBVH.deserialize(result.serialized,geometry);
+    this.uniforms.rtBvh.value.updateFrom(bvh);
+    this.uniforms.rtColor.value.updateFrom(new T.BufferAttribute(result.colors!,4));
+    geometry.dispose();this.setLamps(this.lamps);this.uniforms.rtReady.value=1;return true;
+  }
+  private setLamps(lamps:Lamp[]){
+    const a=this.uniforms.rtLampA.value,b=this.uniforms.rtLampB.value,count=Math.min(lamps.length,RT_LAMP_CAP);
+    for(let i=0;i<count;i++){a[i].set(lamps[i].position.x,lamps[i].position.y,lamps[i].position.z,95);b[i].set(lamps[i].color.r,lamps[i].color.g,lamps[i].color.b);}
+    this.uniforms.rtLampCount.value=count;
+  }
   uniforms = {
     rtBvh: { value: new MeshBVHUniformStruct() },
     rtColor: { value: new FloatVertexAttributeTexture() },
@@ -57,7 +130,7 @@ export class ReflectionField {
     this.uniforms.rtReady.value = 1;
     return true;
   }
-  invalidate() { this.uniforms.rtReady.value = 0; }
+  invalidate() { this.version++;this.packing=null;this.ready=null;this.uploading=null;this.waiting=false;this.worker?.terminate();this.worker=null;this.uniforms.rtReady.value = 0; }
 
   /** Patch a material that already went through VoxelField.apply (the RT GLSL is
    * inserted after the cone-tracing helpers via the hook marker). */
@@ -147,6 +220,7 @@ export class ReflectionField {
     material.needsUpdate = true;
   }
   dispose() {
+    this.destroyed=true;this.invalidate();
     this.uniforms.rtBvh.value.dispose?.();
     this.uniforms.rtColor.value.dispose?.();
   }

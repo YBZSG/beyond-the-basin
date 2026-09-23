@@ -41,6 +41,48 @@ test('room lighting keeps four shadow maps — two here, two next door — and t
   pool.dispose();assert.equal(scene.children.length,0);
 });
 
+test('shadow invalidation is per slot: one moving prop rebuilds one cube map, not four',()=>{
+  const scene=new T.Scene(),pool=new RoomLights(scene);
+  // Widely separated tubes so a caster's swept sphere (radius 1, light reach 36)
+  // can only reach the slot it sits under.
+  const tubes=[0,200,400,600].map(x=>{const l=new T.PointLight(0xffffff,50,36);l.position.set(x,7,0);return l;});
+  pool.select(tubes,[]);
+  const focus=new T.Vector3(),dir=new T.Vector3(0,0,-1);
+  // Stand in for the shadow pass consuming the flags it was given.
+  const consume=()=>{for(let i=0;i<4;i++){pool.lights[i].shadow.needsUpdate=false;}};
+  const flags=()=>pool.lights.slice(0,4).map(l=>l.shadow.needsUpdate);
+  consume();
+  // `select()` primes internally; a second update with the same sources has
+  // nothing to rebuild, which is what buys a free shadow pass on a still frame.
+  pool.update(focus,dir);
+  assert.equal(pool.shadowSlotsUpdated,0,'unchanged sources must not re-rasterize any cube map');
+  const casterAt=(x)=>({body:{radius:1},previous:new T.Vector3(x,7,0),current:new T.Vector3(x+.3,7,0),radius:1});
+  pool.invalidateBodies([casterAt(0)]);
+  pool.update(focus,dir);
+  assert.equal(pool.shadowSlotsUpdated,1,'only the slot above the mover may rebuild');
+  assert.deepEqual(flags(),[true,false,false,false]);
+  consume();
+  // A mover outside every light's reach invalidates nothing at all.
+  pool.invalidateBodies([casterAt(900)]);
+  pool.update(focus,dir);
+  assert.equal(pool.shadowSlotsUpdated,0,'a mover beyond every light must cost nothing');
+  assert.deepEqual(flags(),[false,false,false,false]);
+  // The swept test catches a prop crossing a light's range edge in either
+  // direction: it started inside, so the slot it is leaving still rebuilds.
+  pool.invalidateBodies([{body:{radius:1},previous:new T.Vector3(0,7,0),current:new T.Vector3(60,7,0),radius:1}]);
+  pool.update(focus,dir);
+  assert.equal(pool.shadowSlotsUpdated,1,'leaving a light still dirties that slot');
+  consume();
+  // Escape hatch: a room transition or quality change rebuilds everything.
+  pool.invalidate();pool.update(focus,dir);
+  assert.equal(pool.shadowSlotsUpdated,4);
+  // Re-ranking swaps sources between slots; only the slots that actually
+  // changed hands rebuild, not all four.
+  pool.select([tubes[1],tubes[0],tubes[2],tubes[3]],[]);
+  assert.equal(pool.shadowSlotsUpdated,2,'only slots handed a new source rebuild');
+  pool.dispose();
+});
+
 test('player can jump from water, holding jump cannot fly, and landing generates one ripple',()=>{
   const events=[],player=new PlayerPhysics((x,z,power)=>events.push(power)),camera=new T.PerspectiveCamera();
   camera.position.set(0,1.5,0);
@@ -84,12 +126,50 @@ test('architecture batching preserves world-space triangles and excludes moving 
   root.add(a,b);
   const moving=new T.InstancedMesh(geometry,material,1),fixture=new T.Mesh(geometry,material);fixture.userData.luminaire=true;
   root.add(moving,fixture);root.position.set(32,0,-32);root.updateMatrixWorld(true);
+  // Expected triangle soup: expand each source's index (if any) into the same
+  // vertex order the rasterizer would visit, in world space.
   const expected=[];
-  for(const mesh of [a,b]){const g=mesh.geometry.toNonIndexed(),point=new T.Vector3();for(let i=0;i<g.attributes.position.count;i++){point.fromBufferAttribute(g.attributes.position,i).applyMatrix4(mesh.matrixWorld);expected.push(...point.toArray());}g.dispose();}
+  for(const mesh of [a,b]){
+    const g=mesh.geometry,positions=g.attributes.position,index=g.index,point=new T.Vector3();
+    const visit=i=>{point.fromBufferAttribute(positions,i).applyMatrix4(mesh.matrixWorld);expected.push(...point.toArray());};
+    if(index)for(let i=0;i<index.count;i++)visit(index.getX(i));
+    else for(let i=0;i<positions.count;i++)visit(i);
+  }
   batchArchitecture(root);root.updateMatrixWorld(true);
   assert.equal(moving.parent,root);assert.equal(fixture.parent,root);
   const batch=root.children.find(o=>o.userData.batchedArchitecture);assert.ok(batch&&batch.castShadow);assert.equal(batch.material,material);
-  const actual=[],point=new T.Vector3();for(let i=0;i<batch.geometry.attributes.position.count;i++){point.fromBufferAttribute(batch.geometry.attributes.position,i).applyMatrix4(batch.matrixWorld);actual.push(...point.toArray());}
-  assert.equal(actual.length,expected.length);assert.ok(actual.every((n,i)=>Math.abs(n-expected[i])<.000002));
+  // Indexed sources must stay indexed through the merge: expanding them would
+  // triple the vertex workload in the main and all six shadow views.
+  assert.ok(batch.geometry.index,'indexed architecture must keep its index after batching');
+  const actual=[];
+  {const g=batch.geometry,positions=g.attributes.position,index=g.index,point=new T.Vector3();
+    const visit=i=>{point.fromBufferAttribute(positions,i).applyMatrix4(batch.matrixWorld);actual.push(...point.toArray());};
+    if(index)for(let i=0;i<index.count;i++)visit(index.getX(i));
+    else for(let i=0;i<positions.count;i++)visit(i);}
+  assert.equal(actual.length,expected.length);
+  assert.ok(actual.every((n,i)=>Math.abs(n-expected[i])<.000002));
   batch.geometry.dispose();moving.dispose();geometry.dispose();material.dispose();
+});
+
+test('batching keeps a mixed indexed / non-indexed material in two separate batches',async()=>{
+  const {batchArchitecture}=await import('../app/pool-vct/static-geometry.ts');
+  const root=new T.Group(),material=new T.MeshStandardMaterial();
+  const triangle=()=>{
+    const geometry=new T.BufferGeometry();
+    geometry.setAttribute('position',new T.BufferAttribute(new Float32Array([0,0,0, 1,0,0, 0,1,0]),3));
+    geometry.computeVertexNormals();return geometry;
+  };
+  const boxes=[0,1].map(i=>{const mesh=new T.Mesh(new T.BoxGeometry(1,1,1),material);mesh.position.set(i*3,0,0);return mesh;});
+  const tris=[0,1].map(i=>{const mesh=new T.Mesh(triangle(),material);mesh.position.set(10+i*3,0,0);return mesh;});
+  for(const mesh of [...boxes,...tris]){mesh.castShadow=true;root.add(mesh);}
+  root.updateMatrixWorld(true);
+  batchArchitecture(root);
+  const batches=root.children.filter(o=>o.userData.batchedArchitecture);
+  assert.equal(batches.length,2,'indexed and non-indexed must not share one batch');
+  const withIndex=batches.filter(b=>b.geometry.index),withoutIndex=batches.filter(b=>!b.geometry.index);
+  assert.equal(withIndex.length,1);assert.equal(withoutIndex.length,1);
+  assert.ok(withIndex[0].geometry.index.count>0);
+  assert.equal(withoutIndex[0].geometry.attributes.position.count,6,'two triangles stay unindexed');
+  for(const batch of batches)batch.geometry.dispose();
+  material.dispose();
 });

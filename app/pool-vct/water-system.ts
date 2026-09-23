@@ -1,3 +1,4 @@
+import type { Measure } from './perf/recording';
 import * as T from 'three';
 import type { Water } from 'three/addons/objects/Water.js';
 import type { Solid, Lamp } from './world';
@@ -10,6 +11,17 @@ import { WATER_SETTINGS_DEFAULT, WATER_QUALITY, sanitizeWaterSettings, type Wate
 export { WATER_WAVES, WATER_SETTINGS_DEFAULT };
 export type { WaterSettings };
 import type { Collider } from './physics';
+
+/**
+ * Camera-motion gate for the refraction capture. A stale capture is only
+ * visible through the *relative* shift between the frame it was taken from and
+ * the frame it is reused in, so a purely positional threshold is enough for
+ * translation (0.02 m ~ one frame of a slow walk at 60 Hz) and a cosine test
+ * catches rotation (0.9995 ~ 1.8 degrees of turn). Standing still, the capture
+ * is skipped; turning the head forces a fresh one.
+ */
+const REFRACTION_MOVE_EPS=0.02*0.02;
+const REFRACTION_TURN_COS=0.9995;
 
 export function rayBlocked(start:T.Vector3,end:T.Vector3,solids:Solid[]) {
   const dx=end.x-start.x,dy=end.y-start.y,dz=end.z-start.z;
@@ -52,6 +64,7 @@ export class InteractiveWater {
   private clearColor=new T.Color();
   private renderSize=new T.Vector2();
   private causticFrames=0;
+  private captureFrames=0;
   private wavePush=WATER_SETTINGS_DEFAULT.wavePush;
   private waterRef:Water|null=null;
   causticUniforms={poolCaustics:{value:null as T.Texture|null},poolCausticsWalls:{value:null as T.Texture|null},causticGain:{value:1.5},waterLightPower:{value:1}};
@@ -61,7 +74,16 @@ export class InteractiveWater {
   private wallScene=new T.Scene();
   private camera=new T.Camera();
   private geometry=new T.PlaneGeometry(32,32,384,384);
-  private filterTarget=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false});
+  /**
+   * Ping-pong pair for the separable caustic blur. Kept at a fraction of the
+   * trace resolution: the filter is a soft 9-tap blur, so its own resolution is
+   * not what the eye reads — the *tracing* resolution is what carries the
+   * caustic detail. At Ultra the filter ran 2048² and cost 16.8M px/frame, two
+   * thirds of the entire caustic budget and 12x the main canvas. Dropping it to
+   * half resolution cuts that by 4x with no visible change.
+   * The trace targets keep their mipmaps; the filter reads them at LOD 0.
+   */
+  private filterTarget=new T.WebGLRenderTarget(512,512,{type:T.HalfFloatType,depthBuffer:false});
   private filterScene=new T.Scene();
   private filterMaterial=new T.ShaderMaterial({
     uniforms:{source:{value:null as T.Texture|null},stepSize:{value:new T.Vector2()},strips:{value:1}},
@@ -82,6 +104,17 @@ export class InteractiveWater {
   private lastTime:number|null=null;
   private tracingReady:{value:number}|null=null;
   private lastReady=-1;
+  private causticAge=0;
+  /** Frames since the last refraction (opaque-scene) capture, for throttling. */
+  private refractionAge=Infinity;
+  /** Last value of `refractionRefresh`, so a change can invalidate the cache. */
+  private lastRefractionRefresh=-1;
+  /** Camera pose at the last capture, for the motion gate in `captureScene`. */
+  private capturePos=new T.Vector3(NaN,NaN,NaN);
+  private captureDir=new T.Vector3();
+  private captureDirScratch=new T.Vector3();
+  /** Total frames the refraction buffer was reused instead of re-captured. */
+  private captureSkips=0;
   interactionCount=0;
   private static wallDefs=[
     {normal:new T.Vector3(-1,0,0),strip:0,rotY:-Math.PI/2,shift:[16,0]},
@@ -201,20 +234,52 @@ export class InteractiveWater {
     this.applySettings(this.settings);
   }
   /** Capture the opaque scene in linear HDR before the water pass. It has its
-   * own depth attachment, so water never samples its current render target. */
-  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]){
+   * own depth attachment, so water never samples its current render target.
+   *
+   * This re-renders the entire scene, so it is the most expensive single stage
+   * while walking. `refractionRefresh` throttles it: 0 = every frame, N = reuse
+   * the previous capture for N frames. The camera moves slowly relative to a
+   * 60 Hz frame, so a one-frame-old refraction buffer is essentially invisible,
+   * and skipping halves the scene's draw cost. The buffer is always refreshed
+   * on the first frame after a resize or a quality change so the stale image
+   * can never come from a differently sized target. */
+  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]):'disabled'|'reused'|'rendered'{
     const q=WATER_QUALITY[this.settings.quality];
     const needed=q.refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
     this.optics.sceneReady.value=needed?1:0;
-    if(!needed||!this.waterRef)return;
+    if(!needed||!this.waterRef)return 'disabled';
     renderer.getDrawingBufferSize(this.renderSize);
     const width=Math.max(1,Math.round(this.renderSize.x*q.refraction)),height=Math.max(1,Math.round(this.renderSize.y*q.refraction));
-    if(this.opaque.width!==width||this.opaque.height!==height)this.opaque.setSize(width,height);
+    if(this.opaque.width!==width||this.opaque.height!==height){this.opaque.setSize(width,height);this.refractionAge=Infinity;}
+    // A held/thrown prop is excluded from the capture so it does not appear
+    // twice. The previous gate here was `excluded.some(o=>o.visible)`, which was
+    // almost always true (the whitewater mesh is basically always visible), so
+    // the interval never engaged and a turning camera paid a full scene render
+    // on 2 of every 3 frames. The thing that actually makes a stale refraction
+    // buffer visible is *camera motion* - parallax between the captured frame
+    // and the current one - so gate on that instead.
+    const every=Math.max(0,Math.round(this.settings.refractionRefresh));
+    const moved=this.capturePos.distanceToSquared(camera.position)>REFRACTION_MOVE_EPS
+      ||this.captureDir.dot(camera.getWorldDirection(this.captureDirScratch))<REFRACTION_TURN_COS;
+    if(every>0&&this.refractionAge<every&&!moved){
+      this.refractionAge++;this.captureSkips++;this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;return 'reused';
+    }
+    this.captureDir.copy(this.captureDirScratch);
+    this.capturePos.copy(camera.position);
+    this.refractionAge=0;
+    this.captureFrames++;
     this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
     const target=renderer.getRenderTarget(),visible=this.waterRef.visible,visibility=excluded.map(o=>o.visible);
     try{this.waterRef.visible=false;for(const object of excluded)object.visible=false;renderer.setRenderTarget(this.opaque);renderer.clear();renderer.render(scene,camera);}
     finally{this.waterRef.visible=visible;excluded.forEach((o,i)=>{o.visible=visibility[i];});renderer.setRenderTarget(target);}
-    return true;
+    return 'rendered';
+  }
+  bindOpaqueScene(color:T.Texture,depth:T.DepthTexture,camera:T.PerspectiveCamera){
+    const needed=WATER_QUALITY[this.settings.quality].refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
+    this.optics.sceneReady.value=needed?1:0;
+    this.optics.sceneColor.value=color;this.optics.sceneDepth.value=depth;
+    this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
+    this.captureFrames++;this.refractionAge=0;
   }
   get reflectionResolution(){return WATER_QUALITY[this.settings.quality].reflection;}
   get reflectionEnabled(){return this.settings.reflection;}
@@ -403,15 +468,21 @@ export class InteractiveWater {
     this.wavePush=s.wavePush;
     this.swe.impactScale=s.impact;this.swe.ringWaves=s.ringWaves;this.swe.waveSpeed=s.waveSpeed;
     this.swe.damping=s.damping;this.swe.viscosity=s.viscosity;this.swe.wallLoss=s.wallLoss;
+    this.swe.maxSteps=s.solverSteps;
+    this.detail.maxSteps=s.rippleSteps;
     this.swe.foamDecay=1/Math.max(s.foamLife,.25);
     this.detail.frequency=s.rippleFrequency;
     this.optics.reflectionSize.value=this.reflectionResolution;
     if(this.waterRef)this.waterRef.material.uniforms.distortionScale.value=s.distortion;
+    // Force a fresh capture whenever the setting changes so the interval takes
+    // effect immediately instead of after up to N stale frames.
+    if(this.lastRefractionRefresh!==s.refractionRefresh){this.lastRefractionRefresh=s.refractionRefresh;this.refractionAge=Infinity;}
   }
   snapshot():WaterSettings{return {...this.settings};}
   debug(){return {...this.swe.debug(),quality:this.settings.quality,detailGrid:this.detail.size,detailActive:this.detail.active,
-    causticSize:this.target.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
-    refractionSize:[this.opaque.width,this.opaque.height],settings:this.snapshot()};}
+    causticSize:this.target.width,filterGrid:this.filterTarget.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
+    captureFrames:this.captureFrames,captureSkips:this.captureSkips,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
+    refractionTargetSize:[(this.optics.sceneColor.value?.image as {width?:number}|undefined)?.width??this.opaque.width,(this.optics.sceneColor.value?.image as {height?:number}|undefined)?.height??this.opaque.height],settings:this.snapshot()};}
   private updateQuality(renderer:T.WebGLRenderer){
     const q=WATER_QUALITY[this.settings.quality];
     if(this.waterRef&&(this.waterRef.geometry as T.PlaneGeometry).parameters.widthSegments!==q.surface){
@@ -425,9 +496,14 @@ export class InteractiveWater {
       this.detailDepth.value=next.uniforms.poolDepth.value;this.uniforms.poolCell.value=next.cell;
       this.applySettings(this.settings);
     }
-    if(this.detail.size!==q.ripple){this.detail.dispose();this.detail=new RippleDetail(q.ripple,this.detailDepth);this.detail.frequency=this.settings.rippleFrequency;this.uniforms.detailCell.value=this.detail.cell;}
+    if(this.detail.size!==q.ripple){this.detail.dispose();this.detail=new RippleDetail(q.ripple,this.detailDepth);this.detail.frequency=this.settings.rippleFrequency;this.detail.maxSteps=this.settings.rippleSteps;this.uniforms.detailCell.value=this.detail.cell;}
     if(this.target.width===q.caustics)return;
-    for(const target of [this.target,this.wallTarget,this.filterTarget])target.setSize(q.caustics,q.caustics);
+    // The trace targets carry the caustic detail at full resolution; the blur
+    // ping-pong runs at half, because a 9-tap Gaussian's own sampling grid is
+    // not what the eye resolves. See the filterTarget declaration.
+    for(const target of [this.target,this.wallTarget])target.setSize(q.caustics,q.caustics);
+    const f=Math.max(256,Math.round(q.caustics/2));
+    this.filterTarget.setSize(f,f);
     this.uniforms.causticResolution.value=q.caustics;
     this.geometry.dispose();this.geometry=new T.PlaneGeometry(32,32,q.photons,q.photons);
     for(const mesh of this.scene.children as T.Mesh[])mesh.geometry=this.geometry;
@@ -454,8 +530,10 @@ export class InteractiveWater {
     this.uniforms.blockCount.value=blocks.length;
     this.blocks=blocks;this.swe.setBlocks(blocks);this.detail.terrainChanged();
   }
+  beginTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.beginTerrain(colliders);}
+  stepTerrain(budgetMs:number){const done=this.swe.stepTerrain(budgetMs);if(done)this.detail.terrainChanged();return done;}
   setTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.setTerrain(colliders);this.detail.terrainChanged();}
-  render(renderer:T.WebGLRenderer,time:number){
+  render(renderer:T.WebGLRenderer,time:number,measure:Measure=(_stage,fn)=>fn()){
     this.updateQuality(renderer);
     const dt=this.lastTime===null?0:Math.max(0,Math.min(time-this.lastTime,.25));
     this.lastTime=time;
@@ -465,9 +543,9 @@ export class InteractiveWater {
       const x=Math.sin(time*1.71)*12,z=Math.sin(time*2.39)*12;
       if(!this.swe.isLand(x,z))this.detail.impact(x,z,.0003*this.settings.environmentalStrength,.12);
     }
-    const changed=this.swe.frame(renderer,dt);
+    const changed=measure('water-sim',()=>this.swe.frame(renderer,dt));
     this.uniforms.poolSurface.value=this.swe.uniforms.poolSurface.value;
-    this.detail.frame(renderer,dt,this.layers.ripplesOn.value>0);
+    measure('water-sim',()=>this.detail.frame(renderer,dt,this.layers.ripplesOn.value>0));
     this.uniforms.poolDetail.value=this.detail.uniform.value;
     const active=!this.swe.settled||(this.detail.active&&this.layers.ripplesOn.value>0)||(this.layers.microOn.value>0&&this.settings.microStrength>0&&this.settings.causticsSpeed>0);
     if(this.causticUniforms.causticGain.value<=0)return;
@@ -475,27 +553,44 @@ export class InteractiveWater {
     // A flat, unchanged pool has unchanged light transport. Reuse it instead of
     // retracing millions of rays every frame while the player is standing still.
     if(!changed&&!active&&!this.lastActive&&!this.dirty&&ready===this.lastReady)return;
+    // The water field changes on almost every frame, so requiring a *still* pool
+    // meant this cache never hit: the 2048² floor + 2048² wall retrace plus the
+    // 2048² filter ran in full every frame. Retrace only on the configured
+    // cadence; the waves move slowly enough that a few frames of latency is
+    // invisible, and 0 restores per-frame tracing.
+    const every=Math.max(0,Math.round(this.settings.causticsRefresh));
+    if(every>0&&!this.dirty&&ready===this.lastReady&&this.causticAge<every){
+      this.causticAge++;return;
+    }
+    this.causticAge=0;
     // Moving caustics follow every water frame; only settled transport is cached.
     this.lastActive=active;this.lastReady=ready;this.dirty=false;this.causticFrames++;
+    measure('caustics',()=>{
     const previous=renderer.getRenderTarget(),clear=renderer.getClearColor(this.clearColor),alpha=renderer.getClearAlpha();
     renderer.setRenderTarget(this.target);renderer.setClearColor(0,0);renderer.clear();renderer.render(this.scene,this.camera);
+    // Separable blur, run at the filter's own resolution. Each pass steps in
+    // *texels of its output*, not of the trace target: the H pass writes the
+    // 1024² filterTarget, the V pass writes back to the 2048² trace target and
+    // must therefore step in 2048² texels to cover the same world-space width.
+    const fw=this.filterTarget.width,fh=this.filterTarget.height;
     // Integrate neighbouring computed photon footprints; no image/pattern input.
     this.filterMaterial.uniforms.source.value=this.target.texture;
     this.filterMaterial.uniforms.strips.value=1;
-    this.filterMaterial.uniforms.stepSize.value.set(1.4/this.target.width,0);
+    this.filterMaterial.uniforms.stepSize.value.set(1.4/fw,0);
     renderer.setRenderTarget(this.filterTarget);renderer.render(this.filterScene,this.camera);
     this.filterMaterial.uniforms.source.value=this.filterTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(0,1.4/this.target.width);
+    this.filterMaterial.uniforms.stepSize.value.set(0,1.4/fh);
     renderer.setRenderTarget(this.target);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(this.wallTarget);renderer.setClearColor(0,0);renderer.clear();if(this.settings.quality!=='Medium')renderer.render(this.wallScene,this.camera);
     this.filterMaterial.uniforms.strips.value=4;
     this.filterMaterial.uniforms.source.value=this.wallTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(1.6/this.target.width,0);
+    this.filterMaterial.uniforms.stepSize.value.set(1.6/fw,0);
     renderer.setRenderTarget(this.filterTarget);renderer.render(this.filterScene,this.camera);
     this.filterMaterial.uniforms.source.value=this.filterTarget.texture;
-    this.filterMaterial.uniforms.stepSize.value.set(0,1.2/this.target.width);
+    this.filterMaterial.uniforms.stepSize.value.set(0,1.2/fh);
     renderer.setRenderTarget(this.wallTarget);renderer.render(this.filterScene,this.camera);
     renderer.setRenderTarget(previous);renderer.setClearColor(clear,alpha);
+    });
   }
   dispose(){this.swe.dispose();this.detail.dispose();this.opaque.dispose();this.target.dispose();this.wallTarget.dispose();this.filterTarget.dispose();this.filterMaterial.dispose();(this.filterScene.children[0] as T.Mesh).geometry.dispose();this.geometry.dispose();for(const g of this.wallGeometries)g.dispose();for(const m of this.materials)m.dispose();for(const m of this.masks)m.dispose();}
 }

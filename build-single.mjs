@@ -10,7 +10,7 @@ const outFile = 'dist-single/BEYOND-THE-BASIN-PoolCore-single.html';
 
 const read = (p, enc) => readFileSync(p, enc);
 const dataUri = (p) => {
-    const m = p.endsWith('.ogg') ? 'audio/ogg' : p.endsWith('.jpg') ? 'image/jpeg' : 'application/octet-stream';
+    const m = p.endsWith('.ogg') ? 'audio/ogg' : p.endsWith('.jpg') ? 'image/jpeg' : p.endsWith('.png') ? 'image/png' : 'application/octet-stream';
     return `data:${m};base64,${read(p).toString('base64')}`;
 };
 const must = (ok, what) => { if (!ok) throw new Error(`single-file build: ${what} missing`); };

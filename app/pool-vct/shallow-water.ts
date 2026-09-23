@@ -1,3 +1,4 @@
+import { advanceTask } from './perf/task-budget.ts';
 import * as T from 'three';
 import type { Collider } from './physics';
 
@@ -176,12 +177,21 @@ export class ShallowWater {
    * number (higher = finer rings, stable above ~4 cells per wavelength), and
    * waveSpeed scales gravity — propagation speed is sqrt(waveSpeed*g*depth). */
   impactScale=1;ringWaves=12;waveSpeed=1;damping=.28;viscosity=.0015;wallLoss=1.1;
+  /** Ceiling on solver sub-steps per frame. The cost is linear in this number
+   * (each step is two full-grid passes), so it is the single biggest lever on
+   * frame time. Lower values hold the same wave solution but let fast flow lag
+   * a frame or two behind real time instead of dropping the frame. */
+  maxSteps=MAX_STEPS;
   /** Foam field tuning: gain scales breaking/convergence deposits, decay is
    * the exponential rate (1/lifetime), diff is metres²/second of spreading,
    * splash multiplies the direct deposit from impact sources. */
   foamGain=.7;foamDecay=.5;foamDiff=.003;foamSplash=1;
   readonly size:number;readonly cell:number;
   private depthData:Float32Array;
+  private terrainTask:Generator<void,void>|null=null;
+  private readbackPool:Uint16Array[]=[];
+  private retiredReads=new Set<Readback>();
+  readbackBytes=0;
   private depthTexture:T.DataTexture;
   private stateA:T.WebGLRenderTarget;
   private stateB:T.WebGLRenderTarget;
@@ -276,17 +286,20 @@ export class ShallowWater {
 
   /** Sample actual pool columns: submerged treads, round pillars and tilted
    * colliders contribute; overhead bridges leave water beneath them open. */
-  setTerrain(colliders:Collider[]){
-    this.depthData.fill(REST_DEPTH);
+  setTerrain(colliders:Collider[]){this.terrainTask=null;for(const _ of this.buildTerrain(colliders))void _;}
+  beginTerrain(colliders:Collider[]){this.terrainTask=this.buildTerrain(colliders);}
+  stepTerrain(budgetMs:number){if(!this.terrainTask)return true;if(advanceTask(this.terrainTask,budgetMs)?.done){this.terrainTask=null;return true;}return false;}
+  private *buildTerrain(colliders:Collider[]):Generator<void,void>{
+    const data=new Float32Array(this.depthData.length);data.fill(REST_DEPTH);yield;
     const inverse=new T.Quaternion(),p=new T.Vector3(),direction=new T.Vector3(),box=new T.Box3();
-    for(const c of colliders){
+    for(const c of colliders){yield;
       box.set(c.half.clone().negate(),c.half.clone());
       if(c.rotation)box.applyMatrix4(new T.Matrix4().makeRotationFromQuaternion(c.rotation));box.translate(c.center);
       if(box.min.y>WATER_LEVEL||box.max.y<=POOL_BOTTOM)continue;
       const ix0=Math.max(0,Math.ceil((box.min.x+SW_HALF)/this.cell-.5)),iz0=Math.max(0,Math.ceil((box.min.z+SW_HALF)/this.cell-.5));
       const ix1=Math.min(this.size-1,Math.floor((box.max.x+SW_HALF)/this.cell-.5)),iz1=Math.min(this.size-1,Math.floor((box.max.z+SW_HALF)/this.cell-.5));
       inverse.copy(c.rotation??new T.Quaternion()).invert();direction.set(0,-1,0).applyQuaternion(inverse);
-      for(let z=iz0;z<=iz1;z++)for(let x=ix0;x<=ix1;x++){
+      for(let z=iz0;z<=iz1;z++){yield;for(let x=ix0;x<=ix1;x++){
         const wx=(x+.5)*this.cell-SW_HALF,wz=(z+.5)*this.cell-SW_HALF;let top=box.max.y;
         if(c.radius!==undefined&&!c.rotation){if((wx-c.center.x)**2+(wz-c.center.z)**2>c.radius**2)continue;}
         else if(c.rotation){
@@ -297,9 +310,11 @@ export class ShallowWater {
           }
           if(near>far||far<0)continue;top=WATER_LEVEL-near;
         }
-        const d=Math.max(0,WATER_LEVEL-top),i=x+z*this.size;this.depthData[i]=Math.min(this.depthData[i],d<.04?0:d);
+        const d=Math.max(0,WATER_LEVEL-top),i=x+z*this.size;data[i]=Math.min(data[i],d<.04?0:d);
       }
     }
+    }
+    this.depthData=data;this.depthTexture.image.data=data;
     this.depthTexture.needsUpdate=true;this.terrainDirty=true;this.generation++;
   }
   /** Standalone room convenience; the game supplies full geometry instead. */
@@ -369,10 +384,11 @@ export class ShallowWater {
       if(this.settled)return changed;
       // Conservative bound includes the velocity cap and diagonal propagation.
       const step=Math.min(SW_STEP,.7*this.cell/(Math.SQRT2*(Math.sqrt(9.81*this.waveSpeed*(REST_DEPTH+MAX_HEIGHT))+MAX_FLOW)));
-      const elapsed=Math.min(dt,MAX_STEPS*step);this.droppedTime+=dt-elapsed;this.acc=Math.min(this.acc+elapsed,MAX_STEPS*step);
+      const budget=Math.max(1,Math.min(MAX_STEPS,Math.round(this.maxSteps)));
+      const elapsed=Math.min(dt,budget*step);this.droppedTime+=dt-elapsed;this.acc=Math.min(this.acc+elapsed,budget*step);
       if(this.acc+1e-10<step)return changed;
       const sources=this.inject(renderer);let steps=0;
-      while(this.acc+1e-10>=step&&steps<MAX_STEPS){
+      while(this.acc+1e-10>=step&&steps<budget){
         for(const material of [this.velocity,this.height]){material.uniforms.poolSourceOn.value=sources&&steps===0?1:0;material.uniforms.poolFriction.value=this.damping+1.5*T.MathUtils.smoothstep(this.quiet,8,14);material.uniforms.poolDt.value=step;material.uniforms.poolViscosity.value=this.viscosity;material.uniforms.poolWallLoss.value=this.wallLoss;
           material.uniforms.poolFoamGain.value=this.foamGain;material.uniforms.poolFoamDecay.value=this.foamDecay;material.uniforms.poolFoamDiff.value=this.foamDiff;material.uniforms.poolFoamSplash.value=this.foamSplash;}
         // Gravity scales linearly: wave speed goes with sqrt(waveSpeed*g*depth).
@@ -392,26 +408,30 @@ export class ShallowWater {
     }finally{this.uniforms.poolSurface.value=this.current.texture;renderer.setRenderTarget(previous);renderer.setClearColor(color,alpha);renderer.autoClear=auto;}
   }
   private requestReadback(renderer:T.WebGLRenderer){
-    const job:Readback={buffer:new Uint16Array(SW_PHYS*SW_PHYS*4),generation:this.generation,started:this.clock,done:false,failed:false};
+    if(this.asyncFailed&&this.clock-this.syncAt<1/30)return;
+    const job:Readback={buffer:this.readbackPool.pop()??new Uint16Array(SW_PHYS*SW_PHYS*4),generation:this.generation,started:this.clock,done:false,failed:false};
     if(!this.asyncFailed&&typeof renderer.readRenderTargetPixelsAsync==='function'){
-      this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;});
+      this.readbackBytes+=job.buffer.byteLength;
+      this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;}).finally(()=>{if(this.retiredReads.delete(job)&&!this.disposed)this.recycleReadback(job);});
     }else if(typeof renderer.readRenderTargetPixels==='function'&&this.clock-this.syncAt>=1/30){
       this.syncAt=this.clock;
       // Three's pending async reader can leave a pixel-pack buffer bound.
       // A synchronous typed-array read must temporarily unbind it.
       const gl=renderer.getContext?.() as WebGL2RenderingContext|undefined,pack=gl?.getParameter(gl.PIXEL_PACK_BUFFER_BINDING);
-      try{gl?.bindBuffer(gl.PIXEL_PACK_BUFFER,null);renderer.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
-      catch{this.rejected++;}finally{if(gl)gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pack??null);}
+      try{this.readbackBytes+=job.buffer.byteLength;gl?.bindBuffer(gl.PIXEL_PACK_BUFFER,null);renderer.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
+      catch{this.rejected++;}finally{if(gl)gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pack??null);this.recycleReadback(job);}
     }
   }
   private flushReadback(){
     const job=this.readback;if(!job)return;if(!job.done&&this.clock-job.started<=1)return;this.readback=null;
-    if(!job.done||job.failed){this.asyncFailed=true;return;}
-    if(this.disposed||job.generation!==this.generation)return;this.asyncLands++;this.parseReadback(job.buffer);
+    if(!job.done){this.asyncFailed=true;this.retiredReads.add(job);return;}
+    try{if(job.failed){this.asyncFailed=true;return;}if(this.disposed||job.generation!==this.generation)return;this.asyncLands++;this.parseReadback(job.buffer);}
+    finally{this.recycleReadback(job);}
   }
+  private recycleReadback(job:Readback){if(!this.disposed&&this.readbackPool.length<3)this.readbackPool.push(job.buffer);}
   private parseReadback(bytes:Uint16Array){
     // Half-float alpha=1 marks a completed pixel; reject missing/nonfinite data.
-    for(let i=0;i<bytes.length;i+=4)if(bytes[i+3]!==0x3c00||[bytes[i],bytes[i+1],bytes[i+2]].some(v=>(v&0x7c00)===0x7c00)){this.rejected++;return;}
+    for(let i=0;i<bytes.length;i+=4)if(bytes[i+3]!==0x3c00||(bytes[i]&0x7c00)===0x7c00||(bytes[i+1]&0x7c00)===0x7c00||(bytes[i+2]&0x7c00)===0x7c00){this.rejected++;return;}
     let energy=0,peak=0;
     for(let i=0,j=0;i<this.physicsEta.length;i++,j+=4){
       const h=T.DataUtils.fromHalfFloat(bytes[j]),u=T.DataUtils.fromHalfFloat(bytes[j+1]),v=T.DataUtils.fromHalfFloat(bytes[j+2]);
@@ -465,7 +485,7 @@ export class ShallowWater {
     landed:Number.isFinite(this.readbackLanded)?this.readbackLanded:null,pending:!!this.readback,energy:this.energy,peak:this.peak,settled:this.settled,
     asyncLands:this.asyncLands,syncReads:this.syncReads,rejected:this.rejected,pendingSplats:this.pendingSplats.length/4,pendingPushes:this.pendingPushes.length/5};}
   dispose(){
-    this.disposed=true;this.generation++;this.readback=null;
+    this.disposed=true;this.generation++;this.readback=null;this.terrainTask=null;this.readbackPool=[];this.retiredReads.clear();
     for(const t of [this.stateA,this.stateB,this.sourceTarget,this.physTarget])t.dispose();
     for(const m of [this.velocity,this.height,this.copy,this.down,this.sourceMaterial])m.dispose();
     this.quad.dispose();this.sourceGeometry.dispose();this.depthTexture.dispose();

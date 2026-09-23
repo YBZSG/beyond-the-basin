@@ -25,4 +25,12 @@ hinata_-_naruto_-_bikini.glb
 音效/
 apk/.gradle/
 
+# Agent scratch: memory notes and one-off conversion scripts. Not part of the app.
+.workbuddy/
+
+# This project is npm-based (package-lock.json is the source of truth). Stray
+# pnpm artefacts appeared from an accidental `pnpm` invocation; not tracked.
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
 .tmp-*

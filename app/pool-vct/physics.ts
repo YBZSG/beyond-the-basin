@@ -4,8 +4,21 @@ export type Collider = { center:T.Vector3; half:T.Vector3; rotation?:T.Quaternio
 export type Ladder = { base:T.Vector3; top:T.Vector3; exit:T.Vector3 };
 export type Contact = { normal:T.Vector3; depth:number };
 
+/**
+ * Scratch objects for the narrow phase. `sphereContact` runs hundreds of
+ * thousands of times per frame (bodies x colliders x 2 passes x substeps), and
+ * the original allocated ~6 Vector3/Quaternion per call - enough garbage to
+ * keep the minor GC busy between frames. The result is still a fresh object,
+ * but only when a contact actually exists (the common case returns null).
+ */
+const _q=new T.Vector3(),_closest=new T.Vector3(),_delta=new T.Vector3(),_gaps=new T.Vector3(),_invQuat=new T.Quaternion();
+
 export function sphereContact(p:T.Vector3,r:number,c:Collider):Contact|null {
-  const q=p.clone().sub(c.center);if(c.rotation)q.applyQuaternion(c.rotation.clone().invert());
+  // Inline the translate + inverse rotation: cloning a Quaternion per rotated
+  // collider was the single biggest allocator in the whole physics step.
+  if(c.rotation){_invQuat.copy(c.rotation).invert();_q.copy(p).sub(c.center).applyQuaternion(_invQuat);}
+  else _q.copy(p).sub(c.center);
+  const q=_q;
   let normal:T.Vector3,depth:number;
   if(c.radius!==undefined){
     const horizontal=Math.hypot(q.x,q.z),outsideSide=horizontal-c.radius,outsideY=Math.abs(q.y)-c.half.y;
@@ -14,17 +27,68 @@ export function sphereContact(p:T.Vector3,r:number,c:Collider):Contact|null {
     else if(outsideSide>outsideY){normal=new T.Vector3(q.x/(horizontal||1),0,q.z/(horizontal||1));if(horizontal===0)normal.set(1,0,0);depth=r-outsideSide;}
     else {normal=new T.Vector3(0,Math.sign(q.y)||1,0);depth=r-outsideY;}
   }else{
-    const closest=q.clone().clamp(c.half.clone().negate(),c.half),delta=q.clone().sub(closest),distance=delta.length();
+    _closest.copy(q).clamp(_gaps.copy(c.half).negate(),c.half);
+    _delta.copy(q).sub(_closest);const distance=_delta.length();
     if(distance>=r)return null;
-    if(distance>1e-8){normal=delta.divideScalar(distance);depth=r-distance;}
-    else {const gaps=c.half.clone().sub(new T.Vector3(Math.abs(q.x),Math.abs(q.y),Math.abs(q.z)));const axis=gaps.x<gaps.y&&gaps.x<gaps.z?'x':gaps.y<gaps.z?'y':'z';normal=new T.Vector3();normal[axis]=Math.sign(q[axis])||1;depth=r+gaps[axis];}
+    if(distance>1e-8){normal=_delta.clone().divideScalar(distance);depth=r-distance;}
+    else {_gaps.copy(c.half).sub(_closest.set(Math.abs(q.x),Math.abs(q.y),Math.abs(q.z)));const axis=_gaps.x<_gaps.y&&_gaps.x<_gaps.z?'x':_gaps.y<_gaps.z?'y':'z';normal=new T.Vector3();normal[axis]=Math.sign(q[axis])||1;depth=r+_gaps[axis];}
   }
   if(c.rotation)normal.applyQuaternion(c.rotation);return {normal,depth};
 }
 
-export function resolveSphere(p:T.Vector3,v:T.Vector3,r:number,colliders:Collider[],bounce=.24){
+/**
+ * Spatial hash over the static colliders. `resolveSphere` used to scan the
+ * whole collider list for every body on every substep; with a streamed room,
+ * rotated rods and rails inflate that list into the hundreds, so the scan was
+ * the dominant CPU cost while walking. Buckets are built once per frame from
+ * the (static) collider array and only queried by the bodies near the camera.
+ */
+export type ColliderGrid = {
+  cell: number;
+  buckets: Map<number, Collider[]>;
+  /** Query buckets overlapping an AABB inflated by `pad`. Fills `_query`. */
+  query(x0: number, z0: number, x1: number, z1: number, pad: number, out: Collider[]): Collider[];
+};
+
+export function buildColliderGrid(colliders: Collider[], cell = 4): ColliderGrid {
+  const buckets = new Map<number, Collider[]>();
+  // A collider can span many cells; index it by every cell its AABB touches so
+  // an oversized box is still found from anywhere inside it.
+  for (const c of colliders) {
+    const reach = c.rotation ? c.half.length() : Math.max(c.half.x, c.half.z, c.radius ?? 0);
+    const x0 = Math.floor((c.center.x - reach) / cell), x1 = Math.floor((c.center.x + reach) / cell);
+    const z0 = Math.floor((c.center.z - reach) / cell), z1 = Math.floor((c.center.z + reach) / cell);
+    for (let x = x0; x <= x1; x++) for (let z = z0; z <= z1; z++) {
+      const key = x * 73856093 ^ z * 19349663;
+      const list = buckets.get(key);
+      if (list) list.push(c); else buckets.set(key, [c]);
+    }
+  }
+  return {
+    cell,
+    buckets,
+    query(x0, z0, x1, z1, pad, out) {
+      out.length = 0;
+      const bx0 = Math.floor((x0 - pad) / cell), bx1 = Math.floor((x1 + pad) / cell);
+      const bz0 = Math.floor((z0 - pad) / cell), bz1 = Math.floor((z1 + pad) / cell);
+      for (let x = bx0; x <= bx1; x++) for (let z = bz0; z <= bz1; z++) {
+        const list = buckets.get(x * 73856093 ^ z * 19349663);
+        if (!list) continue;
+        // The same oversized collider can appear in several visited buckets.
+        for (const c of list) if (!out.includes(c)) out.push(c);
+      }
+      return out;
+    },
+  };
+}
+
+export function resolveSphere(p:T.Vector3,v:T.Vector3,r:number,colliders:Collider[],bounce=.24,grid?:ColliderGrid|null,scratch?:Collider[]){
   let grounded=false;
-  for(let pass=0;pass<2;pass++)for(const c of colliders){
+  // Narrow the candidate set to the body's own neighbourhood when a grid is
+  // supplied; without one, fall back to the original full scan.
+  let list=colliders;
+  if(grid&&scratch){list=grid.query(p.x,p.z,p.x,p.z,r,scratch);}
+  for(let pass=0;pass<2;pass++)for(const c of list){
     // Cheap broad phase; rotated box extent uses its bounding sphere.
     const reach=c.rotation?c.half.length():Math.max(c.half.x,c.half.z,c.radius??0);
     if(Math.abs(p.x-c.center.x)>reach+r||Math.abs(p.z-c.center.z)>reach+r)continue;
@@ -46,6 +110,19 @@ export function rayOccluded(origin:T.Vector3,target:T.Vector3,colliders:Collider
 }
 
 export type PropKind = 'egg' | 'duck' | 'ball';
+
+/** A shadow-casting prop that crossed the movement epsilon this frame. Used by
+ * RoomLights to invalidate only the shadow slots the prop can actually reach,
+ * instead of re-rasterizing all 4 x 6 cube faces. Instances are pooled per
+ * body so a bobbing pool of props does not allocate on the hot path. */
+export type MovedShadowCaster = {
+  body: PropBody;
+  /** Position at the previous frame's check (owned by the pooled instance). */
+  previous: T.Vector3;
+  current: T.Vector3;
+  radius: number;
+};
+
 export type PropBody = {
   position:T.Vector3;velocity:T.Vector3;rotation:T.Quaternion;radius:number;floatBias:number;name:string;kind:PropKind;
   visual:T.Group;parts:{mesh:T.InstancedMesh;index:number;local:T.Matrix4}[];
@@ -69,6 +146,24 @@ export class PropPhysics {
   private slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number};
   private wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void;
   private impactEvent?:PropEvents['impact'];private grabEvent?:PropEvents['grab'];
+  /** Broad-phase grid for the static collider set, rebuilt when the room changes. */
+  private grid:ColliderGrid|null=null;
+  private gridSource:Collider[]|null=null;
+  private gridScratch:Collider[]=[];
+  private nearby:PropBody[]=[];
+  private targetScratch=new T.Vector3();
+  private dirScratch=new T.Vector3();
+  /** True when any shadow-casting prop moved this frame - see `update`. */
+  private moved=false;
+  private lastPos=new Map<PropBody,T.Vector3>();
+  /** Pooled caster records, one entry per body that has ever moved. */
+  private casterPool=new Map<PropBody,MovedShadowCaster>();
+  /** Casters that crossed the movement epsilon in the last `update()` call. */
+  readonly movedCasters:MovedShadowCaster[]=[];
+  /** Squared displacement a body must travel before its shadow is stale.
+   * Matches the old whole-set invalidation threshold (1mm) so the visual
+   * result is unchanged; only the set of rebuilt slots shrinks. */
+  private static SHADOW_MOVE_EPSILON_SQ=1e-6;
   constructor(scene:T.Scene,splash:(x:number,z:number,power:number,direction?:{u:number;v:number;vertical?:number;radius?:number})=>void,surface=(x:number,z:number,time:number)=>.32+.018*Math.sin(time*1.3+x*.6+z),events?:PropEvents,flow?:(x:number,z:number)=>{u:number;v:number},wave?:(x:number,z:number,ix:number,iz:number,sigma:number,dirX:number,dirZ:number,speed:number)=>void,slope?:(x:number,z:number,r:number)=>{ax:number;az:number;ux:number;uz:number}){this.scene=scene;this.splash=splash;this.surface=surface;this.flow=flow;this.slope=slope;this.wave=wave;this.impactEvent=events?.impact;this.grabEvent=events?.grab;}
   add(body:PropBody){body.hitCooldown=0;this.bodies.push(body);}
   remove(bodies:PropBody[]){const removed=new Set(bodies.filter(b=>!b.promoted));this.bodies=this.bodies.filter(b=>!removed.has(b));}
@@ -86,12 +181,30 @@ export class PropPhysics {
   update(dt:number,camera:T.Camera,colliders:Collider[],time:number,enabled=true){
     if(enabled)this.accumulator+=Math.min(dt,.2);
     const h=1/120;
+    // Shadow-cache invalidation flag. Every physics prop casts a shadow, so a
+    // prop that moved invalidates the cached shadow cube maps. Compare against
+    // last frame's position rather than testing velocity: a body resting in the
+    // water has a noisy non-zero velocity but a visually stationary position.
+    this.moved=false;
+    // The collider set is static for the life of a room; rebuild the broad-phase
+    // grid only when the caller hands us a different array (a room transition or
+    // a settings change that regenerates geometry). Comparing the reference is
+    // cheap and avoids hashing hundreds of colliders every frame.
+    if(colliders!==this.gridSource){this.gridSource=colliders;this.grid=buildColliderGrid(colliders);}
+    const nearby=this.nearby;
+    // The player position is fixed for the whole update call (the camera only
+    // moves in PlayerPhysics), so hoist the world direction out of the substep
+    // loop instead of recomputing it 10+ times per frame.
+    const camDir=camera.getWorldDirection(this.dirScratch);
     while(this.accumulator>=h){this.accumulator-=h;
-      const nearby=this.bodies.filter(b=>b.position.distanceToSquared(camera.position)<24*24||b===this.held);
+      // Reused array: the previous `filter()` allocated a fresh array on every
+      // substep, which at 10 substeps/frame was a steady stream of garbage.
+      nearby.length=0;
+      for(const b of this.bodies)if(b.position.distanceToSquared(camera.position)<24*24||b===this.held)nearby.push(b);
       for(const b of nearby){
         const before=b.position.y;b.splashCooldown=Math.max(0,b.splashCooldown-h);
         if(b===this.held){
-          const target=camera.position.clone().addScaledVector(camera.getWorldDirection(new T.Vector3()),this.distance);target.y-=.1;
+          const target=this.targetScratch.copy(camera.position).addScaledVector(camDir,this.distance);target.y-=.1;
           b.velocity.copy(target.sub(b.position)).multiplyScalar(16).clampLength(0,12);
         }else{
           // floatBias lifts the buoyancy target so props whose visual sits below the
@@ -152,7 +265,7 @@ export class PropPhysics {
         const beforeHit=b.velocity.clone();
         // Beach balls are the only bouncy kind: a light vinyl shell rebounds at
         // over half the impact speed while eggs and ducks just thud.
-        resolveSphere(b.position,b.velocity,b.radius,colliders,b===this.held?0:(b.kind==='ball'?.62:.3));
+        resolveSphere(b.position,b.velocity,b.radius,colliders,b===this.held?0:(b.kind==='ball'?.62:.3),this.grid,this.gridScratch);
         // Collision impulses above a threshold become impact sounds; the cooldown
         // keeps a resting contact from machine-gunning events every substep.
         const hit=b.velocity.clone().sub(beforeHit).length();
@@ -186,10 +299,44 @@ export class PropPhysics {
       }
     }
     for(const b of this.bodies){
-      if(b.promoted){b.visual.position.copy(b.position);b.visual.quaternion.copy(b.rotation);}
+      // Empty `parts` means the prop was never batched, so its Group is driven
+      // directly instead.
+      if(b.promoted||!b.parts.length){b.visual.position.copy(b.position);b.visual.quaternion.copy(b.rotation);}
       else for(const part of b.parts){const root=new T.Matrix4().compose(b.position.clone().sub(part.mesh.position),b.rotation,new T.Vector3(1,1,1));part.mesh.setMatrixAt(part.index,root.multiply(part.local));part.mesh.instanceMatrix.needsUpdate=true;}
     }
-    this.bodies=this.bodies.filter(b=>{if(b.promoted&&b!==this.held&&b.position.distanceTo(camera.position)>80){this.scene.remove(b.visual);return false;}return true;});
+    // Despawn check runs once per frame, not per substep: the distance test is
+    // stable at frame scale and the array rebuild was the point of the filter.
+    // Only allocate a new array when something is actually removed.
+    let removed=false;
+    for(const b of this.bodies)if(b.promoted&&b!==this.held&&b.position.distanceTo(camera.position)>80){this.scene.remove(b.visual);removed=true;}
+    if(removed)this.bodies=this.bodies.filter(b=>b.promoted&&b!==this.held?b.position.distanceTo(camera.position)<=80:true);
+    // Report the casters that actually moved, for per-slot shadow-cache
+    // invalidation. Only bodies near the camera matter: the shadow-casting
+    // lights reach 36m and the camera sits inside that sphere, so anything
+    // beyond 40m casts no visible shadow. Comparing full positions (not just
+    // y) catches horizontal drift too. Entries are pooled per body so this
+    // loop stays allocation-free; `previous`/`current` are refreshed in place
+    // and the array is rebuilt (not appended) every frame.
+    this.movedCasters.length=0;
+    for(const b of this.bodies){
+      const prev=this.lastPos.get(b);
+      if(prev===undefined){this.lastPos.set(b,b.position.clone());continue;}
+      const dx=b.position.x-prev.x,dy=b.position.y-prev.y,dz=b.position.z-prev.z;
+      if(dx*dx+dy*dy+dz*dz>PropPhysics.SHADOW_MOVE_EPSILON_SQ&&b.position.distanceToSquared(camera.position)<40*40){
+        this.moved=true;
+        let caster=this.casterPool.get(b);
+        if(!caster){caster={body:b,previous:new T.Vector3(),current:new T.Vector3(),radius:b.radius};this.casterPool.set(b,caster);}
+        caster.previous.copy(prev);caster.current.copy(b.position);caster.radius=b.radius;
+        this.movedCasters.push(caster);
+      }
+      prev.copy(b.position);
+    }
+    // Drop stale keys (despawned or un-promoted bodies) so the maps cannot grow
+    // without bound over a long session.
+    if(this.lastPos.size>this.bodies.length){
+      for(const key of [...this.lastPos.keys()])if(!this.bodies.includes(key)){this.lastPos.delete(key);this.casterPool.delete(key);}
+    }
+    return this.moved;
   }
 }
 

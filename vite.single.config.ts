@@ -7,7 +7,8 @@ import { defineConfig } from 'vite';
 // it). build-single.mjs then folds JS/CSS and runtime-fetched assets into the
 // HTML itself.
 export default defineConfig({
-  root: 'apk/www',
+  define: { __POOL_BENCHMARK__: 'false' },
+  root: 'web',
   base: './',
   publicDir: fileURLToPath(new URL('./public', import.meta.url)),
   plugins: [react()],

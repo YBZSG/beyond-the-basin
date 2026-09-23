@@ -10,6 +10,12 @@ export class RippleDetail {
   readonly size:number;
   readonly cell:number;
   frequency=22;
+  /** Ceiling on detail sub-steps per frame. The field integrates at a fixed
+   * 1/120 s so wave speed stays machine-independent, but an unbounded catch-up
+   * loop makes a slow frame slower still (8 steps at 1152² is 10.6M px/frame).
+   * Below this budget the field lags, which reads as calmer ripples - not as a
+   * dropped frame. */
+  maxSteps=8;
   private a:T.WebGLRenderTarget;
   private b:T.WebGLRenderTarget;
   private source:T.WebGLRenderTarget;
@@ -88,12 +94,16 @@ export class RippleDetail {
       }
       const wasActive=this.active;this.quiet+=dt;
       if(!this.active){if(wasActive){for(const t of [this.a,this.b]){renderer.setRenderTarget(t);renderer.clear();}}return;}
-      this.acc=Math.min(this.acc+Math.min(dt,8*STEP),8*STEP);if(this.acc+1e-10<STEP)return;
+      // Clamp the catch-up window to the configured step budget, then discard
+      // the overshoot: letting `acc` grow unbounded would re-introduce the
+      // death spiral on the very next frame.
+      const budget=Math.max(1,Math.min(8,Math.round(this.maxSteps)));
+      this.acc=Math.min(this.acc+Math.min(dt,budget*STEP),budget*STEP);if(this.acc+1e-10<STEP)return;
       renderer.setRenderTarget(this.source);renderer.clear();const count=this.queued.length/4;
       if(count){this.sources.set(this.queued);this.sourceGeometry.instanceCount=count;this.sourceGeometry.attributes.splat.needsUpdate=true;
         this.sourceMaterial.uniforms.frequency.value=Math.min(this.frequency,Math.PI/(2*this.cell));renderer.render(this.sourceScene,this.camera);this.queued.length=0;}
       let i=0;this.mesh.material=this.material;
-      while(this.acc+1e-10>=STEP&&i<8){
+      while(this.acc+1e-10>=STEP&&i<budget){
         this.material.uniforms.field.value=this.current.texture;this.material.uniforms.sourceOn.value=i===0&&count?1:0;
         const next=this.current===this.a?this.b:this.a;renderer.setRenderTarget(next);renderer.render(this.scene,this.camera);this.current=next;this.acc-=STEP;i++;
       }
