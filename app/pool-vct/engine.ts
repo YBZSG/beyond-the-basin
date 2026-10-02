@@ -27,6 +27,9 @@ import { ReflectionField, type RtItem } from './rt';
 import { isTouchDevice, stickToKeys } from './touch';
 import { PoolAudio } from './audio';
 import { collapseInterior, WFC_SIZE, WFC_CELL, type WfcTile } from './wfc';
+import { createAgedTiles } from './aged-tiles';
+import { createArcadeGeometry, arcadeSolids, ARCADE_CEILING } from './arcade';
+import { WetReflectionPass } from './wet-reflections';
 
 type Flicker={light:T.PointLight;glow:T.MeshBasicMaterial;base:number;seed:number;amp:number};
 const roomLightDir=new T.Vector3();
@@ -63,15 +66,16 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   /** QA-only: force the Tyndall shafts on so their depth test can be verified. */
   let shaftsForced=0;
   host.appendChild(renderer.domElement);
-  const scene = new T.Scene(); scene.background = new T.Color('#14262f'); scene.fog = new T.FogExp2('#22343d', .036);
+  const scene = new T.Scene(); scene.background = new T.Color('#657574'); scene.fog = new T.FogExp2('#657574', .025);
   const roomLights=new RoomLights(scene);
   // Per-decay-level mood targets: exponential fog density and backdrop colour.
   // The denser base veil is what turns the next room into light haze and the
   // room after into a heavy silhouette, so distance reads as fog, never black.
   const CORRUPT_FOG=[.036,.043,.053,.066];
   const CORRUPT_BG=['#14262f','#101f28','#0c181f','#080f14'].map(c=>new T.Color(c));
+  const arcadeBackdrop=new T.Color('#657574');
   const camera = new T.PerspectiveCamera(62, host.clientWidth / host.clientHeight, .08, 100);
-  camera.position.set(10, 1.5, 12); camera.rotation.order = 'YXZ'; camera.lookAt(-4, 1.9, -10);
+  camera.position.set(5,1.65,15); camera.rotation.order = 'YXZ'; camera.lookAt(9,1.5,-8);
   const field = new VoxelField();
   const waterSystem=new InteractiveWater();
   const particles=new SplashParticles();scene.add(particles.aboveWater,particles.submerged);
@@ -109,10 +113,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     if(power>.22){audio.diveIn();liquid.impact(x,z,power,waterSystem.flowAt(x,z));}
     else audio.splash(power,0,0);
   },(x,z)=>.32+waterSystem.heightAt(x,z));
-  const tile = new T.MeshStandardMaterial({ color: '#63899d', roughness: .3, metalness: 0 }); field.apply(tile, true);
-  const pale = new T.MeshStandardMaterial({ color: '#aab6b0', roughness: .36, metalness: 0 }); field.apply(pale, true);
-  const daylightTile=new T.MeshStandardMaterial({color:'#75adb2',roughness:.3,metalness:0});field.apply(daylightTile,true,true);
-  const daylightPale=new T.MeshStandardMaterial({color:'#dbddd0',roughness:.36,metalness:0});field.apply(daylightPale,true,true);
+  const aged=createAgedTiles(renderer,field);
+  const tile=aged.material;
+  const pale=aged.createMaterial('#eeeee7');
+  const daylightTile=aged.createMaterial('#eff0e7');
+  const daylightPale=aged.createMaterial('#f4f2e8');
   const metal = new T.MeshStandardMaterial({ color: '#6e6a51', roughness: .4, metalness: .78 }); field.apply(metal);
   const yellow = new T.MeshStandardMaterial({ color: '#f2c32c', roughness: .3 }); field.apply(yellow);
   const orange = new T.MeshStandardMaterial({ color: '#d36a24', roughness: .35 }); field.apply(orange);
@@ -129,11 +134,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // Rough ceramic uses the prefiltered room probe. Reserve per-pixel reflection
   // rays for actual metal; tracing every tile was both mirror-like and costly.
   rt.apply(chrome,'pool-vct-rt-chrome-1'); rt.apply(red,'pool-vct-rt-red-1');
-  tile.envMapIntensity=.8; pale.envMapIntensity=.75;
+  tile.envMapIntensity=1.1; pale.envMapIntensity=1.1;
   const glow = new T.MeshBasicMaterial({ color: new T.Color(3.4, 3.6, 3.5) });
   // Deep-corruption rooms swap the clean tile set for a damp, mossy one.
-  const grimTile=new T.MeshStandardMaterial({color:'#4f6b64',roughness:.44,metalness:0});field.apply(grimTile,true);
-  const grimPale=new T.MeshStandardMaterial({color:'#828b7a',roughness:.52,metalness:0});field.apply(grimPale,true);
+  const grimTile=aged.createMaterial('#4f6b64');
+  const grimPale=aged.createMaterial('#828b7a');
   waterSystem.attachReceiver(grimTile);waterSystem.attachReceiver(grimPale);
   // Dead tubes keep their fixture but stop emitting; skylights in decayed wings cloud over.
   const glowOff=new T.MeshBasicMaterial({color:new T.Color(.14,.17,.18)});
@@ -143,7 +148,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // dry room on top of the WFC chamber's stair column.
   const exitGlow=new T.MeshBasicMaterial({color:new T.Color(2.1,.3,.2)});
   const lampHousing=new T.MeshStandardMaterial({color:'#667474',roughness:.48,metalness:.65});
-  daylightTile.envMapIntensity=.8;daylightPale.envMapIntensity=.75;
+  daylightTile.envMapIntensity=1.1;daylightPale.envMapIntensity=1.1;
   const materials: T.Material[] = [tile, pale, daylightTile,daylightPale,metal, yellow, orange, black, ivory, glow,skylightGlow,lampHousing,chrome,red,grimTile,grimPale,glowOff,skylightDim,exitGlow];
   const cube = new T.BoxGeometry(1, 1, 1), sphere = new T.SphereGeometry(1, 16, 12);
   const cylinder = new T.CylinderGeometry(1, 1, 1, 32);
@@ -172,7 +177,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   archShape.lineTo(3.5,0);archShape.lineTo(3.5,5.3);
   archShape.absarc(0,5.3,3.5,0,Math.PI,false);archShape.lineTo(-3.5,0);archShape.closePath();
   const archGeometry=new T.ExtrudeGeometry(archShape,{depth:.8,bevelEnabled:false,curveSegments:32});
-  const textures: T.Texture[] = [ballTexture];
+  const arcadeGeometry=createArcadeGeometry();
+  const textures: T.Texture[] = [ballTexture,...aged.textures];
   const chunks = new Map<string, Chunk>(); const visited = new Set<string>();
   let allSolids: Solid[] = [], cx = NaN, cz = NaN, originX=0, originZ=0;
   let allColliders:Collider[]=[],allLadders:Ladder[]=[];
@@ -287,10 +293,11 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const bright=layout.variant===3||layout.variant===5||layout.variant===6;
     // 柱阵水厅（variant 7）抬到 13m：柱子撑满高度，柱顶还要留出干燥
     // 小房间和人的净空。
-    const ceiling=layout.variant===3?14:layout.variant===7?13:(layout.variant===4||layout.variant===6)?5.8:9.2;
+    const ceiling=layout.variant===0?ARCADE_CEILING:layout.variant===3?14:layout.variant===7?13:(layout.variant===4||layout.variant===6)?5.8:9.2;
     // Exploration decay: 0 pristine near spawn, 3 far out. Lights die off first,
     // then geometry tilts and pales, then signs stop making sense.
     const corrupt=layout.corrupt;
+    const powerScale=[1,.78,.52,.32][corrupt];
     let wfcGrid:WfcTile[][]|null=null;
     box(c,x,-.995,z,32,.55,32);
     if(bright){
@@ -311,14 +318,34 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       box(c,x+side*10,(ceiling+GROUND)/2,z-16,12,ceiling-GROUND,.6);
       box(c,x-16,(ceiling+GROUND)/2,z+side*10,.6,ceiling-GROUND,12);
     }
-    box(c,x,(ceiling+5.4)/2,z-16,8,ceiling-5.4,.6);box(c,x-16,(ceiling+5.4)/2,z,.6,ceiling-5.4,8);
+    const portalTop=Math.min(5.4,ceiling-.45);
+    box(c,x,(ceiling+portalTop)/2,z-16,8,ceiling-portalTop,.6);box(c,x-16,(ceiling+portalTop)/2,z,.6,ceiling-portalTop,8);
     for(const axis of ['x','z'] as const){
       const neighbour=roomLayout(rx+(axis==='x'?1:0),rz+(axis==='z'?1:0),seed).variant;
-      const adjacentTop=neighbour===3?14:neighbour===7?13:(neighbour===4||neighbour===6)?5.8:9.2;
+      const adjacentTop=neighbour===0?ARCADE_CEILING:neighbour===3?14:neighbour===7?13:(neighbour===4||neighbour===6)?5.8:9.2;
       if(ceiling>adjacentTop)box(c,x+(axis==='x'?16:0),(ceiling+adjacentTop)/2,z+(axis==='z'?16:0),axis==='x'?.6:32,ceiling-adjacentTop,axis==='x'?32:.6,pale);
     }
     yield;
-    if(layout.variant<3){
+    if(layout.variant===0){
+      // Low, continuous arcades in the existing streamed world. The three
+      // openings share the pool, collision map, optical passes and room jobs.
+      for(const dz of [4,-3.4,-10.8]){
+        const wall=new T.Mesh(arcadeGeometry,pale);wall.position.set(x,0,z+dz);
+        wall.castShadow=wall.receiveShadow=true;c.group.add(wall);
+        c.solids.push(...arcadeSolids(x,z+dz,pale.color));
+        for(const dx of [-5.3,5.3]){
+          const pos=new T.Vector3(x+dx,3.25,z+dz+2.05);
+          const power=(dz===4?20:dz===-3.4?15:10)*powerScale;
+          const light=new T.PointLight('#edf5ed',power,18,2);light.position.copy(pos);
+          c.lights.push(light);c.lamps.push({position:pos.clone(),color:light.color.clone(),power:power/4.75});
+          const housing=box(c,pos.x,pos.y+.1,z+dz+1.3,.96,.18,.22,lampHousing,false);
+          const tube=box(c,pos.x,pos.y,z+dz+1.43,.78,.085,.09,glow as unknown as T.MeshStandardMaterial,false);
+          for(const fixture of [housing,tube]){fixture.castShadow=false;fixture.userData.luminaire=true;}
+        }
+      }
+      box(c,x+12.3,-.15,z-10,5.1,1.14,3.8,pale);
+      for(let i=0;i<3;i++)box(c,x+12.3,-.36-i*.14,z-7.85+i*.42,4.5,.72-i*.28,.44,pale);
+    }else if(layout.variant<3){
     for(const dx of [-10,-3,4,11]) {
       box(c,x+dx,(6+GROUND)/2,z-9,1,6-GROUND,1);
       box(c,x+dx,7.45,z-9,.65,2.9,.65);
@@ -464,13 +491,12 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // survivors flicker like failing ballasts. At least one tube per room
     // stays alive — total darkness would wall off exploration. rng draws are
     // unconditional so the same room always regenerates the same failures.
-    const powerScale=[1,.78,.52,.32][corrupt];
     const survival=[1,1,.6,.28][corrupt];
     const flickerChance=[0,.5,.8,1][corrupt];
     const flickerAmp=[0,.35,.6,.85][corrupt];
     const alive=[rng()<survival,rng()<survival];
     if(!alive[0]&&!alive[1])alive[rng()<.5?0:1]=true;
-    for(const slot of [0,1]) {
+    for(const slot of layout.variant===0?[]:[0,1]) {
       const dx=slot===0?-9:8;
       const pos=new T.Vector3(x+dx,Math.min(7.3,ceiling-.7),z-5),color=new T.Color(bright?'#fff5de':dx<0?'#b5dfdc':'#eee9d5');
       const power=(bright?175:layout.variant===4?55:95)*powerScale;
@@ -504,9 +530,9 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     }
     yield;
     // Deep-corruption rooms go quiet: half the floaters are simply gone.
-    const duckCount=corrupt>=3?Math.ceil(layout.ducks/2):layout.ducks;
+    const duckCount=layout.variant===0?0:corrupt>=3?Math.ceil(layout.ducks/2):layout.ducks;
     // 海滩球是稀客：多数房间漂着一个，偶尔成对，剩下的没有。
-    const ballCount=Math.floor(rng()*2.4);
+    const ballVote=rng(),ballCount=layout.variant===0?0:Math.floor(ballVote*2.4);
     const spawn=(px:number,pz:number,yaw:number,kind:PropKind)=>{if(!blocked(new T.Vector3(px,1,pz),c.solids))prop(c,px,pz,yaw,kind);};
     if(wfcGrid){
       // WFC 房间：道具只落在坍缩出的空水格上，不会卡进柱子或平台。
@@ -638,7 +664,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     }
     return items;
   };
-  stream(); scene.add(new T.AmbientLight('#9dbacb',.095));
+  stream(); scene.add(new T.AmbientLight('#dadfd7',.2));
+  scene.add(new T.HemisphereLight('#e9eee6','#73877f',.27));
   const normals=new T.TextureLoader().load('/assets/textures/waternormals.jpg');normals.wrapS=normals.wrapT=T.RepeatWrapping;textures.push(normals);
   // Stronger distortion sells the sharpened wave normals in the reflection.
   const water=new Water(new T.PlaneGeometry(96,96,384,384),{textureWidth:768,textureHeight:768,waterNormals:normals,sunDirection:new T.Vector3(-.3,1,-.3),sunColor:'#a1bdc3',waterColor:'#327c80',distortionScale:.55,alpha:.48,fog:true});
@@ -681,7 +708,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   const probeFaces=probe.children as unknown as T.PerspectiveCamera[];
   let environment:T.WebGLRenderTarget|null=null;
   scene.environmentIntensity=.75;
-  tile.envMapIntensity=.8; pale.envMapIntensity=.75;
+  tile.envMapIntensity=1.1; pale.envMapIntensity=1.1;
   // Capture a single cube face; spreading the six renders across frames keeps each one cheap.
   // Shadows are not re-rendered per face — the main pass already produced them this frame.
   const captureProbeFace=(face:number)=>{
@@ -709,6 +736,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     ()=>{water.updateMatrixWorld();water.onBeforeRender(renderer,scene,camera,water.geometry,water.material,null!);},measure);
   const sceneDepth=scenePass.depth;
   composer.addPass(scenePass);
+  const wetReflection=new WetReflectionPass(scene,camera,rtTileMaterials,scenePass.opaque.texture,sceneDepth,measure);
+  composer.addPass(wetReflection);
   const liquidPass=new LiquidSurfacePass(scene,camera,liquid.mesh,water.material.uniforms,sceneDepth,measure);
   composer.addPass(liquidPass);
   const whitewaterPass=new WhitewaterPass(scene,camera,[particles.drops],sceneDepth,measure);
@@ -774,7 +803,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   let tyndallLevel=0,tyndallWarmed=false;
   const bloom=new UnrealBloomPass(new T.Vector2(host.clientWidth,host.clientHeight),.045,.25,1.6);composer.addPass(bloom);composer.addPass(new OutputPass());
   const film=new ShaderPass({
-    uniforms:{tDiffuse:{value:null},time:{value:0},filterMode:{value:1}},
+    uniforms:{tDiffuse:{value:null},time:{value:0},filterMode:{value:0}},
     vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
     fragmentShader:`uniform sampler2D tDiffuse;uniform float time;uniform int filterMode;varying vec2 vUv;
       void main(){
@@ -871,7 +900,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     pad('throw',()=>{if(active&&props.held&&!charging){charging=true;chargeStart=performance.now();}},()=>{if(charging){charging=false;dragging=false;if(props.held&&active){const charge=T.MathUtils.clamp((performance.now()-chargeStart)/1100,0,1);props.release(camera,6+charge*11);}}});
     on(touchUI.querySelector<HTMLElement>('.vct-touch-menu')!,'touchstart',e=>{e.preventDefault();pauseGame();});
   }
-  const keydown=(e:KeyboardEvent)=>{if(['KeyW','KeyA','KeyS','KeyD','ShiftLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyV','KeyR'].includes(e.code)&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();keys.add(e.code);if(e.code==='KeyV'&&!e.repeat){vct=!vct;field.uniforms.vctStrength.value=vct?1.8:0;}if(e.code==='KeyR'){props.release();charging=false;player.climbing=null;player.vertical=0;camera.position.set(10-originX*ROOM,1.5,12-originZ*ROOM);stream();camera.lookAt(-4,1.9,-10);}}};
+  const keydown=(e:KeyboardEvent)=>{if(['KeyW','KeyA','KeyS','KeyD','ShiftLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyV','KeyR'].includes(e.code)&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();keys.add(e.code);if(e.code==='KeyV'&&!e.repeat){vct=!vct;field.uniforms.vctStrength.value=vct?1.8:0;}if(e.code==='KeyR'){props.release();charging=false;player.climbing=null;player.vertical=0;camera.position.set(5-originX*ROOM,1.65,15-originZ*ROOM);stream();camera.lookAt(9-originX*ROOM,1.5,-8-originZ*ROOM);}}};
   const keyup=(e:KeyboardEvent)=>keys.delete(e.code);
   const mouse=(e:MouseEvent)=>{if(document.pointerLockElement===renderer.domElement){camera.rotation.y-=e.movementX*.0017;camera.rotation.x=T.MathUtils.clamp(camera.rotation.x-e.movementY*.0017,-1.3,1.3);}};
   const lock=()=>{active=document.pointerLockElement===renderer.domElement;keys.clear();if(!active){releaseDrag();charging=false;}};
@@ -947,8 +976,9 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // (Light ranking moved below the physics step - see the props block.)
     // Global mood eases toward the current room's decay: denser fog, darker water.
     const mood=Math.min(1,dt*.6),fog=scene.fog as T.FogExp2|null;
-    if(fog)fog.density+=(CORRUPT_FOG[currentCorrupt]-fog.density)*mood;
-    (scene.background as T.Color).lerp(CORRUPT_BG[currentCorrupt],mood);
+    const arcadeMood=roomLayout(cx,cz,seed).variant===0;
+    if(fog){fog.density+=((arcadeMood?.025:CORRUPT_FOG[currentCorrupt])-fog.density)*mood;fog.color.lerp(arcadeMood?arcadeBackdrop:CORRUPT_BG[currentCorrupt],mood);}
+    (scene.background as T.Color).lerp(arcadeMood?arcadeBackdrop:CORRUPT_BG[currentCorrupt],mood);
     // Tyndall shafts follow the room: lit only under clerestories that have
     // not gone dark, easing in and out as the player crosses doorways.
     // `shaftsForced` is the QA override, so the depth-occlusion path can be
@@ -1023,6 +1053,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     // Local automated physics/visual acceptance only; never exposed by production UI.
     qa:QA_ENABLED?{
       performance:{start:()=>recording.startRecording(),stop:()=>recording.stopRecording(),gpu:(on:boolean)=>{recording.enabled=on;},snapshot:()=>recording.stages},
+      reflections:(enabled:boolean,debug=false)=>{wetReflection.enabled=enabled;wetReflection.debug(debug);},
       inspect:()=>({room:[cx,cz],variant:roomLayout(cx,cz,seed).variant,programs:renderer.info.programs?.length,waterVisible:water.visible,vertical:player.vertical,grounded:player.grounded,impacts:waterSystem.interactionCount,audio:audio.inspect(),position:camera.position.toArray(),time,held:props.held?.name??'',charge:chargeNow(),grabs:props.grabs,throws:props.throws,climbing:!!player.climbing,slides:player.slides,filter:film.uniforms.filterMode.value,environment:!!scene.environment,transition:!!transition||!!chunkJob,workerError:rt.error,vctReady:field.uniforms.vctReady.value>0,blocks:waterSystem.uniforms.blockCount.value,props:props.bodies.filter(b=>b.position.distanceTo(camera.position)<15).map(b=>({name:b.name,kind:b.kind,position:b.position.toArray(),velocity:b.velocity.toArray(),promoted:b.promoted})),ladders:allLadders.filter(l=>l.base.distanceTo(camera.position)<30).map(l=>({base:l.base.toArray(),top:l.top.toArray(),exit:l.exit.toArray()}))}),
       view:(position:number[],target:number[])=>{player.climbing=null;player.vertical=0;const ox=originX,oz=originZ;camera.position.fromArray(position);stream();camera.lookAt(new T.Vector3(target[0]-(originX-ox)*ROOM,target[1],target[2]-(originZ-oz)*ROOM));},
       simulate:(enabled:boolean)=>{active=enabled;keys.clear();},

@@ -250,8 +250,8 @@ export function microSlope(uniforms: WaveUniforms, p: Vec, footprint: Vec): Slop
       // A slow third scale warps the phase of the first, so the two bands do not
       // beat into a visible repeating interference pattern.
       const phase = pShifted.dot(vec2(.47, -.31)).add(t.mul(.04)).sin().mul(.35);
-      const s1 = k1.mul(pShifted.dot(k1).add(t.mul(.18)).add(phase).cos()).mul(.00020).mul(largeFade);
-      const s2 = k2.mul(pShifted.dot(k2).sub(t.mul(.11)).cos()).mul(.000045).mul(smallFade);
+      const s1 = k1.mul(pShifted.dot(k1).add(t.mul(.18)).add(phase).cos()).mul(.0009).mul(largeFade);
+      const s2 = k2.mul(pShifted.dot(k2).sub(t.mul(.11)).cos()).mul(.00012).mul(smallFade);
       out.assign(s1.add(s2).mul(microStrength).mul(microOn));
     });
     return out;

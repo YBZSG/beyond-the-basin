@@ -49,8 +49,8 @@ vec2 microSlope(vec2 p,float footprint){
   float largeFade=1.0-smoothstep(.7,2.4,footprint*length(k1));
   float smallFade=1.0-smoothstep(.7,2.4,footprint*length(k2));
   float phase=sin(dot(p,vec2(.47,-.31))+t*.04)*.35;
-  vec2 s=k1*cos(dot(p,k1)+t*.18+phase)*.00020*largeFade;
-  s+=k2*cos(dot(p,k2)-t*.11)*.000045*smallFade;
+  vec2 s=k1*cos(dot(p,k1)+t*.18+phase)*.0009*largeFade;
+  s+=k2*cos(dot(p,k2)-t*.11)*.00012*smallFade;
   return s*microStrength*microOn;
 }
 vec3 poolNormal(vec2 p){return normalize(vec3(-simulationSlope(p)-detailSlope(p)-microSlope(p,.09),1.0).xzy);}
@@ -64,7 +64,7 @@ float poolHeightSmooth(vec2 p){
 `;
 
 export const WATER_FRAGMENT=WATER_WAVES+/* glsl */`
-uniform sampler2D mirrorSampler,sceneColor,sceneDepth,poolCaustics;
+uniform sampler2D mirrorSampler,normalSampler,sceneColor,sceneDepth,poolCaustics;
 uniform float refractionOn,reflectionOn,absorptionOn,fresnelOn,waterlineOn,sceneReady,debugView;
 uniform float refractionStrength,fresnelStrength,absorptionStrength,distortionScale,causticGain;
 uniform float cameraNear,cameraFar,reflectionSize;
@@ -103,6 +103,14 @@ float foamNoise(vec2 p){
   vec4 h=fract(sin(vec4(dot(i,vec2(127.1,311.7)),dot(i+vec2(1,0),vec2(127.1,311.7)),dot(i+vec2(0,1),vec2(127.1,311.7)),dot(i+vec2(1,1),vec2(127.1,311.7))))*43758.5453);
   return mix(mix(h.x,h.y,f.x),mix(h.z,h.w,f.x),f.y);
 }
+// Two drifting, filtered normal-map scales break up the regular analytic
+// bands into small irregular ripples, without disturbing the physics field.
+vec2 surfaceGrain(vec2 p){
+  vec2 world=p+microOrigin;
+  vec2 a=texture2D(normalSampler,world*.085+poolTime*vec2(.0021,-.0016)).rg*2.0-1.0;
+  vec2 b=texture2D(normalSampler,mat2(.8,-.6,.6,.8)*world*.14+poolTime*vec2(-.0013,.0019)).rg*2.0-1.0;
+  return (a*.12+b*.06)*microStrength*microOn;
+}
 void main(){
   vec2 p=worldPosition.xz;
   // The simulation's binary land cells constrain flux, not silhouettes.
@@ -112,7 +120,7 @@ void main(){
   float footprint=max(length(dFdx(p)),length(dFdy(p)));
   float detailFade=(1.0-smoothstep(8.0,26.0,distanceToEye))*(1.0-smoothstep(.09,.24,footprint));
   vec2 sim=simulationSlope(p),ripple=detailSlope(p)*detailFade;
-  vec2 micro=microSlope(p,footprint)*(1.0-smoothstep(4.0,18.0,distanceToEye));
+  vec2 micro=(microSlope(p,footprint)+surfaceGrain(p))*(1.0-smoothstep(12.0,34.0,distanceToEye));
   vec3 N=normalize(vec3(-sim-ripple-micro,1).xzy);
   float theta=clamp(dot(N,V),0.0,1.0);
   const float f0=.020373;
@@ -127,16 +135,18 @@ void main(){
   // gentle depth/angle scale. Foreground objects reject offset samples.
   vec3 refracted=refract(-V,N,1.0/1.333),flatRefracted=refract(-V,vec3(0,1,0),1.0/1.333);
   vec2 bend=(mat3(viewMatrix)*(refracted-flatRefracted)).xy;
-  vec2 offset=bend*min(thickness,2.5)*.09*refractionStrength*refractionOn/(.7+distanceToEye*.12);
+  vec2 offset=bend*min(thickness,2.5)*.16*refractionStrength*refractionOn/(.7+distanceToEye*.12);
   offset=clamp(offset,vec2(-.016),vec2(.016));
   vec2 refractUv=clamp(screenUv+offset,vec2(.002),vec2(.998));
   float offsetZ=-perspectiveDepthToViewZ(texture2D(sceneDepth,refractUv).r,cameraNear,cameraFar);
   if(offsetZ<-viewP.z+.02)refractUv=screenUv;
   vec3 transmitted=texture2D(sceneColor,refractUv).rgb;
-  vec3 absorption=exp(-vec3(.11,.033,.021)*absorptionStrength*absorptionOn*thickness);
+  vec3 absorption=exp(-vec3(.26,.085,.054)*absorptionStrength*absorptionOn*thickness);
   transmitted=transmitted*absorption+vec3(.13,.29,.30)*(1.0-absorption)*.24;
   vec2 reflectUv=mirrorCoord.xy/max(mirrorCoord.w,.001);
-  reflectUv+=N.xz*distortionScale*(.002+.025/max(distanceToEye,1.0));
+  // A grazing reflected ray amplifies the micro-slope. Using only eye distance
+  // left the low view of the indoor pool looking like an undisturbed mirror.
+  reflectUv+=N.xz*distortionScale*(.018+.16/max(theta,.18));
   vec2 border=vec2(1.5/reflectionSize);
   reflectUv=clamp(reflectUv,border,1.0-border);
   vec3 reflected=texture2D(mirrorSampler,reflectUv).rgb;
