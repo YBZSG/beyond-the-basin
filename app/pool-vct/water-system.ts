@@ -11,6 +11,7 @@ import { WATER_SETTINGS_DEFAULT, WATER_QUALITY, sanitizeWaterSettings, type Wate
 export { WATER_WAVES, WATER_SETTINGS_DEFAULT };
 export type { WaterSettings };
 import type { Collider } from './physics';
+import type { PoolRenderer } from './backend.ts';
 
 /**
  * Camera-motion gate for the refraction capture. A stale capture is only
@@ -53,14 +54,13 @@ export class InteractiveWater {
   private detailDepth={value:this.swe.uniforms.poolDepth.value as T.Texture};
   private detail=new RippleDetail(WATER_QUALITY.High.ripple,this.detailDepth);
   uniforms={poolSurface:{value:this.swe.uniforms.poolSurface.value},poolDepth:this.detailDepth,poolDetail:{value:this.detail.uniform.value},
-    poolCell:{value:this.swe.cell},detailCell:{value:this.detail.cell},poolTime:{value:0},microOrigin:{value:new T.Vector2()},blockCount:{value:0},causticResolution:{value:1024}};
+    poolCell:{value:this.swe.cell},detailCell:{value:this.detail.cell},poolTime:{value:0},blockCount:{value:0},causticResolution:{value:1024}};
   private tuning:Record<string,{value:number}>=Object.fromEntries(Object.entries(WATER_SETTINGS_DEFAULT).filter(([,v])=>typeof v==='number').map(([k,v])=>[k,{value:v as number}]));
   private layers:Record<string,{value:number}>=Object.fromEntries(['simulation','ripples','micro','refraction','reflection','absorption','fresnel','waterline','foam'].map(k=>[k+'On',{value:1}]));
   private terrain:Collider[]=[];
   private blocks:T.Vector4[]|null=null;
   private opaque=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,depthBuffer:true});
   private optics={sceneColor:{value:this.opaque.texture},sceneDepth:{value:null as T.DepthTexture|null},sceneReady:{value:0},cameraNear:{value:.08},cameraFar:{value:100},reflectionSize:{value:768}};
-  private lastEnvironment=0;
   private clearColor=new T.Color();
   private renderSize=new T.Vector2();
   private causticFrames=0;
@@ -72,7 +72,7 @@ export class InteractiveWater {
   wallTarget=new T.WebGLRenderTarget(2048,2048,{type:T.HalfFloatType,depthBuffer:false,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter,magFilter:T.LinearFilter});
   private scene=new T.Scene();
   private wallScene=new T.Scene();
-  private camera=new T.Camera();
+  private camera=new T.OrthographicCamera(-1,1,1,-1,0,1);
   private geometry=new T.PlaneGeometry(32,32,384,384);
   /**
    * Ping-pong pair for the separable caustic blur. Kept at a fraction of the
@@ -89,10 +89,10 @@ export class InteractiveWater {
     uniforms:{source:{value:null as T.Texture|null},stepSize:{value:new T.Vector2()},strips:{value:1}},
     vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0,1);}',
     fragmentShader:`uniform sampler2D source;uniform vec2 stepSize;uniform float strips;varying vec2 vUv;
-      vec3 sampleLight(vec2 uv){float lo=floor(vUv.y*strips)/strips;uv.y=clamp(uv.y,lo+.00025,lo+1.0/strips-.00025);return texture2D(source,uv).rgb;}
-      void main(){vec3 c=sampleLight(vUv)*.227027;
-        c+=(sampleLight(vUv+stepSize*1.384615)+sampleLight(vUv-stepSize*1.384615))*.316216;
-        c+=(sampleLight(vUv+stepSize*3.230769)+sampleLight(vUv-stepSize*3.230769))*.070270;
+      vec3 sampleLight(vec2 uv,float lo){uv.y=clamp(uv.y,lo+.00025,lo+1.0/strips-.00025);return texture2D(source,uv).rgb;}
+      void main(){float lo=floor(vUv.y*strips)/strips;vec3 c=sampleLight(vUv,lo)*.227027;
+        c+=(sampleLight(vUv+stepSize*1.384615,lo)+sampleLight(vUv-stepSize*1.384615,lo))*.316216;
+        c+=(sampleLight(vUv+stepSize*3.230769,lo)+sampleLight(vUv-stepSize*3.230769,lo))*.070270;
         gl_FragColor=vec4(c,1);}`,
     depthTest:false,depthWrite:false,
   });
@@ -243,7 +243,7 @@ export class InteractiveWater {
    * and skipping halves the scene's draw cost. The buffer is always refreshed
    * on the first frame after a resize or a quality change so the stale image
    * can never come from a differently sized target. */
-  captureScene(renderer:T.WebGLRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]):'disabled'|'reused'|'rendered'{
+  captureScene(renderer:PoolRenderer,scene:T.Scene,camera:T.PerspectiveCamera,excluded:T.Object3D[]=[]):'disabled'|'reused'|'rendered'{
     const q=WATER_QUALITY[this.settings.quality];
     const needed=q.refraction>0&&(this.settings.refraction||this.settings.absorption||this.settings.debugView===8);
     this.optics.sceneReady.value=needed?1:0;
@@ -271,7 +271,7 @@ export class InteractiveWater {
     this.optics.cameraNear.value=camera.near;this.optics.cameraFar.value=camera.far;
     const target=renderer.getRenderTarget(),visible=this.waterRef.visible,visibility=excluded.map(o=>o.visible);
     try{this.waterRef.visible=false;for(const object of excluded)object.visible=false;renderer.setRenderTarget(this.opaque);renderer.clear();renderer.render(scene,camera);}
-    finally{this.waterRef.visible=visible;excluded.forEach((o,i)=>{o.visible=visibility[i];});renderer.setRenderTarget(target);}
+    finally{this.waterRef.visible=visible;excluded.forEach((o,i)=>{o.visible=visibility[i];});renderer.setRenderTarget(target as never);}
     return 'rendered';
   }
   bindOpaqueScene(color:T.Texture,depth:T.DepthTexture,camera:T.PerspectiveCamera){
@@ -310,6 +310,7 @@ export class InteractiveWater {
     }
   }
   attachReceiver(material:T.MeshStandardMaterial){
+    material.userData.poolCaustics=this.causticUniforms;
     const before=material.onBeforeCompile;
     const baseKey=material.customProgramCacheKey();
     material.onBeforeCompile=(shader,renderer)=>{
@@ -344,6 +345,7 @@ export class InteractiveWater {
     material.customProgramCacheKey=()=> `${baseKey}-caustics-4`;material.needsUpdate=true;
   }
   attachFloater(material:T.MeshStandardMaterial){
+    material.userData.poolFloater=this.uniforms;
     const before=material.onBeforeCompile;
     material.onBeforeCompile=(shader,renderer)=>{
       before.call(material,shader,renderer);Object.assign(shader.uniforms,this.uniforms);
@@ -472,6 +474,8 @@ export class InteractiveWater {
     this.detail.maxSteps=s.rippleSteps;
     this.swe.foamDecay=1/Math.max(s.foamLife,.25);
     this.detail.frequency=s.rippleFrequency;
+    this.detail.speed=s.waveSpeed;
+    this.detail.environmentalStrength=this.layers.ripplesOn.value>0?s.environmentalStrength:0;
     this.optics.reflectionSize.value=this.reflectionResolution;
     if(this.waterRef)this.waterRef.material.uniforms.distortionScale.value=s.distortion;
     // Force a fresh capture whenever the setting changes so the interval takes
@@ -483,7 +487,7 @@ export class InteractiveWater {
     causticSize:this.target.width,filterGrid:this.filterTarget.width,causticFrames:this.causticFrames,reflectionSize:this.reflectionResolution,
     captureFrames:this.captureFrames,captureSkips:this.captureSkips,refractionAge:Number.isFinite(this.refractionAge)?this.refractionAge:0,
     refractionTargetSize:[(this.optics.sceneColor.value?.image as {width?:number}|undefined)?.width??this.opaque.width,(this.optics.sceneColor.value?.image as {height?:number}|undefined)?.height??this.opaque.height],settings:this.snapshot()};}
-  private updateQuality(renderer:T.WebGLRenderer){
+  private updateQuality(renderer:PoolRenderer){
     const q=WATER_QUALITY[this.settings.quality];
     if(this.waterRef&&(this.waterRef.geometry as T.PlaneGeometry).parameters.widthSegments!==q.surface){
       this.waterRef.geometry.dispose();this.waterRef.geometry=new T.PlaneGeometry(96,96,q.surface,q.surface);
@@ -496,7 +500,7 @@ export class InteractiveWater {
       this.detailDepth.value=next.uniforms.poolDepth.value;this.uniforms.poolCell.value=next.cell;
       this.applySettings(this.settings);
     }
-    if(this.detail.size!==q.ripple){this.detail.dispose();this.detail=new RippleDetail(q.ripple,this.detailDepth);this.detail.frequency=this.settings.rippleFrequency;this.detail.maxSteps=this.settings.rippleSteps;this.uniforms.detailCell.value=this.detail.cell;}
+    if(this.detail.size!==q.ripple){this.detail.dispose();this.detail=new RippleDetail(q.ripple,this.detailDepth);this.detail.frequency=this.settings.rippleFrequency;this.detail.speed=this.settings.waveSpeed;this.detail.environmentalStrength=this.layers.ripplesOn.value>0?this.settings.environmentalStrength:0;this.detail.maxSteps=this.settings.rippleSteps;this.uniforms.detailCell.value=this.detail.cell;}
     if(this.target.width===q.caustics)return;
     // The trace targets carry the caustic detail at full resolution; the blur
     // ping-pong runs at half, because a 9-tap Gaussian's own sampling grid is
@@ -521,7 +525,7 @@ export class InteractiveWater {
       +h(.16,.16)+h(-.16,-.16)+h(-.16,.16)+h(.16,-.16))/16*this.settings.waveHeight;
   }
   depthAt(x:number,z:number){return this.swe.depthAt(x,z);}
-  rebase(shift:T.Vector3){this.dirty=true;this.swe.rebase(shift.x,shift.z);this.detail.rebase(shift.x,shift.z);this.uniforms.microOrigin.value.add(new T.Vector2(shift.x,shift.z));}
+  rebase(shift:T.Vector3){this.dirty=true;this.swe.rebase(shift.x,shift.z);this.detail.rebase(shift.x,shift.z);}
   /** Waterline-crossing obstacles of every streamed room (XZ boxes), refreshed
    * after every floating-origin rebase so the solver mask and shader see local
    * coords. Rasterised into the land mask as reflective cells. */
@@ -533,21 +537,16 @@ export class InteractiveWater {
   beginTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.beginTerrain(colliders);}
   stepTerrain(budgetMs:number){const done=this.swe.stepTerrain(budgetMs);if(done)this.detail.terrainChanged();return done;}
   setTerrain(colliders:Collider[]){this.dirty=true;this.uniforms.blockCount.value=colliders.length;this.blocks=null;this.terrain=colliders;this.swe.setTerrain(colliders);this.detail.terrainChanged();}
-  render(renderer:T.WebGLRenderer,time:number,measure:Measure=(_stage,fn)=>fn()){
+  render(renderer:PoolRenderer,time:number,measure:Measure=(_stage,fn)=>fn()){
     this.updateQuality(renderer);
     const dt=this.lastTime===null?0:Math.max(0,Math.min(time-this.lastTime,.25));
     this.lastTime=time;
     this.uniforms.poolTime.value=time;
-    if(time-this.lastEnvironment>2.7&&this.settings.environmentalStrength>0){
-      this.lastEnvironment=time;
-      const x=Math.sin(time*1.71)*12,z=Math.sin(time*2.39)*12;
-      if(!this.swe.isLand(x,z))this.detail.impact(x,z,.0003*this.settings.environmentalStrength,.12);
-    }
     const changed=measure('water-sim',()=>this.swe.frame(renderer,dt));
     this.uniforms.poolSurface.value=this.swe.uniforms.poolSurface.value;
     measure('water-sim',()=>this.detail.frame(renderer,dt,this.layers.ripplesOn.value>0));
     this.uniforms.poolDetail.value=this.detail.uniform.value;
-    const active=!this.swe.settled||(this.detail.active&&this.layers.ripplesOn.value>0)||(this.layers.microOn.value>0&&this.settings.microStrength>0&&this.settings.causticsSpeed>0);
+    const active=!this.swe.settled||(this.detail.active&&this.layers.ripplesOn.value>0);
     if(this.causticUniforms.causticGain.value<=0)return;
     const ready=this.tracingReady?.value??1;
     // A flat, unchanged pool has unchanged light transport. Reuse it instead of
@@ -589,7 +588,7 @@ export class InteractiveWater {
     this.filterMaterial.uniforms.source.value=this.filterTarget.texture;
     this.filterMaterial.uniforms.stepSize.value.set(0,1.2/fh);
     renderer.setRenderTarget(this.wallTarget);renderer.render(this.filterScene,this.camera);
-    renderer.setRenderTarget(previous);renderer.setClearColor(clear,alpha);
+    renderer.setRenderTarget(previous as never);renderer.setClearColor(clear,alpha);
     });
   }
   dispose(){this.swe.dispose();this.detail.dispose();this.opaque.dispose();this.target.dispose();this.wallTarget.dispose();this.filterTarget.dispose();this.filterMaterial.dispose();(this.filterScene.children[0] as T.Mesh).geometry.dispose();this.geometry.dispose();for(const g of this.wallGeometries)g.dispose();for(const m of this.materials)m.dispose();for(const m of this.masks)m.dispose();}

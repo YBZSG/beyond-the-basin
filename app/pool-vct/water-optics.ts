@@ -1,10 +1,9 @@
 // All slopes use world XZ metres. Height, reflection, refraction and photon
-// transport share the same macro + meso field; only micro detail is band-limited.
+// transport share the same simulated height fields, including fine detail.
 export const WATER_WAVES=/* glsl */`
 uniform sampler2D poolSurface,poolDepth,poolDetail;
 uniform float poolCell,detailCell,poolTime,waveHeight,rippleGain,normalBoost,microStrength;
-uniform float simulationOn,ripplesOn,microOn,causticsScale,causticsSpeed;
-uniform vec2 microOrigin;
+uniform float simulationOn,ripplesOn,microOn;
 float poolRestDepth(vec2 p){return texture2D(poolDepth,(p+48.0)/96.0).r;}
 // poolDepth is nearest-filtered: the solver needs a hard land mask. Sampling
 // it directly quantises anything derived from depth to the 0.125m cell grid,
@@ -42,16 +41,12 @@ vec2 detailSlope(vec2 p){
 }
 vec2 microSlope(vec2 p,float footprint){
   if(microOn<.5)return vec2(0);
-  p+=microOrigin;float t=poolTime*causticsSpeed;
-  // Two unrelated scales/directions, centimetres per second, millimetre slopes.
-  // Analytic band limiting suppresses subpixel frequencies without TAA history.
-  vec2 k1=vec2(8.1,5.7)*causticsScale,k2=vec2(-20.3,27.1)*causticsScale;
-  float largeFade=1.0-smoothstep(.7,2.4,footprint*length(k1));
-  float smallFade=1.0-smoothstep(.7,2.4,footprint*length(k2));
-  float phase=sin(dot(p,vec2(.47,-.31))+t*.04)*.35;
-  vec2 s=k1*cos(dot(p,k1)+t*.18+phase)*.0009*largeFade;
-  s+=k2*cos(dot(p,k2)-t*.11)*.00012*smallFade;
-  return s*microStrength*microOn;
+  // Enhance only the high-frequency part of the propagated height field.
+  // A flat field remains flat: no scrolling map or independent normal waves.
+  float e=detailCell*2.0;
+  vec2 broad=vec2(detailHeight(p+vec2(e,0))-detailHeight(p-vec2(e,0)),detailHeight(p+vec2(0,e))-detailHeight(p-vec2(0,e)))/(2.0*e);
+  float fade=1.0-smoothstep(1.0,3.0,footprint/detailCell);
+  return (detailSlope(p)-broad)*microStrength*microOn*fade;
 }
 vec3 poolNormal(vec2 p){return normalize(vec3(-simulationSlope(p)-detailSlope(p)-microSlope(p,.09),1.0).xzy);}
 float poolHeightSmooth(vec2 p){
@@ -64,7 +59,7 @@ float poolHeightSmooth(vec2 p){
 `;
 
 export const WATER_FRAGMENT=WATER_WAVES+/* glsl */`
-uniform sampler2D mirrorSampler,normalSampler,sceneColor,sceneDepth,poolCaustics;
+uniform sampler2D mirrorSampler,sceneColor,sceneDepth,poolCaustics;
 uniform float refractionOn,reflectionOn,absorptionOn,fresnelOn,waterlineOn,sceneReady,debugView;
 uniform float refractionStrength,fresnelStrength,absorptionStrength,distortionScale,causticGain;
 uniform float cameraNear,cameraFar,reflectionSize;
@@ -103,14 +98,6 @@ float foamNoise(vec2 p){
   vec4 h=fract(sin(vec4(dot(i,vec2(127.1,311.7)),dot(i+vec2(1,0),vec2(127.1,311.7)),dot(i+vec2(0,1),vec2(127.1,311.7)),dot(i+vec2(1,1),vec2(127.1,311.7))))*43758.5453);
   return mix(mix(h.x,h.y,f.x),mix(h.z,h.w,f.x),f.y);
 }
-// Two drifting, filtered normal-map scales break up the regular analytic
-// bands into small irregular ripples, without disturbing the physics field.
-vec2 surfaceGrain(vec2 p){
-  vec2 world=p+microOrigin;
-  vec2 a=texture2D(normalSampler,world*.085+poolTime*vec2(.0021,-.0016)).rg*2.0-1.0;
-  vec2 b=texture2D(normalSampler,mat2(.8,-.6,.6,.8)*world*.14+poolTime*vec2(-.0013,.0019)).rg*2.0-1.0;
-  return (a*.12+b*.06)*microStrength*microOn;
-}
 void main(){
   vec2 p=worldPosition.xz;
   // The simulation's binary land cells constrain flux, not silhouettes.
@@ -120,7 +107,7 @@ void main(){
   float footprint=max(length(dFdx(p)),length(dFdy(p)));
   float detailFade=(1.0-smoothstep(8.0,26.0,distanceToEye))*(1.0-smoothstep(.09,.24,footprint));
   vec2 sim=simulationSlope(p),ripple=detailSlope(p)*detailFade;
-  vec2 micro=(microSlope(p,footprint)+surfaceGrain(p))*(1.0-smoothstep(12.0,34.0,distanceToEye));
+  vec2 micro=microSlope(p,footprint)*(1.0-smoothstep(12.0,34.0,distanceToEye));
   vec3 N=normalize(vec3(-sim-ripple-micro,1).xzy);
   float theta=clamp(dot(N,V),0.0,1.0);
   const float f0=.020373;

@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { WebGPURenderer } from 'three/webgpu';
 import { attribute, float, uniform, vec2, vec4 } from 'three/tsl';
+import { installShaderMaterials } from './webgpu/shader-material.ts';
 
 /** Which render backend actually ended up driving the frame loop. */
 export type BackendKind = 'webgpu' | 'webgl2';
@@ -47,10 +48,17 @@ export async function probeWebGPU(): Promise<boolean> {
  * `WebGPURenderer` also falls back on its own when device creation fails, but
  * probing first lets us report the truth to the UI instead of guessing.
  */
-export async function createBackend(antialias: boolean): Promise<Backend> {
-  const available = await probeWebGPU();
+export async function createBackend(antialias: boolean, forceBackend?: BackendKind): Promise<Backend> {
+  let preferWebGPU = forceBackend ? forceBackend === 'webgpu' : true;
+  if (!forceBackend && typeof location !== 'undefined') {
+    const param = new URLSearchParams(location.search).get('backend');
+    if (param === 'webgl2' || param === 'webgl') preferWebGPU = false;
+    else if (param === 'webgpu') preferWebGPU = true;
+  }
+  const available = preferWebGPU && await probeWebGPU();
   const renderer = new WebGPURenderer({ antialias, alpha: false, forceWebGL: !available });
   await renderer.init();
+  installShaderMaterials(renderer);
   const kind: BackendKind = available ? 'webgpu' : 'webgl2';
   const reason = available
     ? 'WebGPU · TSL 材质'
@@ -130,9 +138,12 @@ export async function readbackTarget(
  * The node renderer exposes anisotropy directly instead of through
  * `renderer.capabilities`, and the WebGL2 fallback backend caps it lower.
  */
-export function maxAnisotropy(renderer: WebGPURenderer): number {
+export function maxAnisotropy(renderer: PoolRenderer): number {
   try {
-    return renderer.getMaxAnisotropy();
+    if ('capabilities' in renderer && (renderer as T.WebGLRenderer).capabilities) {
+      return (renderer as T.WebGLRenderer).capabilities.getMaxAnisotropy();
+    }
+    return (renderer as WebGPURenderer).getMaxAnisotropy();
   } catch {
     return 4;
   }

@@ -1,13 +1,14 @@
 import * as T from 'three';
 import type { VoxelField } from './world';
+import { type PoolRenderer, maxAnisotropy } from './backend';
 
 /** CC0 scanned ceramic, projected in metres so scaled walls keep square tiles. */
-export function createAgedTiles(renderer:T.WebGLRenderer,field:VoxelField){
+export function createAgedTiles(renderer:PoolRenderer,field:VoxelField){
   const loader=new T.TextureLoader();
   const textures=['color','normal','roughness'].map(name=>{
     const texture=loader.load(`/assets/textures/aged-tiles/${name}.jpg`);
     texture.wrapS=texture.wrapT=T.RepeatWrapping;
-    texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+    texture.anisotropy=Math.min(8,maxAnisotropy(renderer));
     return texture;
   });
   textures[0].colorSpace=T.SRGBColorSpace;
@@ -18,9 +19,22 @@ export function createAgedTiles(renderer:T.WebGLRenderer,field:VoxelField){
     clearcoat:.7,clearcoatRoughness:.1,clearcoatNormalMap:textures[1],clearcoatNormalScale:new T.Vector2(.22,.22),
   });
   field.apply(material);
+  material.userData.poolAged={textures};
   const before=material.onBeforeCompile;
   material.onBeforeCompile=(shader,renderer)=>{
     before.call(material,shader,renderer);
+    // Point lights approximate fluorescent illumination, but have no emitting
+    // surface and produced detached white blobs on the glaze. Keep their
+    // diffuse/shadow contribution; fixture-shaped specular comes from the
+    // captured emissive tube geometry (environment and live reflection).
+    const direct='RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );';
+    shader.fragmentShader=shader.fragmentShader.replace(direct,`{
+      vec3 ceramicSpecular=reflectedLight.directSpecular;
+      vec3 ceramicCoat=clearcoatSpecularDirect;
+      ${direct}
+      reflectedLight.directSpecular=ceramicSpecular;
+      clearcoatSpecularDirect=ceramicCoat;
+    }`);
     // The original scan is diagonal. Rotate all three maps together, retaining
     // their registered grout and surface wear, with roughly 20 cm tiles.
     shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`
@@ -44,7 +58,7 @@ export function createAgedTiles(renderer:T.WebGLRenderer,field:VoxelField){
     shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',T.ShaderChunk.normal_fragment_maps.replaceAll('vNormalMapUv','agedUv'));
     shader.fragmentShader=shader.fragmentShader.replace('#include <clearcoat_normal_fragment_maps>',T.ShaderChunk.clearcoat_normal_fragment_maps.replaceAll('vClearcoatNormalMapUv','agedUv'));
   };
-  material.customProgramCacheKey=()=> 'pool-aged-wet-white-tiles-2';
+  material.customProgramCacheKey=()=> 'pool-aged-wet-white-tiles-3';
   return material;
   };
   return {material:createMaterial('#e0e3dc'),createMaterial,textures};

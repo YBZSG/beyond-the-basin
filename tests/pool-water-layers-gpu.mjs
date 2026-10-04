@@ -47,6 +47,25 @@ async (page) => {
     for(let z=-2;z<2;z+=.1)for(let x=-2;x<2;x+=.1)change+=Math.abs(flat.at(x,z)-ripple.at(x,z));
     check('computed caustics change with the shared wave normal',change>.01,{change});
     water.dispose();
+    const ambient=new InteractiveWater();ambient.setTerrain([]);ambient.applySettings({caustics:false});
+    ambient.render(renderer,0);
+    for(let i=1;i<=120;i++)ambient.render(renderer,i/60);
+    let a=read(ambient.detail,48);
+    const points=[];for(let z=-15;z<15;z+=.25)for(let x=-15;x<15;x+=.25)points.push(a.at(x,z));
+    for(let i=121;i<=150;i++)ambient.render(renderer,i/60);
+    let b=read(ambient.detail,48),difference=0,index=0;
+    for(let z=-15;z<15;z+=.25)for(let x=-15;x<15;x+=.25)difference+=Math.abs(b.at(x,z)-points[index++]);
+    let covered=0;for(let z=-15;z<15;z+=.25)for(let x=-15;x<15;x+=.25)if(Math.abs(b.at(x,z))>.00003)covered++;
+    check('default continuous ambient waves cover the pool without point impacts or shallow momentum',a.peak>.0001&&b.peak>.0001&&difference>.1&&covered/points.length>.7&&read(ambient.swe).peak===0&&ambient.detail.queued.length===0,{before:a.peak,after:b.peak,difference,coverage:covered/points.length});
+    ambient.applySettings({environmentalStrength:0});
+    for(let i=151;i<=720;i++)ambient.render(renderer,i/60);
+    check('ambient fine heights settle to zero when environmental forcing stops',read(ambient.detail,48).peak===0,{});
+    ambient.applySettings({environmentalStrength:.08,quality:'Medium'});
+    for(let i=721;i<=750;i++)ambient.render(renderer,i/60);
+    check('medium quality keeps the same live fine-wave source path',ambient.detail.size===384&&read(ambient.detail,48).peak>.0001,{size:ambient.detail.size,peak:read(ambient.detail,48).peak});
+    ambient.applySettings({ripples:false});ambient.render(renderer,751/60);
+    check('fine-wave switch clears the entire detail field',read(ambient.detail,48).peak===0,{});
+    ambient.dispose();
     // Foam: repeated splashes must deposit into the state alpha channel, stay
     // bounded in [0,1], and decay away once the pool goes quiet again.
     sw=new ShallowWater();sw.setTerrain([]);sw.frame(renderer,0);

@@ -64,11 +64,18 @@ export class SplashParticles {
       `);
     };
     dropMaterial.customProgramCacheKey=()=>'whitewater-mesh-transmission-v1';
+    dropMaterial.userData.poolDrop=this.optical;
     this.drops=new T.InstancedMesh(new T.SphereGeometry(1,12,8),dropMaterial,MAX_PARTICLES);
     this.drops.name='Water droplets (3D)';
     this.drops.onBeforeRender=(renderer,_scene,camera)=>{
-      renderer.getCurrentViewport(this.viewport);
-      this.optical.viewport.value.set(this.viewport.z,this.viewport.w);
+      if('isWebGPURenderer' in renderer){
+        const target=renderer.getRenderTarget();
+        if(target)this.optical.viewport.value.set(target.width,target.height);
+        else renderer.getDrawingBufferSize(this.optical.viewport.value);
+      }else{
+        renderer.getCurrentViewport(this.viewport);
+        this.optical.viewport.value.set(this.viewport.z,this.viewport.w);
+      }
       this.optical.renderOptics.value=+(camera===this.mainCamera);
     };
 

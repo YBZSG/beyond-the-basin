@@ -16,6 +16,22 @@ function encoded(h=0,u=0,v=0){
   for(let i=0;i<bytes.length;i+=4){bytes[i]=T.DataUtils.toHalfFloat(h);bytes[i+1]=T.DataUtils.toHalfFloat(u);bytes[i+2]=T.DataUtils.toHalfFloat(v);bytes[i+3]=0x3c00;}
   return bytes;
 }
+
+test('continuous ambient forcing advances at a fixed timestep without point impacts and respects layer switches',()=>{
+  const run=fps=>{
+    const water=new InteractiveWater(),r=renderer();water.setTerrain([]);water.applySettings({caustics:false});
+    for(let i=0;i<=fps*3;i++)water.render(r,i/fps);
+    assert.equal(water.detail.queued.length,0,'ambient waves must not call the impact path');
+    assert.equal(water.swe.pendingSplats.length,0,'fine ambient forcing stays out of shallow physics');
+    const clock=water.detail.environmentTime;assert.ok(Math.abs(clock-3)<1e-8);
+    water.applySettings({environmentalStrength:0});assert.equal(water.detail.environmentalStrength,0);
+    water.applySettings({environmentalStrength:.08,ripples:false});assert.equal(water.detail.environmentalStrength,0);
+    water.applySettings({ripples:true,quality:'Low'});assert.equal(water.detail.environmentalStrength,0);
+    water.applySettings({quality:'High',waveSpeed:2});assert.equal(water.detail.speed,2);assert.equal(water.detail.environmentalStrength,.08);
+    water.dispose();return clock;
+  };
+  assert.ok(Math.abs(run(30)-run(144))<1e-8);
+});
 test('room masonry and its GPU depth texture agree, with open portals',()=>{
   const sw=new ShallowWater(),tex=sw.uniforms.poolDepth.value.image.data;
   for(let j=13;j<SW_SIZE;j+=31)for(let i=7;i<SW_SIZE;i+=29){

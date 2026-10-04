@@ -219,40 +219,25 @@ export function detailSlope(uniforms: WaveUniforms, p: Vec): SlopeNode {
 }
 
 /**
- * Two-scale analytic micro-normal detail.
- *
- * Band-limited by `footprint` so subpixel frequencies are suppressed without a
- * TAA history - the two wave vectors are unrelated in scale and direction, and
- * each fades out once its period approaches the pixel footprint.
- *
- * Like `detailHeight`, the GLSL early-returns when `microOn < .5`, so the whole
- * body sits in an `If()` and the disabled path costs nothing. The trailing
- * `* microOn` is kept rather than being folded into the branch condition: GLSL
- * scales by the uniform's actual value, which need not be exactly 0 or 1.
+ * High-frequency contrast from the simulated detail heights, matching GLSL.
+ * A flat height field cannot generate micro waves. Footprint filtering keeps
+ * the additional slope contrast below the pixel sampling limit.
  */
 export function microSlope(uniforms: WaveUniforms, p: Vec, footprint: Vec): SlopeNode {
   const microOn = u(uniforms, 'microOn', 0);
-  const poolTime = u(uniforms, 'poolTime', 0);
-  const causticsSpeed = u(uniforms, 'causticsSpeed', 1);
-  const causticsScale = u(uniforms, 'causticsScale', 1);
   const microStrength = u(uniforms, 'microStrength', 0);
-  const pack = uniforms.microOrigin;
-  const microOrigin = pack === undefined ? vec2(0, 0) : (pack.value as { x: number; y: number });
+  const cell = u(uniforms, 'detailCell', 1), e = cell.mul(2);
+  const xp = detailHeight(uniforms, p.add(vec2(e, 0)));
+  const xn = detailHeight(uniforms, p.sub(vec2(e, 0)));
+  const yp = detailHeight(uniforms, p.add(vec2(0, e)));
+  const yn = detailHeight(uniforms, p.sub(vec2(0, e)));
+  const fine = detailSlope(uniforms, p);
   return Fn<SlopeNode>(() => {
     const out = vec2(0).toVar();
     If(microOn.greaterThanEqual(.5), () => {
-      const pShifted = p.add(vec2(microOrigin.x, microOrigin.y));
-      const t = poolTime.mul(causticsSpeed);
-      const k1 = vec2(8.1, 5.7).mul(causticsScale);
-      const k2 = vec2(-20.3, 27.1).mul(causticsScale);
-      const largeFade = smoothstep(float(.7), float(2.4), footprint.mul(k1.length())).oneMinus();
-      const smallFade = smoothstep(float(.7), float(2.4), footprint.mul(k2.length())).oneMinus();
-      // A slow third scale warps the phase of the first, so the two bands do not
-      // beat into a visible repeating interference pattern.
-      const phase = pShifted.dot(vec2(.47, -.31)).add(t.mul(.04)).sin().mul(.35);
-      const s1 = k1.mul(pShifted.dot(k1).add(t.mul(.18)).add(phase).cos()).mul(.0009).mul(largeFade);
-      const s2 = k2.mul(pShifted.dot(k2).sub(t.mul(.11)).cos()).mul(.00012).mul(smallFade);
-      out.assign(s1.add(s2).mul(microStrength).mul(microOn));
+      const broad = vec2(xp.sub(xn), yp.sub(yn)).div(e.mul(2));
+      const fade = smoothstep(float(1), float(3), footprint.div(cell)).oneMinus();
+      out.assign(fine.sub(broad).mul(microStrength).mul(microOn).mul(fade));
     });
     return out;
   })();

@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import type { createPool, Status, WaterSettings } from './engine';
+import { backendLabel } from './backend';
 import type { PerfSnapshot } from './perf/perf-types';
 import { QA_ENABLED } from './benchmark';
 import { isTouchDevice } from './touch';
@@ -13,7 +14,7 @@ const TIMING_ROWS=([['道具物理','props'],['白水/浪花','liquid'],['粒子
 const WATER_PRESETS:[string,WaterSettings][]=[
   ['恢复默认',{...WATER_DEFAULT}],
   ['细腻明显',{...WATER_DEFAULT,waveHeight:.8,rippleGain:1.6,normalBoost:1.7,distortion:.75,impact:1.3,ringWaves:15,wavePush:1.1,waveSpeed:1.15}],
-  ['平静如镜',{...WATER_DEFAULT,waveHeight:.2,rippleGain:.5,normalBoost:1,distortion:.3,impact:.6,ringWaves:9,wavePush:.5,waveSpeed:.75}],
+  ['平静如镜',{...WATER_DEFAULT,waveHeight:.2,rippleGain:.5,environmentalStrength:0,normalBoost:1,distortion:.3,impact:.6,ringWaves:9,wavePush:.5,waveSpeed:.75}],
 ];
 const loadWater=():WaterSettings=>{
   try{const raw=localStorage.getItem(WATER_STORE);if(raw)return sanitizeWaterSettings({...JSON.parse(raw),debugView:0});}catch{}
@@ -25,7 +26,7 @@ const loadWater=():WaterSettings=>{
  * tell us. `shadowSlots` is the payoff of per-slot invalidation - it should sit
  * at 0/4 on a still frame.
  */
-function PerfMetrics({perf}:{perf:PerfSnapshot}){
+function PerfMetrics({perf,status}:{perf:PerfSnapshot;status?:Status}){
   const f=perf.frame,g=perf.gpu;
   // Show sample age and scope: WebGL timing excludes the separate liquid device.
   return <div className="vct-perf-metrics">
@@ -33,14 +34,14 @@ function PerfMetrics({perf}:{perf:PerfSnapshot}){
     <div><span>绘制调用 / 三角形</span><b>{perf.render.calls}c / {Math.round(perf.render.triangles/1000)}k</b></div>
     <div><span>GPU 时间</span><b>{g.supported?(g.disjoint?'采样中断':(g.last?`${g.average.toFixed(1)} ms · ${perf.stages.gpu.frame?.ageFrames??0} 帧前`:'等待样本')):'不可用'}</b></div>
     <div><span>60 FPS 帧预算 / CPU</span><b>{perf.frameBudgetMs.toFixed(2)} / {perf.stages.cpuMs.toFixed(1)} ms</b></div>
-    <div><span>GPU 范围</span><b>WebGL · 不含液体 Compute</b></div>
+    <div><span>渲染后端</span><b>{backendLabel(status?.backend ?? 'webgpu')} · {status?.backendReason ?? 'TSL 材质'}</b></div>
     <div><span>阴影槽重建</span><b>{perf.shadowSlots}/4</b></div>
   </div>;
 }
 /** Compare CPU stage work against the actual 60 FPS frame budget. */
 const isHot=(ms:number,budget:number)=>ms>budget;
 export default function PoolVCT() {
-  const host=useRef<HTMLDivElement>(null),engine=useRef<ReturnType<typeof createPool>|null>(null);
+  const host=useRef<HTMLDivElement>(null),engine=useRef<Awaited<ReturnType<typeof createPool>>|null>(null);
   const touch=isTouchDevice();
   const [ready,setReady]=useState(false),[locked,setLocked]=useState(false),[error,setError]=useState('');
   const [seed,setSeed]=useState(250821),[draft,setDraft]=useState('250821');
@@ -67,8 +68,8 @@ export default function PoolVCT() {
   // Sliders write through to the live renderer and persist for next sessions.
   useEffect(()=>{if(!ready)return;engine.current?.waterSettings(water);try{localStorage.setItem(WATER_STORE,JSON.stringify(water));}catch{}},[ready,water]);
   useEffect(()=>{const update=()=>{const d=new Date(),pad=(v:number)=>String(v).padStart(2,'0');setCameraTime(`’${pad(d.getFullYear()%100)} ${pad(d.getMonth()+1)} ${pad(d.getDate())}  ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`);};update();const timer=window.setInterval(update,1000);return()=>window.clearInterval(timer);},[]);
-  const [status,setStatus]=useState<Status>({x:0,z:0,rooms:9,discovered:1,fps:0,vct:true,impacts:0,caustics:true,hint:'',filter:1,held:'',throws:0,grabs:0,height:1.5,climbing:false,slides:0,charge:0,paused:true,corrupt:0});
-  useEffect(()=>{let cancelled=false;import('./engine').then(({createPool})=>{if(cancelled||!host.current)return;try{engine.current=createPool(host.current,seed,setStatus);if(QA_ENABLED&&new URLSearchParams(location.search).has('qa')){(window as Window & {__poolQA?:typeof engine.current.qa}).__poolQA=engine.current.qa;}(window as Window & {__poolPause?:()=>void}).__poolPause=()=>engine.current?.pause();setReady(true);}catch(e){setError(String(e));}});return()=>{cancelled=true;engine.current?.dispose();engine.current=null;};},[seed]);
+  const [status,setStatus]=useState<Status>({x:0,z:0,rooms:9,discovered:1,fps:0,vct:true,impacts:0,caustics:true,hint:'',filter:1,held:'',throws:0,grabs:0,height:1.5,climbing:false,slides:0,charge:0,paused:true,corrupt:0,backend:'webgpu',backendReason:'WebGPU · TSL 材质'});
+  useEffect(()=>{let cancelled=false;import('./engine').then(async ({createPool})=>{if(cancelled||!host.current)return;try{const pool=await createPool(host.current,seed,setStatus);if(cancelled){pool.dispose();return;}engine.current=pool;if(QA_ENABLED&&new URLSearchParams(location.search).has('qa')){(window as Window & {__poolQA?:typeof engine.current.qa}).__poolQA=engine.current.qa;}(window as Window & {__poolPause?:()=>void}).__poolPause=()=>engine.current?.pause();setReady(true);}catch(e){setError(String(e));}});return()=>{cancelled=true;engine.current?.dispose();engine.current=null;};},[seed]);
   useEffect(()=>{const onLock=()=>setLocked(!!document.pointerLockElement);document.addEventListener('pointerlockchange',onLock);return()=>document.removeEventListener('pointerlockchange',onLock);},[]);
   // Touch sessions have no pointer lock; the engine's paused flag drives the menu instead.
   const entered=touch?!status.paused:locked;
@@ -76,9 +77,9 @@ export default function PoolVCT() {
   const barBudget=Math.max(status.perf?.frameBudgetMs??16.67,1e-6);
   return <main className="vct-page">
     <div className="vct-canvas" ref={host}/>
-    <div className="vct-top"><span>POOLCORE <i> / </i> VOL. 02</span><span><b className="vct-dot"/> {ready?'空间已生成':'正在填充体素光照场'}</span></div>
+    <div className="vct-top"><span>POOLCORE <i> / </i> VOL. 02 <i> / </i> {backendLabel(status.backend ?? 'webgpu')}</span><span><b className="vct-dot"/> {ready?`空间已生成 [${backendLabel(status.backend ?? 'webgpu')}]`:'正在填充体素光照场'}</span></div>
     {!entered&&<section className="vct-menu">
-      <p className="vct-kicker">一座没有出口的旧泳池</p>
+      <p className="vct-kicker">一座没有出口的旧泳池 · {backendLabel(status.backend ?? 'webgpu')}</p>
       <h1>深水之外<span>BEYOND THE BASIN</span></h1>
       <p className="vct-description">灯还亮着，水还在动。<br/>穿过廊柱，下一座泳池正在等你。</p>
       <button className="vct-enter" disabled={!ready||!!error} onClick={()=>engine.current?.enter()}>{ready?'进入水中':'正在准备场景'}<span>↗</span></button>
@@ -87,6 +88,7 @@ export default function PoolVCT() {
       <button className="vct-filter" aria-pressed={sound} onClick={()=>setSound(!sound)}>声音：{sound?'开启':'关闭'} <span>水声 · 脚步 · 碰撞</span></button>
       <button className="vct-filter" aria-pressed={music} onClick={()=>setMusic(!music)}>音乐：{music?'开启':'关闭'} <span>环境底噪 · 循环</span></button>
       <button className="vct-filter" onClick={()=>engine.current?.cycleFilter()}>镜头：{['原始','CCD 摄像机','VHS 录像','冷色纪实'][status.filter]} <span>F 切换 ↻</span></button>
+      <div className="vct-filter" style={{cursor:'default'}}>渲染后端：{backendLabel(status.backend ?? 'webgpu')} <span>{status.backendReason}</span></div>
       <section className="vct-water" aria-label="水面设置">
         <span>水面设置 · 实时生效 · 自动保存</span>
         <label className="vct-water-select">水体质量<select aria-label="水体质量" value={water.quality} onChange={e=>setWater(w=>({...w,quality:e.target.value as WaterQuality}))}>{Object.keys(WATER_QUALITY).map(q=><option key={q}>{q}</option>)}</select></label>
@@ -127,7 +129,7 @@ export default function PoolVCT() {
     {debugOpen&&entered&&status.timings&&<aside className="vct-perf-hud" aria-label="实时帧耗时">
       <div className="vct-perf-head"><strong>{status.fps} FPS</strong><span>{status.timings.total.toFixed(1)} ms / 帧</span></div>
       {TIMING_ROWS.map(([label,key])=>{const ms=status.timings![key]??0,hot=status.perf&&isHot(ms,status.perf.frameBudgetMs);return <div key={key} className={hot?'vct-hot':undefined}><span>{label}</span><i style={{width:`${Math.min(100,ms/barBudget*100)}%`}}/><b>{ms.toFixed(1)}</b></div>;})}
-      {status.perf&&<PerfMetrics perf={status.perf}/>}
+      {status.perf&&<PerfMetrics perf={status.perf} status={status}/>}
     </aside>}
     <footer className="vct-footer"><div><span>SECTOR {String(status.x).padStart(2,'0')} / {String(status.z).padStart(2,'0')}</span><small>已探索 {status.discovered} 个区域 · {status.rooms} 个驻留区块 · 崩坏 {['完好','渐衰','显著','严重'][status.corrupt]}</small></div><div className="vct-tech">{status.vct?'体素锥追踪 GI':'GI 对照：关闭'} · {status.caustics?'水光焦散':'焦散关闭'}<small>{status.fps} FPS · SEED {seed} · 水面交互 {status.impacts}</small></div><time aria-label="摄像机本地时间">{cameraTime}</time></footer>
   </main>;

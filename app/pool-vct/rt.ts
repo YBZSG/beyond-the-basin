@@ -24,6 +24,8 @@ export class ReflectionField {
   private packing:Generator<void,void>|null=null;
   private ready:{version:number;positions?:Float32Array;colors?:Float32Array;serialized:ReturnType<typeof MeshBVH.serialize>;textures?:PackedRtTexture[];error?:string}|null=null;
   private uploading:PackedRtTexture[]|null=null;
+  private uploaded:{key:PackedRtTexture['key'];texture:T.DataTexture}[]=[];
+  private retired:T.Texture[]=[];
   private lamps:Lamp[]=[];
   private waiting=false;
   private destroyed=false;
@@ -39,6 +41,8 @@ export class ReflectionField {
     geometry.dispose();
   }
   beginRebuild(items:RtItem[],lamps:Lamp[]){
+    for(const texture of this.retired)texture.dispose();this.retired=[];
+    for(const item of this.uploaded)item.texture.dispose();this.uploaded=[];
     const version=++this.version;this.lamps=lamps;this.ready=null;this.uploading=null;this.waiting=true;this.error='';
     // Cancel obsolete work instead of allowing a queue of full BVH builds.
     this.worker?.terminate();this.worker=new BvhWorker();
@@ -64,12 +68,28 @@ export class ReflectionField {
       if(budgetMs<=0)return false;
       // One native upload per frame; no synchronous repacking of all BVH arrays.
       const packed=this.uploading.shift()!;
-      const texture=packed.key==='color'?this.uniforms.rtColor.value:(this.uniforms.rtBvh.value as unknown as ReflectionTextureFields)[packed.key];
-      texture.dispose();texture.image={data:packed.data,width:packed.width,height:packed.height};
+      const texture=new T.DataTexture();
+      texture.image={data:packed.data,width:packed.width,height:packed.height};
       texture.format=packed.format;texture.type=packed.type;texture.internalFormat=packed.internalFormat;
+      if(renderer&&'isWebGPURenderer' in renderer){
+        texture.internalFormat=null;
+        if(packed.key==='index'||packed.key==='bvhContents'){
+          texture.image.data=new Uint32Array(packed.data);texture.type=T.UnsignedIntType;
+        }
+      }
       texture.minFilter=texture.magFilter=T.NearestFilter;texture.generateMipmaps=false;texture.needsUpdate=true;
       renderer?.initTexture(texture);
+      this.uploaded.push({key:packed.key,texture});
       if(this.uploading.length)return false;
+      // Publish one complete generation. Mixing new bounds with old triangle
+      // indices would produce wrong intersections during streamed uploads.
+      const fields=this.uniforms.rtBvh.value as unknown as ReflectionTextureFields;
+      for(const {key,texture:next} of this.uploaded){
+        this.retired.push(key==='color'?this.uniforms.rtColor.value:fields[key]);
+        if(key==='color')this.uniforms.rtColor.value=next as FloatVertexAttributeTexture;
+        else fields[key]=next;
+      }
+      this.uploaded=[];
       this.uploading=null;this.setLamps(this.lamps);this.uniforms.rtReady.value=1;return true;
     }
     if(!this.waiting)return true;
@@ -135,6 +155,7 @@ export class ReflectionField {
   /** Patch a material that already went through VoxelField.apply (the RT GLSL is
    * inserted after the cone-tracing helpers via the hook marker). */
   apply(material: T.MeshStandardMaterial, cacheKey: string) {
+    material.userData.poolRt=this.uniforms;
     const before = material.onBeforeCompile;
     material.onBeforeCompile = (shader, renderer) => {
       before.call(material, shader, renderer);
@@ -223,5 +244,7 @@ export class ReflectionField {
     this.destroyed=true;this.invalidate();
     this.uniforms.rtBvh.value.dispose?.();
     this.uniforms.rtColor.value.dispose?.();
+    for(const texture of this.retired)texture.dispose();this.retired=[];
+    for(const item of this.uploaded)item.texture.dispose();this.uploaded=[];
   }
 }

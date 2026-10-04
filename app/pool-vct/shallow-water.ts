@@ -1,6 +1,7 @@
 import { advanceTask } from './perf/task-budget.ts';
 import * as T from 'three';
 import type { Collider } from './physics';
+import type { PoolRenderer } from './backend.ts';
 
 export const WATER_LEVEL=.32, POOL_BOTTOM=-.72;
 export const SW_SIZE=768, SW_DOMAIN=96, SW_HALF=SW_DOMAIN/2, SW_CELL=SW_DOMAIN/SW_SIZE;
@@ -214,7 +215,7 @@ export class ShallowWater {
   private asyncFailed=false;private syncAt=-Infinity;
   private asyncLands=0;private syncReads=0;private rejected=0;private simulated=0;private droppedTime=0;
   private quad=new T.PlaneGeometry(2,2);
-  private camera=new T.Camera();private scene=new T.Scene();private mesh=new T.Mesh(this.quad);
+  private camera=new T.OrthographicCamera(-1,1,1,-1,0,1);private scene=new T.Scene();private mesh=new T.Mesh(this.quad);
   private velocity:T.ShaderMaterial;private height:T.ShaderMaterial;private copy:T.ShaderMaterial;private down:T.ShaderMaterial;
   private sourceGeometry=new T.InstancedBufferGeometry();private sourceScene=new T.Scene();private sourceMaterial:T.ShaderMaterial;
   private sources=new Float32Array(SOURCE_BATCH*4);private momenta=new Float32Array(SOURCE_BATCH*2);
@@ -272,13 +273,13 @@ export class ShallowWater {
 
   /** Resample only on quality changes. Preserve the live field and prop
    * readback rather than flattening the pool when a slider preset changes. */
-  inherit(renderer:T.WebGLRenderer,other:ShallowWater){
+  inherit(renderer:PoolRenderer,other:ShallowWater){
     this.frame(renderer,0);
     const material=new T.ShaderMaterial({uniforms:{previous:{value:other.current.texture},poolDepth:this.uniforms.poolDepth},
       vertexShader,fragmentShader:`uniform sampler2D previous,poolDepth;void main(){vec2 uv=gl_FragCoord.xy/${this.size}.0;gl_FragColor=texture2D(poolDepth,uv).r>0.0?texture2D(previous,uv):vec4(0);}`,
       depthTest:false,depthWrite:false,toneMapped:false});
     const target=renderer.getRenderTarget();
-    try{this.draw(renderer,material,this.current);}finally{renderer.setRenderTarget(target);material.dispose();}
+    try{this.draw(renderer,material,this.current);}finally{renderer.setRenderTarget(target as never);material.dispose();}
     this.physicsEta.set(other.physicsEta);this.physicsU.set(other.physicsU);this.physicsV.set(other.physicsV);
     this.pendingSplats.push(...other.pendingSplats);this.pendingPushes.push(...other.pendingPushes);
     this.settled=other.settled;this.quiet=other.quiet;this.clock=other.clock;this.energy=other.energy;this.peak=other.peak;
@@ -352,9 +353,9 @@ export class ShallowWater {
     this.wake();
   }
   private wake(){this.settled=false;this.quiet=0;this.calm=0;}
-  private draw(renderer:T.WebGLRenderer,material:T.ShaderMaterial,target:T.WebGLRenderTarget){this.mesh.material=material;renderer.setRenderTarget(target);renderer.render(this.scene,this.camera);}
-  private clear(renderer:T.WebGLRenderer,target:T.WebGLRenderTarget){renderer.setRenderTarget(target);renderer.clear();}
-  private inject(renderer:T.WebGLRenderer){
+  private draw(renderer:PoolRenderer,material:T.ShaderMaterial,target:T.WebGLRenderTarget){this.mesh.material=material;renderer.setRenderTarget(target);renderer.render(this.scene,this.camera);}
+  private clear(renderer:PoolRenderer,target:T.WebGLRenderTarget){renderer.setRenderTarget(target);renderer.clear();}
+  private inject(renderer:PoolRenderer){
     this.clear(renderer,this.sourceTarget);
     this.sourceMaterial.uniforms.poolRingW.value=Math.min(this.ringWaves,Math.PI/(2*this.cell));
     const count=this.pendingSplats.length/4+this.pendingPushes.length/5;
@@ -370,7 +371,7 @@ export class ShallowWater {
     }
     this.pendingSplats.length=0;this.pendingPushes.length=0;return count>0;
   }
-  frame(renderer:T.WebGLRenderer,dt:number){
+  frame(renderer:PoolRenderer,dt:number){
     dt=Number.isFinite(dt)?Math.max(0,dt):0;this.clock+=dt;this.quiet+=dt;this.flushReadback();
     const previous=renderer.getRenderTarget(),color=renderer.getClearColor(new T.Color()),alpha=renderer.getClearAlpha(),auto=renderer.autoClear;
     renderer.autoClear=false;renderer.setClearColor(0,0);let changed=false;
@@ -405,21 +406,36 @@ export class ShallowWater {
         this.energy=0;this.peak=0;this.acc=0;this.settled=true;this.generation++;
       }else if(!this.readback){this.down.uniforms.poolState.value=this.current.texture;this.draw(renderer,this.down,this.physTarget);this.requestReadback(renderer);}
       return changed;
-    }finally{this.uniforms.poolSurface.value=this.current.texture;renderer.setRenderTarget(previous);renderer.setClearColor(color,alpha);renderer.autoClear=auto;}
+    }finally{this.uniforms.poolSurface.value=this.current.texture;renderer.setRenderTarget(previous as never);renderer.setClearColor(color,alpha);renderer.autoClear=auto;}
   }
-  private requestReadback(renderer:T.WebGLRenderer){
+  private requestReadback(renderer:PoolRenderer){
     if(this.asyncFailed&&this.clock-this.syncAt<1/30)return;
+    const r=renderer as unknown as {
+      readRenderTargetPixelsAsync?:(target:unknown,x:number,y:number,w:number,h:number,buf:ArrayBufferView)=>Promise<unknown>;
+      readRenderTargetPixels?:(target:unknown,x:number,y:number,w:number,h:number,buf:ArrayBufferView)=>void;
+      getContext?:()=>{getParameter?:(pname:number)=>unknown;bindBuffer?:(target:number,buffer:unknown)=>void};
+    };
     const job:Readback={buffer:this.readbackPool.pop()??new Uint16Array(SW_PHYS*SW_PHYS*4),generation:this.generation,started:this.clock,done:false,failed:false};
-    if(!this.asyncFailed&&typeof renderer.readRenderTargetPixelsAsync==='function'){
+    if(!this.asyncFailed&&typeof r.readRenderTargetPixelsAsync==='function'){
       this.readbackBytes+=job.buffer.byteLength;
-      this.readback=job;renderer.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer).then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;}).finally(()=>{if(this.retiredReads.delete(job)&&!this.disposed)this.recycleReadback(job);});
-    }else if(typeof renderer.readRenderTargetPixels==='function'&&this.clock-this.syncAt>=1/30){
+      this.readback=job;const pixels='isWebGPURenderer' in renderer
+        ? (renderer as import('three/webgpu').WebGPURenderer).readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS).then(data=>{
+          // CPU fields are indexed from -Z to +Z. WebGPU reads attachments
+          // from their top row, the opposite of our GLSL/physics convention.
+          if(renderer.coordinateSystem===T.WebGPUCoordinateSystem){
+            const pixels=data as Uint16Array,stride=SW_PHYS*4;
+            for(let row=0;row<SW_PHYS;row++)job.buffer.set(pixels.subarray(row*stride,(row+1)*stride),(SW_PHYS-1-row)*stride);
+          }else job.buffer.set(data as Uint16Array);
+        })
+        : r.readRenderTargetPixelsAsync(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);
+      pixels.then(()=>{job.done=true;},()=>{job.done=true;job.failed=true;}).finally(()=>{if(this.retiredReads.delete(job)&&!this.disposed)this.recycleReadback(job);});
+    }else if(typeof r.readRenderTargetPixels==='function'&&this.clock-this.syncAt>=1/30){
       this.syncAt=this.clock;
       // Three's pending async reader can leave a pixel-pack buffer bound.
       // A synchronous typed-array read must temporarily unbind it.
-      const gl=renderer.getContext?.() as WebGL2RenderingContext|undefined,pack=gl?.getParameter(gl.PIXEL_PACK_BUFFER_BINDING);
-      try{this.readbackBytes+=job.buffer.byteLength;gl?.bindBuffer(gl.PIXEL_PACK_BUFFER,null);renderer.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
-      catch{this.rejected++;}finally{if(gl)gl.bindBuffer(gl.PIXEL_PACK_BUFFER,pack??null);this.recycleReadback(job);}
+      const gl=(typeof r.getContext==='function'?r.getContext():null) as WebGL2RenderingContext|undefined,pack=gl?.getParameter?.(gl.PIXEL_PACK_BUFFER_BINDING);
+      try{this.readbackBytes+=job.buffer.byteLength;gl?.bindBuffer?.(gl.PIXEL_PACK_BUFFER,null);r.readRenderTargetPixels(this.physTarget,0,0,SW_PHYS,SW_PHYS,job.buffer);this.syncReads++;this.parseReadback(job.buffer);}
+      catch{this.rejected++;}finally{if(gl)gl.bindBuffer?.(gl.PIXEL_PACK_BUFFER,pack??null);this.recycleReadback(job);}
     }
   }
   private flushReadback(){

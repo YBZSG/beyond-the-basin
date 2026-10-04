@@ -1,4 +1,5 @@
 import * as T from 'three';
+import type { PoolRenderer } from './backend.ts';
 
 export const DETAIL_DOMAIN=48;
 const STEP=1/120,MAX_SOURCES=128;
@@ -10,6 +11,8 @@ export class RippleDetail {
   readonly size:number;
   readonly cell:number;
   frequency=22;
+  speed=1;
+  environmentalStrength=0;
   /** Ceiling on detail sub-steps per frame. The field integrates at a fixed
    * 1/120 s so wave speed stays machine-independent, but an unbounded catch-up
    * loop makes a slow frame slower still (8 steps at 1152² is 10.6M px/frame).
@@ -21,21 +24,25 @@ export class RippleDetail {
   private source:T.WebGLRenderTarget;
   private current:T.WebGLRenderTarget;
   readonly uniform:{value:T.Texture};
-  private scene=new T.Scene();private camera=new T.Camera();private quad=new T.PlaneGeometry(2,2);
+  private scene=new T.Scene();private camera=new T.OrthographicCamera(-1,1,1,-1,0,1);private quad=new T.PlaneGeometry(2,2);
   private mesh:T.Mesh;private material:T.ShaderMaterial;
   private sourceScene=new T.Scene();private sourceGeometry=new T.InstancedBufferGeometry();private sourceMaterial:T.ShaderMaterial;
   private sources=new Float32Array(MAX_SOURCES*4);private queued:number[]=[];
   private acc=0;private quiet=10;private initialized=false;private needsClear=true;
   private shift=new T.Vector2();
+  private environmentOrigin=new T.Vector2();
+  private environmentTime=0;
+  private environmentGain=0;
   private copy:T.ShaderMaterial;
   constructor(size:number,depth:{value:T.Texture}){
     this.size=size;this.cell=DETAIL_DOMAIN/size;
     const target=()=>new T.WebGLRenderTarget(size,size,{type:T.HalfFloatType,depthBuffer:false});
     this.a=target();this.b=target();this.source=target();this.current=this.a;this.uniform={value:this.current.texture};
     this.material=new T.ShaderMaterial({glslVersion:T.GLSL3,vertexShader,depthTest:false,depthWrite:false,toneMapped:false,
-      uniforms:{field:{value:this.current.texture},depth,source:{value:this.source.texture},sourceOn:{value:0}},
+      uniforms:{field:{value:this.current.texture},depth,source:{value:this.source.texture},sourceOn:{value:0},speed:{value:this.speed},
+        environment:{value:0},time:{value:0},frequency:{value:this.frequency},environmentOrigin:{value:this.environmentOrigin}},
       fragmentShader:`precision highp float;
-        uniform sampler2D field,depth,source;uniform float sourceOn;out vec4 result;
+        uniform sampler2D field,depth,source;uniform float sourceOn,speed,environment,time,frequency;uniform vec2 environmentOrigin;out vec4 result;
         bool wet(ivec2 c){vec2 p=(vec2(c)+.5)*${this.cell}-24.0;return all(greaterThanEqual(c,ivec2(0)))&&all(lessThan(c,ivec2(${size})))&&texture(depth,(p+48.0)/96.0).r>0.0;}
         float neighbour(ivec2 c,float h){return wet(c)?texelFetch(field,c,0).r:h;}
         void main(){ivec2 c=ivec2(gl_FragCoord.xy);if(!wet(c)){result=vec4(0);return;}
@@ -43,7 +50,15 @@ export class RippleDetail {
           float w=neighbour(c-ivec2(1,0),s.r),e=neighbour(c+ivec2(1,0),s.r),n=neighbour(c+ivec2(0,1),s.r),b=neighbour(c-ivec2(0,1),s.r);
           float edge=float(min(min(c.x,c.y),min(${size-1}-c.x,${size-1}-c.y)))*${this.cell};
           float damp=exp(-${STEP}*(1.3+5.0*(1.0-smoothstep(0.0,2.0,edge))));
-          float v=(s.g+${STEP*.85*.85/(this.cell*this.cell)}*(w+e+n+b-4.0*s.r))*damp;
+          // Continuous travelling pressure excites the height/velocity solver
+          // over wet cells. No periodic splats or normal-only animation.
+          vec2 p=(vec2(c)+.5)*${this.cell}-24.0+environmentOrigin;
+          float scale=frequency/22.0,phaseSpeed=.85*sqrt(speed);
+          vec2 k1=vec2(5.1,2.7)*scale,k2=vec2(-6.3,8.4)*scale,k3=vec2(12.2,3.4)*scale;
+          float w1=length(k1)*phaseSpeed,w2=length(k2)*phaseSpeed,w3=length(k3)*phaseSpeed;
+          float force=environment*.02*(.55*w1*sin(dot(p,k1)-time*w1)
+            +.3*w2*sin(dot(p,k2)-time*w2+1.7)+.15*w3*sin(dot(p,k3)-time*w3+.4));
+          float v=(s.g+${STEP*.85*.85/(this.cell*this.cell)}*speed*(w+e+n+b-4.0*s.r)+${STEP}*force)*damp;
           float h=s.r+${STEP}*v+texelFetch(source,c,0).r*sourceOn;
           result=vec4(clamp(h,-.012,.012),clamp(v,-.15,.15),0,0);
         }`});
@@ -56,7 +71,7 @@ export class RippleDetail {
       fragmentShader:`uniform sampler2D depth;uniform float frequency;varying vec2 p,origin;varying float power,radius;
         void main(){if(texture2D(depth,(p+48.0)/96.0).r<=0.0)discard;
           // Sample the source-to-pixel segment: no direct splash injection through masonry.
-          for(int i=1;i<=12;i++)if(texture2D(depth,(mix(origin,p,float(i)/12.0)+48.0)/96.0).r<=0.0)discard;
+          for(int i=1;i<=12;i++){if(texture2D(depth,(mix(origin,p,float(i)/12.0)+48.0)/96.0).r<=0.0)discard;}
           vec2 q=(p-origin)/radius;float r=length(q),a=frequency*radius;
           float sinc=r>.0001?sin(a*r)/r:a;
           float packet=((2.0+a*a-r*r)*cos(a*r)+(a-2.0*a*r*r)*sinc)/(2.0+2.0*a*a);
@@ -71,15 +86,15 @@ export class RippleDetail {
       gl_FragColor=all(greaterThanEqual(uv,vec2(0)))&&all(lessThanEqual(uv,vec2(1)))&&texture2D(depth,(p+48.0)/96.0).r>0.0?texture2D(field,uv):vec4(0);}`,
       uniforms:{field:{value:this.current.texture},depth,shift:{value:this.shift}},depthTest:false,depthWrite:false,toneMapped:false});
   }
-  get active(){return this.quiet<8;}
+  get active(){return this.quiet<8||this.environmentalStrength>0;}
   impact(x:number,z:number,power:number,radius=.16){
     if(![x,z,power,radius].every(Number.isFinite)||Math.abs(x)>23||Math.abs(z)>23||power<=0)return;
     if(this.queued.length>=MAX_SOURCES*4)return;
     this.queued.push(x,z,Math.min(.006,power),Math.max(this.cell*2,radius));this.quiet=0;
   }
-  rebase(x:number,z:number){this.shift.add(new T.Vector2(x/this.cell,z/this.cell));for(let i=0;i<this.queued.length;i+=4){this.queued[i]-=x;this.queued[i+1]-=z;}}
+  rebase(x:number,z:number){this.shift.add(new T.Vector2(x/this.cell,z/this.cell));this.environmentOrigin.add(new T.Vector2(x,z));for(let i=0;i<this.queued.length;i+=4){this.queued[i]-=x;this.queued[i+1]-=z;}}
   terrainChanged(){this.initialized=false;}
-  frame(renderer:T.WebGLRenderer,dt:number,enabled:boolean){
+  frame(renderer:PoolRenderer,dt:number,enabled:boolean){
     const old=renderer.getRenderTarget(),color=renderer.getClearColor(new T.Color()),alpha=renderer.getClearAlpha(),auto=renderer.autoClear;
     renderer.autoClear=false;renderer.setClearColor(0,0);
     try{
@@ -90,9 +105,10 @@ export class RippleDetail {
       }
       if(!enabled){
         if(this.active)for(const t of [this.a,this.b]){renderer.setRenderTarget(t);renderer.clear();}
-        this.queued.length=0;this.quiet=10;this.acc=0;return;
+        this.queued.length=0;this.quiet=10;this.acc=0;this.environmentGain=0;return;
       }
       const wasActive=this.active;this.quiet+=dt;
+      if(this.environmentalStrength>0)this.quiet=0;
       if(!this.active){if(wasActive){for(const t of [this.a,this.b]){renderer.setRenderTarget(t);renderer.clear();}}return;}
       // Clamp the catch-up window to the configured step budget, then discard
       // the overshoot: letting `acc` grow unbounded would re-introduce the
@@ -103,11 +119,16 @@ export class RippleDetail {
       if(count){this.sources.set(this.queued);this.sourceGeometry.instanceCount=count;this.sourceGeometry.attributes.splat.needsUpdate=true;
         this.sourceMaterial.uniforms.frequency.value=Math.min(this.frequency,Math.PI/(2*this.cell));renderer.render(this.sourceScene,this.camera);this.queued.length=0;}
       let i=0;this.mesh.material=this.material;
+      this.material.uniforms.speed.value=Math.max(.3,Math.min(3,this.speed));
+      this.material.uniforms.frequency.value=Math.min(this.frequency,Math.PI/(2*this.cell));
       while(this.acc+1e-10>=STEP&&i<budget){
+        this.environmentTime+=STEP;
+        this.environmentGain+=(Math.max(0,Math.min(1,this.environmentalStrength))-this.environmentGain)*(1-Math.exp(-STEP*2));
+        this.material.uniforms.time.value=this.environmentTime;this.material.uniforms.environment.value=this.environmentGain;
         this.material.uniforms.field.value=this.current.texture;this.material.uniforms.sourceOn.value=i===0&&count?1:0;
         const next=this.current===this.a?this.b:this.a;renderer.setRenderTarget(next);renderer.render(this.scene,this.camera);this.current=next;this.acc-=STEP;i++;
       }
-    }finally{this.uniform.value=this.current.texture;renderer.setRenderTarget(old);renderer.setClearColor(color,alpha);renderer.autoClear=auto;}
+    }finally{this.uniform.value=this.current.texture;renderer.setRenderTarget(old as never);renderer.setClearColor(color,alpha);renderer.autoClear=auto;}
   }
   dispose(){for(const t of [this.a,this.b,this.source])t.dispose();for(const m of [this.material,this.copy,this.sourceMaterial])m.dispose();this.quad.dispose();this.sourceGeometry.dispose();}
 }

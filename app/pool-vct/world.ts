@@ -42,6 +42,7 @@ export class VoxelField {
   constructor() {
     // Bind empty 1x1x1 levels so sampler3D uniforms stay valid before the first finish().
     const empty = new T.Data3DTexture(new Uint8Array(4), 1, 1, 1);
+    empty.name='pool-voxel-placeholder';
     empty.format = T.RGBAFormat; empty.type = T.UnsignedByteType;
     empty.minFilter = empty.magFilter = T.LinearFilter; empty.unpackAlignment = 1; empty.needsUpdate = true;
     this.textures.push(empty);
@@ -51,7 +52,13 @@ export class VoxelField {
   private preparing:Generator<void,void>|null=null;
   private mipTask:Generator<void,void>|null=null;
   private mipTextures:T.Data3DTexture[]=[];
-  begin(solids:Solid[],lamps:Lamp[],cx:number,cz:number){this.job=null;this.mipTask=null;for(const t of this.mipTextures)t.dispose();this.mipTextures=[];this.preparing=this.prepare(solids,lamps,cx,cz);}
+  private retiredTextures:T.Data3DTexture[]=[];
+  begin(solids:Solid[],lamps:Lamp[],cx:number,cz:number){
+    // The previous probe capture and asynchronous material builds have finished
+    // by the next transaction. Retain one generation until then, never more.
+    for(const texture of this.retiredTextures)texture.dispose();this.retiredTextures=[];
+    this.job=null;this.mipTask=null;for(const t of this.mipTextures)t.dispose();this.mipTextures=[];this.preparing=this.prepare(solids,lamps,cx,cz);
+  }
   private *prepare(solids: Solid[], lamps: Lamp[], cx: number, cz: number):Generator<void,void> {
     const nx = 128, ny = 32, nz = 128, cell = .75;
     const origin = new T.Vector3(cx * ROOM - 48, -1.5, cz * ROOM - 48);
@@ -146,7 +153,7 @@ export class VoxelField {
     const job=this.job;if(!job)return true;
     // stepRadiance completes the mip preparation before reporting ready.
     if(this.mipTextures.length!==4)return false;
-    for(const texture of this.textures)texture.dispose();
+    this.retiredTextures.push(...this.textures);
     this.textures=this.mipTextures;this.mipTextures=[];this.mipTask=null;
     this.uniforms.vct0.value = this.textures[0]; this.uniforms.vct1.value = this.textures[1];
     this.uniforms.vct2.value = this.textures[2]; this.uniforms.vct3.value = this.textures[3];
@@ -160,8 +167,9 @@ export class VoxelField {
     while (!this.stepRadiance(1e9));
     this.finish();
   }
-  dispose() { for (const t of [...this.textures,...this.mipTextures]) t.dispose(); this.textures = [];this.mipTextures=[];this.mipTask=null;this.preparing=null;this.job=null; }
+  dispose() { for (const t of [...this.textures,...this.mipTextures,...this.retiredTextures]) t.dispose(); this.textures = [];this.mipTextures=[];this.retiredTextures=[];this.mipTask=null;this.preparing=null;this.job=null; }
   apply(material: T.MeshStandardMaterial, tiles = false, twoTone = false) {
+    material.userData.poolVoxel={uniforms:this.uniforms,tiles,twoTone};
     material.onBeforeCompile = shader => {
       Object.assign(shader.uniforms, this.uniforms);
       shader.vertexShader = 'varying vec3 vPoolWorld; uniform float poolTime;\n' + shader.vertexShader;

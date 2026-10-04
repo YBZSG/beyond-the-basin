@@ -6,7 +6,7 @@ export const WATER_QUALITY={
 } as const;
 export type WaterQuality=keyof typeof WATER_QUALITY;
 export const WATER_DEBUG=['完整水面','浅水高度','速度场','模拟法线','细波纹','最终法线','水深','Fresnel','折射','焦散','反射','浮沫'] as const;
-export const WATER_LAYERS={simulation:'浅水表面',ripples:'交互细波纹',microNormals:'微表面法线',refraction:'屏幕折射',absorption:'深度吸收',caustics:'动态焦散',reflection:'平面反射',fresnel:'Fresnel',waterline:'接触水线',foam:'表面浮沫'} as const;
+export const WATER_LAYERS={simulation:'浅水表面',ripples:'模拟细波纹',microNormals:'细波高频细节',refraction:'屏幕折射',absorption:'深度吸收',caustics:'动态焦散',reflection:'平面反射',fresnel:'Fresnel',waterline:'接触水线',foam:'表面浮沫'} as const;
 export const WATER_SLIDERS=[
   {key:'waveHeight',label:'波浪起伏',min:0,max:2,step:.01,def:1},
   {key:'waveSpeed',label:'波速',min:.3,max:3,step:.05,def:1},
@@ -15,7 +15,7 @@ export const WATER_SLIDERS=[
   {key:'wallLoss',label:'池壁耗散',min:0,max:4,step:.05,def:1.1},
   {key:'rippleGain',label:'细波强度',min:0,max:3,step:.01,def:1},
   {key:'rippleFrequency',label:'细波频率',min:10,max:32,step:1,def:22},
-  {key:'microStrength',label:'微法线强度',min:0,max:2,step:.01,def:.65},
+  {key:'microStrength',label:'细波高频强度',min:0,max:2,step:.01,def:.65},
   {key:'environmentalStrength',label:'环境微扰',min:0,max:1,step:.01,def:.08},
   {key:'normalBoost',label:'波浪反光',min:.5,max:2,step:.05,def:1},
   {key:'distortion',label:'倒影偏移',min:0,max:1.5,step:.01,def:.4},
@@ -23,8 +23,6 @@ export const WATER_SLIDERS=[
   {key:'fresnelStrength',label:'Fresnel 强度',min:0,max:1.5,step:.01,def:1},
   {key:'absorptionStrength',label:'水体吸收',min:0,max:3,step:.01,def:.7},
   {key:'causticsIntensity',label:'焦散亮度',min:0,max:3,step:.05,def:1.5},
-  {key:'causticsScale',label:'焦散细节尺度',min:.5,max:2,step:.05,def:1},
-  {key:'causticsSpeed',label:'焦散微动速度',min:0,max:2,step:.05,def:.6},
   {key:'causticsRefresh',label:'焦散更新间隔',min:0,max:6,step:1,def:2},
   {key:'solverSteps',label:'求解子步上限',min:1,max:8,step:1,def:8},
   {key:'rippleSteps',label:'细波子步上限',min:1,max:8,step:1,def:8},

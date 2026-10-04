@@ -30,14 +30,17 @@ import { collapseInterior, WFC_SIZE, WFC_CELL, type WfcTile } from './wfc';
 import { createAgedTiles } from './aged-tiles';
 import { createArcadeGeometry, arcadeSolids, ARCADE_CEILING } from './arcade';
 import { WetReflectionPass } from './wet-reflections';
+import { createBackend, maxAnisotropy, type BackendKind } from './backend';
+import { PMREMGenerator } from 'three/webgpu';
+import { createPlanarCapture } from './webgpu/planar-capture';
 
 type Flicker={light:T.PointLight;glow:T.MeshBasicMaterial;base:number;seed:number;amp:number};
 const roomLightDir=new T.Vector3();
 export type { WaterSettings } from './water-system';
 type Chunk = { group: T.Group; solids: Solid[]; lamps: Lamp[]; floats: T.Group[]; lights: T.PointLight[]; bodies:PropBody[]; colliders:Collider[]; ladders:Ladder[]; flickers:Flicker[]; far?:boolean };
 export type FrameTimings = { [stage: string]: number };
-export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number; timings?: FrameTimings; perf?: PerfSnapshot };
-export function createPool(host: HTMLElement, seed: number, report: (s: Status) => void) {
+export type Status = { x: number; z: number; rooms: number; discovered: number; fps: number; vct: boolean; impacts: number; caustics: boolean; hint:string; filter:number; held:string; throws:number; grabs:number; height:number; climbing:boolean; slides:number; charge:number; paused:boolean; corrupt:number; backend?: BackendKind; backendReason?: string; timings?: FrameTimings; perf?: PerfSnapshot };
+export async function createPool(host: HTMLElement, seed: number, report: (s: Status) => void) {
   const touch=isTouchDevice();
   // Frame stage profiler. Enabled only while a debug consumer asks for it, so
   // the branch cost is the entire overhead in normal play.
@@ -48,7 +51,8 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // browser exposes it - asynchronous GPU time. Ordinary play samples one
   // GPU frame per second; only explicit benchmark recordings retain all frames.
   const cpuProfiler=createCpuProfiler();
-  const renderer = new T.WebGLRenderer({ antialias: !touch, powerPreference: 'high-performance' });
+  const backend = await createBackend(!touch);
+  const renderer = backend.renderer;
   renderer.setPixelRatio(BENCHMARK_BUILD?1:Math.min(devicePixelRatio, touch?1.25:1.5));
   renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFShadowMap;
@@ -57,7 +61,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   // chain means it only ever describes the last pass. Take manual control so
   // draw calls are reported for the whole frame instead.
   renderer.info.autoReset=false;
-  const gpuProfiler=createGpuProfiler(renderer.getContext());
+  const gpuProfiler=createGpuProfiler((typeof renderer.getContext === 'function' ? renderer.getContext() : null) as WebGL2RenderingContext | null);
   const recording=new PerformanceRecording(gpuProfiler);recording.benchmark=BENCHMARK_BUILD;
   const measure=recording.measure;
   let resumeFrame=true;
@@ -164,7 +168,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     ball: { radius: BEACH_BALL_RADIUS, floatBias: .05, name: '海滩球', sink: 0, buoyK: 110, buoyZeta: .35, buoyMax: 34, flowRate: 1.6, splashBoost: 1 },
   };
   const ballGeometry=createBeachBallGeometry(),ballTexture=createBeachBallTexture();
-  ballTexture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+  ballTexture.anisotropy=Math.min(8,maxAnisotropy(renderer));
   const ballMaterial=new T.MeshStandardMaterial({map:ballTexture,roughness:.27,metalness:0,envMapIntensity:.7});
   field.apply(ballMaterial);materials.push(ballMaterial);
   // Closed solids cast their front surface; back-face depth creates a visible
@@ -334,7 +338,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
         wall.castShadow=wall.receiveShadow=true;c.group.add(wall);
         c.solids.push(...arcadeSolids(x,z+dz,pale.color));
         for(const dx of [-5.3,5.3]){
-          const pos=new T.Vector3(x+dx,3.25,z+dz+2.05);
+          const pos=new T.Vector3(x+dx,3.25,z+dz+1.5);
           const power=(dz===4?20:dz===-3.4?15:10)*powerScale;
           const light=new T.PointLight('#edf5ed',power,18,2);light.position.copy(pos);
           c.lights.push(light);c.lamps.push({position:pos.clone(),color:light.color.clone(),power:power/4.75});
@@ -666,30 +670,21 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
   };
   stream(); scene.add(new T.AmbientLight('#dadfd7',.2));
   scene.add(new T.HemisphereLight('#e9eee6','#73877f',.27));
-  const normals=new T.TextureLoader().load('/assets/textures/waternormals.jpg');normals.wrapS=normals.wrapT=T.RepeatWrapping;textures.push(normals);
-  // Stronger distortion sells the sharpened wave normals in the reflection.
-  const water=new Water(new T.PlaneGeometry(96,96,384,384),{textureWidth:768,textureHeight:768,waterNormals:normals,sunDirection:new T.Vector3(-.3,1,-.3),sunColor:'#a1bdc3',waterColor:'#327c80',distortionScale:.55,alpha:.48,fog:true});
+  // Water supplies the planar capture; our optical shader uses simulated heights.
+  const water=new Water(new T.PlaneGeometry(96,96,384,384),{textureWidth:768,textureHeight:768,sunDirection:new T.Vector3(-.3,1,-.3),sunColor:'#a1bdc3',waterColor:'#327c80',distortionScale:.55,alpha:.48,fog:true});
   waterSystem.attach(water);
   particles.attachSurface(water.material.uniforms,camera);
   water.rotation.x=-Math.PI/2;water.position.y=.32;water.material.transparent=true;water.material.depthWrite=false;
   // Water owns its reflection target in a closure; retain it for full teardown.
   let reflectionTarget:Parameters<typeof renderer.setRenderTarget>[0]=null;
-  const renderWater=water.onBeforeRender;
+  const planarCapture=createPlanarCapture(renderer,scene,camera,water,water.material.uniforms,()=>waterSystem.reflectionResolution);
+  reflectionTarget=planarCapture.target;
   let reflectionFrame=-1;
-  water.onBeforeRender=function(...args){
+  water.onBeforeRender=function(){
     water.material.uniforms.eye.value.copy(camera.position);
     if(!waterSystem.reflectionEnabled||reflectionFrame===recording.frame)return;
     reflectionFrame=recording.frame;
-    const setTarget=renderer.setRenderTarget;
-    renderer.setRenderTarget=function(target,...rest){
-      const uniforms=water.material.uniforms as Record<string,{value:unknown}>|undefined;
-      if(uniforms&&target&&target.texture===uniforms.mirrorSampler?.value){
-        reflectionTarget=target;const size=waterSystem.reflectionResolution;
-        if(target.width!==size)target.setSize(size,size);
-      }
-      return setTarget.call(this,target,...rest);
-    };
-    try{measure('reflection',()=>renderWater.apply(this,args));}finally{renderer.setRenderTarget=setTarget;}
+    measure('reflection',()=>planarCapture.render());
   };
   scene.add(water);
   // The streamed world is a 5×5 room block; beyond its edge is nothing. Fog
@@ -703,10 +698,10 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     cap.position.set(x,6.9,z);cap.rotation.y=ry;scene.add(cap);
   }
   const probeTarget=new T.WebGLCubeRenderTarget(1024,{type:T.HalfFloatType});
-  const probe=new T.CubeCamera(.1,65,probeTarget);const pmrem=new T.PMREMGenerator(renderer);
+  const probe=new T.CubeCamera(.1,65,probeTarget);const pmrem=new PMREMGenerator(renderer);
   probe.position.set(0,3.4,0);
   const probeFaces=probe.children as unknown as T.PerspectiveCamera[];
-  let environment:T.WebGLRenderTarget|null=null;
+  let environment:T.RenderTarget|null=null;
   scene.environmentIntensity=.75;
   tile.envMapIntensity=1.1; pale.envMapIntensity=1.1;
   // Capture a single cube face; spreading the six renders across frames keeps each one cheap.
@@ -719,21 +714,28 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const waterVisible=water.visible;water.visible=false;
     const generateMipmaps=probeTarget.texture.generateMipmaps;
     if(face<5)probeTarget.texture.generateMipmaps=false;
-    const shadows=renderer.shadowMap.autoUpdate;renderer.shadowMap.autoUpdate=false;
+    const shadowMap=renderer.shadowMap as unknown as {autoUpdate?:boolean;enabled:boolean};
+    const shadows=shadowMap.autoUpdate??shadowMap.enabled;if(shadowMap.autoUpdate!==undefined)shadowMap.autoUpdate=false;
     const previous=renderer.getRenderTarget();
     renderer.setRenderTarget(probeTarget,face,0);renderer.render(scene,probeFaces[face]);
     renderer.setRenderTarget(previous);
-    renderer.shadowMap.autoUpdate=shadows;
+    if(shadowMap.autoUpdate!==undefined)shadowMap.autoUpdate=shadows;
     probeTarget.texture.generateMipmaps=generateMipmaps;
     water.visible=waterVisible;
   };
   const finishTransition=()=>{
-    const next=pmrem.fromCubemap(probeTarget.texture);
-    environment?.dispose();environment=next;scene.environment=environment.texture;
+    // Keep the same atlas and bindings across streamed rooms. Replacing and
+    // disposing it invalidates materials still using the previous environment.
+    environment=pmrem.fromCubemap(probeTarget.texture,environment);
+    scene.environment=environment.texture;
   };
-  const composer=new EffectComposer(renderer);
+  // Establish the environment before any liquid shader or PBR material builds.
+  // Otherwise the first streamed probe adds IBL to every shader mid-interaction.
+  for(let face=0;face<6;face++)captureProbeFace(face);
+  finishTransition();
+  const composer=new EffectComposer(renderer as never);
   const scenePass=new PoolScenePass(scene,camera,(color,depth,view)=>waterSystem.bindOpaqueScene(color,depth,view),
-    ()=>{water.updateMatrixWorld();water.onBeforeRender(renderer,scene,camera,water.geometry,water.material,null!);},measure);
+    ()=>{water.updateMatrixWorld();water.onBeforeRender(renderer as never,scene,camera,water.geometry,water.material,null!);},measure);
   const sceneDepth=scenePass.depth;
   composer.addPass(scenePass);
   const wetReflection=new WetReflectionPass(scene,camera,rtTileMaterials,scenePass.opaque.texture,sceneDepth,measure);
@@ -828,6 +830,12 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
       }`
   });composer.addPass(film);
   for(const pass of [tyndall,bloom,...composer.passes.filter(p=>p instanceof OutputPass),film]){const render=pass.render.bind(pass);pass.render=(...args)=>measure('post',()=>render(...args));}
+  // Build the transient liquid and droplet paths while the loading UI is up.
+  // Count-zero meshes would otherwise compile only at the first impact.
+  waterSystem.render(renderer,0,measure);
+  particles.drops.count=liquid.mesh.count=1;liquidPass.enabled=true;
+  composer.render();
+  particles.drops.count=liquid.mesh.count=0;liquidPass.enabled=false;
   const keys=new Set<string>();let active=false,disposed=false,last=performance.now(),frames=0,elapsed=0,fps=0,time=0,vct=true,stepDistance=0,caustics=true,dragging=false,charging=false,chargeStart=0;
   // Crosshair action shared by desktop left-click and the mobile look-area tap:
   // grab a prop if one is aimed at, otherwise strike the water surface.
@@ -948,7 +956,6 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     if(touch&&(touchLook.x||touchLook.y)){camera.rotation.y-=touchLook.x;camera.rotation.x=T.MathUtils.clamp(camera.rotation.x-touchLook.y,-1.3,1.3);touchLook.x=touchLook.y=0;}
     frameBuilding=true;try{measure('stream',stream);}finally{frameBuilding=false;}
     if(chunkJob?.teleport){recording.end(interval,{transition:'preparing-teleport'});return;}
-    water.material.uniforms.time.value=time*.38;
     // A fixed ceiling trades longer convergence on slow machines for smaller hitches.
     if(transition&&!transition.giDone&&!chunkJob){
       const slack=backgroundBudget(recording.cpuMs);
@@ -1032,7 +1039,7 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     const charge=chargeNow();
     // Smoothed over ~0.5s: a per-interval average swings wildly and makes it
     // impossible to tell whether a settings change actually helped.
-    if(elapsed>.35||(charge>0&&elapsed>.06)){fps=fps?Math.round(fps*.45+(frames/elapsed)*.55):Math.round(frames/elapsed);frames=0;elapsed=0;const aimed=props.pick(camera,allColliders);const ladder=player.nearest(camera,allLadders);const hint=charge>0?(touch?`蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`:`右键蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`):props.held?(touch?'按住「投掷」蓄力 · 「拿起」放下':'右键按住蓄力投掷 · 滚轮调整距离 · E 放下'):player.climbing?(touch?'摇杆上/下攀爬 · 「拿起」松开':'W / S 攀爬 · E 松开'):aimed?`${aimed.name} · ${touch?'轻点屏幕拿起':'左键拖动 / E 拿起'}`:ladder?(touch?'靠近梯子按「拿起」攀爬':'E 攀爬梯子'):(touch?'轻点水面泛起涟漪':'低头点击水面 · F 切换镜头');report(profiler.merge({x:cx,z:cz,rooms:chunks.size,discovered:visited.size,fps,vct,impacts:waterSystem.interactionCount,caustics,hint,filter:film.uniforms.filterMode.value,held:props.held?.name??'',throws:props.throws,grabs:props.grabs,height:camera.position.y,climbing:!!player.climbing,slides:player.slides,charge,paused:!active,corrupt:currentCorrupt,perf:{frame:cpuProfiler.stats(),gpu:gpuProfiler.snapshot(),render:readRendererMetrics(renderer),shadowSlots:roomLights.shadowSlotsUpdated,stages:recording.stages,transfer:{...liquid.transfer,shallowReadbackBytes:waterSystem.swe.readbackBytes},frameBudgetMs:1000/60}}));}
+    if(elapsed>.35||(charge>0&&elapsed>.06)){fps=fps?Math.round(fps*.45+(frames/elapsed)*.55):Math.round(frames/elapsed);frames=0;elapsed=0;const aimed=props.pick(camera,allColliders);const ladder=player.nearest(camera,allLadders);const hint=charge>0?(touch?`蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`:`右键蓄力 ${'▮'.repeat(1+Math.round(charge*7)).padEnd(8,'▯')} ${Math.round(charge*100)}% · 松开投出`):props.held?(touch?'按住「投掷」蓄力 · 「拿起」放下':'右键按住蓄力投掷 · 滚轮调整距离 · E 放下'):player.climbing?(touch?'摇杆上/下攀爬 · 「拿起」松开':'W / S 攀爬 · E 松开'):aimed?`${aimed.name} · ${touch?'轻点屏幕拿起':'左键拖动 / E 拿起'}`:ladder?(touch?'靠近梯子按「拿起」攀爬':'E 攀爬梯子'):(touch?'轻点水面泛起涟漪':'低头点击水面 · F 切换镜头');report(profiler.merge({x:cx,z:cz,rooms:chunks.size,discovered:visited.size,fps,vct,impacts:waterSystem.interactionCount,caustics,hint,filter:film.uniforms.filterMode.value,held:props.held?.name??'',throws:props.throws,grabs:props.grabs,height:camera.position.y,climbing:!!player.climbing,slides:player.slides,charge,paused:!active,corrupt:currentCorrupt,backend:backend.kind,backendReason:backend.reason,perf:{frame:cpuProfiler.stats(),gpu:gpuProfiler.snapshot(),render:readRendererMetrics(renderer),shadowSlots:roomLights.shadowSlotsUpdated,stages:recording.stages,transfer:{...liquid.transfer,shallowReadbackBytes:waterSystem.swe.readbackBytes},frameBudgetMs:1000/60}}));}
   });
   return {
     visitRoom:(x:number,z:number)=>{
@@ -1052,9 +1059,10 @@ export function createPool(host: HTMLElement, seed: number, report: (s: Status) 
     cycleFilter:()=>{film.uniforms.filterMode.value=(film.uniforms.filterMode.value+1)%4;},
     // Local automated physics/visual acceptance only; never exposed by production UI.
     qa:QA_ENABLED?{
+      renderResources:()=>({renderer,scene,camera,composer,scenePass,water,wetReflection,film}),
       performance:{start:()=>recording.startRecording(),stop:()=>recording.stopRecording(),gpu:(on:boolean)=>{recording.enabled=on;},snapshot:()=>recording.stages},
       reflections:(enabled:boolean,debug=false)=>{wetReflection.enabled=enabled;wetReflection.debug(debug);},
-      inspect:()=>({room:[cx,cz],variant:roomLayout(cx,cz,seed).variant,programs:renderer.info.programs?.length,waterVisible:water.visible,vertical:player.vertical,grounded:player.grounded,impacts:waterSystem.interactionCount,audio:audio.inspect(),position:camera.position.toArray(),time,held:props.held?.name??'',charge:chargeNow(),grabs:props.grabs,throws:props.throws,climbing:!!player.climbing,slides:player.slides,filter:film.uniforms.filterMode.value,environment:!!scene.environment,transition:!!transition||!!chunkJob,workerError:rt.error,vctReady:field.uniforms.vctReady.value>0,blocks:waterSystem.uniforms.blockCount.value,props:props.bodies.filter(b=>b.position.distanceTo(camera.position)<15).map(b=>({name:b.name,kind:b.kind,position:b.position.toArray(),velocity:b.velocity.toArray(),promoted:b.promoted})),ladders:allLadders.filter(l=>l.base.distanceTo(camera.position)<30).map(l=>({base:l.base.toArray(),top:l.top.toArray(),exit:l.exit.toArray()}))}),
+      inspect:()=>({room:[cx,cz],variant:roomLayout(cx,cz,seed).variant,backend:backend.kind,backendReason:backend.reason,programs:(renderer.info as unknown as {programs?:unknown[]}).programs?.length,waterVisible:water.visible,vertical:player.vertical,grounded:player.grounded,impacts:waterSystem.interactionCount,audio:audio.inspect(),position:camera.position.toArray(),time,held:props.held?.name??'',charge:chargeNow(),grabs:props.grabs,throws:props.throws,climbing:!!player.climbing,slides:player.slides,filter:film.uniforms.filterMode.value,environment:!!scene.environment,transition:!!transition||!!chunkJob,workerError:rt.error,vctReady:field.uniforms.vctReady.value>0,blocks:waterSystem.uniforms.blockCount.value,props:props.bodies.filter(b=>b.position.distanceTo(camera.position)<15).map(b=>({name:b.name,kind:b.kind,position:b.position.toArray(),velocity:b.velocity.toArray(),promoted:b.promoted})),ladders:allLadders.filter(l=>l.base.distanceTo(camera.position)<30).map(l=>({base:l.base.toArray(),top:l.top.toArray(),exit:l.exit.toArray()}))}),
       view:(position:number[],target:number[])=>{player.climbing=null;player.vertical=0;const ox=originX,oz=originZ;camera.position.fromArray(position);stream();camera.lookAt(new T.Vector3(target[0]-(originX-ox)*ROOM,target[1],target[2]-(originZ-oz)*ROOM));},
       simulate:(enabled:boolean)=>{active=enabled;keys.clear();},
       forceShafts:(on:boolean)=>{shaftsForced=on?1:0;},

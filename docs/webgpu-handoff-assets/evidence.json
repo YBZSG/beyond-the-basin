@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-04",
+  "status": "incomplete_migration_handoff",
+  "repository": "YBZSG/beyond-the-basin",
+  "branch": "cde/aged-pool-arcade",
+  "finalCodeChecks": {
+    "test": {
+      "passed": 116,
+      "failed": 0
+    },
+    "typecheck": "passed",
+    "lint": "passed",
+    "build": "passed",
+    "completeWebGPUInteractionAndVisualQA": "not_completed"
+  },
+  "historicalGPUCheck": {
+    "scope": "Intermediate version before final RT, warmup and atomic BVH publication edits. Must rerun.",
+    "results": [
+      {
+        "name": "WebGPU is the active backend",
+        "pass": true,
+        "evidence": {
+          "kind": "webgpu"
+        }
+      },
+      {
+        "name": "asymmetric frame stays upright through successive colour/depth copies",
+        "pass": true,
+        "evidence": {
+          "topGreen": [
+            0.96826171875,
+            0.96826171875,
+            0.96826171875
+          ],
+          "copyError": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "name": "colour and nonuniform depth retain the same vertical coordinates",
+        "pass": true,
+        "evidence": {
+          "topDepth": 0.68408203125,
+          "depthError": 0
+        }
+      },
+      {
+        "name": "voxel texture bindings split and update after a shared placeholder is disposed",
+        "pass": true,
+        "evidence": {
+          "actual": [
+            0.199951171875,
+            0.39990234375,
+            0.599609375,
+            0.7998046875
+          ]
+        }
+      },
+      {
+        "name": "finite waves and CPU buoyancy readback agree at asymmetric world Z",
+        "pass": true,
+        "evidence": {
+          "nan": 0,
+          "peak": 0.018646240234375,
+          "near": 0.0135498046875,
+          "mirrored": 0,
+          "centroidZ": 7,
+          "debug": {
+            "grid": 384,
+            "cell": 0.25,
+            "clock": 0.26666666666666666,
+            "simulated": 0.26666666666666666,
+            "droppedTime": 0,
+            "landed": 0.26666666666666666,
+            "pending": false,
+            "energy": 3.137983150406661e-8,
+            "peak": 0.0135498046875,
+            "settled": false,
+            "asyncLands": 6,
+            "syncReads": 0,
+            "rejected": 0,
+            "pendingSplats": 0,
+            "pendingPushes": 0
+          }
+        }
+      }
+    ],
+    "passed": true,
+    "errors": []
+  },
+  "historicalRuntimeDiagnostics": {
+    "splashV2": {
+      "consoleErrors": [],
+      "firstMaxIntervalMs": 346.7,
+      "second": {
+        "p50Ms": 15.5,
+        "p95Ms": 18.9,
+        "maxMs": 20.6
+      },
+      "third": {
+        "p50Ms": 14.8,
+        "p95Ms": 22.1,
+        "maxMs": 38
+      },
+      "scope": "Synthetic clicks in an intermediate version; connected liquid visual quality not accepted."
+    },
+    "splashV3": {
+      "peakFluidParticles": 3552,
+      "peakDrops": 17,
+      "released": 86,
+      "errorsPresent": true,
+      "scope": "Simulation activity only. Invalid RT bind group errors occurred; not final performance or correctness acceptance."
+    }
+  },
+  "finalCodeRuntimeObservation": "New Edge initialization log had only favicon 404 and powerPreference warnings. No complete splash/room/quality regression after final edits."
+}
