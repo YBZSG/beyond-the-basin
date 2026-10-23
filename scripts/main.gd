@@ -9,6 +9,7 @@ const SPAWN_MODES := ["original", "formal", "expanded"]
 const SEED_INPUT_GUARD_REVISION := 1
 const PropsScript = preload("res://scripts/player/pool_props.gd")
 const WaterScript = preload("res://scripts/water/source_water_runtime.gd")
+const WaterSettingsScript = preload("res://scripts/water/source_port/source_water_settings.gd")
 const MaterialsScript = preload("res://scripts/rendering/pool_materials.gd")
 const LightingScript = preload("res://scripts/rendering/pool_lighting.gd")
 const AudioScript = preload("res://scripts/audio/pool_audio.gd")
@@ -77,7 +78,8 @@ var _caustics_on := true
 var _ccd_on := false
 var _filter_mode := 0
 var _advanced: PanelContainer
-var _water_settings: Dictionary = {}
+var _water_settings: Dictionary = WaterSettingsScript.sanitize_wind_settings({})
+var _wind_controls: Dictionary = {}
 var _water_visible := true
 var _gi_check: CheckButton
 var _caustics_check: CheckButton
@@ -926,38 +928,38 @@ func _build_water_panel(ui: Control) -> void:
 	title.text="原生水体 / WATER & LAYERS"
 	title.add_theme_font_size_override("font_size",22)
 	list.add_child(title)
-	var controls:Array=[]
-	for row:Dictionary in preload("res://scripts/water/source_port/source_water_settings.gd").SLIDERS:
-		if row.key=="refractionRefresh":continue # Godot copies the current opaque screen every frame.
-		controls.append([row.label,row.key,row.min,row.max,row.defval,row.step])
-	for entry in controls:
-		var row:=HBoxContainer.new()
-		var label:=Label.new()
-		label.text=entry[0]
-		label.custom_minimum_size.x=110
-		row.add_child(label)
-		var slider:=HSlider.new()
-		slider.min_value=entry[2]
-		slider.max_value=entry[3]
-		slider.step=entry[5]
-		slider.value=_water_settings.get(entry[1],entry[4])
-		slider.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-		var parameter:String=entry[1]
-		slider.value_changed.connect(func(value):_water_settings[parameter]=value;_apply_live_water("set_tuning",[parameter,value]);_save_settings())
-		row.add_child(slider)
-		var numeric_value:=Label.new()
-		numeric_value.custom_minimum_size.x=64
-		numeric_value.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
-		numeric_value.text=String.num(slider.value,4 if slider.step<0.001 else (3 if slider.step<0.01 else (0 if slider.step>=1.0 else 2)))
-		var value_digits:=4 if slider.step<0.001 else (3 if slider.step<0.01 else (0 if slider.step>=1.0 else 2))
-		slider.value_changed.connect(func(value):numeric_value.text=String.num(value,value_digits))
-		row.add_child(numeric_value)
-		list.add_child(row)
+	if MainhallPreview.desktop_allowed():
+		# Keep the small independent wind group visible before the advanced controls.
+		_wind_controls.clear()
+		var wind_check := _add_check(list, WaterSettingsScript.LAYERS.windWaves, bool(_water_settings.get("windWaves", WaterSettingsScript.DEFAULT.windWaves)), func(value):
+			_water_settings["windWaves"] = value
+			_apply_live_water("set_tuning", ["windWaves", value])
+			_save_settings())
+		wind_check.name = "WindWaves"
+		wind_check.tooltip_text = WaterSettingsScript.WIND_TOOLTIPS.windWaves
+		_wind_controls["windWaves"] = wind_check
+		var wind_note := Label.new()
+		wind_note.name = "WindOpticsNote"
+		wind_note.text = "轻微室内风纹 · 水面光学近似，非完整风场物理。\n关闭风纹仍保留脚步、涉水和物体交互。"
+		wind_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		wind_note.add_theme_font_size_override("font_size", 12)
+		list.add_child(wind_note)
+		for row: Dictionary in WaterSettingsScript.SLIDERS:
+			if row.key in WaterSettingsScript.WIND_KEYS:
+				_wind_controls[row.key] = _add_water_slider(list, row)
+		var wind_reset := _button("恢复轻微室内风 / RESET WIND", _reset_wind_settings)
+		wind_reset.name = "ResetWind"
+		wind_reset.tooltip_text = "只恢复风纹开关、强度、方向和细密度，不改变其他水体、画质、阴影或交互设置。"
+		list.add_child(wind_reset)
+		list.add_child(HSeparator.new())
+	for row: Dictionary in WaterSettingsScript.SLIDERS:
+		if row.key == "refractionRefresh" or row.key in WaterSettingsScript.WIND_KEYS: continue
+		_add_water_slider(list, row)
 	_add_check(list,"平面反射（原仓库镜像相机）",bool(_water_settings.get("ssr_enabled",_water_settings.get("reflection",true))),func(v):_water_settings["ssr_enabled"]=v;_apply_live_water("set_tuning",["ssr_enabled",v]);_save_settings())
 	_add_check(list,"深度折射",bool(_water_settings.get("refraction_enabled",_water_settings.get("refraction",true))),func(v):_water_settings["refraction_enabled"]=v;_apply_live_water("set_tuning",["refraction_enabled",v]);_save_settings())
 	for key:String in ["simulation","ripples","microNormals","absorption","fresnel","waterline","foam"]:
 		var parameter:String=key
-		var label:String=preload("res://scripts/water/source_port/source_water_settings.gd").LAYERS[key]
+		var label:String=WaterSettingsScript.LAYERS[key]
 		_add_check(list,label,bool(_water_settings.get(key,true)),func(v):_water_settings[parameter]=v;_apply_live_water("set_tuning",[parameter,v]);_save_settings())
 	_add_check(list,"原仓库体积光束 / SOURCE LIGHT SHAFTS",_fog_on,func(v):_set_source_fog(v);_save_settings())
 	_add_check(list,"显示水面",_water_visible,func(v):_water_visible=v;_apply_live_water("set_enabled",[v]);_save_settings())
@@ -968,6 +970,56 @@ func _build_water_panel(ui: Control) -> void:
 	list.add_child(debug)
 	list.add_child(_button("返回 / BACK",func():_advanced.hide();_menu.show()))
 	_advanced.hide()
+
+func _water_value_text(value: float, step: float) -> String:
+	return String.num(value, 4 if step < 0.001 else (3 if step < 0.01 else (0 if step >= 1.0 else 2)))
+
+func _add_water_slider(parent: Control, entry: Dictionary) -> HSlider:
+	var row := HBoxContainer.new()
+	var parameter: String = entry.key
+	var tooltip: String = WaterSettingsScript.WIND_TOOLTIPS.get(parameter, "")
+	row.tooltip_text = tooltip
+	var label := Label.new()
+	label.text = entry.label
+	label.custom_minimum_size.x = 110
+	label.tooltip_text = tooltip
+	row.add_child(label)
+	var slider := HSlider.new()
+	slider.name = "Water_" + parameter
+	slider.tooltip_text = tooltip
+	slider.min_value = entry.min
+	slider.max_value = entry.max
+	slider.step = entry.step
+	slider.value = _water_settings.get(parameter, entry.defval)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.value_changed.connect(func(value):
+		_water_settings[parameter] = value
+		_apply_live_water("set_tuning", [parameter, value])
+		_save_settings())
+	row.add_child(slider)
+	var numeric_value := Label.new()
+	numeric_value.name = "NumericValue"
+	numeric_value.custom_minimum_size.x = 64
+	numeric_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	numeric_value.text = _water_value_text(slider.value, slider.step)
+	slider.value_changed.connect(func(value): numeric_value.text = _water_value_text(value, slider.step))
+	row.add_child(numeric_value)
+	parent.add_child(row)
+	return slider
+
+func _reset_wind_settings() -> void:
+	# Reset only the wind layer, without touching unrelated saved preferences.
+	for key: String in WaterSettingsScript.WIND_KEYS:
+		var value: Variant = WaterSettingsScript.DEFAULT[key]
+		_water_settings[key] = value
+		_apply_live_water("set_tuning", [key, value])
+		var control: Control = _wind_controls.get(key)
+		if control is CheckButton:
+			control.set_pressed_no_signal(value)
+		elif control is HSlider:
+			control.set_value_no_signal(value)
+			control.get_parent().get_node("NumericValue").text = _water_value_text(value, control.step)
+	_save_settings()
 
 func _render_diagnostics_state() -> Dictionary:
 	# Read-only facts for a user-invoked report. Do not repair or reset state here.
@@ -1125,7 +1177,7 @@ func _load_settings() -> void:
 	_gi_on=bool(config.get_value("display","gi",true))
 	_caustics_on=bool(config.get_value("display","caustics",true))
 	_fog_on=bool(config.get_value("display","source_shafts",true))
-	_water_settings=config.get_value("water","settings",{})
+	_water_settings=WaterSettingsScript.sanitize_wind_settings(config.get_value("water","settings",{}))
 	_water_visible=bool(config.get_value("water","visible",true))
 	# Clean imagery is default on each launch; CCD is deliberately opt-in each session.
 	_ccd_on=false
@@ -1149,6 +1201,7 @@ func _save_settings(restart_mode: String = "", restart_seed: int = 0, atomic: bo
 	config.set_value("display","source_shafts",_fog_on)
 	config.set_value("audio","effects",_audio_on)
 	config.set_value("audio","ambience",_ambience_on)
+	_water_settings = WaterSettingsScript.sanitize_wind_settings(_water_settings)
 	config.set_value("water","settings",_water_settings)
 	config.set_value("water","visible",_water_visible)
 	return _world_restart.save_config_atomic(config, "user://settings.cfg") if atomic else config.save("user://settings.cfg")

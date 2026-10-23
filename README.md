@@ -49,3 +49,8 @@
 源项目基线：[66a4543602d9e774db07c2da12ce1d40d522532c](https://github.com/YBZSG/beyond-the-basin/tree/66a4543602d9e774db07c2da12ce1d40d522532c)。水体移植保留原 SWE、细波、APIC-MPM 和光子焦散算法的来源及说明，不把简化滚动贴图当成原算法。
 
 资产与第三方代码许可见 `CREDITS.md`、`docs/licenses/`、`docs/SOURCE_LIQUID_LICENSES.md` 及各资源 NOTICE。没有复制 POOLS 游戏资产，也不为原项目或用户提供的音效擅自添加新的整体开源许可证。
+
+## PC visual and wind refinements (2026-10-23)
+
+The delivered PC shadow/avatar refinements, clearer basin grout, and adjustable optical wind ripples are integrated on top of the existing Android work. See [PC feature guide and verification scope](docs/PC-VISUAL-WIND-20261023.md) and [wind optical model](docs/wind_water_optics.md). This source integration does not replace or rebuild the published Android APKs.
+

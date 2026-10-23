@@ -2,6 +2,7 @@ class_name OriginalSourceWater
 extends Node3D
 ## Original 66a4543 InteractiveWater orchestration, with native renderer APIs.
 ## Native baseline remains in pool_water.gd for historical review, never silent fallback.
+const WindWaves=preload("res://scripts/water/wind_wave_controller.gd")
 const Settings=preload("res://scripts/water/source_port/source_water_settings.gd")
 const Events=preload("res://scripts/water/source_port/source_wave_events.gd")
 const Solver=preload("res://scripts/water/source_port/source_wave_solver.gd")
@@ -21,6 +22,7 @@ const NearfieldProfile=preload("res://scripts/water/pc_nearfield_water_profile.g
 const QUALITY={"Low":{"simulation":384,"surface":96,"ripple":192,"reflection":256},"Medium":{"simulation":384,"surface":192,"ripple":384,"reflection":384},"High":{"simulation":768,"surface":384,"ripple":768,"reflection":768},"Ultra":{"simulation":1152,"surface":512,"ripple":1152,"reflection":1536}}
 const MobileProfile=preload("res://scripts/mobile/pool_mobile_profile.gd")
 const LEVEL=.32
+var wind_waves:=WindWaves.new()
 var mobile_optimized:bool=MobileProfile.is_mobile_session()
 var quality_levels:Dictionary=MobileProfile.WATER_QUALITY if mobile_optimized else QUALITY
 var settings:Dictionary=Settings.DEFAULT.duplicate()
@@ -625,6 +627,7 @@ func set_source_fog(density:float,active:bool)->void:
   material.set_shader_parameter("sourceFogDensity",density)
   material.set_shader_parameter("sourceFogColor",_surface_uniforms.sourceFogColor)
 func _apply_surface(material:ShaderMaterial)->void:
+ if not OS.has_feature("android") and not OS.has_feature("ios") and not OS.get_cmdline_user_args().has("--mobile-preview"):wind_waves.apply_to(material)
  material.set_shader_parameter("poolSurface",solver.get_state_texture());material.set_shader_parameter("poolDepth",solver.get_depth_texture());material.set_shader_parameter("poolDetail",solver.get_detail_texture());material.set_shader_parameter("poolCell",solver.cell);material.set_shader_parameter("detailCell",solver.detail_cell)
  material.set_shader_parameter("domain_origin",domain_origin);material.set_shader_parameter("microOrigin",domain_origin);material.set_shader_parameter("poolTime",_time);material.set_shader_parameter("poolCaustics",caustics.floor_texture)
  material.set_shader_parameter("ripplesOn",0.0 if quality=="Low" else 1.0);material.set_shader_parameter("microOn",1.0 if quality in ["High","Ultra"] else 0.0);material.set_shader_parameter("foamOn",0.0 if quality=="Low" else 1.0)
@@ -652,6 +655,8 @@ func _process(delta:float)->void:
  if _nearfield_profile:_nearfield_profile.refresh_context()
  if not enabled or _terrain_paused or not _terrain_ready:return
  _time+=maxf(0.0,delta)
+ var wind_anchor:=Vector2(_camera.global_position.x,_camera.global_position.z) if is_instance_valid(_camera) else domain_origin
+ if not OS.has_feature("android") and not OS.has_feature("ios") and not OS.get_cmdline_user_args().has("--mobile-preview"):wind_waves.advance(delta,wind_anchor)
  if _liquid:_refresh_particle_sampler()
  var focus:=_local(_camera.global_position) if is_instance_valid(_camera) else Vector2.ZERO
  if _liquid:events.crest_spray(minf(delta,.05),func(x:float,z:float,power:float,_foam:float)->void:
@@ -751,6 +756,12 @@ func set_debug_view(value:int)->void:settings.debugView=clampi(value,0,11);_surf
 func set_tuning(parameter:String,value:Variant)->void:
  var aliases={"wave_height":"waveHeight","ripple_gain":"rippleGain","micro_strength":"microStrength","normal_boost":"normalBoost","refraction_strength":"refractionStrength","absorption_strength":"absorptionStrength","reflection_strength":"fresnelStrength","caustics_intensity":"causticsIntensity","foam_strength":"foamStrength","debug_view":"debugView","refraction_enabled":"refraction","ssr_enabled":"reflection"}
  var key:String=aliases.get(parameter,parameter)
+ if key in WindWaves.DEFAULT:
+  var desired:Dictionary=settings.duplicate();desired[key]=value
+  var checked:Dictionary=Settings.sanitize_wind_settings(desired)
+  for wind_key:String in WindWaves.DEFAULT:settings[wind_key]=checked[wind_key]
+  wind_waves.set_target(settings);_tuning[parameter]=settings[key]
+  return # Do not rebind photons, reset a field or touch physics for a wind slider.
  if Settings.LAYERS.has(key):settings[key]=bool(value)
  elif key=="debugView":settings[key]=clampi(int(value),0,11)
  else:
@@ -758,6 +769,7 @@ func set_tuning(parameter:String,value:Variant)->void:
    if row.key==key and (value is float or value is int) and is_finite(float(value)):settings[key]=clampf(float(value),row.min,row.max)
  _tuning[parameter]=value;_apply_settings();_bind_all()
 func _apply_settings()->void:
+ wind_waves.set_target(settings)
  for row:Dictionary in Settings.SLIDERS:_surface_uniforms[row.key]=settings[row.key]
  _surface_uniforms.distortionScale=settings.distortion;_surface_uniforms.causticGain=settings.causticsIntensity;_surface_uniforms.debugView=float(settings.debugView)
  for layer:String in Settings.LAYERS:

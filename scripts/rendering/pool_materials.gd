@@ -64,7 +64,7 @@ func _init() -> void:
 	_materials["formal_coping"].set_shader_parameter("coat_strength",0.11)
 	_materials["formal_dry_deck"].set_shader_parameter("grout_pigment",Color("a7b5b0"))
 	_materials["formal_wainscot"].set_shader_parameter("grout_pigment",Color("a4bbb8"))
-	_materials["formal_basin"].set_shader_parameter("grout_pigment",Color("afc5c8"))
+	_materials["formal_basin"].set_shader_parameter("grout_pigment",Color("7d969d"))
 	# Coping has actual metre-scale recessed joints in its geometry. A second
 	# 100 mm grid here would contradict that construction and shrink its scale.
 	_materials["formal_coping"].set_shader_parameter("tile_face_only",true)

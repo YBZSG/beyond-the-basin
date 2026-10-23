@@ -19,3 +19,7 @@ export_credentials.cfg
 .DS_Store
 Thumbs.db
 # Keep assets/cache/source_terrain/: these are deliberate runtime inputs.
+
+# Local wind settings contract report
+tests/wind_water/settings_report.json
+

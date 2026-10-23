@@ -9,6 +9,7 @@ const BODY_LAYER: int = 1 << 16 # Layer 17: dynamic avatar, excluded from static
 const PLANAR_CLIP_MARKER: int = 1 << 19
 const PLANAR_CLIP_HEIGHT: float = 0.318
 const HandIK = preload("res://scripts/player/avatar_hand_ik.gd")
+const MotionRefinement = preload("res://scripts/player/explorer_motion_refinement.gd")
 const CarryContact = preload("res://scripts/player/avatar_carry_contact_candidate.gd")
 const AVATAR_SHADER: Shader = preload("res://shaders/avatar_body.gdshader")
 const HEAD_LAYER: int = 1 << 17 # Layer 18: visible in mirrors, hidden in first person.
@@ -22,6 +23,8 @@ const REQUIRED_CLIPS: Array[String] = ["Idle", "Walk", "Run", "Hold", "Wade", "S
 ## Keep the eye just ahead of the chest without moving the camera or capsule.
 @export var body_visual_offset: Vector3 = Vector3(0.0, 0.0, 0.13)
 @export_range(1.0, 24.0) var transition_rate: float = 9.0
+## Reversible candidate switch, also used by matched native baseline captures.
+@export var motion_refinement_enabled: bool = true
 
 var _player: CharacterBody3D
 var _camera: Camera3D
@@ -68,6 +71,9 @@ var _pending_gait_distance: float = 0.0
 var _uses_locomotion_signal: bool = false
 var _ik_debug: Dictionary = {}
 var _hand_ik: RefCounted
+var _motion_refinement: RefCounted
+var _motion_debug: Dictionary = {}
+var _motion_refinement_allowed: bool = true
 
 
 func _ready() -> void:
@@ -82,6 +88,7 @@ func setup(player: CharacterBody3D) -> void:
 	if is_instance_valid(_player) and _player != player and _player.has_signal("locomotion_step"):
 		if _player.is_connected("locomotion_step", _on_locomotion_step):
 			_player.disconnect("locomotion_step", _on_locomotion_step)
+	_motion_refinement_allowed = not (OS.has_feature("android") or OS.has_feature("ios") or "--mobile-preview" in OS.get_cmdline_user_args() or "--original-avatar-motion" in OS.get_cmdline_user_args())
 	var changed_player: bool = _player != player
 	_player = player
 	_player_properties.clear()
@@ -349,6 +356,8 @@ func _build_animation_tree() -> void:
 	_tree.advance(0.0)
 	_hand_ik = HandIK.new()
 	_hand_ik.setup(_skeleton)
+	_motion_refinement = MotionRefinement.new()
+	_motion_refinement.setup(_skeleton)
 
 func _is_upper_body_track(path: NodePath) -> bool:
 	if path.get_subname_count() == 0:
@@ -376,6 +385,8 @@ func _integrate_locomotion(displacement: Vector3, delta: float, distance_overrid
 	if delta <= 0.0:
 		return
 	var enabled: bool = bool(_player_value("enabled", true))
+	if _motion_refinement_allowed and motion_refinement_enabled and _motion_refinement != null:
+		_motion_refinement.integrate(displacement, delta, _player.global_rotation.y, int(_player_value("locomotion_epoch", 0)), enabled)
 	var climbing: bool = enabled and is_instance_valid(_player_value("climbing", null))
 	var swimming: bool = enabled and bool(_player_value("_swimming", false)) and not climbing
 	var wading: bool = enabled and bool(_player_value("_in_water", false)) and not swimming and not climbing
@@ -471,6 +482,11 @@ func _process(delta: float) -> void:
 	# Explicit time seeks sample all gait clips at one normalized phase. Zero
 	# additional advance avoids accidentally adding a second render-delta clock.
 	_tree.advance(0.0)
+	# Frame-local body mechanics precede terrain leg placement (when enabled)
+	# and grip IK. AnimationTree overwrites the correction every render.
+	if _motion_refinement_allowed and motion_refinement_enabled and _motion_refinement != null:
+		var terrain_depth: float = float(_player.call("_water_depth", _player.global_position)) if _player.has_method("_water_depth") else 0.0
+		_motion_debug = _motion_refinement.apply(_idle_clock, _gait_phase, _move_blend, _run_blend, _wade_blend, _hold_blend, maxf(_swim_blend, _climb_blend), _body_yaw, terrain_depth)
 	if _hand_ik != null:
 		_ik_debug = _hand_ik.apply(_player_value("held", null), _player.global_basis, _hold_blend, delta)
 
@@ -512,6 +528,8 @@ func get_debug_state() -> Dictionary:
 		"animation_speed": _animation_speed,
 		"gait_phase":_gait_phase,"distance_driven":true,"gait_distance_delta":_last_gait_distance,
 		"physics_driven_gait":_uses_locomotion_signal,
+		"motion_refinement":_motion_debug,"motion_refinement_enabled":motion_refinement_enabled and _motion_refinement_allowed,
+		"motion_refinement_desktop_allowed":_motion_refinement_allowed,
 		"move_blend":_move_blend,"run_blend":_run_blend,"hand_ik":_ik_debug,
 		"locomotion_blends": {"idle": 1.0 - walk_weight, "walk": walk_weight * (1.0 - run_weight), "run": run_weight},
 		"hold_blend": _hold_blend,

@@ -7,6 +7,7 @@ render_mode unshaded, fog_disabled, depth_draw_never, cull_back;
 // debug branches are retained. Caustics are applied to receiver materials,
 // NEVER an unrelated procedural texture multiplied into transmission.
 #include "res://shaders/source_water/shared_waves.gdshaderinc"
+#include "res://shaders/source_water/wind_ripples.gdshaderinc"
 uniform sampler2D mirrorSampler : filter_linear, repeat_disable;
 uniform sampler2D sceneColor : hint_screen_texture, filter_linear, repeat_disable;
 uniform sampler2D sceneDepth : hint_depth_texture, filter_nearest, repeat_disable;
@@ -101,7 +102,10 @@ void fragment(){
     ripple=detailSlope(p); // Same actual detail slope as photon path in near field.
   }
   // PC_NEARFIELD_END
-  vec3 N=normalize(vec3(-sim-ripple-micro,1).xzy);
+  // Independent wind relief changes the actual optical normal used below by
+  // Fresnel, planar reflection, refraction and highlights, never collision depth.
+  vec2 wind=windOpticalSlope(worldPosition.xz,footprint,bed);
+  vec3 N=normalize(vec3(-sim-ripple-micro-wind,1).xzy);
   float theta=clamp(dot(N,V),0.0,1.0);
   const float f0=.020373;
   float fresnel=clamp((f0+(1.0-f0)*pow(1.0-theta,5.0))*fresnelStrength,0.0,1.0)*fresnelOn;

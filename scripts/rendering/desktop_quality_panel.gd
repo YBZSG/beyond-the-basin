@@ -1,6 +1,7 @@
 extends Node
 ## Desktop-only, live graphics controls. Android retains its independent runtime.
 ## The preset is the starting point; every override is saved independently.
+const PCShadowProfile = preload("res://scripts/rendering/pc_indoor_shadow_candidate.gd")
 const SETTINGS_PATH := "user://desktop_quality.cfg"
 const PRESET_NAMES := ["Low", "Medium", "High", "Ultra"]
 const SHADOW_SIZES := [1024, 2048, 4096, 8192]
@@ -33,6 +34,8 @@ var _checks: Dictionary = {}
 var _scroll: ScrollContainer
 var _applied: Dictionary = {}
 var apply_counts: Dictionary = {}
+var _pc_shadow_profile := PCShadowProfile.new()
+var pc_shadow_status: Dictionary = {}
 
 static func is_desktop_session() -> bool:
 	return not (OS.has_feature("android") or OS.has_feature("ios") or "--mobile-preview" in OS.get_cmdline_user_args())
@@ -187,10 +190,21 @@ func apply_settings() -> void:
 	var shadows_changed := _changed("light_overrides", [main.get_instance_id(), settings.shadows])
 	if shadows_changed:
 		for node in main.find_children("*", "Light3D", true, false): _apply_light(node)
-	if (lighting_changed or shadows_changed or atlas_changed or water_replaced) and is_instance_valid(_water) and _water.has_method("refresh_capture_lighting"):
+	var pc_shadow_changed := _apply_pc_shadow_profile(environment_node)
+	if (lighting_changed or shadows_changed or atlas_changed or water_replaced or pc_shadow_changed) and is_instance_valid(_water) and _water.has_method("refresh_capture_lighting"):
 		if main.has_method("_capture_lighting_changed"): main.call("_capture_lighting_changed")
 		else: _water.call("refresh_capture_lighting")
 	_refresh_interface()
+
+func _apply_pc_shadow_profile(environment_node: WorldEnvironment) -> bool:
+	var sun := environment_node.get_node_or_null("ApertureSun") as DirectionalLight3D if is_instance_valid(environment_node) else null
+	var enabled := bool(settings.shadows) and "--original-shadow-sampling" not in OS.get_cmdline_user_args()
+	var sun_id := sun.get_instance_id() if is_instance_valid(sun) else 0
+	if not _changed("pc_shadow_sampling", [sun_id, preset, enabled]): return false
+	# Keep the original120m fade/cutoff and atlas size. Only near allocation and
+	# supported desktop filtering change; mobile never installs this owner.
+	pc_shadow_status = _pc_shadow_profile.configure(sun, preset, enabled, "preserve120")
+	return is_instance_valid(sun)
 
 func _node_added(node: Node) -> void:
 	# Lighting is configured around add_child(), so read the authored state only
@@ -199,7 +213,9 @@ func _node_added(node: Node) -> void:
 
 func _apply_new_light(reference: WeakRef) -> void:
 	var node := reference.get_ref() as Node
-	if is_instance_valid(node): _apply_light(node)
+	if is_instance_valid(node):
+		_apply_light(node)
+		if node is DirectionalLight3D and node.name == "ApertureSun": apply_settings()
 
 func _apply_light(node: Node) -> void:
 	if not is_instance_valid(node) or not is_instance_valid(main) or not main.is_ancestor_of(node): return
@@ -390,6 +406,7 @@ func _refresh_interface() -> void:
 		check.tooltip_text = "当前渲染器不支持；保存的选择会在兼容的渲染器下启用。" if check.disabled else ""
 	_notes.text = "移动视角时反射始终逐帧更新；更新间隔仅用于静止视角。当前渲染器：%s。High 默认保持原生高画质；Ultra 启用 125%% 超采样、8× MSAA 和更高精度。选择预设会重置下面的单项设置，修改会自动保存。" % renderer
 	_notes.text += "\n水体精度改变模拟、细波纹和水面网格；反射宽度与刷新频率独立可调。关闭阴影不会开启原本不投影的灯光。High / Ultra 默认逐帧计算焦散；这提高动画连续性，也增加 GPU 负担，不改变光子数量或波浪公式。"
+	_notes.text += "\nPC 近景阴影采用 5/14/60/120 米分配，保留原最远覆盖；High/Ultra 增加软阴影采样。更高滤波可能增加 GPU 负担，不会改变角色轮廓。"
 	if renderer != "forward_plus":
 		_notes.text += "\nTAA、SDFGI、SSAO 和 SSIL 仅支持 Forward+，不可用选项已禁用；本页不会假装即时更换渲染器。"
 
@@ -404,5 +421,6 @@ func _fit_panel() -> void:
 	_scroll.custom_minimum_size = Vector2.ZERO
 
 func _exit_tree() -> void:
+	_pc_shadow_profile.restore()
 	if is_instance_valid(_panel): _panel.queue_free()
 	if is_instance_valid(_open_button): _open_button.queue_free()
