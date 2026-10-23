@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+FORMAL_IMPORT formal_arch { "visible": 5, "collision": 14, "uv0": 5, "uv2": 5, "surfaces": 19, "triangles": 3380 }
+EXACT_STAIR COLLISION_Main_Stair0 top_y=0.37999999523163
+EXACT_STAIR COLLISION_Main_Stair1 top_y=0.23999997973442
+EXACT_STAIR COLLISION_Main_Stair2 top_y=0.10000000149012
+EXACT_STAIR COLLISION_Main_Stair3 top_y=-0.03999999910593
+FORMAL_IMPORT formal_mainhall { "visible": 223, "collision": 254, "uv0": 223, "uv2": 223, "surfaces": 477, "triangles": 79660 }
+FORMAL_IMPORT formal_arcade { "visible": 66, "collision": 89, "uv0": 66, "uv2": 66, "surfaces": 155, "triangles": 21992 }
+FORMAL_IMPORT formal_sidepool { "visible": 59, "collision": 66, "uv0": 59, "uv2": 59, "surfaces": 125, "triangles": 19048 }
+FORMAL_IMPORT formal_terrace { "visible": 118, "collision": 128, "uv0": 118, "uv2": 118, "surfaces": 246, "triangles": 34424 }
+FORMAL_IMPORT formal_bath { "visible": 69, "collision": 685, "uv0": 69, "uv2": 69, "surfaces": 754, "triangles": 57420 }
+FORMAL_IMPORT_RESULT PASS

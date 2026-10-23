@@ -1,0 +1,6 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+SOURCE_NATIVE_READBACK_CONTRACT_PASS assertions=72823 failures=0 finite_patterns=63488 nonfinite_channel_cases=6144 invalid_alpha_patterns=65535
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+SOURCE_NATIVE_READBACK_TYPED_PASS calls=1000

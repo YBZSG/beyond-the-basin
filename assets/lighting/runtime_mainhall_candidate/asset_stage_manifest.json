@@ -1,0 +1,22 @@
+{
+  "native_proof": "res://output/eight-hour/final-mainhall-native.png.json",
+  "native_proof_sha256": "343c19430f3fb1dac26d9b9591ccc5bf527b334612e2ad6c1f79f7c0aa800e5c",
+  "pass": true,
+  "preparation_sha256": "14d352050d3d40784d03d4b205d81317101e794d77cfe3ffcc5c9a3c3b42d12c",
+  "runtime_default_changed": false,
+  "source_data": "res://assets/lighting/final_mainhall/native_indirect.lmbake",
+  "source_data_sha256": "19a8301cc3906183f54d6436ee6acab7468260509ab9d7255e1061af981f68ba",
+  "source_scene": "res://scenes/lighting_lab/final_mainhall_native.tscn",
+  "source_scene_sha256": "1d912f671148b05710b3cc173df5beab46d44ca369da8b3f3e23ba4249fb45c1",
+  "status": "quarantined_atlases_pending_import_and_native_staging",
+  "textures": [
+    {
+      "height": 256,
+      "layers": 48,
+      "sha256": "8aabb748f20fad0d36fadee1d8288aded72ac9660cdd2687806a43a7618c1f95",
+      "source": "res://assets/lighting/final_mainhall/native_indirect.exr",
+      "target": "res://assets/lighting/runtime_mainhall_candidate/indirect_00.exr",
+      "width": 256
+    }
+  ]
+}

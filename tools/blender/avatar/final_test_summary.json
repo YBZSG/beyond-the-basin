@@ -1,0 +1,78 @@
+{
+  "pass": true,
+  "verified_at_utc": "2026-10-22T12:36:05.549422+00:00",
+  "scope": "Headless CPU/resource-parser verification only. No new native capture, GPU shader execution, or rendered reflection proof.",
+  "model_sha256": "d21df79cd70292588a438d7b84d3225e4d7b185303c80f039266f96423ca5e6b",
+  "texture_sha256": {
+    "pool_explorer_explorer_pants_weave.png": "1e7df75967b2083f3c2a84520c436ad77bf5b8e137107ee42a3c05fc4ee63c5e",
+    "pool_explorer_explorer_shirt_weave.png": "86c4c5f7c795aa4840ef1ebb247d0f981633a9072c7bf8de8f7386a1ba3107e3"
+  },
+  "adapter_sha256": "6f9eeb62cbf989d428f13fd07ca603da00d354338e5db8fa095bdc7bb093c9fc",
+  "geometry": {
+    "bounds_position": "(-0.448266, 0.009, -0.066)",
+    "bounds_size": "(0.896531, 1.718794, 0.305791)",
+    "material_surfaces": 18,
+    "smooth_weight_vertices": 8669,
+    "surfaces": 18,
+    "weighted_vertices": 22745
+  },
+  "head_visibility_contract": {
+    "body_layer": 65536,
+    "head_layer": 131072,
+    "main_clip_disabled": true,
+    "main_mask": 393215,
+    "main_visible_heads": 0,
+    "method": "actual mesh masks, visibility, shadow settings and shared skin/skeleton",
+    "planar_clip_enabled": true,
+    "planar_mask": 720897,
+    "reflection_eligible_heads": 1,
+    "rendered_reflection_verified": false,
+    "shadow_only_heads": 1,
+    "static_cube_avatar_meshes": 0,
+    "static_cube_mask": 1
+  },
+  "material_contract": {
+    "native_shader_render_verified": false,
+    "normal_mapped_surfaces": 0,
+    "shader_path": "res://shaders/avatar_body.gdshader",
+    "shader_sha256": "2487210b140bb948417b6aaa3108069324231d75b96f6324b3b9015f2a2363fd",
+    "surfaces_checked": 18,
+    "textured_surfaces": 2
+  },
+  "synthetic_material_contract": {
+    "headless_parsed_shader_uniforms": 32,
+    "map_channels_checked": [
+      "roughness_green",
+      "metallic_blue",
+      "ao_alpha"
+    ],
+    "mapped_textures_checked": 5,
+    "native_shader_render_verified": false,
+    "normal_strength_checked": true,
+    "shader_path": "res://shaders/avatar_body.gdshader",
+    "shader_sha256": "2487210b140bb948417b6aaa3108069324231d75b96f6324b3b9015f2a2363fd"
+  },
+  "animation_extreme_samples": 63,
+  "stance_phases_per_clip": 32,
+  "projection_grid": "(97, 73)",
+  "state_projection_views": 12,
+  "state_phases_per_view": 8,
+  "hold_max_central_hand_forearm_hits": 0,
+  "hold_max_held_sightline_blocked_phases": 0,
+  "all_states_max_near_camera_hits": 0,
+  "headless_reports": {
+    "contract": "tools/blender/avatar/final_test_contract.json",
+    "asset": "tools/blender/avatar/final_test_asset.json",
+    "projection": "tools/blender/avatar/final_test_projection.json"
+  },
+  "headless_logs": {
+    "contract": "tools/blender/avatar/final_test_contract.log",
+    "asset": "tools/blender/avatar/final_test_asset.log",
+    "projection": "tools/blender/avatar/final_test_projection.log"
+  },
+  "visual_fixture_parse_log": "tools/blender/avatar/final_visual_parse.log",
+  "integration_sha256": {
+    "scripts/player/pool_avatar.gd": "6f9eeb62cbf989d428f13fd07ca603da00d354338e5db8fa095bdc7bb093c9fc",
+    "shaders/avatar_body.gdshader": "2487210b140bb948417b6aaa3108069324231d75b96f6324b3b9015f2a2363fd"
+  }
+}

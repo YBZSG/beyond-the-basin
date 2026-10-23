@@ -1,0 +1,63 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="BEYOND THE BASIN | PoolCore Native"
+config/description="Source-based Godot PC port of Beyond the Basin. Seeded pools, Quiet Wing, floating props and interactive water."
+config/version="0.6.2-pc-waterfeel-20261023"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/handheld/orientation.android=4
+
+[filesystem]
+
+import/blender/enabled=false
+
+[input_devices]
+
+pointing/emulate_mouse_from_touch.android=false
+
+[layer_names]
+
+3d_render/layer_1="Architecture and props"
+3d_render/layer_2="Water"
+3d_render/layer_17="Player body"
+3d_render/layer_18="Explorer head (reflection only)"
+3d_physics/layer_1="Architecture"
+3d_physics/layer_2="Floating props"
+3d_physics/layer_3="Player"
+
+[physics]
+
+common/physics_ticks_per_second=120
+common/max_physics_steps_per_frame.pc=16
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
+textures/default_filters/anisotropic_filtering_level=4
+anti_aliasing/quality/msaa_3d=2
+anti_aliasing/quality/use_taa=true
+occlusion_culling/use_occlusion_culling=true
+rendering_device/fallback_to_opengl3.android=false
+anti_aliasing/quality/msaa_3d.mobile=0
+anti_aliasing/quality/use_taa.mobile=false

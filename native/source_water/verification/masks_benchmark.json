@@ -1,0 +1,47 @@
+{
+	"all_bytes_equal_every_iteration": true,
+	"coord": "(0, 0)",
+	"godot": "4.6.3-stable (official)",
+	"mask_size": 256,
+	"masks": 2,
+	"measured_iterations": 9,
+	"median_reduction_percent": 98.7068539317161,
+	"mode": "CPU-only shared Linux host; includes native input packing; no GPU/FPS/device claim",
+	"results": {
+		"gdscript_exact": {
+			"max_ms": 9932.735,
+			"median_ms": 8930.159,
+			"min_ms": 8517.5,
+			"samples_ms": [
+				9252.691,
+				8930.159,
+				8869.59,
+				9043.19,
+				8879.792,
+				8517.5,
+				9067.836,
+				8636.312,
+				9932.735
+			]
+		},
+		"native_exact_including_packing": {
+			"max_ms": 134.309,
+			"median_ms": 115.48,
+			"min_ms": 100.24,
+			"samples_ms": [
+				100.24,
+				115.48,
+				105.406,
+				119.314,
+				112.427,
+				110.139,
+				123.958,
+				134.309,
+				128.245
+			]
+		}
+	},
+	"seed": 250821,
+	"solids": 109,
+	"warmups": 2
+}

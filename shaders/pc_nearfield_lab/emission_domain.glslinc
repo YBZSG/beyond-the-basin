@@ -1,0 +1,9 @@
+// TEST-ONLY mainhall mapping. Enable only after verifying active authored
+// water_rects is Rect2(-8,-6,16,12). Receiver atlas/world UV stay32x32m.
+// Invoke IDENTICALLY in wave cache, photon vert, result compute and result vert.
+// No extra power or area compensation: sourcePoint Jacobian handles source area.
+vec2 nf_mainhall_emission_point(int column,int row,int segments,bool wall) {
+    vec2 p=(vec2(float(column),float(row))/float(segments)-.5)*vec2(16.0,12.0);
+    if(!wall)p.y=-p.y;
+    return p;
+}

@@ -1,0 +1,146 @@
+{
+  "generator": "Blender 4.3.2",
+  "reference": "explorer_reference_ai.png",
+  "height_m": 1.7277942895889282,
+  "bones": 42,
+  "connected_bones": 28,
+  "meshes": {
+    "Body_Explorer": {
+      "vertices": 17875,
+      "triangles": 35003,
+      "materials": 11,
+      "vertex_groups": 35,
+      "armature_modifiers": 1
+    },
+    "Head_Explorer": {
+      "vertices": 4870,
+      "triangles": 9474,
+      "materials": 7,
+      "vertex_groups": 3,
+      "armature_modifiers": 1
+    }
+  },
+  "animations": {
+    "Idle": {
+      "frames": 288,
+      "duration": 2.4,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 288,
+      "exported_start_s": 0.0,
+      "exported_end_s": 2.4000000953674316,
+      "exported_duration_s": 2.4000000953674316
+    },
+    "Walk": {
+      "frames": 120,
+      "duration": 1.0,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 120,
+      "cycle_distance_m": 1.15,
+      "stance_fraction": 0.56,
+      "phase_zero": "left front contact; right foot phase offset +0.5",
+      "exported_start_s": 0.0,
+      "exported_end_s": 1.0,
+      "exported_duration_s": 1.0
+    },
+    "Run": {
+      "frames": 120,
+      "duration": 1.0,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 120,
+      "cycle_distance_m": 2.4,
+      "stance_fraction": 0.3,
+      "phase_zero": "left front contact; right foot phase offset +0.5",
+      "exported_start_s": 0.0,
+      "exported_end_s": 1.0,
+      "exported_duration_s": 1.0
+    },
+    "Hold": {
+      "frames": 288,
+      "duration": 2.4,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 288,
+      "exported_start_s": 0.0,
+      "exported_end_s": 2.4000000953674316,
+      "exported_duration_s": 2.4000000953674316
+    },
+    "Wade": {
+      "frames": 120,
+      "duration": 1.0,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 120,
+      "cycle_distance_m": 1.05,
+      "stance_fraction": 0.62,
+      "phase_zero": "left front contact; right foot phase offset +0.5",
+      "exported_start_s": 0.0,
+      "exported_end_s": 1.0,
+      "exported_duration_s": 1.0
+    },
+    "Swim": {
+      "frames": 184,
+      "duration": 1.5333333333333334,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 184,
+      "exported_start_s": 0.0,
+      "exported_end_s": 1.5333333015441895,
+      "exported_duration_s": 1.5333333015441895
+    },
+    "Climb": {
+      "frames": 160,
+      "duration": 1.3333333333333333,
+      "sample_rate_hz": 120,
+      "start_frame": 0,
+      "end_frame": 160,
+      "exported_start_s": 0.0,
+      "exported_end_s": 1.3333333730697632,
+      "exported_duration_s": 1.3333333730697632
+    }
+  },
+  "coordinate_contract": "Blender +Y front, glTF/Godot -Z front; foot origin at floor, height 1.73 m.",
+  "quality_note": "Procedurally authored game-ready interpretation of reference, not a scan or photoreal likeness.",
+  "gait_ik": {
+    "Walk": {
+      "max_target_error_m": 9.453726962543667e-08,
+      "min_reach_margin_m": 0.005730282989030111,
+      "min_knee_flex_rad": 0.24480580532284835,
+      "max_knee_flex_rad": 1.0258602281574438
+    },
+    "Wade": {
+      "max_target_error_m": 1.2687881563549044e-07,
+      "min_reach_margin_m": 0.006902654211858095,
+      "min_knee_flex_rad": 0.2687183409178826,
+      "max_knee_flex_rad": 1.299836180164356
+    },
+    "Run": {
+      "max_target_error_m": 8.33000234328132e-08,
+      "min_reach_margin_m": 0.0036124822293686076,
+      "min_knee_flex_rad": 0.19432837893513932,
+      "max_knee_flex_rad": 2.0669414641091883
+    }
+  },
+  "gait_contract": {
+    "phase_zero": "left front contact",
+    "right_phase_offset": 0.5,
+    "phase_driver": "actual planar distance / blended cycle_distance_m",
+    "stance_reference_velocity": "minus cycle distance per normalized cycle",
+    "source_samples_start_at_zero": true
+  },
+  "pre_reduction_weights": {
+    "vertices": 48177,
+    "unweighted": 0,
+    "max_weight_error": 1.1102230246251565e-16,
+    "max_influences": 3
+  },
+  "weights": {
+    "vertices": 22745,
+    "unweighted": 0,
+    "max_weight_error": 4.6566128730773926e-08,
+    "max_influences": 4,
+    "multi_influence_vertices": 8995
+  }
+}

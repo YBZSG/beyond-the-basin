@@ -1,0 +1,9 @@
+[configuration]
+entry_symbol = "source_water_library_init"
+compatibility_minimum = "4.6"
+reloadable = false
+
+[libraries]
+linux.x86_64 = "res://native/source_water/bin/libsource_water.linux.x86_64.so"
+windows.x86_64 = "res://native/source_water/bin/source_water.windows.x86_64.dll"
+android.arm64 = "res://native/source_water/bin/libsource_water.android.arm64.so"

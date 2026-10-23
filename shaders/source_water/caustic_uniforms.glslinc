@@ -1,0 +1,42 @@
+layout(set=0,binding=0,std140) uniform Waves {
+    vec4 wave0;
+    vec4 wave1;
+    vec4 wave2;
+    vec4 wave3;
+    // PC_NEARFIELD_BEGIN
+    vec4 pcNearfield; // x enabled(default0), y height/gradient strength(default1), zw reserved.
+    // PC_NEARFIELD_END
+};
+#define poolCell wave0.x
+#define detailCell wave0.y
+#define poolTime wave0.z
+#define waveHeight wave0.w
+#define rippleGain wave1.x
+#define normalBoost wave1.y
+#define microStrength wave1.z
+#define simulationOn wave1.w
+#define ripplesOn wave2.x
+#define microOn wave2.y
+#define causticsScale wave2.z
+#define causticsSpeed wave2.w
+#define microOrigin wave3.xy
+#define causticResolution wave3.z
+#define rtReady wave3.w
+// PC_NEARFIELD_BEGIN
+#define PC_NEARFIELD_CAUSTICS
+#define pcNearfieldOn pcNearfield.x
+#define pcNearfieldStrength pcNearfield.y
+// PC_NEARFIELD_END
+layout(set=0,binding=1) uniform sampler2D poolSurface;
+layout(set=0,binding=2) uniform sampler2D poolDepth;
+layout(set=0,binding=3) uniform sampler2D poolDetail;
+layout(set=0,binding=4) uniform sampler2D visibilityMap0;
+layout(set=0,binding=5) uniform sampler2D visibilityMap1;
+layout(push_constant,std430) uniform PhotonPass {
+    vec4 lampData;
+    vec4 wallData;
+    vec4 passData; // reflected, photon segments, is wall, lamp index
+    vec4 receiverData; // plane offset (original -15.7), exact wave cache enabled, cache offset, zero-power BVH skip
+};
+#define lampPosition lampData.xyz
+#define lampPower lampData.w

@@ -1,0 +1,23 @@
+{
+  "cases": 1024,
+  "checks": 12293,
+  "engine": {
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "hex": 263683,
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "status": "stable",
+    "string": "4.6.3-stable (official)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "lerpf_utility_hash": 998901048,
+  "notes": [
+    "Direct typed and Variant call paths against original GDS prefix.",
+    "NaN/Inf, sub-threshold float32 neighbors, signed zero, negative/large scales, malformed arrays and immutability.",
+    "Engine lerpf ptr utility used, so architecture-specific lerp contraction is not reimplemented."
+  ],
+  "pass": true
+}

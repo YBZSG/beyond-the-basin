@@ -1,0 +1,78 @@
+{
+  "evidence": {
+    "half_walk_bones": {
+      "arm": 0.199999988079071,
+      "thigh": 0.350000023841858
+    },
+    "initial": {
+      "animation_speed": 1.0,
+      "animation_tree_active": true,
+      "blended_speed": 0.0,
+      "body_layer": 65536,
+      "body_mesh_count": 2,
+      "body_visual_offset": "(0.0, 0.0, 0.13)",
+      "bone_count": 7,
+      "bones": [
+        "Hips",
+        "Spine",
+        "UpperArm.L",
+        "Forearm.L",
+        "Thigh.L",
+        "Shin.L",
+        "Head"
+      ],
+      "camera_hides_head": true,
+      "camera_planar_clip_disabled": true,
+      "climb_blend": 0.0,
+      "clips": {
+        "Climb": "Imported/ExplorerRig|Climb",
+        "Hold": "Imported/ExplorerRig|Hold",
+        "Idle": "Imported/ExplorerRig|Idle",
+        "Run": "Imported/ExplorerRig|Run",
+        "Swim": "Imported/ExplorerRig|Swim",
+        "Wade": "Imported/ExplorerRig|Wade",
+        "Walk": "Imported/ExplorerRig|Walk"
+      },
+      "error": "",
+      "head_layer": 131072,
+      "head_mesh_count": 2,
+      "hold_blend": 0.0,
+      "hold_filter_track_count": 1,
+      "loaded": true,
+      "locomotion_blends": {
+        "idle": 1.0,
+        "run": 0.0,
+        "walk": 0.0
+      },
+      "material_count": 1,
+      "material_shader": "res://shaders/avatar_body.gdshader",
+      "model_path": "res://assets/models/avatar/pool_explorer.glb",
+      "planar_clip_height": 0.318,
+      "planar_clip_marker": 524288,
+      "planar_speed": 0.0,
+      "shadow_head_count": 2,
+      "skeleton_path": "PoolExplorer/ExplorerRig/Skeleton3D",
+      "state": "Idle",
+      "swim_blend": 0.0,
+      "visual_model_position": "(0.0, 0.0, 0.13)",
+      "visual_only": true,
+      "wade_blend": 0.0
+    },
+    "synthetic_material_contract": {
+      "headless_parsed_shader_uniforms": 32,
+      "map_channels_checked": [
+        "roughness_green",
+        "metallic_blue",
+        "ao_alpha"
+      ],
+      "mapped_textures_checked": 5,
+      "native_shader_render_verified": false,
+      "normal_strength_checked": true,
+      "shader_path": "res://shaders/avatar_body.gdshader",
+      "shader_sha256": "2487210b140bb948417b6aaa3108069324231d75b96f6324b3b9015f2a2363fd"
+    }
+  },
+  "failures": [],
+  "gpu_executed": false,
+  "pass": true
+}

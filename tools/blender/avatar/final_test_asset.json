@@ -1,0 +1,176 @@
+{
+  "evidence": {
+    "animation_extremes": {
+      "clip_pose_ranges": {
+        "Climb": 2.51000413461588,
+        "Hold": 0.0205023332964629,
+        "Idle": 0.0514459616970271,
+        "Run": 4.43748603458516,
+        "Swim": 3.2562565333792,
+        "Wade": 3.7219569075387,
+        "Walk": 2.69413011963479
+      },
+      "max_bone_length_error": 0.0765138864517212,
+      "max_bone_radius": 2.00029683113098,
+      "max_quaternion_error": 1.19209289550781e-07,
+      "sample_count": 63
+    },
+    "foot_forward": {
+      "L": "(0.0, -0.065, -0.155)",
+      "R": "(-0.0, -0.065, -0.155)"
+    },
+    "geometry": {
+      "bounds_position": "(-0.448266, 0.009, -0.066)",
+      "bounds_size": "(0.896531, 1.718794, 0.305791)",
+      "material_surfaces": 18,
+      "smooth_weight_vertices": 8669,
+      "surfaces": 18,
+      "weighted_vertices": 22745
+    },
+    "head_visibility_contract": {
+      "body_layer": 65536,
+      "head_layer": 131072,
+      "main_clip_disabled": true,
+      "main_mask": 393215,
+      "main_visible_heads": 0,
+      "method": "actual mesh masks, visibility, shadow settings and shared skin/skeleton",
+      "planar_clip_enabled": true,
+      "planar_mask": 720897,
+      "reflection_eligible_heads": 1,
+      "rendered_reflection_verified": false,
+      "shadow_only_heads": 1,
+      "static_cube_avatar_meshes": 0,
+      "static_cube_mask": 1
+    },
+    "material_contract": {
+      "native_shader_render_verified": false,
+      "normal_mapped_surfaces": 0,
+      "shader_path": "res://shaders/avatar_body.gdshader",
+      "shader_sha256": "2487210b140bb948417b6aaa3108069324231d75b96f6324b3b9015f2a2363fd",
+      "surfaces_checked": 18,
+      "textured_surfaces": 2
+    },
+    "model_sha256": "d21df79cd70292588a438d7b84d3225e4d7b185303c80f039266f96423ca5e6b",
+    "pose_changes": {
+      "idle_to_walk": 2.65202559041791,
+      "walk_over_time": 1.29308386403136
+    },
+    "runtime": {
+      "animation_speed": 1.0,
+      "animation_tree_active": true,
+      "blended_speed": 0.0,
+      "body_layer": 65536,
+      "body_mesh_count": 1,
+      "body_visual_offset": "(0.0, 0.0, 0.13)",
+      "bone_count": 42,
+      "bones": [
+        "Root",
+        "Hips",
+        "Spine",
+        "Chest",
+        "Neck",
+        "Head",
+        "Shoulder_R",
+        "UpperArm_R",
+        "Forearm_R",
+        "Hand_R",
+        "Index1_R",
+        "Index2_R",
+        "Middle1_R",
+        "Middle2_R",
+        "Ring1_R",
+        "Ring2_R",
+        "Little1_R",
+        "Little2_R",
+        "Thumb1_R",
+        "Thumb2_R",
+        "Shoulder_L",
+        "UpperArm_L",
+        "Forearm_L",
+        "Hand_L",
+        "Index1_L",
+        "Index2_L",
+        "Middle1_L",
+        "Middle2_L",
+        "Ring1_L",
+        "Ring2_L",
+        "Little1_L",
+        "Little2_L",
+        "Thumb1_L",
+        "Thumb2_L",
+        "UpperLeg_R",
+        "LowerLeg_R",
+        "Foot_R",
+        "Toe_R",
+        "UpperLeg_L",
+        "LowerLeg_L",
+        "Foot_L",
+        "Toe_L"
+      ],
+      "camera_hides_head": true,
+      "camera_planar_clip_disabled": true,
+      "climb_blend": 0.0,
+      "clips": {
+        "Climb": "Climb",
+        "Hold": "Hold",
+        "Idle": "Idle",
+        "Run": "Run",
+        "Swim": "Swim",
+        "Wade": "Wade",
+        "Walk": "Walk"
+      },
+      "error": "",
+      "head_layer": 131072,
+      "head_mesh_count": 1,
+      "hold_blend": 0.0,
+      "hold_filter_track_count": 26,
+      "loaded": true,
+      "locomotion_blends": {
+        "idle": 1.0,
+        "run": 0.0,
+        "walk": 0.0
+      },
+      "material_count": 17,
+      "material_shader": "res://shaders/avatar_body.gdshader",
+      "model_path": "res://assets/models/avatar/pool_explorer.glb",
+      "planar_clip_height": 0.318,
+      "planar_clip_marker": 524288,
+      "planar_speed": 0.0,
+      "shadow_head_count": 1,
+      "skeleton_path": "pool_explorer/ExplorerRig/Skeleton3D",
+      "state": "Idle",
+      "swim_blend": 0.0,
+      "visual_model_position": "(0.0, 0.0, 0.13)",
+      "visual_only": true,
+      "wade_blend": 0.0
+    },
+    "stance_feet": {
+      "clips": {
+        "Run": {
+          "stance_ankle_max": 0.120510876178741,
+          "stance_ankle_min": 0.111085265874863,
+          "swing_ankle_max": 0.28537791967392
+        },
+        "Wade": {
+          "stance_ankle_max": 0.117246359586716,
+          "stance_ankle_min": 0.114969193935394,
+          "swing_ankle_max": 0.285395920276642
+        },
+        "Walk": {
+          "stance_ankle_max": 0.11593359708786,
+          "stance_ankle_min": 0.114832580089569,
+          "swing_ankle_max": 0.200456500053406
+        }
+      },
+      "phases_per_clip": 32,
+      "rest_ankle_height": 0.115000247955322
+    },
+    "texture_sha256": {
+      "pool_explorer_explorer_pants_weave.png": "1e7df75967b2083f3c2a84520c436ad77bf5b8e137107ee42a3c05fc4ee63c5e",
+      "pool_explorer_explorer_shirt_weave.png": "86c4c5f7c795aa4840ef1ebb247d0f981633a9072c7bf8de8f7386a1ba3107e3"
+    }
+  },
+  "failures": [],
+  "gpu_executed": false,
+  "pass": true
+}

@@ -1,0 +1,6 @@
+/toolchain/
+/build/
+*.o
+*.obj
+*.lib
+*.exp

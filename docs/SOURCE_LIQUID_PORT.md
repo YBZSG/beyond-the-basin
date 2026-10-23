@@ -1,0 +1,61 @@
+# Original liquid subsystem, native Godot 4.6.3 port
+
+Baseline: poolcore commit `66a4543602d9e774db07c2da12ce1d40d522532c`. This ports the original `liquid-mpm.ts`, `liquid-mpm-shader.ts`, `liquid-surface-pass.ts`, `splash-particles.ts`, and `whitewater-pass.ts`, not the later working-tree V2 water implementation. Original host quirks are retained. The native implementation is not a particle-sheet or ballistic substitute for the MPM solver.
+
+## Preserved simulation and storage
+
+`SourceLiquidMPM` and `liquid_mpm.glslinc` retain three domains, 18,000 particles per domain, 80³ grid cells, 1/720-second substeps, integer atomic accumulation at scale 65,536, and all nine original entries: clear, mass, pressure, velocity, gather, resetHeads, link, exportState, deleteParticles. Each particle/export record remains 80 bytes: five vec4 lanes, including the padded column-major APIC/shape matrices. Grid nodes remain four 32-bit signed integers. Domain parameters remain 64 bytes. The link counter is explicitly zero initialized and governs collider substep time, not the host patch-age parameter.
+
+The direct translation retains quadratic B-spline transfers, APIC affine velocity, density-normalized pressure/viscosity, gravity in physical units, boundary constraints, moving collider trajectory, neighbor linked lists, covariance-derived anisotropic axes, and source deletion/export order. It does not reduce the grid, particle budget, neighbor traversal or solver stages for the software test device. Runtime readback is asynchronous; Godot render-thread scheduling replaces WebGPU command submission without moving state uploads inside an open compute list.
+
+The host retains source RNG and source allocation order, impact/collider/crest initialization, three-domain admission, patch lifetime, delayed snapshots, interpolation, dry-ground rejection, one-shot particle removal, volume-scaled return ripples, and sparse-particle conversion into secondary droplets. Source wading calls below the crest threshold still do not directly spawn a domain. The source callbacks sample the filtered macro surface mirror, not shader fine-detail displacement.
+
+`SourceWhitewaterParticles` preserves the original 1,024-particle capacity, ballistic drop gravity/drag, entrained-air rise/advection, water-rise-aware swept contact with seven bisections, volume/relative-velocity ripple strengths, one-shot bubble popping, and speed-dependent 3D ellipsoid stretch. No independent spray emitter substitutes for MPM detachment.
+
+## Preserved render graph
+
+`SourceLiquidSurface` is a `CompositorEffect` at post-transparent/pre-native-postprocessing. It draws the source indexed sphere topology using the exact anisotropic instance rows into RGBA32F eye depth plus D32F hardware depth. Four alternating original narrow-range filter passes retain the 9,000/10,000 sentinel, 1–6-pixel radius, ±0.035 thresholds and +0.012 distant-depth substitution. The surface pass retains reconstructed eye positions, closest-depth derivatives, dry-land/underwater clipping, scene-depth occlusion, Schlick Fresnel 0.020373 + 0.979627(1−N·V)^5, IOR 1.333, source refraction scale, and source water-level joining.
+
+Droplets draw into a separate RGBA16F + D32F target at 4× MSAA. A fullscreen pass copies the completed HDR water color and stable opaque depth before source ellipsoid rendering; the target is then resolved and copied to the real scene color. Transmission never samples its active render target. Source opacity .94 and depth write are retained. Direct-light GGX, correlated Smith visibility, DFG lookup and multiple-scattering equations are translated from the installed source Three r185 material path. The original 16×16 RG16F DFG bytes are included without recomputation.
+
+Godot's actual render-scene projection is used, including reverse-Z and framebuffer Y orientation. Eye-space transmission offsets convert Y using the projection sign before sampling top-left-origin native textures. A guarded depth correction only applies if the backend supplies a conventional projection, never to an already corrected native matrix. Camera translation is shifted by `domainOrigin`, so rows, textures, terrain and light/BVH positions remain in solver-local coordinates; no double translation of instance data is needed. Bubble `MultiMeshInstance3D` must be positioned at the domain's world origin by its owner.
+
+## API and ownership
+
+- `SourceLiquidMPM.configure(surface_at, depth_at)` initializes global RD. Explicit `initialize()` is also supported. Call `impact(x,z,power,flow)`, `crest(x,z,power,flow)`, `frame(dt)`, `rebase(shift)` and `dispose()` on the owner thread.
+- `flow` uses the original dictionary keys `u`, `v`, optional `radius` and `vertical`. All positions/callbacks are local metres. `return_ripple(position,strength)` and `droplet_released(position,velocity,size)` connect back to the existing wave event route and `SourceWhitewaterParticles.release`.
+- `instance_rows` stores three float32 rows per kernel. `bounds`, `visible_count`, `depth_mesh`, `stats()` and `snapshot_updated` are exposed. No local-device RID is bound into the global render graph.
+- `SourceWhitewaterParticles.configure(surface_at,depth_at,flow_at)`, `release`, `bubbles`, `frame`, `rebase`, `dispose`; `drop_rows`, `drop_mesh`, `submerged_mesh`, `stats()` and `return_ripple` are exposed.
+- `SourceLiquidSurface.configure(surface_texture,rest_depth_texture,detail_texture)`, `configure_environment(actual_room_cubemap)`, `set_lights(actual_scene_lights)`, `configure_shadow_bvh(packed_bvh)`, `frame(liquid,particles,parameters)`, `dispose()`.
+- Frame parameters preserve original wave controls and accept `domainOrigin` as Vector2 XZ or Vector3. `microOrigin` is a separate source wave offset, not the world-domain origin.
+- Light dictionaries contain local `position` or `direction`, linear `color`, `intensity`, `range` (0 means infinite), `decay` and `casts_shadow`. Capacity is the original 27 slots; only flags explicitly supplied by the scene are shadowed. Default shadow flags match the source's first four slots.
+- Shadow BVH takes the same `nodes` and `triangles` byte arrays as `SourceCaustics.build_triangle_bvh`: 48-byte records. Runtime integration can share the existing caustic arrays and avoid a duplicate CPU build.
+- Only the main camera receives this compositor; reflection/capture cameras must not recursively render it. Opaque scene depth must exclude transparent base water, matching the source graph.
+
+## Explicit native rendering adaptations and remaining parity boundaries
+
+1. **Environment prefilter:** Three's private PMREM packed CubeUV layout is replaced by the actual room's six-face, linear-HDR Cubemap and native mip chain. Reflection directions, Fresnel and roughness remain source values; mip filtering is not numerically identical to PMREM. Parent integration supplies the actual captured room, not a static blue sky. The source fallback tint applies only before an environment capture is ready.
+2. **Direct-light shadows:** Godot does not expose its private point-shadow atlas to arbitrary RD shaders. The native adapter traces actual local opaque triangles for the original four shadow slots, retaining the source normal offset .025, near plane .3, cube-face perspective depth and bias −.00003. The center-ray depth comparison is converted back to distance, not approximated with radial linear shadow depth. This is hard visibility, not the original 1,024² cube shadow's radius-2 PCF. Dynamic casters require the owner to refresh the supplied BVH; a static BVH does not contain moving props. Shared BVH triangles are double-sided; original material-specific shadowSide and per-vertex normal-offset interpolation are additional shadow parity boundaries. Missing BVH does not silently unshadow those lights: their direct specular contribution remains suppressed until geometry is supplied. Non-shadowed lights remain active.
+3. **Submerged bubbles:** Geometry, motion, alpha, color, roughness and render order are source-derived, but the native material BRDF/environment implementation is Godot's. It is not claimed to be a byte-identical Three MeshPhysicalMaterial. The source's existing transparent-capture ambiguity is not described as fixed parity.
+4. **Numerical representation:** Source scalar host state uses doubles; final GPU buffers are float32. Native Vector2/Vector3 signal payloads round to Godot's standard real_t precision. Full MPM trajectories across GPU compilers are tested with the source tolerances, not asserted bit-identical.
+5. **Backend:** A real graphics context and Forward+/Mobile RD are required. Headless/Compatibility are not proof of GPU execution; no silent CPU MPM or procedural-sheet fallback is supplied. No 60-fps or whole-scene pixel-equivalence claim follows from isolated correctness tests.
+
+## Verification recorded on 2026-10-21
+
+| Test | Result | Evidence |
+|---|---|---|
+| Original baseline CPU/graph/contracts | 26 passed | Original Node test log in source audit |
+| `tests/source_liquid_host.gd` | 4/4 exact float32 SHA-256 matches | Click 6,474; strong impact 13,806; collider 13,806; crest 13,494 particles |
+| `tests/source_liquid_lifecycle.gd` | 7 passed | One-shot removal, stale snapshots, rebase and epoch ownership |
+| `tests/source_liquid_contacts.gd` | 8 passed | Swept contact, 8× volume response, rising water, bubble once-only, cap and dry land |
+| `tests/source_liquid_gpu.gd` | 4 passed on actual Forward+ RD | Gravity, APIC inertia, finite isolated axes, compressed-block expansion |
+| `tests/source_liquid_rd_smoke.gd` | Actual RD ready, 16 rendered frames, no shader/binding errors | All nine MPM entries and six render programs, 27 lights/BVH compile |
+| `tests/source_liquid_pixels.gd` | Actual RD passed, 90 composite frames | Front-depth 2.831 m, occluded color delta 0, translated domain, both directional-refraction gradients, clear/blocked BVH specular |
+
+Actual numerical evidence: expected free fall −0.1373854167 m, observed −0.1383638763 m, final vy −1.6526431274 m/s; APIC dx .1347452545 m, vx .8171702576 m/s; isolated diagonal axes .6399999857; compressed 216-particle radial expansion sum 170790.238932 and maximum speed 4.059840113 m/s. These satisfy the unchanged original tolerances. They do not constitute a direct original-vs-native GPU image comparison. Actual HDR pixel fixtures additionally verified unchanged opaque blockers, visible 3D front surfaces, and source-local coordinates at world origin (37,0,−19). Gradient green-channel gains were .06967163 for liquid refraction/down and .21569824 for droplet transmission/up, proving the native texture-Y conversion rather than merely compiling it. The final direct-light BVH check measured clear red-channel specular+transmission 21.96875 versus blocked .03918457, difference 21.92956543; all pixel checks passed in 90 composite frames. This isolated run reported no shader, binding or shutdown-leak warning after defensive disposal cleanup.
+
+Run CPU tests with the official Godot binary using `--headless --path . --script tests/source_liquid_host.gd` and `source_liquid_contacts.gd`. Run GPU tests without `--headless`, using a real Forward+ context. Serialize GPU tests on software Vulkan to avoid device contention. Pixel tests produce PNG evidence under `output/`; their HDR numeric comparisons, not screenshot appearance alone, determine success.
+
+An integrated 18-frame main-room capture also produced one 13,806-particle MPM domain, seven liquid composite frames, 48 return removals and six return ripples, with actual room Cubemap ready. Its water error fields were empty, but that capture reported seven leaked Texture RIDs at process shutdown; it is not a clean-lifetime acceptance result. Standalone liquid tests did not report that warning.
+
+Full-room sustained interactions, dynamic-caster refresh, pending-readback rebase stress, filtered-depth synthetic A/B parity, multi-view rendering and GPU resource lifetime stress remain separate acceptance items unless their own logs explicitly demonstrate them. Original source audit and fixtures are preserved in the checkpoint alongside this project. Attribution and complete third-party notices: [SOURCE_LIQUID_LICENSES.md](SOURCE_LIQUID_LICENSES.md).

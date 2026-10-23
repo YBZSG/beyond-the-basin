@@ -1,0 +1,277 @@
+{
+  "active_states": [
+    {
+      "aspect": 1.33333333333333,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 14,
+      "minimum_hit_distance": 0.601729452610016,
+      "phases": 8,
+      "pitch": 0.0,
+      "state": "Hold"
+    },
+    {
+      "aspect": 1.33333333333333,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 696,
+      "minimum_hit_distance": 0.409759223461151,
+      "phases": 8,
+      "pitch": -0.6,
+      "state": "Hold"
+    },
+    {
+      "aspect": 1.77777777777778,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 9,
+      "minimum_hit_distance": 0.601244330406189,
+      "phases": 8,
+      "pitch": 0.0,
+      "state": "Hold"
+    },
+    {
+      "aspect": 1.77777777777778,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 728,
+      "minimum_hit_distance": 0.407724112272263,
+      "phases": 8,
+      "pitch": -0.6,
+      "state": "Hold"
+    },
+    {
+      "aspect": 1.33333333333333,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": 0.0,
+      "state": "Wade"
+    },
+    {
+      "aspect": 1.33333333333333,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": -0.6,
+      "state": "Wade"
+    },
+    {
+      "aspect": 1.77777777777778,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": 0.0,
+      "state": "Wade"
+    },
+    {
+      "aspect": 1.77777777777778,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": -0.6,
+      "state": "Wade"
+    },
+    {
+      "aspect": 1.33333333333333,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": 0.0,
+      "state": "Climb"
+    },
+    {
+      "aspect": 1.33333333333333,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": -0.6,
+      "state": "Climb"
+    },
+    {
+      "aspect": 1.77777777777778,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": 0.0,
+      "state": "Climb"
+    },
+    {
+      "aspect": 1.77777777777778,
+      "held_sightline_blocked_phases": 0,
+      "max_central_body_hits": 0,
+      "max_central_hand_forearm": 0,
+      "max_near_camera_hits": 0,
+      "max_peripheral_hand_forearm": 0,
+      "minimum_hit_distance": -1.0,
+      "phases": 8,
+      "pitch": -0.6,
+      "state": "Climb"
+    }
+  ],
+  "failures": [],
+  "gpu_executed": false,
+  "grid": "(97, 73)",
+  "method": "CPU skinning and triangle BVH ray intersections",
+  "model_sha256": "d21df79cd70292588a438d7b84d3225e4d7b185303c80f039266f96423ca5e6b",
+  "pass": true,
+  "rays_per_view": 7081,
+  "results": [
+    {
+      "after": {
+        "central_body_hits": 0,
+        "central_hand_forearm": 0,
+        "central_torso": 0,
+        "clear": 6932,
+        "feet": 64,
+        "hand_forearm_hits": 37,
+        "legs": 16,
+        "lower_torso": 54,
+        "minimum_hit_distance": 0.299042940139771,
+        "near_camera_hits": 0,
+        "upper_torso": 15
+      },
+      "aspect": 1.33333333333333,
+      "before": {
+        "central_body_hits": 471,
+        "central_hand_forearm": 0,
+        "central_torso": 471,
+        "clear": 4166,
+        "feet": 0,
+        "hand_forearm_hits": 0,
+        "legs": 0,
+        "lower_torso": 0,
+        "minimum_hit_distance": 0.135056808590889,
+        "near_camera_hits": 0,
+        "upper_torso": 2915
+      },
+      "pitch": -1.1
+    },
+    {
+      "after": {
+        "central_body_hits": 0,
+        "central_hand_forearm": 0,
+        "central_torso": 0,
+        "clear": 5903,
+        "feet": 48,
+        "hand_forearm_hits": 144,
+        "legs": 14,
+        "lower_torso": 117,
+        "minimum_hit_distance": 0.178594499826431,
+        "near_camera_hits": 0,
+        "upper_torso": 999
+      },
+      "aspect": 1.33333333333333,
+      "before": {
+        "central_body_hits": 946,
+        "central_hand_forearm": 0,
+        "central_torso": 946,
+        "clear": 2984,
+        "feet": 0,
+        "hand_forearm_hits": 0,
+        "legs": 0,
+        "lower_torso": 0,
+        "minimum_hit_distance": 0.135057270526886,
+        "near_camera_hits": 0,
+        "upper_torso": 4097
+      },
+      "pitch": -1.3
+    },
+    {
+      "after": {
+        "central_body_hits": 0,
+        "central_hand_forearm": 0,
+        "central_torso": 0,
+        "clear": 6971,
+        "feet": 47,
+        "hand_forearm_hits": 25,
+        "legs": 12,
+        "lower_torso": 40,
+        "minimum_hit_distance": 0.326734781265259,
+        "near_camera_hits": 0,
+        "upper_torso": 11
+      },
+      "aspect": 1.77777777777778,
+      "before": {
+        "central_body_hits": 444,
+        "central_hand_forearm": 0,
+        "central_torso": 444,
+        "clear": 4260,
+        "feet": 0,
+        "hand_forearm_hits": 0,
+        "legs": 0,
+        "lower_torso": 0,
+        "minimum_hit_distance": 0.135056808590889,
+        "near_camera_hits": 0,
+        "upper_torso": 2821
+      },
+      "pitch": -1.1
+    },
+    {
+      "after": {
+        "central_body_hits": 0,
+        "central_hand_forearm": 0,
+        "central_torso": 0,
+        "clear": 6169,
+        "feet": 37,
+        "hand_forearm_hits": 110,
+        "legs": 14,
+        "lower_torso": 88,
+        "minimum_hit_distance": 0.178594499826431,
+        "near_camera_hits": 0,
+        "upper_torso": 773
+      },
+      "aspect": 1.77777777777778,
+      "before": {
+        "central_body_hits": 920,
+        "central_hand_forearm": 0,
+        "central_torso": 920,
+        "clear": 3094,
+        "feet": 0,
+        "hand_forearm_hits": 0,
+        "legs": 0,
+        "lower_torso": 0,
+        "minimum_hit_distance": 0.135057270526886,
+        "near_camera_hits": 0,
+        "upper_torso": 3987
+      },
+      "pitch": -1.3
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+	"bytes_compared_per_path": 655360,
+	"cases": [
+		{
+			"boxes": 243,
+			"name": "formal_(-1, -1)",
+			"native_and_wrapper_match_archived_golden": true,
+			"native_ms": 99.348,
+			"reference_algorithm": "731cda1380bdce60d38a7488a384e141359f01aba734a0386fe4ddf8eb95eb3e",
+			"sha256": [
+				"7ee0cafffc33ac8b1b5bf2a3c04f51da9383a16e2d0198263e162f8b5f5989cb",
+				"a5228db69c1f1ea9fa36d966eb95c298642fc2aeac8ffd0df44cd432f721c3b3"
+			]
+		},
+		{
+			"boxes": 87,
+			"name": "formal_(0, -1)",
+			"native_and_wrapper_match_archived_golden": true,
+			"native_ms": 15.138,
+			"reference_algorithm": "731cda1380bdce60d38a7488a384e141359f01aba734a0386fe4ddf8eb95eb3e",
+			"sha256": [
+				"de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31",
+				"d7d875d50a1384deef4dc1d59f8c5607b12d79c22d922b42bc4a0c2a6bd3ff5f"
+			]
+		},
+		{
+			"boxes": 53,
+			"name": "formal_(-1, 0)",
+			"native_and_wrapper_match_archived_golden": true,
+			"native_ms": 23.545,
+			"reference_algorithm": "731cda1380bdce60d38a7488a384e141359f01aba734a0386fe4ddf8eb95eb3e",
+			"sha256": [
+				"f7ff218b7547e7b4e092e83379068a4f99af9595abff5e1cbd9a9122e63e8ed4",
+				"a786e287bb60d0228f8a8171a07b02b565148f77082b5870a186bfb4d5a78c2a"
+			]
+		},
+		{
+			"boxes": 131,
+			"name": "formal_(0, -2)",
+			"native_and_wrapper_match_archived_golden": true,
+			"native_ms": 83.808,
+			"reference_algorithm": "731cda1380bdce60d38a7488a384e141359f01aba734a0386fe4ddf8eb95eb3e",
+			"sha256": [
+				"6c19f5f45d0b523086db17d8095fd7205d7c0a240232a6fbe0b5c803109476a8",
+				"e392c4ad9fc2bda4fab306a630ce1adf63730ab604d1320f9e91b084d4bc75d3"
+			]
+		},
+		{
+			"boxes": 691,
+			"name": "formal_(-1, -2)",
+			"native_and_wrapper_match_archived_golden": true,
+			"native_ms": 610.469,
+			"reference_algorithm": "731cda1380bdce60d38a7488a384e141359f01aba734a0386fe4ddf8eb95eb3e",
+			"sha256": [
+				"248b0d34cc5d0b06efcf60fb8d6fa92d68290355fdb056d92b98d248e54ea4d4",
+				"c456150a5d03573fc638b160b5bd4322566354bef5e32f00f49bd240f6ca5bb1"
+			]
+		}
+	],
+	"fixture_sha256": "38754887bf315a0c746cd589b93e428f0b407bbf63ae9bdbdc33e3d9bb4caa03",
+	"godot": "4.6.3-stable (official)"
+}

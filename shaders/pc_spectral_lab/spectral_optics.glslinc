@@ -1,0 +1,38 @@
+// TEST-ONLY. No production shader includes this file.
+// RGB representatives are 650/550/450 nm at 20 C, air index approximated as 1.
+// PC_SPECTRAL_BAND must be 0, 1, or 2 for transmitted per-channel draws.
+// Reflection is one common geometric draw with three Fresnel power weights.
+const vec3 pcLabIorRGB = vec3(1.331666595718179, 1.334683329053798, 1.3396084494078662);
+const float pcLabSourceIor = 1.333;
+const float pcLabSourceF0 = .02037;
+float pcLabDielectricF0(float ior) {
+    float ratio = (ior - 1.0) / (ior + 1.0);
+    return ratio * ratio;
+}
+float pcLabF0(float ior) {
+    // Anchor the source's rounded F0 exactly at source IOR. This is a small
+    // source-preserving Schlick approximation, not exact spectral radiometry.
+    return pcLabSourceF0 + (pcLabDielectricF0(ior) - pcLabDielectricF0(pcLabSourceIor));
+}
+float pcLabIor() { return pcLabIorRGB[PC_SPECTRAL_BAND]; }
+float pcLabFresnel(float cosine) {
+    float f0 = pcLabF0(pcLabIor());
+    return f0 + (1.0 - f0) * pow(1.0 - cosine, 5.0);
+}
+float pcLabFloorTransmission() {
+    // Preserve original .98 floor photometry, but apply wavelength-dependent
+    // relative Schlick transmission. Cancellation avoids grazing-angle 0/0.
+    // The source floor model is NOT absolute energy-conserving at all angles.
+    return .98 * ((1.0 - pcLabF0(pcLabIor())) / (1.0 - pcLabSourceF0));
+}
+vec3 pcLabChannelMask() {
+    return vec3(PC_SPECTRAL_BAND == 0 ? 1.0 : 0.0,
+                PC_SPECTRAL_BAND == 1 ? 1.0 : 0.0,
+                PC_SPECTRAL_BAND == 2 ? 1.0 : 0.0);
+}
+vec3 pcLabReflectionWeights(float cosine) {
+    float q = pow(1.0 - cosine, 5.0);
+    float sourceFresnel = .02037 + .97963 * q;
+    vec3 f0 = vec3(pcLabF0(pcLabIorRGB.x), pcLabF0(pcLabIorRGB.y), pcLabF0(pcLabIorRGB.z));
+    return (f0 + (vec3(1.0) - f0) * q) / sourceFresnel;
+}

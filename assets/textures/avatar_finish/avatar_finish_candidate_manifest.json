@@ -1,0 +1,73 @@
+{
+  "generator": "generate_avatar_finish.py",
+  "original": true,
+  "image_inputs": [],
+  "randomness": "none; deterministic analytic periodic field",
+  "color_space": "linear data; no sRGB/gamma conversion",
+  "normal_convention": "OpenGL tangent +X,+Y,+Z; PNG rows downward",
+  "size": [
+    512,
+    512
+  ],
+  "profiles": {
+    "shirt_plain": {
+      "tile_m": 0.0224,
+      "threads": 32,
+      "relief_m": 9e-06,
+      "roughness": 0.865,
+      "roughness_variation": 0.024,
+      "kind": "plain",
+      "yarn_pitch_m": 0.0007,
+      "height_range_m": [
+        1.4815517264131168e-07,
+        9.854585561837892e-06
+      ],
+      "normal_tilt_degrees": {
+        "mean": 1.4636812155071335,
+        "p95": 2.521886434342858,
+        "max": 3.096571266508929
+      },
+      "encoded_roughness_range": [
+        0.8470588235294118,
+        0.8784313725490196
+      ],
+      "encoded_roughness_mean": 0.8647382100423177,
+      "analytical_height_seam_error_m": 5.082197683525802e-20,
+      "analytical_roughness_seam_error": 1.1102230246251565e-16,
+      "files": {
+        "assets/textures/avatar_finish/shirt_plain_normal.png": "d7804f59feea100493f0d3545426c2c72a290a9380b6c67f0fd704d95e594008",
+        "assets/textures/avatar_finish/shirt_plain_roughness.png": "b66d257e7cd369c8d8cf35f307bc1b4dbcf12b864d7725288a95daf0937f606e"
+      }
+    },
+    "trousers_twill": {
+      "tile_m": 0.0256,
+      "threads": 32,
+      "relief_m": 1e-05,
+      "roughness": 0.905,
+      "roughness_variation": 0.022,
+      "kind": "twill",
+      "yarn_pitch_m": 0.0008,
+      "height_range_m": [
+        1.6461689563210293e-07,
+        1.0972509993832066e-05
+      ],
+      "normal_tilt_degrees": {
+        "mean": 1.3656470807601286,
+        "p95": 2.56870550014311,
+        "max": 3.074693765188591
+      },
+      "encoded_roughness_range": [
+        0.8901960784313725,
+        0.9176470588235294
+      ],
+      "encoded_roughness_mean": 0.9048276564654182,
+      "analytical_height_seam_error_m": 6.268043809681823e-20,
+      "analytical_roughness_seam_error": 1.1102230246251565e-16,
+      "files": {
+        "assets/textures/avatar_finish/trousers_twill_normal.png": "f950f8e16273db31a2f2bcd365cd17b46ba21103a83c6fd311c10c742732797d",
+        "assets/textures/avatar_finish/trousers_twill_roughness.png": "bfa926b4495187406c617356bbbd62a7618d8618e7f2d05753e9044678e16805"
+      }
+    }
+  },
+  "estimated_uncompressed_rgba8_with_mips_bytes": 5592405
+}

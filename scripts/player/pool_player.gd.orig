@@ -1,0 +1,695 @@
+class_name PoolPlayer
+extends CharacterBody3D
+## First-person native controller translated from PlayerPhysics / engine input.
+## Feet are the root; capsule is 1.64 m tall, camera eye height is 1.6 m.
+
+signal water_impact(position: Vector3, power: float)
+signal interaction(kind: String, position: Vector3, power: float)
+signal pause_requested
+signal held_changed(body: RigidBody3D)
+signal locomotion_step(displacement: Vector3, delta: float)
+
+const EYE_HEIGHT: float = 1.6
+const BODY_HEIGHT: float = 1.64
+const BODY_RADIUS: float = 0.32
+# User-requested human-scale locomotion tuning, separate from the unchanged SWE/MPM.
+# Authored avatar cycles use matching travelled-distance strides, not wall time.
+const WALK_SPEED: float = 1.65
+const SPRINT_SPEED: float = 3.8
+const WATER_WALK_SPEED: float = 1.25
+const WATER_SPRINT_SPEED: float = 2.2
+const WadingDepthResponse = preload("res://scripts/player/wading_depth_candidate.gd")
+const MOVE_ACCELERATION: float = 8.0
+const MOVE_DECELERATION: float = 10.0
+const WALK_STEP_DISTANCE: float = 0.575
+const WADE_STEP_DISTANCE: float = 0.525
+const RUN_STEP_DISTANCE: float = 1.2
+# Terrain depth is stable under passing crests. A 1.04 m supported bath remains
+# wading; genuinely deep water retains the source spring and surface response.
+const SWIM_TERRAIN_ENTER: float = 1.25
+const SWIM_TERRAIN_EXIT: float = 1.10
+const GRAVITY: float = 9.81
+const JUMP_SPEED: float = 5.0
+const SWIM_JUMP_SPEED: float = 3.8
+const LADDER_SPEED: float = 1.8
+const STEP_HEIGHT: float = 0.32
+const PICK_DISTANCE: float = 3.6
+const THROW_CHARGE_SECONDS: float = 1.1
+const HELD_DISTANCE_MIN: float = 0.38
+const HELD_CARRY_DISTANCE: float = 0.48
+const HELD_DISTANCE_MAX: float = 3.0
+# Original engine.ts: distance = clamp(distance - event.deltaY * .002, .75, 3).
+# Godot has wheel directions/factors, not DOM deltaY: one detent maps to 100
+# DOM delta units (0.2 m). Up is negative DOM deltaY, so it moves the prop away.
+const HELD_WHEEL_STEP: float = 0.2
+const CarryContact = preload("res://scripts/player/avatar_carry_contact_candidate.gd")
+
+@export var mouse_sensitivity: float = 0.0017
+# Reversible gameplay tuning; disabled retains the delivered water speeds.
+@export var depth_wading_response_enabled: bool = false
+var camera: Camera3D
+var enabled: bool = false
+var held: RigidBody3D
+var held_distance: float = HELD_CARRY_DISTANCE
+var _hold_anchor_previous: Vector3 = Vector3.ZERO
+var _hold_anchor_valid: bool = false
+var _hold_rotation_offset: Basis = Basis.IDENTITY
+var grabs: int = 0
+var throws: int = 0
+var slides: int = 0
+var climbing: Node3D
+var climb_progress: float = 0.0
+var _water: Node
+var _props: Node
+var _jump_buffer: float = 0.0
+var _splash_cooldown: float = 0.0
+var _dragging: bool = false
+var _charging: bool = false
+var _charge_elapsed: float = 0.0
+var _step_eye_offset: float = 0.0
+var _step_snap_pause: float = 0.0
+var _walk_distance: float = 0.0
+var _source_time: float = 0.0
+var _swimming: bool = false
+var _in_water: bool = false
+var _deep_water: bool = false
+var _footstep_side: float = -1.0
+var _footstep_stride: float = WALK_STEP_DISTANCE
+var _move_velocity: Vector2 = Vector2.ZERO
+# Read-only animation telemetry. Totals never include warp/ladder snapping.
+# Epoch changes tell consumers to discard cached interpolation across a warp.
+var _locomotion_distance: float = 0.0
+var _locomotion_time: float = 0.0
+var _locomotion_delta: Vector3 = Vector3.ZERO
+var _locomotion_speed: float = 0.0
+var _locomotion_epoch: int = 0
+var locomotion_distance: float:
+	get: return _locomotion_distance
+var locomotion_time: float:
+	get: return _locomotion_time
+var locomotion_delta: Vector3:
+	get: return _locomotion_delta
+var locomotion_speed: float:
+	get: return _locomotion_speed
+var locomotion_epoch: int:
+	get: return _locomotion_epoch
+var _pending_collision_restore: Array[RigidBody3D] = []
+
+func _ready() -> void:
+	collision_layer = 4
+	collision_mask = 1 | 2
+	floor_max_angle = deg_to_rad(60.0)
+	floor_snap_length = 0.35
+	floor_stop_on_slope = false
+	floor_constant_speed = true
+	floor_block_on_wall = true
+	safe_margin = 0.002
+	max_slides = 8
+	if get_node_or_null("PlayerCapsule") == null:
+		var collision := CollisionShape3D.new()
+		collision.name = "PlayerCapsule"
+		var capsule := CapsuleShape3D.new()
+		capsule.radius = BODY_RADIUS
+		capsule.height = BODY_HEIGHT
+		collision.shape = capsule
+		collision.position.y = BODY_HEIGHT * 0.5
+		add_child(collision)
+	camera = get_node_or_null("ViewCamera") as Camera3D
+	if camera == null:
+		camera = Camera3D.new()
+		camera.name = "ViewCamera"
+		camera.position.y = EYE_HEIGHT
+		camera.fov = 62.0
+		camera.near = 0.035
+		camera.far = 150.0
+		add_child(camera)
+	camera.current = true
+	add_to_group("pool_player")
+
+func set_enabled(value: bool) -> void:
+	enabled = value
+	_jump_buffer = 0.0
+	if not value:
+		_charging = false
+		_charge_elapsed = 0.0
+		if _dragging:
+			release_prop()
+		_dragging = false
+		velocity = Vector3.ZERO
+		_move_velocity = Vector2.ZERO
+		_locomotion_delta = Vector3.ZERO
+		_locomotion_speed = 0.0
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if value else Input.MOUSE_MODE_VISIBLE
+
+func set_water(water_node: Node) -> void:
+	_water = water_node
+
+func set_props(props_node: Node) -> void:
+	_props = props_node
+
+func get_view_camera() -> Camera3D:
+	return camera
+
+func warp_to(point: Vector3, look_target: Vector3) -> void:
+	_locomotion_epoch += 1
+	_locomotion_delta = Vector3.ZERO
+	_locomotion_speed = 0.0
+	_walk_distance = 0.0
+	_footstep_side = -1.0
+	_footstep_stride = WALK_STEP_DISTANCE
+	_deep_water = false
+	_swimming = false
+	_in_water = false
+	global_position = point
+	velocity = Vector3.ZERO
+	_move_velocity = Vector2.ZERO
+	climbing = null
+	climb_progress = 0.0
+	_step_eye_offset = 0.0
+	_step_snap_pause = 0.0
+	_jump_buffer = 0.0
+	if camera == null:
+		return
+	camera.position = Vector3(0.0, EYE_HEIGHT, 0.0)
+	var direction: Vector3 = look_target - camera.global_position
+	if direction.length_squared() > 0.00001:
+		rotation.y = atan2(-direction.x, -direction.z)
+		camera.rotation.x = clampf(atan2(direction.y, Vector2(direction.x, direction.z).length()), -1.3, 1.3)
+		camera.rotation.y = 0.0
+		camera.rotation.z = 0.0
+	if is_instance_valid(held):
+		held.global_position = get_hold_anchor()
+		_hold_anchor_valid = false
+		held.linear_velocity = Vector3.ZERO
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and enabled:
+		set_enabled(false)
+		pause_requested.emit()
+
+func _has_action(event: InputEvent, action: StringName, pressed: bool = true) -> bool:
+	if not InputMap.has_action(action):
+		return false
+	return event.is_action_pressed(action) if pressed else event.is_action_released(action)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not enabled:
+		return
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		rotate_y(-event.relative.x * mouse_sensitivity)
+		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * mouse_sensitivity, -1.3, 1.3)
+		get_viewport().set_input_as_handled()
+		return
+	if _has_action(event, "pause"):
+		set_enabled(false)
+		pause_requested.emit()
+		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventKey and event.echo:
+		return
+	if _has_action(event, "jump"):
+		_jump_buffer = 0.12
+	if _has_action(event, "interact"):
+		interact_action()
+		get_viewport().set_input_as_handled()
+	if event is InputEventMouseButton and event.pressed and is_instance_valid(held):
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			var direction: float = 1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0
+			# Some platforms report 0 when high-precision factors are unsupported.
+			var amount: float = absf(event.factor) if not is_zero_approx(event.factor) else 1.0
+			held_distance = clampf(held_distance + direction * HELD_WHEEL_STEP * amount, HELD_DISTANCE_MIN, HELD_DISTANCE_MAX)
+			get_viewport().set_input_as_handled()
+			return
+	if _has_action(event, "throw_prop"):
+		if is_instance_valid(held) and not _charging:
+			_charging = true
+			_charge_elapsed = 0.0
+		get_viewport().set_input_as_handled()
+	elif _has_action(event, "throw_prop", false):
+		if _charging:
+			var throw_speed: float = 6.0 + get_charge() * 11.0
+			_charging = false
+			_dragging = false
+			release_prop(throw_speed)
+		get_viewport().set_input_as_handled()
+	if _has_action(event, "grab_prop"):
+		if not is_instance_valid(held):
+			var picked: RigidBody3D = pick_prop()
+			if picked != null:
+				grab_prop(picked)
+				_dragging = true
+			else:
+				strike_water()
+		get_viewport().set_input_as_handled()
+	elif _has_action(event, "grab_prop", false):
+		# Only a LEFT release ends a drag; right release must retain its throw.
+		if _dragging:
+			_dragging = false
+			release_prop()
+		get_viewport().set_input_as_handled()
+
+func _pressed(action: StringName) -> bool:
+	return InputMap.has_action(action) and Input.is_action_pressed(action)
+
+func _physics_process(delta: float) -> void:
+	_locomotion_delta = Vector3.ZERO
+	_locomotion_speed = 0.0
+	# Source engine time advances while paused as well as during active movement.
+	_source_time += delta
+	_restore_released_collisions()
+	if not enabled or camera == null:
+		return
+	_locomotion_time += maxf(0.0, delta)
+	if _charging:
+		_charge_elapsed = minf(THROW_CHARGE_SECONDS, _charge_elapsed + delta)
+	if not is_instance_valid(held):
+		held = null
+		_charging = false
+	_jump_buffer = maxf(0.0, _jump_buffer - delta)
+	_splash_cooldown = maxf(0.0, _splash_cooldown - delta)
+	if is_instance_valid(climbing):
+		_move_velocity = Vector2.ZERO
+		_update_ladder(delta)
+		_update_held_target(delta)
+		return
+	climbing = null
+	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_back", 0.0)
+	var direction: Vector3 = global_basis * Vector3(input_vector.x, 0.0, input_vector.y)
+	var surface: float = _water_height(global_position)
+	var water_present: bool = _is_water_at(global_position)
+	_in_water = water_present and global_position.y < surface
+	# Native feet-root adapter: latch whether this is a genuine swimming volume
+	# from terrain depth, never from instantaneous ripple/feet immersion. The old
+	# >1.05 m gate switched a source spring with a ~0.47 m target on/off, bouncing
+	# the 1.04 m bath floor whenever a crest exceeded only ~11 mm.
+	_update_deep_water(water_present)
+	var physics_eye_y: float = global_position.y + 1.65
+	_swimming = _deep_water and physics_eye_y < surface + 1.3 and velocity.y < 1.0 and velocity.y > -1.5
+	var speed: float = SPRINT_SPEED if _pressed("sprint") else WALK_SPEED
+	if _in_water:
+		speed = WATER_SPRINT_SPEED if _pressed("sprint") else WATER_WALK_SPEED
+		if depth_wading_response_enabled and is_instance_valid(_water) and _water.has_method("depth_at"):
+			speed = WadingDepthResponse.speed(_water_depth(global_position), _pressed("sprint"), _deep_water, WATER_WALK_SPEED, WATER_SPRINT_SPEED)
+	# Smooth movement intent separately from collision-resolved velocity. Resetting
+	# acceleration from zero on each wall contact repeatedly re-enters safe margins.
+	var planar: Vector2 = _move_velocity
+	var desired_planar := Vector2(direction.x, direction.z) * speed
+	var slowing: bool = desired_planar.length_squared() < planar.length_squared() or desired_planar.dot(planar) < 0.0
+	planar = planar.move_toward(desired_planar, (MOVE_DECELERATION if slowing else MOVE_ACCELERATION) * delta)
+	_move_velocity = planar
+	velocity.x = planar.x
+	velocity.z = planar.y
+	velocity.y -= GRAVITY * delta
+	if _deep_water and physics_eye_y < surface + 1.18 and velocity.y < 0.0:
+		velocity.y += (surface + 1.18 - physics_eye_y) * 50.0 * delta - velocity.y * 7.0 * delta
+	if _jump_buffer > 0.0 and (is_on_floor() or _swimming):
+		_jump_buffer = 0.0
+		velocity.y = SWIM_JUMP_SPEED if _swimming else JUMP_SPEED
+		if _swimming:
+			_emit_water_impact(global_position, 0.14)
+			_splash_cooldown = 0.3
+	var before: Vector3 = global_position
+	var was_grounded: bool = is_on_floor()
+	_step_snap_pause = maxf(0.0, _step_snap_pause - delta)
+	var stepped: bool = _try_step(delta, was_grounded)
+	floor_snap_length = 0.0 if _step_snap_pause > 0.0 else 0.35
+	var desired_x: float = velocity.x
+	var desired_z: float = velocity.z
+	if stepped:
+		velocity.x = 0.0
+		velocity.z = 0.0
+	move_and_slide()
+	if stepped:
+		velocity.x = desired_x
+		velocity.z = desired_z
+	_apply_slide(delta)
+	_push_contact_props(delta)
+	_record_locomotion(before, global_position, delta)
+	_update_held_target(delta)
+	var after_surface: float = _water_height(global_position)
+	if water_present and before.y > surface and global_position.y <= after_surface and velocity.y < -1.0 and _splash_cooldown <= 0.0:
+		_emit_water_impact(global_position, clampf(0.09 + absf(velocity.y) * 0.035, 0.14, 0.48))
+		_splash_cooldown = 0.4
+	_update_travel_water(before, global_position, delta, is_on_floor(), velocity.y, _pressed("sprint"), _source_time)
+	_step_eye_offset = move_toward(_step_eye_offset, 0.0, delta * 2.0)
+	camera.position.y = EYE_HEIGHT + _step_eye_offset
+
+func _update_deep_water(water_present: bool) -> void:
+	if not water_present:
+		_deep_water = false
+		return
+	var terrain_depth: float = _water_depth(global_position)
+	if _deep_water:
+		_deep_water = terrain_depth > SWIM_TERRAIN_EXIT
+	else:
+		_deep_water = terrain_depth >= SWIM_TERRAIN_ENTER
+
+func _record_locomotion(before: Vector3, after: Vector3, delta: float) -> void:
+	_locomotion_delta = Vector3(after.x - before.x, 0.0, after.z - before.z)
+	var travelled: float = _locomotion_delta.length()
+	_locomotion_distance += travelled
+	_locomotion_speed = travelled / delta if delta > 0.0 else 0.0
+	locomotion_step.emit(_locomotion_delta,delta)
+
+func _set_footstep_stride(stride: float) -> void:
+	# Preserve normalized half-cycle progress across gait changes and stops.
+	if not is_equal_approx(stride, _footstep_stride):
+		_walk_distance = _walk_distance / _footstep_stride * stride
+		_footstep_stride = stride
+
+func _update_travel_water(before: Vector3, point: Vector3, delta: float, grounded: bool, vertical: float, sprinting: bool, elapsed: float) -> void:
+	# engine.ts animate(): integrate the *travelled* segment, not input velocity.
+	# Native position is at the feet (source camera.y - 1.64); the native eye
+	# remains 1.6 m. Terrain depth, not eye/feet immersion, is the source weight.
+	var travel := Vector2(point.x - before.x, point.z - before.z)
+	var travelled: float = travel.length()
+	var depth: float = _water_depth(point)
+	var wading: bool = travelled > 0.0001 and point.y < _water_height(point) and depth > 0.0 and absf(vertical) < 1.0
+	if wading:
+		_set_footstep_stride(WADE_STEP_DISTANCE)
+		_walk_distance += travelled
+		var speed: float = travelled / maxf(delta, 0.001)
+		var immersion: float = clampf(depth / 0.7, 0.1, 1.0)
+		var power: float = (0.026 + speed * 0.012) * immersion
+		var pieces: int = maxi(1, ceili(travelled / 0.2))
+		for index in range(pieces):
+			var fraction: float = (float(index) + 0.5) / float(pieces)
+			var position_on_segment: Vector3 = before.lerp(point, fraction)
+			if is_instance_valid(_water) and _water.has_method("push"):
+				_water.call("push", position_on_segment, travel * (0.45 * immersion / float(pieces)), 0.22 + 0.08 * immersion)
+		if _walk_distance > WADE_STEP_DISTANCE:
+			# Half-cycle events follow actual travelled distance, never elapsed*speed.
+			# Alternation cannot jump sides when accelerating or resuming movement.
+			_footstep_side = -_footstep_side
+			var side: float = _footstep_side
+			var perpendicular := Vector2(-travel.y, travel.x) / maxf(travelled, 0.001)
+			var foot: Vector3 = point + Vector3(perpendicular.x, 0.0, perpendicular.y) * (0.12 * side)
+			if is_instance_valid(_water):
+				if _water.has_method("wave_impact"):
+					_water.call("wave_impact", foot, power * 0.5)
+				elif _water.has_method("impact"):
+					_water.call("impact", foot, power * 0.5)
+				if _water.has_method("wake_dipole"):
+					_water.call("wake_dipole", foot, travel / travelled, speed * 0.45, 0.22)
+				if speed > 2.0 and _water.has_method("crest"):
+					# Source caps wading crests at .22; do not "fix" the liquid
+					# crest gate's original minimum-power quirk here.
+					_water.call("crest", foot, minf(0.22, (speed - 2.0) * 0.1))
+			interaction.emit("step_water", foot, speed / WALK_SPEED)
+			_walk_distance = fmod(_walk_distance, WADE_STEP_DISTANCE)
+	elif travelled > 0.0001 and grounded and absf(vertical) < 1.0:
+		var stride: float = RUN_STEP_DISTANCE if sprinting else WALK_STEP_DISTANCE
+		_set_footstep_stride(stride)
+		_walk_distance += travelled
+		if _walk_distance > stride:
+			_walk_distance = fmod(_walk_distance, stride)
+			interaction.emit("step_run" if sprinting else "step_tile", point, SPRINT_SPEED / WALK_SPEED if sprinting else 1.0)
+	# Idle/airborne ticks do not advance or reset the partial travelled stride.
+	# A resumed step therefore completes its existing phase, with no time burst.
+
+func _water_depth(point: Vector3) -> float:
+	if not _is_water_at(point):
+		return 0.0
+	if is_instance_valid(_water) and _water.has_method("depth_at"):
+		return float(_water.call("depth_at", point))
+	# Legacy test/adaptor compatibility only; the source runtime supplies depth_at.
+	return maxf(0.0, _water_height(point) - point.y)
+
+func _try_step(delta: float, was_grounded: bool) -> bool:
+	if not was_grounded or velocity.y > 0.1:
+		return false
+	var travel := Vector3(velocity.x, 0.0, velocity.z) * delta
+	if travel.length_squared() < 0.0000001:
+		return false
+	var wall_hit := KinematicCollision3D.new()
+	if not test_move(global_transform, travel, wall_hit):
+		return false
+	if wall_hit.get_normal().y > 0.5:
+		return false
+	# Probe the top beyond the capsule's rounded nose. A capsule-only downward
+	# sweep first sees a steep corner, incorrectly refusing ordinary stairs.
+	var probe: Vector3 = global_position + travel.normalized() * (BODY_RADIUS + travel.length() + 0.03)
+	var query := PhysicsRayQueryParameters3D.create(probe + Vector3.UP * (STEP_HEIGHT + 0.02), probe + Vector3.DOWN * 0.02, 1, [get_rid()])
+	var landing: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+	if landing.is_empty() or (landing["normal"] as Vector3).y < cos(floor_max_angle):
+		return false
+	var elevation: float = (landing["position"] as Vector3).y - global_position.y + safe_margin
+	if elevation < 0.005 or elevation > STEP_HEIGHT + 0.005:
+		return false
+	var raised: Transform3D = global_transform
+	if test_move(raised, Vector3.UP * elevation):
+		return false
+	raised.origin.y += elevation
+	if test_move(raised, travel):
+		return false
+	raised.origin += travel
+	_step_eye_offset -= elevation
+	# Prevent automatic floor snapping from immediately undoing the step before
+	# the capsule's centre reaches the tread. Gravity remains active throughout.
+	_step_snap_pause = 0.16
+	global_position = raised.origin
+	return true
+
+func _apply_slide(delta: float) -> void:
+	for index in range(get_slide_collision_count()):
+		var collision: KinematicCollision3D = get_slide_collision(index)
+		var collider: Object = collision.get_collider()
+		if collider is Node and (collider.has_meta("pool_slide") or collider.is_in_group("pool_slides")) and collision.get_normal().y > 0.5:
+			var downhill: Vector3 = Vector3.DOWN * GRAVITY
+			downhill = downhill.slide(collision.get_normal())
+			# Source applies this as direct displacement (gravity * h * .55).
+			move_and_collide(downhill * delta * 0.55)
+			slides += 1
+			break
+
+func _push_contact_props(delta: float) -> void:
+	for index in range(get_slide_collision_count()):
+		var collision: KinematicCollision3D = get_slide_collision(index)
+		var body := collision.get_collider() as RigidBody3D
+		if body != null and body != held and body.is_in_group("pool_interactable"):
+			body.apply_central_impulse(-collision.get_normal() * maxf(0.08, velocity.length() * delta * 0.5))
+
+func _water_height(point: Vector3) -> float:
+	if is_instance_valid(_water) and _water.has_method("surface_height_at"):
+		return float(_water.call("surface_height_at", point))
+	return 0.32
+
+func _is_water_at(point: Vector3) -> bool:
+	if is_instance_valid(_water) and _water.has_method("is_water_at"):
+		return bool(_water.call("is_water_at", point))
+	return true
+
+func _emit_water_impact(point: Vector3, power: float, tap: bool = false) -> void:
+	if is_instance_valid(_water):
+		if tap and _water.has_method("splash"):
+			_water.call("splash", point, power, {})
+		elif not tap and _water.has_method("player_impact"):
+			# Source player entries queue liquid only above .22. Taps always
+			# enter the liquid path; wading footfalls use wave_impact only.
+			_water.call("player_impact", point, power)
+		elif _water.has_method("impact"):
+			_water.call("impact", point, power)
+	water_impact.emit(point, power)
+
+func pick_prop() -> RigidBody3D:
+	if camera == null or not is_inside_tree():
+		return null
+	var origin: Vector3 = camera.global_position
+	var query := PhysicsRayQueryParameters3D.create(origin, origin - camera.global_basis.z * PICK_DISTANCE, 1 | 2, [get_rid()])
+	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return null
+	var body := hit.get("collider") as RigidBody3D
+	return body if body != null and body.is_in_group("pool_interactable") else null
+
+func grab_prop(body: RigidBody3D) -> void:
+	if not is_instance_valid(body) or not body.is_in_group("pool_interactable"):
+		return
+	if is_instance_valid(held):
+		release_prop()
+	held = body
+	held_distance = HELD_CARRY_DISTANCE
+	_hold_anchor_valid = false
+	_hold_rotation_offset = global_basis.inverse()*body.global_basis
+	# The existing rigid-body servo presents the duck without a pickup snap.
+	_hold_rotation_offset = CarryContact.rotation_offset(str(body.get("prop_kind")), _hold_rotation_offset)
+	grabs += 1
+	body.add_collision_exception_with(self)
+	add_collision_exception_with(body)
+	body.call("set_held", true)
+	interaction.emit("grab_" + str(body.get("prop_kind")), body.global_position, 1.0)
+	held_changed.emit(body)
+
+func _update_held_target(delta: float) -> void:
+	if is_instance_valid(held):
+		var target: Vector3 = get_hold_anchor()
+		var carry: float = 1.0-smoothstep(0.58,0.95,held_distance)
+		# Feed forward target velocity only for near carrying. The source prop servo
+		# remains v=16*(target-position); without this it visibly lags by v/16.
+		var anchor_velocity: Vector3 = Vector3.ZERO
+		if _hold_anchor_valid and delta>0.0:
+			anchor_velocity = ((target-_hold_anchor_previous)/delta).limit_length(6.0)
+		_hold_anchor_previous = target
+		_hold_anchor_valid = true
+		held.call("set_hold_target", target+anchor_velocity*(carry/16.0))
+		if held.has_method("set_carry_rotation"):
+			held.call("set_carry_rotation",(global_basis*_hold_rotation_offset).get_rotation_quaternion(),carry)
+
+func get_hold_anchor() -> Vector3:
+	# Near carrying follows the torso, not a ray that swings through thighs when
+	# looking down. The original long-range camera-ray drag is still available.
+	var carry_distance: float = held_distance
+	if is_instance_valid(held) and str(held.get("prop_kind"))=="egg":carry_distance-=0.04
+	var near_anchor: Vector3 = global_position + Vector3.UP*(1.30+clampf(camera.rotation.x,-0.4,0.4)*0.12) - global_basis.z*carry_distance
+	var remote_anchor: Vector3 = camera.global_position-camera.global_basis.z*held_distance-Vector3.UP*0.1
+	if held_distance <= 0.58:
+		return near_anchor
+	if held_distance >= 0.95:
+		return remote_anchor
+	var blend: float = smoothstep(0.58,0.95,held_distance)
+	var near_relative: Vector3 = near_anchor-camera.global_position
+	var remote_relative: Vector3 = remote_anchor-camera.global_position
+	var direction: Vector3 = near_relative.lerp(remote_relative,blend)
+	# Preserve the old transition direction, but do not let its linear chord
+	# pull the object toward the eye when scrolling farther while looking up.
+	var radius: float = lerpf(near_relative.length(),remote_relative.length(),blend)
+	return camera.global_position+direction.normalized()*radius
+
+func release_prop(throw_speed: float = -1.0) -> void:
+	if not is_instance_valid(held):
+		held = null
+		_charging = false
+		return
+	var body: RigidBody3D = held
+	_hold_anchor_valid = false
+	held = null
+	_charging = false
+	_charge_elapsed = 0.0
+	_dragging = false
+	body.call("set_held", false)
+	if throw_speed >= 0.0 and camera != null:
+		body.call("launch", -camera.global_basis.z, throw_speed)
+		throws += 1
+		interaction.emit("throw_" + str(body.get("prop_kind")), body.global_position, throw_speed)
+	else:
+		body.linear_velocity = Vector3.ZERO
+		interaction.emit("drop_" + str(body.get("prop_kind")), body.global_position, 0.5)
+	# Delay collision restoration until outside the capsule, preventing self-launch.
+	_pending_collision_restore.append(body)
+	held_changed.emit(null)
+
+func _restore_released_collisions() -> void:
+	for index in range(_pending_collision_restore.size() - 1, -1, -1):
+		var body: RigidBody3D = _pending_collision_restore[index]
+		if not is_instance_valid(body):
+			_pending_collision_restore.remove_at(index)
+			continue
+		if body == held:
+			_pending_collision_restore.remove_at(index)
+			continue
+		var delta: Vector3 = body.global_position - (global_position + Vector3.UP * BODY_HEIGHT * 0.5)
+		if Vector2(delta.x, delta.z).length() > BODY_RADIUS + float(body.get("radius")) + 0.05 or absf(delta.y) > BODY_HEIGHT * 0.5 + float(body.get("radius")):
+			body.remove_collision_exception_with(self)
+			remove_collision_exception_with(body)
+			_pending_collision_restore.remove_at(index)
+
+func interact_action() -> void:
+	if is_instance_valid(held):
+		release_prop()
+		return
+	var picked: RigidBody3D = pick_prop()
+	if picked != null:
+		grab_prop(picked)
+	else:
+		toggle_ladder()
+
+func nearest_ladder() -> Node3D:
+	if not is_inside_tree():
+		return null
+	var nearest: Node3D
+	var nearest_distance: float = 1.25
+	for node in get_tree().get_nodes_in_group("pool_ladders"):
+		if not node is Node3D or not node.has_meta("base") or not node.has_meta("top") or not node.has_meta("exit"):
+			continue
+		var base: Vector3 = node.get_meta("base")
+		var top: Vector3 = node.get_meta("top")
+		var exit: Vector3 = node.get_meta("exit")
+		var eye_y: float = global_position.y + 1.65
+		if eye_y < base.y - 0.5 or eye_y > top.y + 2.3:
+			continue
+		for point in [base, top, exit]:
+			var distance: float = Vector2(global_position.x - point.x, global_position.z - point.z).length()
+			if distance < nearest_distance:
+				nearest_distance = distance
+				nearest = node
+	return nearest
+
+func toggle_ladder() -> void:
+	if is_instance_valid(climbing):
+		climbing = null
+		velocity = Vector3.ZERO
+		return
+	climbing = nearest_ladder()
+	if climbing != null:
+		var base: Vector3 = climbing.get_meta("base")
+		var top: Vector3 = climbing.get_meta("top")
+		climb_progress = clampf(global_position.y - base.y, 0.0, top.y - base.y)
+		velocity = Vector3.ZERO
+		interaction.emit("ladder", global_position, 0.6)
+
+func _update_ladder(delta: float) -> void:
+	var base: Vector3 = climbing.get_meta("base")
+	var top: Vector3 = climbing.get_meta("top")
+	var exit: Vector3 = climbing.get_meta("exit")
+	var height: float = maxf(0.01, top.y - base.y)
+	climb_progress += (float(_pressed("move_forward")) - float(_pressed("move_back"))) * LADDER_SPEED * delta
+	global_position = base.lerp(top, clampf(climb_progress / height, 0.0, 1.0))
+	velocity = Vector3.ZERO
+	camera.position.y = EYE_HEIGHT
+	if climb_progress >= height:
+		global_position = exit
+		climbing = null
+		apply_floor_snap()
+	elif climb_progress < 0.0:
+		global_position = base
+		climbing = null
+
+func strike_water() -> void:
+	if camera == null:
+		return
+	var direction: Vector3 = -camera.global_basis.z
+	if direction.y >= -0.0001:
+		return
+	var distance: float = (_water_height(camera.global_position) - camera.global_position.y) / direction.y
+	if distance <= 0.0 or distance >= 12.0:
+		return
+	var point: Vector3 = camera.global_position + direction * distance
+	if not _is_water_at(point):
+		return
+	var query := PhysicsRayQueryParameters3D.create(camera.global_position, point, 1, [get_rid()])
+	if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		return
+	_emit_water_impact(point, 0.13, true)
+	interaction.emit("tap_water", point, 0.13)
+
+func get_charge() -> float:
+	return clampf(_charge_elapsed / THROW_CHARGE_SECONDS, 0.0, 1.0) if _charging and is_instance_valid(held) else 0.0
+
+func get_status() -> Dictionary:
+	var aimed: RigidBody3D = pick_prop() if enabled and not is_instance_valid(held) else null
+	var ladder: Node3D = nearest_ladder() if enabled and not is_instance_valid(held) else null
+	var hint: String = "低头点击水面 · F 切换镜头"
+	if get_charge() > 0.0:
+		hint = "右键蓄力 %d%% · 松开投出" % int(get_charge() * 100.0)
+	elif is_instance_valid(held):
+		hint = "右键按住蓄力投掷 · 滚轮调整距离 · E 放下"
+	elif is_instance_valid(climbing):
+		hint = "W / S 攀爬 · E 松开"
+	elif aimed != null:
+		hint = str(aimed.get("display_name")) + " · 左键拖动 / E 拿起"
+	elif ladder != null:
+		hint = "E 攀爬梯子"
+	return {"held": str(held.get("display_name")) if is_instance_valid(held) else "", "held_kind": str(held.get("prop_kind")) if is_instance_valid(held) else "", "charge": get_charge(), "climbing": is_instance_valid(climbing), "climb_progress": climb_progress, "grabs": grabs, "throws": throws, "slides": slides, "grounded": is_on_floor(), "swimming": _swimming, "in_water": _in_water, "height": camera.global_position.y if camera != null else global_position.y + EYE_HEIGHT, "hint": hint, "paused": not enabled}
+
+func status() -> Dictionary:
+	return get_status()

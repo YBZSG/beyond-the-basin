@@ -1,0 +1,121 @@
+// Direct syntax port of poolcore@66a4543602d9e774db07c2da12ce1d40d522532c
+// liquid-mpm-shader.ts. MLS-MPM transfers adapted from matsuoka-601/Splash (MIT).
+// STAGE: 0 clear, 1 mass, 2 pressure, 3 velocity, 4 gather,
+// 5 resetHeads, 6 link, 7 exportState, 8 deleteParticles.
+// All positions/velocities are grid units; all physical forces convert metres.
+#if STAGE == 0 || STAGE == 3 || STAGE == 5
+layout(local_size_x=128,local_size_y=1,local_size_z=1) in;
+#else
+layout(local_size_x=64,local_size_y=1,local_size_z=1) in;
+#endif
+struct Particle { vec4 x; vec4 v; mat3 C; }; // std430 stride 80, NOT 68.
+struct Cell { int x; int y; int z; int m; };
+struct Sample { vec4 x; vec4 v; vec4 a; vec4 b; vec4 c; };
+#if STAGE == 1 || STAGE == 2 || STAGE == 4 || STAGE == 6 || STAGE == 7 || STAGE == 8
+layout(set=0,binding=0,std430) restrict buffer Particles { Particle particles[]; };
+#endif
+#if STAGE == 0 || STAGE == 1 || STAGE == 2 || STAGE == 3 || STAGE == 4 || STAGE == 5 || STAGE == 6 || STAGE == 7
+layout(set=0,binding=1,std430) restrict buffer Grid { Cell grid[]; };
+#endif
+#if STAGE == 1 || STAGE == 2 || STAGE == 3 || STAGE == 4 || STAGE == 6 || STAGE == 7
+layout(set=0,binding=2,std140) uniform Params { uint count; float h; float dt; float age; vec4 flow; vec4 body; vec4 motion; } p;
+#endif
+#if STAGE == 7
+layout(set=0,binding=3,std430) restrict buffer Samples { Sample samples[]; };
+#endif
+#if STAGE == 3 || STAGE == 4 || STAGE == 6 || STAGE == 7
+layout(set=0,binding=4,std430) restrict buffer Links { int links[]; };
+#endif
+#if STAGE == 8
+layout(set=0,binding=5,std430) restrict readonly buffer Deletions { uint deletions[]; };
+#endif
+const int NX=80,NY=80,NZ=80;
+const float SCALE=65536.0;
+uint idx(ivec3 c){return uint((c.x*NY+c.y)*NZ+c.z);}
+void weights(vec3 d,out vec3 w[3]){w[0]=.5*(.5-d)*(.5-d);w[1]=.75-d*d;w[2]=.5*(.5+d)*(.5+d);}
+void main(){
+ uint id=gl_GlobalInvocationID.x;
+#if STAGE == 8
+ if(id>=deletions[0])return;
+ particles[deletions[id+1u]].v.w=0.0;
+#elif STAGE == 0
+ if(id>=uint(NX*NY*NZ))return;
+ grid[id].x=0;grid[id].y=0;grid[id].z=0;grid[id].m=0;
+#elif STAGE == 1
+ if(id>=p.count)return;Particle a=particles[id];if(a.v.w<.5)return;
+ ivec3 base=ivec3(floor(a.x.xyz));vec3 w[3];weights(a.x.xyz-(vec3(base)+.5),w);
+ for(int x=0;x<3;x++)for(int y=0;y<3;y++)for(int z=0;z<3;z++){
+  ivec3 c=base+ivec3(x,y,z)-1;uint i=idx(c);float weight=w[x].x*w[y].y*w[z].z;
+  vec3 d=vec3(c)+.5-a.x.xyz;vec3 momentum=weight*(a.v.xyz+a.C*d)*SCALE;
+  atomicAdd(grid[i].m,int(weight*SCALE));atomicAdd(grid[i].x,int(momentum.x));atomicAdd(grid[i].y,int(momentum.y));atomicAdd(grid[i].z,int(momentum.z));
+ }
+#elif STAGE == 2
+ if(id>=p.count)return;Particle a=particles[id];if(a.v.w<.5)return;
+ ivec3 base=ivec3(floor(a.x.xyz));vec3 w[3];weights(a.x.xyz-(vec3(base)+.5),w);float density=0.;
+ for(int x=0;x<3;x++)for(int y=0;y<3;y++)for(int z=0;z<3;z++)density+=float(grid[idx(base+ivec3(x,y,z)-1)].m)/SCALE*w[x].x*w[y].y*w[z].z;
+ particles[id].x.w=density;
+ float pressure=max(0.,64./(p.h*p.h)*(density/3.64133-1.));
+ float viscosity=.000001/(p.h*p.h);
+ mat3 stress=mat3(vec3(-pressure,0,0),vec3(0,-pressure,0),vec3(0,0,-pressure))+viscosity*(a.C+transpose(a.C));
+ mat3 force=-4.*p.dt/max(density,.05)*stress;
+ for(int x=0;x<3;x++)for(int y=0;y<3;y++)for(int z=0;z<3;z++){
+  ivec3 c=base+ivec3(x,y,z)-1;uint i=idx(c);float weight=w[x].x*w[y].y*w[z].z;
+  vec3 momentum=force*(vec3(c)+.5-a.x.xyz)*weight*SCALE;
+  atomicAdd(grid[i].x,int(momentum.x));atomicAdd(grid[i].y,int(momentum.y));atomicAdd(grid[i].z,int(momentum.z));
+ }
+#elif STAGE == 3
+ if(id>=uint(NX*NY*NZ))return;uint i=id;float m=float(grid[i].m);if(m<1.)return;
+ vec3 c=vec3(float(i/uint(NY*NZ))+.5,float((i/uint(NZ))%uint(NY))+.5,float(i%uint(NZ))+.5);
+ vec3 v=vec3(float(grid[i].x),float(grid[i].y),float(grid[i].z))/m;
+ v.y-=9.81/p.h*p.dt*smoothstep(10.,12.,c.y);
+ if(c.y<5.)v=mix(v,vec3(p.flow.x/p.h,max(0.,v.y),p.flow.y/p.h),clamp((5.-c.y)*.65,0.,1.));
+ float age=float(links[p.count])*p.dt;
+ if(p.body.w>0.&&age<.16){
+  vec3 centre=p.body.xyz+p.motion.xyz*age/p.h;vec3 d=(c-centre)*p.h;float distance=length(d);
+  if(distance<p.body.w&&distance>.00001){vec3 n=d/distance;vec3 relative=v-p.motion.xyz/p.h;float inward=dot(relative,n);if(inward<0.)v-=inward*n;
+   float correction=min(.6,(p.body.w-distance)*25.)/p.h;v+=n*max(0.,correction-dot(v-p.motion.xyz/p.h,n));}
+ }
+ float speed=length(v);if(speed>7./p.h)v*=7./p.h/speed;
+ grid[i].x=int(v.x*SCALE);grid[i].y=int(v.y*SCALE);grid[i].z=int(v.z*SCALE);
+#elif STAGE == 4
+ if(id==0u)links[p.count]+=1;
+ if(id>=p.count)return;Particle a=particles[id];if(a.v.w<.5)return;
+ ivec3 base=ivec3(floor(a.x.xyz));vec3 w[3];weights(a.x.xyz-(vec3(base)+.5),w);vec3 v=vec3(0);mat3 C=mat3(0);
+ for(int x=0;x<3;x++)for(int y=0;y<3;y++)for(int z=0;z<3;z++){
+  ivec3 c=base+ivec3(x,y,z)-1;uint i=idx(c);float weight=w[x].x*w[y].y*w[z].z;
+  vec3 weighted=vec3(float(grid[i].x),float(grid[i].y),float(grid[i].z))/SCALE*weight;
+  vec3 d=vec3(c)+.5-a.x.xyz;v+=weighted;C+=mat3(weighted*d.x,weighted*d.y,weighted*d.z);
+ }
+ a.v=vec4(v,a.v.w);a.C=C*4.;a.x=vec4(a.x.xyz+v*p.dt,a.x.w);
+ if(any(lessThan(a.x.xyz,vec3(2.)))||any(greaterThan(a.x.xyz,vec3(77.))))a.v.w=0.;
+ particles[id]=a;
+#elif STAGE == 5
+ if(id<uint(NX*NY*NZ))grid[id].m=-1;
+#elif STAGE == 6
+ if(id>=p.count||particles[id].v.w<.5)return;
+ ivec3 cell=ivec3(floor(particles[id].x.xyz));links[id]=atomicExchange(grid[idx(cell)].m,int(id));
+#elif STAGE == 7
+ if(id>=p.count)return;
+ Particle a=particles[id];mat3 shape=mat3(.64);vec3 shift=vec3(0);int neighbours=64;
+ if(a.v.w>.5&&a.x.y>10.5){
+  vec3 mean=vec3(0);mat3 covariance=mat3(0);float sum=0.;neighbours=0;
+  ivec3 base=ivec3(floor(a.x.xyz));
+  for(int x=-2;x<=2;x++)for(int y=-2;y<=2;y++)for(int z=-2;z<=2;z++){
+   ivec3 cell=base+ivec3(x,y,z);if(any(lessThan(cell,ivec3(0)))||any(greaterThanEqual(cell,ivec3(80))))continue;
+   int j=grid[idx(cell)].m;int budget=0;
+   while(j>=0&&budget<96){vec3 d=particles[uint(j)].x.xyz-a.x.xyz;float d2=dot(d,d);
+    if(d2<4.){float w=pow(1.-d2*.25,3.);mean+=d*w;sum+=w;neighbours++;covariance+=mat3(d*d.x,d*d.y,d*d.z)*w;}
+    j=links[uint(j)];budget++;
+   }
+  }
+  if(neighbours>8&&sum>1.){
+   mean/=sum;covariance=covariance*(1./sum)-mat3(mean*mean.x,mean*mean.y,mean*mean.z);
+   float xx=sqrt(max(.035,covariance[0].x));float yx=covariance[0].y/xx;float zx=covariance[0].z/xx;
+   float yy=sqrt(max(.035,covariance[1].y-yx*yx));float zy=(covariance[1].z-yx*zx)/yy;
+   float zz=sqrt(max(.035,covariance[2].z-zx*zx-zy*zy));
+   shape=mat3(vec3(xx,yx,zx),vec3(0,yy,zy),vec3(0,0,zz));shape*=.64/pow(xx*yy*zz,1./3.);shift=mean*.55;
+  }
+ }
+ samples[id]=Sample(a.x,vec4(a.v.xyz,a.v.w>.5?float(neighbours):0.),vec4(shape[0],shift.x),vec4(shape[1],shift.y),vec4(shape[2],shift.z));
+#endif
+}

@@ -1,0 +1,63 @@
+OPTIONAL LIGHTING LABORATORY, NOT GAMEPLAY LIGHTING
+
+Final release decision, 2026-10-22 01:02 UTC: all baked GI remains quarantined.
+Both full-game baked attempts, including the pre-first-draw cold route, ended
+by external SIGKILL before a baked candidate image was produced. Native finite,
+UV and source-optics checks remain valid only in their stated narrower scope;
+they are not full-game art acceptance. No production bake assets or installer
+were promoted. Do not enable these fixtures as default gameplay lighting.
+The concise, hash-bound decision and evidence index is:
+  docs/verification/eight-hour/material-lighting/baked-gi-quarantine-decision.json
+
+The final editable gameplay source deliberately separates assets/lighting and
+scenes/lighting_lab into an optional lab ZIP. Extract that ZIP INTO the source
+project root, beside project.godot, only if you want to inspect or reproduce the
+lighting experiments. It is not needed to play, export or edit the actual game.
+Do not put this optional ZIP into a playable PC or Android package.
+
+The optional ZIP retains lab scene sources, preparation manifests and small tiny
+fixtures. The exact validation state is in assets/lighting/README.md and the
+corresponding docs/verification/eight-hour/material-lighting reports. A saved
+fixture or completed native bake is NOT proof of finite data, good pixels or
+production integration. The tiny controls remain laboratory-only.
+
+Deliberately omitted rejected full-hall payloads:
+  assets/lighting/formal_mainhall/study_indirect.exr
+  assets/lighting/formal_mainhall/study_indirect.exr.import
+  assets/lighting/formal_mainhall/study_indirect.lmbake
+The original bake contained non-finite radiance and must never be rebound to the
+game. Its concise failure evidence and original runbook remain in:
+  docs/verification/eight-hour/material-lighting/NATIVE-BAKE-FAILURE-DIAGNOSIS.md
+  docs/verification/eight-hour/material-lighting/NATIVE-BAKE-RUNBOOK.md
+
+The preserved formal_mainhall_lightmap_lab.tscn intentionally still names the
+omitted study_indirect.lmbake. Do not open that one historical scene or run its
+saved-data tests expecting a ready-made bake. To create a NEW UNBAKED study in a
+separate copy of the source project, with the optional lab restored:
+  1. Open the project in the official Godot 4.6.3 editor and finish importing.
+  2. Confirm the three omitted payloads above do not exist. Never overwrite a
+     populated study or delete the only copy of experimental evidence.
+  3. From that copy's project root, run:
+     godot --headless --path . --script tools/lighting/prepare_formal_lightmap_lab.gd
+This overwrites the historical lab scene with CURRENT geometry and an empty
+LightmapGIData placeholder. It cannot reproduce the old geometry after later
+asset changes, and it does not bake or validate lighting. Consult the retained
+runbook before any new native-editor bake; there is no automatic bake retry.
+
+For the newer final-mainhall preparation, the retained manifest records the
+exact source hashes and the test distinguishes prepared from baked state:
+  godot --headless --path . --script tests/final_mainhall_bake_contract.gd
+After source/geometry changes, that historical manifest may correctly fail.
+Use tools/lighting/prepare_final_mainhall_lightmap.gd only in a separate copy,
+following its no-overwrite guards. The --baked contract is valid only after a
+separate completed native bake, and still does not replace native pixel review.
+
+Tiny fixture generator, in a NEW separate copy without existing tiny bake data:
+  godot --headless --path . --script tools/lighting/prepare_tiny_lightmap_diagnostic.gd
+It refuses to overwrite existing tiny fixtures. Preserve the supplied validated
+fixtures; do not remove them simply to run the generator. Preparation creates
+unbaked placeholders, not replacements for a validated saved bake.
+
+Other retained tests may reference the optional scenes/data. Restore the lab
+first for those tests. Ordinary game/runtime and release tests do not require
+the optional lab. No new gameplay LightmapGI claim is made by this package.

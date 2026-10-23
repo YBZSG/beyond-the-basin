@@ -1,0 +1,101 @@
+{
+  "facility_bench": {
+    "collision_proxies": 3,
+    "glb": "assets/models/expansion/facility_bench.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_bench.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 3,
+    "visual_triangles": 220
+  },
+  "facility_drain": {
+    "collision_proxies": 0,
+    "glb": "assets/models/expansion/facility_drain.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_drain.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 2,
+    "visual_triangles": 324
+  },
+  "facility_portal": {
+    "collision_proxies": 3,
+    "glb": "assets/models/expansion/facility_portal.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_portal.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 2,
+    "visual_triangles": 220
+  },
+  "facility_rail": {
+    "collision_proxies": 3,
+    "glb": "assets/models/expansion/facility_rail.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_rail.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 1,
+    "visual_triangles": 196
+  },
+  "facility_service_door": {
+    "collision_proxies": 1,
+    "glb": "assets/models/expansion/facility_service_door.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_service_door.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 3,
+    "visual_triangles": 520
+  },
+  "facility_shower": {
+    "collision_proxies": 1,
+    "glb": "assets/models/expansion/facility_shower.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_shower.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 2,
+    "visual_triangles": 268
+  },
+  "facility_wayfinding": {
+    "collision_proxies": 0,
+    "glb": "assets/models/expansion/facility_wayfinding.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/facility_wayfinding.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 2,
+    "visual_triangles": 49
+  },
+  "low_arched_bath": {
+    "collision_proxies": 157,
+    "glb": "assets/models/expansion/low_arched_bath.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/low_arched_bath.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 7,
+    "visual_triangles": 6992
+  },
+  "service_transition": {
+    "collision_proxies": 112,
+    "glb": "assets/models/expansion/service_transition.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/service_transition.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 9,
+    "visual_triangles": 5940
+  },
+  "shower_changing": {
+    "collision_proxies": 135,
+    "glb": "assets/models/expansion/shower_changing.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/shower_changing.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 9,
+    "visual_triangles": 12168
+  },
+  "skylight_gallery": {
+    "collision_proxies": 166,
+    "glb": "assets/models/expansion/skylight_gallery.glb",
+    "source": "original procedural Blender geometry",
+    "source_blend": "tools/blender/expansion/source/skylight_gallery.blend",
+    "uv_metres_per_unit": 1.0,
+    "visual_material_batches": 7,
+    "visual_triangles": 5732
+  }
+}

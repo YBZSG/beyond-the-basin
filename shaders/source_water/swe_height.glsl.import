@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://b0yrqexh421tg"
+path="res://.godot/imported/swe_height.glsl-e24ae9a1c1ceee9ea0e7a7bf02d9cbf5.res"
+
+[deps]
+
+source_file="res://shaders/source_water/swe_height.glsl"
+dest_files=["res://.godot/imported/swe_height.glsl-e24ae9a1c1ceee9ea0e7a7bf02d9cbf5.res"]
+
+[params]
+

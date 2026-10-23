@@ -1,0 +1,70 @@
+// Native API shadow adapter: real scene triangle visibility, not a replacement
+// for simulation. Original PCF cube-map softness differs; documented separately.
+struct BvhNode { vec4 minimum; vec4 maximum; ivec4 data; };
+struct Triangle { vec4 a; vec4 b; vec4 c; };
+layout(set=0,binding=10,std430) readonly buffer Nodes { BvhNode nodes[]; };
+layout(set=0,binding=11,std430) readonly buffer Triangles { Triangle triangles[]; };
+bool hitBox(vec3 origin,vec3 direction,vec3 lo,vec3 hi,float limit) {
+    float nearT=0.0,farT=limit;
+    for(int axis=0;axis<3;axis++) {
+        if(abs(direction[axis])<1e-8) {
+            if(origin[axis]<lo[axis]||origin[axis]>hi[axis]) return false;
+        } else {
+            float a=(lo[axis]-origin[axis])/direction[axis];
+            float b=(hi[axis]-origin[axis])/direction[axis];
+            nearT=max(nearT,min(a,b)); farT=min(farT,max(a,b));
+            if(nearT>farT) return false;
+        }
+    }
+    return true;
+}
+// three-mesh-bvh 0.9.15 triangle test, MIT (Garrett Johnson). Keep its
+// barycentric AND near-origin +1e-5 tolerances, including shared triangle edges.
+bool hitTriangle(vec3 o,vec3 d,Triangle tri,float limit) {
+    vec3 edge1=tri.b.xyz-tri.a.xyz,edge2=tri.c.xyz-tri.a.xyz;
+    vec3 norm=cross(edge1,edge2);
+    float det=-dot(d,norm),invdet=1.0/det;
+    vec3 AO=o-tri.a.xyz,DAO=cross(AO,d);
+    vec4 uvt;
+    uvt.x=dot(edge2,DAO)*invdet;
+    uvt.y=-dot(edge1,DAO)*invdet;
+    uvt.z=dot(AO,norm)*invdet;
+    uvt.w=1.0-uvt.x-uvt.y;
+    float distance=uvt.z;
+    uvt+=vec4(1e-5);
+    return all(greaterThanEqual(uvt,vec4(0.0)))&&distance<limit;
+}
+float directLightVisible(vec3 source,vec3 normal,vec3 direction,float distanceToLight,float lightRange) {
+    if(lightInfo.z<.5) return 0.0;
+    // Three r185 point shadows use perspective depth along the selected cube
+    // face, NOT radial linear depth. Reproduce the unfiltered center comparison
+    // including source near=.3, bias=-.00003 and normalBias=.025 exactly.
+    vec3 light=source+direction*distanceToLight;
+    vec3 receiver=source+normal*.025;
+    vec3 lightToReceiver=receiver-light;
+    float radial=length(lightToReceiver);
+    vec3 absRay=abs(lightToReceiver);
+    float axisDepth=max(max(absRay.x,absRay.y),absRay.z);
+    float nearPlane=.3,farPlane=lightRange>0.?lightRange:36.;
+    if(axisDepth<nearPlane||axisDepth>farPlane) return 1.;
+    float dp=farPlane*(axisDepth-nearPlane)/(axisDepth*(farPlane-nearPlane))-.00003;
+    float biasedAxis=farPlane*nearPlane/(farPlane-dp*(farPlane-nearPlane));
+    float radialPerAxis=radial/axisDepth;
+    float nearDistance=nearPlane*radialPerAxis;
+    float limit=biasedAxis*radialPerAxis-nearDistance;
+    if(limit<=0.) return 1.;
+    direction=lightToReceiver/radial;
+    vec3 origin=light+direction*nearDistance;
+    int stack[64]; int count=1; stack[0]=0;
+    while(count>0) {
+        int index=stack[--count];
+        BvhNode node=nodes[index];
+        if(!hitBox(origin,direction,node.minimum.xyz,node.maximum.xyz,limit)) continue;
+        if(node.data.w>0) {
+            for(int i=0;i<node.data.w;i++) if(hitTriangle(origin,direction,triangles[node.data.z+i],limit)) return 0.0;
+        } else if(node.data.x>=0) {
+            stack[count++]=node.data.x; stack[count++]=node.data.y;
+        }
+    }
+    return 1.0;
+}

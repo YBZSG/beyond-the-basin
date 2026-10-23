@@ -1,0 +1,95 @@
+extends Node
+## Early, fail-closed PC overlay loader. No game preloads before the pack mount.
+const BASELINE_SHA256 := "@BASELINE_SHA256@"
+const OVERLAY_SHA256 := "@OVERLAY_SHA256@"
+const CACHE_PACK_SHA256 := "@CACHE_PACK_SHA256@"
+const CACHE_RECIPE_SHA256 := "@CACHE_RECIPE_SHA256@"
+const PATCH_FILES: Dictionary = @PATCH_FILES@
+const PATCH_FILENAME := "PoolCore-PC-Splash-Repair.pck"
+var _scene: PackedScene
+
+func _fail(code: int, message: String) -> void:
+	push_error("PC_SPLASH_REPAIR_REFUSED: " + message)
+	get_tree().quit(code)
+
+func _ready() -> void:
+	var root_path := ""
+	var verify_only := false
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--pc-splash-root="):
+			root_path = arg.trim_prefix("--pc-splash-root=")
+		elif arg == "--pc-splash-verify-only":
+			verify_only = true
+	if root_path.is_empty() or not root_path.is_absolute_path():
+		_fail(20, "Use the repair launcher; an absolute package folder is required.")
+		return
+	var engine := Engine.get_version_info()
+	if int(engine.get("major", 0)) != 4 or int(engine.get("minor", 0)) != 6 or int(engine.get("patch", 0)) != 3:
+		_fail(21, "This exact-baseline patch requires Godot 4.6.3 Standard.")
+		return
+	var baseline := root_path.path_join("PoolCore-Source-Water.pck")
+	var overlay := root_path.path_join(PATCH_FILENAME)
+	if FileAccess.get_sha256(baseline) != BASELINE_SHA256:
+		_fail(22, "The original PCK is missing or is not the delivered repair1 baseline. Nothing was patched.")
+		return
+	if FileAccess.get_sha256(overlay) != OVERLAY_SHA256:
+		_fail(23, "The repair PCK is missing or damaged. Extract the original repair ZIP again.")
+		return
+	if not ProjectSettings.load_resource_pack(baseline, true):
+		_fail(33, "Cannot mount the verified original pack.")
+		return
+	ProjectSettings.set_setting("application/run/main_scene", "res://scenes/main.tscn")
+	for property in ProjectSettings.get_property_list():
+		if str(property.name).begins_with("autoload/"):
+			_fail(24, "Unexpected autoload; this launcher must run before game resources load.")
+			return
+	for path in PATCH_FILES:
+		if ResourceLoader.has_cached(path):
+			_fail(25, "A patched script was already cached before mounting: " + path)
+			return
+	if not ProjectSettings.load_resource_pack(overlay, true):
+		_fail(26, "Godot could not mount the repair overlay.")
+		return
+	for path in PATCH_FILES:
+		if FileAccess.get_sha256(path) != PATCH_FILES[path]:
+			_fail(27, "Mounted resource hash mismatch: " + path)
+			return
+	if FileAccess.get_sha256("res://pc_splash_cache_recipe.json") != CACHE_RECIPE_SHA256:
+		_fail(34, "Cache reconstruction recipe checksum mismatch.")
+		return
+	var recipe: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://pc_splash_cache_recipe.json"))
+	var cache_helper = load("res://pc_splash_cache_reconstruct.gd")
+	var cache_result: Dictionary = cache_helper.mount_cache(recipe, CACHE_PACK_SHA256)
+	if not cache_result.get("ok", false):
+		_fail(35, str(cache_result.get("reason", "Exact cache reconstruction failed.")))
+		return
+	print("PC_SPLASH_EXACT_CACHE_MOUNTED ", JSON.stringify(cache_result))
+	for path in PATCH_FILES:
+		var script = load(path)
+		if script == null or not script is GDScript or not script.can_instantiate():
+			_fail(28, "Repaired script did not compile: " + path)
+			return
+		if script.source_code.sha256_text() != PATCH_FILES[path]:
+			_fail(29, "Loaded script source differs from the mounted patch: " + path)
+			return
+	var main_scene := str(ProjectSettings.get_setting("application/run/main_scene", ""))
+	if main_scene != "res://scenes/main.tscn":
+		_fail(30, "Unexpected main scene; the baseline is not supported.")
+		return
+	_scene = load(main_scene) as PackedScene
+	if _scene == null or not _scene.can_instantiate():
+		_fail(31, "The unchanged baseline main scene could not be loaded.")
+		return
+	print("PC_SPLASH_REPAIR_VERIFIED baseline=" + BASELINE_SHA256 + " overlay=" + OVERLAY_SHA256 + " scripts=" + str(PATCH_FILES.size()))
+	if verify_only:
+		print("PC_SPLASH_REPAIR_VERIFY_ONLY_OK (CPU/resource-loading gate, not GPU or Windows execution)")
+		get_tree().quit(0)
+		return
+	_start_game.call_deferred()
+
+func _start_game() -> void:
+	var result := get_tree().change_scene_to_packed(_scene)
+	if result != OK:
+		_fail(32, "Main scene could not start: " + str(result))
+		return
+	print("PC_SPLASH_REPAIR_MAIN_SCENE_REQUESTED")

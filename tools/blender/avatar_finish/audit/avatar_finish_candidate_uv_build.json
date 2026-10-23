@@ -1,0 +1,518 @@
+{
+  "source": "assets/models/avatar_v2/pool_explorer_v2.glb",
+  "source_sha256": "cf30e23b692db289228921f1c128a3c7cd79022c53f98c4962ea05d2caa25f17",
+  "modifications": "Cloth-only TEXCOORD_1 + MikkTSpace tangent and seam vertex splits. Original attributes copied exactly.",
+  "original_uv": {
+    "shirt_plain": {
+      "vertices": 5679,
+      "triangles": 11342,
+      "area_m2": 0.7005130242443491,
+      "uv_bounds": [
+        [
+          -1.8066461086273193,
+          -6.452686786651611
+        ],
+        [
+          1.8156967163085938,
+          -3.671797275543213
+        ]
+      ],
+      "degenerate_uv_triangles": 2,
+      "uv_degenerate_area_fraction": 1.7780854225219533e-10,
+      "m_per_u_p05_p50_p95": [
+        0.1831343869200902,
+        0.22291402182760353,
+        1.2968172169132837
+      ],
+      "m_per_v_p05_p50_p95": [
+        0.18555077078117635,
+        0.213084637440351,
+        0.8640479223393832
+      ],
+      "singular_min_p05_p50_p95": [
+        0.16589796797235534,
+        0.18567896263149128,
+        0.20360644392859356
+      ],
+      "singular_max_p05_p50_p95": [
+        0.201783652936661,
+        0.27665475472943424,
+        1.6465660758346057
+      ],
+      "anisotropy_p05_p50_p95": [
+        1.0748655391694497,
+        1.49545355187645,
+        8.847807066090402
+      ],
+      "area_anisotropy_over_3": 0.18465923369721904,
+      "area_scale_p05_p50_p95": [
+        0.18795146670775587,
+        0.22999350086802073,
+        0.5533151175790479
+      ]
+    },
+    "trousers_twill": {
+      "vertices": 6087,
+      "triangles": 12090,
+      "area_m2": 0.8418615755983527,
+      "uv_bounds": [
+        [
+          -0.9110047221183777,
+          -4.164769649505615
+        ],
+        [
+          0.9453009366989136,
+          0.6509418487548828
+        ]
+      ],
+      "degenerate_uv_triangles": 0,
+      "uv_degenerate_area_fraction": 0.0,
+      "m_per_u_p05_p50_p95": [
+        0.18153012520859288,
+        0.2524648198139555,
+        2.296726644409177
+      ],
+      "m_per_v_p05_p50_p95": [
+        0.18656737617688524,
+        0.20344712132985335,
+        0.5418965340672544
+      ],
+      "singular_min_p05_p50_p95": [
+        0.16274997038804526,
+        0.1848110737208597,
+        0.20188659393511849
+      ],
+      "singular_max_p05_p50_p95": [
+        0.20215285393422053,
+        0.29395583308576995,
+        2.424243058243187
+      ],
+      "anisotropy_p05_p50_p95": [
+        1.0799744266801696,
+        1.6067013803641024,
+        13.147207581537442
+      ],
+      "area_anisotropy_over_3": 0.22631412196015718,
+      "area_scale_p05_p50_p95": [
+        0.18753188497365758,
+        0.23368603725168482,
+        0.6721887630909156
+      ]
+    }
+  },
+  "candidate_uv": {
+    "shirt_plain": {
+      "material": "Explorer | warm ivory woven shirt",
+      "source_vertices": 5679,
+      "candidate_vertices": 6289,
+      "seam_edges": 599,
+      "charts": [
+        {
+          "chart": 0,
+          "triangles": 1219,
+          "area_m2": 0.04758570302260523,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 1,
+          "triangles": 2513,
+          "area_m2": 0.20413860039519705,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 2,
+          "triangles": 229,
+          "area_m2": 0.02192104716641552,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 3,
+          "triangles": 196,
+          "area_m2": 0.010657646519575792,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 4,
+          "triangles": 1281,
+          "area_m2": 0.04967546759689867,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 5,
+          "triangles": 2742,
+          "area_m2": 0.20388020957256003,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 6,
+          "triangles": 242,
+          "area_m2": 0.021763604870102427,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 7,
+          "triangles": 195,
+          "area_m2": 0.010342629292608763,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 8,
+          "triangles": 1205,
+          "area_m2": 0.04844438243071636,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 9,
+          "triangles": 1301,
+          "area_m2": 0.04780583016054152,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 10,
+          "triangles": 1,
+          "area_m2": 7.979727524798363e-05,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 11,
+          "triangles": 1,
+          "area_m2": 0.0011269416427239776,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 12,
+          "triangles": 1,
+          "area_m2": 3.297946386737749e-05,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 13,
+          "triangles": 42,
+          "area_m2": 0.004975124767724992,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 14,
+          "triangles": 40,
+          "area_m2": 0.004650098163438088,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 15,
+          "triangles": 42,
+          "area_m2": 0.004975468318889398,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 16,
+          "triangles": 40,
+          "area_m2": 0.004649796985972898,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 17,
+          "triangles": 26,
+          "area_m2": 0.006896721113277714,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 18,
+          "triangles": 26,
+          "area_m2": 0.006910975916284201,
+          "normalization_m_per_uv": 1.0
+        }
+      ],
+      "metric": {
+        "vertices": 6289,
+        "triangles": 11342,
+        "area_m2": 0.7005130242443491,
+        "uv_bounds": [
+          [
+            0.0,
+            -4.326435565948486
+          ],
+          [
+            3.811951160430908,
+            1.0
+          ]
+        ],
+        "degenerate_uv_triangles": 0,
+        "uv_degenerate_area_fraction": 0.0,
+        "m_per_u_p05_p50_p95": [
+          0.9170288801245623,
+          1.0009715091934148,
+          1.0926913988692835
+        ],
+        "m_per_v_p05_p50_p95": [
+          0.9211373142891581,
+          1.0009096920202518,
+          1.1067878923163128
+        ],
+        "singular_min_p05_p50_p95": [
+          0.8975517114037828,
+          0.9952304744217564,
+          1.0700832402820624
+        ],
+        "singular_max_p05_p50_p95": [
+          0.9308608514496358,
+          1.0071950238544158,
+          1.1670895329540976
+        ],
+        "anisotropy_p05_p50_p95": [
+          1.0000273736926237,
+          1.0099524517921339,
+          1.1016112398870317
+        ],
+        "area_anisotropy_over_3": 3.560263763180255e-06,
+        "area_scale_p05_p50_p95": [
+          0.9227805297547105,
+          1.0006937909475289,
+          1.089417732144469
+        ]
+      }
+    },
+    "trousers_twill": {
+      "material": "Explorer | charcoal cotton trousers",
+      "source_vertices": 6087,
+      "candidate_vertices": 6714,
+      "seam_edges": 674,
+      "charts": [
+        {
+          "chart": 0,
+          "triangles": 2749,
+          "area_m2": 0.18640002617962637,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 1,
+          "triangles": 89,
+          "area_m2": 0.004273804495824152,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 2,
+          "triangles": 104,
+          "area_m2": 0.005885131451577763,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 3,
+          "triangles": 110,
+          "area_m2": 0.013306362173352682,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 4,
+          "triangles": 2780,
+          "area_m2": 0.18870582978092898,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 5,
+          "triangles": 89,
+          "area_m2": 0.003423691816351493,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 6,
+          "triangles": 113,
+          "area_m2": 0.017453794259836286,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 7,
+          "triangles": 118,
+          "area_m2": 0.005215162282183883,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 8,
+          "triangles": 2748,
+          "area_m2": 0.1872743715348406,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 9,
+          "triangles": 89,
+          "area_m2": 0.004071454204222391,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 10,
+          "triangles": 2838,
+          "area_m2": 0.1883393185249247,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 11,
+          "triangles": 89,
+          "area_m2": 0.0036260854303691303,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 12,
+          "triangles": 8,
+          "area_m2": 0.00016913007684138393,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 13,
+          "triangles": 11,
+          "area_m2": 0.001734798243660407,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 14,
+          "triangles": 17,
+          "area_m2": 0.006206370993027122,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 15,
+          "triangles": 14,
+          "area_m2": 0.006406141119924769,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 16,
+          "triangles": 6,
+          "area_m2": 0.00040862437163013965,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 17,
+          "triangles": 6,
+          "area_m2": 0.00040862436435418203,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 18,
+          "triangles": 6,
+          "area_m2": 0.0004090027359779924,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 19,
+          "triangles": 6,
+          "area_m2": 0.0004090027287020348,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 20,
+          "triangles": 6,
+          "area_m2": 0.0004086486078449525,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 21,
+          "triangles": 6,
+          "area_m2": 0.0004086486078449525,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 22,
+          "triangles": 26,
+          "area_m2": 0.007238361078634625,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 23,
+          "triangles": 24,
+          "area_m2": 0.007169437777605481,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 24,
+          "triangles": 2,
+          "area_m2": 5.7201856179744937e-05,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 25,
+          "triangles": 6,
+          "area_m2": 0.00040862436435418203,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 26,
+          "triangles": 6,
+          "area_m2": 0.00040862437163013965,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 27,
+          "triangles": 6,
+          "area_m2": 0.0004090027214260772,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 28,
+          "triangles": 6,
+          "area_m2": 0.0004090027359779924,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 29,
+          "triangles": 6,
+          "area_m2": 0.0004086486078449525,
+          "normalization_m_per_uv": 1.0
+        },
+        {
+          "chart": 30,
+          "triangles": 6,
+          "area_m2": 0.0004086487606400624,
+          "normalization_m_per_uv": 1.0
+        }
+      ],
+      "metric": {
+        "vertices": 6714,
+        "triangles": 12090,
+        "area_m2": 0.8418615755983527,
+        "uv_bounds": [
+          [
+            0.0,
+            -8.134852409362793
+          ],
+          [
+            3.821023464202881,
+            1.0
+          ]
+        ],
+        "degenerate_uv_triangles": 0,
+        "uv_degenerate_area_fraction": 0.0,
+        "m_per_u_p05_p50_p95": [
+          0.9340605526240786,
+          0.9994816449947516,
+          1.1028522098719504
+        ],
+        "m_per_v_p05_p50_p95": [
+          0.9358274114840818,
+          0.9994696517686177,
+          1.0997624591041297
+        ],
+        "singular_min_p05_p50_p95": [
+          0.9267318980246936,
+          0.9949792645860539,
+          1.0892684671643753
+        ],
+        "singular_max_p05_p50_p95": [
+          0.9413378636830163,
+          1.002867738677801,
+          1.1135479868911102
+        ],
+        "anisotropy_p05_p50_p95": [
+          1.0000083849395707,
+          1.0109531387991288,
+          1.0478301674158745
+        ],
+        "area_anisotropy_over_3": 0.0,
+        "area_scale_p05_p50_p95": [
+          0.9353729133717943,
+          0.9995258513636507,
+          1.1001451601040853
+        ]
+      }
+    }
+  },
+  "candidate_sha256": "3c02a9d08c218744972e78c248a758fc55bb1c57011df1d52b5c2e3097e9cc7a"
+}

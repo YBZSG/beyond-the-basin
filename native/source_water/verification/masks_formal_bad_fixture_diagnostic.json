@@ -1,0 +1,29 @@
+{
+  "archived_sha256": [
+    "7ee0cafffc33ac8b1b5bf2a3c04f51da9383a16e2d0198263e162f8b5f5989cb",
+    "a5228db69c1f1ea9fa36d966eb95c298642fc2aeac8ffd0df44cd432f721c3b3"
+  ],
+  "coord": "(-1, -1)",
+  "lamps": [
+    -9.0,
+    7.30000019073486,
+    -5.0,
+    8.0,
+    7.30000019073486,
+    -5.0
+  ],
+  "native_equals_old": true,
+  "native_sha256": [
+    "7d05ec8add5c7fbec8e95c123d5fb1a63e83aada980e70f8c4906e268053943a",
+    "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+  ],
+  "old_equals_archived": false,
+  "old_sha256": [
+    "7d05ec8add5c7fbec8e95c123d5fb1a63e83aada980e70f8c4906e268053943a",
+    "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+  ],
+  "solids": 243,
+  "wrapper_equals_native": true,
+  "diagnosis": "Fixture exporter omitted add_formal_lights and paired default lamp inputs with authored old mask outputs. Native and immutable old GDScript agree on those inputs.",
+  "invalid_fixture_sha256": "0bf1f944ba654dfc7eb12160d91233cad97eb4110bc8d32bc394ef8202ab06b1"
+}

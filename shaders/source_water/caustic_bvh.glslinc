@@ -1,0 +1,55 @@
+// API adaptation of three-mesh-bvh bvhIntersectFirstHit: closest-hit visibility
+// is equivalent to an early ANY hit before the receiver's .065m tolerance.
+// The BVH contains actual scene triangles. Incoming light uses the source AABB mask.
+struct BvhNode { vec4 minimum; vec4 maximum; ivec4 data; };
+struct Triangle { vec4 a; vec4 b; vec4 c; };
+layout(set=0,binding=6,std430) readonly buffer Nodes { BvhNode nodes[]; };
+layout(set=0,binding=7,std430) readonly buffer Triangles { Triangle triangles[]; };
+bool hitBox(vec3 origin,vec3 direction,vec3 lo,vec3 hi,float limit) {
+    float nearT=0.0,farT=limit;
+    for(int axis=0;axis<3;axis++) {
+        if(abs(direction[axis])<1e-8) {
+            if(origin[axis]<lo[axis]||origin[axis]>hi[axis]) return false;
+        } else {
+            float a=(lo[axis]-origin[axis])/direction[axis];
+            float b=(hi[axis]-origin[axis])/direction[axis];
+            nearT=max(nearT,min(a,b)); farT=min(farT,max(a,b));
+            if(nearT>farT) return false;
+        }
+    }
+    return true;
+}
+// three-mesh-bvh 0.9.15 triangle test, MIT (Garrett Johnson). Keep its
+// barycentric AND near-origin +1e-5 tolerances, including shared triangle edges.
+bool hitTriangle(vec3 o,vec3 d,Triangle tri,float limit) {
+    vec3 edge1=tri.b.xyz-tri.a.xyz,edge2=tri.c.xyz-tri.a.xyz;
+    vec3 norm=cross(edge1,edge2);
+    float det=-dot(d,norm),invdet=1.0/det;
+    vec3 AO=o-tri.a.xyz,DAO=cross(AO,d);
+    vec4 uvt;
+    uvt.x=dot(edge2,DAO)*invdet;
+    uvt.y=-dot(edge1,DAO)*invdet;
+    uvt.z=dot(AO,norm)*invdet;
+    uvt.w=1.0-uvt.x-uvt.y;
+    float distance=uvt.z;
+    uvt+=vec4(1e-5);
+    return all(greaterThanEqual(uvt,vec4(0.0)))&&distance<limit;
+}
+float waterRayVisible(vec3 source,vec3 direction,float distanceToReceiver) {
+    if(rtReady<.5) return 0.0;
+    float limit=distanceToReceiver-.065;
+    if(limit<=0.0) return 1.0;
+    vec3 origin=source+direction*.025;
+    int stack[64]; int count=1; stack[0]=0;
+    while(count>0) {
+        int index=stack[--count];
+        BvhNode node=nodes[index];
+        if(!hitBox(origin,direction,node.minimum.xyz,node.maximum.xyz,limit)) continue;
+        if(node.data.w>0) {
+            for(int i=0;i<node.data.w;i++) if(hitTriangle(origin,direction,triangles[node.data.z+i],limit)) return 0.0;
+        } else if(node.data.x>=0) {
+            stack[count++]=node.data.x; stack[count++]=node.data.y;
+        }
+    }
+    return 1.0;
+}

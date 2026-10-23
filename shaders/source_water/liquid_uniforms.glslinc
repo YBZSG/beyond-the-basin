@@ -1,0 +1,19 @@
+layout(set=0,binding=0,std140) uniform LiquidFrame {
+ mat4 projection; mat4 inverseProjection; mat4 viewMatrix; mat4 cameraWorld;
+ vec4 viewport; // width, height, projection scale, environment max LOD
+ vec4 wave0; vec4 wave1; vec4 wave2; vec4 wave3;
+ vec4 options; // hasEnvironment, unused, unused, unused
+};
+#define poolCell wave0.x
+#define detailCell wave0.y
+#define poolTime wave0.z
+#define waveHeight wave0.w
+#define rippleGain wave1.x
+#define normalBoost wave1.y
+#define microStrength wave1.z
+#define simulationOn wave1.w
+#define ripplesOn wave2.x
+#define microOn wave2.y
+#define causticsScale wave2.z
+#define causticsSpeed wave2.w
+#define microOrigin wave3.xy

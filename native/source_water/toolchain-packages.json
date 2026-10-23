@@ -1,0 +1,30 @@
+{
+  "clang-19": {
+    "Version": "1:19.1.7-3+b1",
+    "Filename": "pool/main/l/llvm-toolchain-19/clang-19_19.1.7-3+b1_amd64.deb",
+    "Size": "116584",
+    "SHA256": "bbb74458d782b7792b61b0eed92746df5e6d033778c045cf8c2b3835b7c4efc4",
+    "Depends": "libc6 (>= 2.34), libclang-cpp19 (>= 1:19.1.7), libgcc-s1 (>= 3.0), libllvm19 (= 1:19.1.7-3+b1), libstdc++6 (>= 11), libstdc++-14-dev, libgcc-14-dev, libobjc-14-dev, libclang-common-19-dev (= 1:19.1.7-3+b1), llvm-19-linker-tools (= 1:19.1.7-3+b1), libclang1-19 (= 1:19.1.7-3+b1), libc6-dev, binutils"
+  },
+  "libclang-common-19-dev": {
+    "Version": "1:19.1.7-3+b1",
+    "Filename": "pool/main/l/llvm-toolchain-19/libclang-common-19-dev_19.1.7-3+b1_amd64.deb",
+    "Size": "739932",
+    "SHA256": "4018e40e2d4144fe38c45822e68cca63c1bf6c7872c3073ebb262ad4b2f9b8bc",
+    "Depends": null
+  },
+  "libclang-cpp19": {
+    "Version": "1:19.1.7-3+b1",
+    "Filename": "pool/main/l/llvm-toolchain-19/libclang-cpp19_19.1.7-3+b1_amd64.deb",
+    "Size": "13191148",
+    "SHA256": "a7d2b6df51050834f6ea5c0d5e34869c2298b0bcdaa91eff17ba3db2cd545c47",
+    "Depends": "libc6 (>= 2.38), libgcc-s1 (>= 3.0), libllvm19 (= 1:19.1.7-3+b1), libstdc++6 (>= 12)"
+  },
+  "lld-19": {
+    "Version": "1:19.1.7-3+b1",
+    "Filename": "pool/main/l/llvm-toolchain-19/lld-19_19.1.7-3+b1_amd64.deb",
+    "Size": "1374952",
+    "SHA256": "756a805e8811d527dd2b5417f016c9342b8631fa9c1ddcd56265c13ae33bf3a4",
+    "Depends": "libc6 (>= 2.34), libgcc-s1 (>= 3.0), libllvm19 (= 1:19.1.7-3+b1), libstdc++6 (>= 12), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.2.2)"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "provenance": "Original deterministic analytic PBR material; not a captured scan, not a downloaded photograph.",
+  "generator": "tools/materials/build_formal_ceramic.py",
+  "seed": 20261021,
+  "size": [
+    4096,
+    4096
+  ],
+  "tiles_per_axis": 16,
+  "repeat_metres": 1.6,
+  "tile_pitch_metres": 0.1,
+  "joint_width_metres": 0.0018,
+  "edge_ease_metres": 0.0006,
+  "joint_relief_metres": 0.00028,
+  "tile_crown_metres": 8e-06,
+  "joint_coverage": 0.03439244627952576,
+  "flat_face_normal_xy_rms": 0.029215475544333458,
+  "channels": {
+    "albedo": "sRGB neutral colour modulation",
+    "normal": "OpenGL tangent normal; +Y",
+    "surface": "linear RGB: roughness reference / per-tile variation / face coverage"
+  },
+  "files": {
+    "pool_ceramic_albedo_4k.png": {
+      "sha256": "c66f1810150f3a98f125ab897ea722cf4082a863aed0074eb31354cc877cf8dd",
+      "bytes": 124263
+    },
+    "pool_ceramic_normal_gl_4k.png": {
+      "sha256": "40cda73f3e26ee7e6fe89239f334c67c9f129fc727b4340fc3384d8cb9f3450c",
+      "bytes": 72475
+    },
+    "pool_ceramic_surface_4k.png": {
+      "sha256": "ce7e4b92561974ac2576b67088ad5be8a6e416600fcad01865a52c25c3a2db78",
+      "bytes": 64102
+    }
+  }
+}

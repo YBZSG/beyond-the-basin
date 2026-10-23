@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "units": "metres",
+  "front": "Godot local +Z",
+  "wall_plane": 0.0,
+  "blender_version": "4.3.2",
+  "assets": {
+    "pool_return_valve": {
+      "description": "Wall-mounted quarter-turn valve with label and fasteners",
+      "bounds_min": [
+        -0.09099999815225601,
+        -0.0949999988079071,
+        -0.0
+      ],
+      "bounds_max": [
+        0.09099999815225601,
+        0.1665000021457672,
+        0.09927500039339066
+      ],
+      "dimensions": [
+        0.18199999630451202,
+        0.2615000009536743,
+        0.09927500039339066
+      ],
+      "mesh_objects": 9,
+      "triangles": 3988,
+      "bytes": 211472,
+      "glb_sha256": "d06bb51984450438df9af70e21ac81b2c11b8520398d9c7bccf3d2997240effb",
+      "blend_sha256": "a9b964b9d8c0e77576df67ccaf0b33724699cb7f3260b81fb28627119bc5b4ac"
+    },
+    "pool_return_fitting": {
+      "description": "105 mm stainless return with genuine recessed 30 mm outlet",
+      "bounds_min": [
+        -0.052000001072883606,
+        -0.052000001072883606,
+        -0.0
+      ],
+      "bounds_max": [
+        0.052000001072883606,
+        0.052000001072883606,
+        0.03200000151991844
+      ],
+      "dimensions": [
+        0.10400000214576721,
+        0.10400000214576721,
+        0.03200000151991844
+      ],
+      "mesh_objects": 5,
+      "triangles": 2824,
+      "bytes": 112032,
+      "glb_sha256": "fb5fd0d96cbdad35172abea716ac202aacfbf48b4d4e31bd39df0e00b9858d01",
+      "blend_sha256": "1801eeb7d7e71ef1c649e1240e8165539e797802d8364de6c4391a40e5d0a538"
+    }
+  },
+  "authorship": "Original project-authored utility fittings; existing project license retained.",
+  "limits": "No rendering was performed. No audio, water surface, jet mesh, light, collider, or simulator is embedded in these GLBs. Candidate runtime supplies bounded collision and explicit integration."
+}

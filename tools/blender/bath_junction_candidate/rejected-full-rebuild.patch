@@ -1,0 +1,88 @@
+--- a/tools/blender/build_formal.py
++++ b/tools/blender/build_formal.py
+@@ -718,6 +718,68 @@
+  add_terrace_fittings()
+  save('formal_terrace')
+ 
++def continuous_bath_plaster_wall(angles):
++    """One closed manifold solid; true portals below y=3.2, headers above.
++
++    The y=3.2 rings share vertices and surface edges, but there are no horizontal
++    faces except on the actual portal soffits. Only external silhouette corners
++    receive the source 8 mm / 3-segment bevel. No decorative seam-covering ring.
++    Source Godot coordinates (x,y,z) become Blender (x,-z,y).
++    """
++    material=M['Plaster']
++    count=len(angles)-1
++    alpha=math.asin(3.0/8.8)
++    opening=[]
++    for i in range(count):
++        a=(angles[i]+angles[i+1])*.5
++        opening.append((math.cos(a)>0 and abs(math.sin(a))<math.sin(alpha)) or
++                       (math.sin(a)>0 and abs(math.cos(a))<math.sin(alpha)))
++    verts=[]
++    for a in angles[:-1]:
++        for y in [1.48,3.2,4.6]:
++            for r in [8.80,9.16]:
++                verts.append((r*math.cos(a),-r*math.sin(a),y))
++    def v(i,h,side):return (i%count)*6+h*2+side
++    faces=[]
++    for i in range(count):
++        j=(i+1)%count
++        # Shared y=3.2 edges prevent both the former groove and internal caps.
++        for h in ([1] if opening[i] else [0,1]):
++            faces.extend([(v(i,h,0),v(i,h+1,0),v(j,h+1,0),v(j,h,0)),
++                          (v(i,h,1),v(j,h,1),v(j,h+1,1),v(i,h+1,1))])
++        faces.append((v(i,2,0),v(i,2,1),v(j,2,1),v(j,2,0)))
++        h=1 if opening[i] else 0
++        faces.append((v(i,h,0),v(j,h,0),v(j,h,1),v(i,h,1)))
++        if not opening[i] and opening[(i-1)%count]:
++            faces.append((v(i,0,0),v(i,0,1),v(i,1,1),v(i,1,0)))
++        if not opening[i] and opening[j]:
++            faces.append((v(j,0,0),v(j,1,0),v(j,1,1),v(j,0,1)))
++    me=bpy.data.meshes.new('Bath_Wall_Continuous');me.from_pydata(verts,[],faces);me.update()
++    ob=bpy.data.objects.new('Bath_Wall',me);bpy.context.collection.objects.link(ob)
++    me.materials.append(material)
++    bm=bmesh.new();bm.from_mesh(me)
++    bmesh.ops.delete(bm,geom=[v for v in bm.verts if not v.link_faces],context='VERTS')
++    bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.normal_update();bm.to_mesh(me);bm.free();me.update()
++    uv=me.uv_layers.new(name='UVMap')
++    for f in me.polygons:
++        f.use_smooth=abs(f.normal.z)<.1
++        # Same world-metre dominant-axis projection as the original generator.
++        axis=max(range(3),key=lambda i:abs(f.normal[i]));axes=[i for i in range(3) if i!=axis]
++        for li in f.loop_indices:
++            co=me.vertices[me.loops[li].vertex_index].co;uv.data[li].uv=(co[axes[0]],co[axes[1]])
++    bpy.ops.object.select_all(action='DESELECT');ob.select_set(True);bpy.context.view_layer.objects.active=ob
++    mod=ob.modifiers.new('External masonry edges only; no y3.2 joint','BEVEL')
++    mod.width=.008;mod.segments=3;mod.limit_method='ANGLE';mod.angle_limit=math.radians(30);mod.harden_normals=True
++    bpy.ops.object.modifier_apply(modifier=mod.name)
++    mod=ob.modifiers.new('Preserved planar caps and smooth walls','WEIGHTED_NORMAL');mod.keep_sharp=True
++    bpy.ops.object.modifier_apply(modifier=mod.name)
++    ob['units']='metres';ob['uv0']='1 UV unit = 1 metre; runtime ceramic pitch 0.1m'
++    ob['uv2']='packed nonoverlapping smart projection, unbaked'
++    ob['construction']='Single watertight plaster shell with lower east/south portals and upper headers; no internal y=3.2 caps or groove'
++    ob['junction_candidate']=True
++    ob.select_set(False)
++    return ob
++
+ def build_formal_bath():
+  reset()
+  c=DEEP_BASINS['bath'];floor=c['basin_floor']
+@@ -755,8 +817,14 @@
+   angle=(angles[i]+angles[i+1])/2
+   return (math.cos(angle)>0 and abs(math.sin(angle))<math.sin(alpha)) or (math.sin(angle)>0 and abs(math.cos(angle))<math.sin(alpha))
+  perimeter_band('Bath_Wainscot',circle_points(8.78,angles),circle_points(9.16,angles),.52,1.48,'Ceramic',doorway)
+- perimeter_band('Bath_Wall',circle_points(8.80,angles),circle_points(9.16,angles),1.48,3.2,'Plaster',doorway)
+- perimeter_band('Bath_UpperDrum',circle_points(8.80,angles),circle_points(9.16,angles),3.2,4.6,'Plaster')
++ lower_wall=perimeter_band('Bath_Wall',circle_points(8.80,angles),circle_points(9.16,angles),1.48,3.2,'Plaster',doorway)
++ upper_wall=perimeter_band('Bath_UpperDrum',circle_points(8.80,angles),circle_points(9.16,angles),3.2,4.6,'Plaster')
++ # Keep exactly the original proxy generators above, but replace the two visible
++ # solids with one watertight shell. Nothing overlaps to hide the former seam.
++ for ob in [lower_wall,upper_wall]:bpy.data.objects.remove(ob,do_unlink=True)
++ continuous_bath_plaster_wall(angles)
++ marker=bpy.data.objects.new('Bath_UpperDrum',None);bpy.context.collection.objects.link(marker)
++ marker['construction']='Geometry unified into Bath_Wall; all original COLLISION_Bath_UpperDrum_* proxies preserved'
+  perimeter_band('Bath_CopingWallTermination',circle_points(8.765,angles),circle_points(9.17,angles),1.464,1.50,'Coping',doorway,col=False,bevel=.003)
+  for axis in ['x','z']:
+   for sign in [-1,1]:

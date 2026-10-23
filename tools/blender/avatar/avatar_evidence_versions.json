@@ -1,0 +1,45 @@
+{
+  "final_checkpoint_utc": "2026-10-22T12:22:00Z",
+  "final_files": {
+    "assets/models/avatar/pool_explorer.glb": "d21df79cd70292588a438d7b84d3225e4d7b185303c80f039266f96423ca5e6b",
+    "tools/blender/avatar/pool_explorer.blend": "1520b0116be6090ebbb49cc6a71e3f4d87af8fc6d9aad0b520a0e26d38d38846",
+    "assets/models/avatar/explorer_shirt_weave.png": "86c4c5f7c795aa4840ef1ebb247d0f981633a9072c7bf8de8f7386a1ba3107e3",
+    "assets/models/avatar/explorer_pants_weave.png": "1e7df75967b2083f3c2a84520c436ad77bf5b8e137107ee42a3c05fc4ee63c5e",
+    "scripts/player/pool_avatar.gd": "6f9eeb62cbf989d428f13fd07ca603da00d354338e5db8fa095bdc7bb093c9fc",
+    "shaders/avatar_body.gdshader": "2487210b140bb948417b6aaa3108069324231d75b96f6324b3b9015f2a2363fd"
+  },
+  "final_preview_images": [
+    "tools/blender/avatar/previews/explorer_preview_rest.png",
+    "tools/blender/avatar/previews/explorer_preview_idle.png",
+    "tools/blender/avatar/previews/explorer_preview_walk.png",
+    "tools/blender/avatar/previews/explorer_preview_run.png",
+    "tools/blender/avatar/previews/explorer_preview_side.png",
+    "tools/blender/avatar/previews/explorer_preview_back.png"
+  ],
+  "prior_native_fixture": {
+    "glb_sha256": "1672cbbdecf7131b7141e01c82742e95761cec3160a0e46036093ad05476ef0a",
+    "captures": "tools/blender/avatar/qa_project/captures/",
+    "renderer": "Godot 4.6.3 Compatibility, X11 Mesa llvmpipe LLVM19 software rasterization",
+    "hardware_acceleration_verified": false,
+    "final_refinement_native_tested": false,
+    "material_note": "This earlier fixture still used the original Godot-extracted fabric PNGs; final checkpoint synchronizes low-contrast extraction copies.",
+    "body_layer": 1,
+    "avatar_mirror_clip_shader_present": false
+  },
+  "tests_pending": [
+    "Native final shader appearance and rendered full-body reflections in the parent full-game run"
+  ],
+  "final_render_contract": {
+    "body_layer": 65536,
+    "reflection_head_layer": 131072,
+    "mirror_marker": 524288,
+    "static_cube_mask": 1,
+    "mirror_underwater_clip_world_y": 0.318,
+    "main_camera_excludes": [
+      131072,
+      524288
+    ]
+  },
+  "final_headless_summary": "tools/blender/avatar/final_test_summary.json",
+  "headless_render_integration_passed": true
+}

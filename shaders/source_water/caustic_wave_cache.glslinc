@@ -1,0 +1,29 @@
+// Evaluate the unchanged source wave equations once per ORIGINAL lattice vertex.
+// FP32 storage only; no downsampling, quantisation, interpolation or temporal reuse.
+// Host inserts caustic_uniforms.glslinc and shared_waves.glslinc verbatim.
+layout(local_size_x=64,local_size_y=1,local_size_z=1) in;
+struct WaveSample { vec4 pointHeight; vec4 normal; };
+layout(set=0,binding=8,std430) writeonly buffer WaveSamples { WaveSample waveSamples[]; };
+void main() {
+    int segments=int(passData.y);
+    int index=int(gl_GlobalInvocationID.x);
+    if(index>=(segments+1)*(segments+1)) return;
+    int row=index/(segments+1), column=index%(segments+1);
+    vec2 p=vec2(float(column),float(row))/float(segments)*32.0-16.0;
+    if(passData.z<.5) p.y=-p.y;
+    // PC_NEARFIELD_BEGIN
+    p=pcNearfieldEmissionPoint(p);
+    // PC_NEARFIELD_END
+    float height=.32+poolSurfaceHeight(p);
+    vec3 n=poolNormal(p);
+    // PC_NEARFIELD_BEGIN
+    if(pcNearfieldPhotonActive()){
+        vec3 detail=pcNearfieldPhotonSample(p);
+        height+=detail.x;
+        n=normalize(vec3(-simulationSlope(p)-detailSlope(p)-detail.yz,1.0).xzy);
+    }
+    // PC_NEARFIELD_END
+    int target=int(receiverData.z)+index;
+    waveSamples[target].pointHeight=vec4(p,height,0.0);
+    waveSamples[target].normal=vec4(n,0.0);
+}

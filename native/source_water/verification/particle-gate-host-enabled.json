@@ -1,0 +1,11 @@
+{
+  "checks": 104,
+  "failures": [],
+  "notes": [
+    "Five sequential deltas per case, including pause and non-finite input.",
+    "Ordered surface/depth callbacks and release/return events are compared as bytes.",
+    "Reentrant callbacks mutate future flags/data and patch count, and replace dictionary arrays.",
+    "Published render rows and original fixture arrays remain immutable."
+  ],
+  "pass": true
+}

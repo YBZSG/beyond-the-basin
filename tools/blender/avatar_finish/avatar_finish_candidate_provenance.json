@@ -1,0 +1,192 @@
+{
+  "kind": "original analytic cloth finish; separate candidate; not integrated",
+  "source_glb": "assets/models/avatar_v2/pool_explorer_v2.glb",
+  "source_sha256": "cf30e23b692db289228921f1c128a3c7cd79022c53f98c4962ea05d2caa25f17",
+  "external_asset_inputs": [],
+  "ai_image_inputs": [],
+  "normal": "OpenGL tangent +Y, linear data",
+  "runtime_cloth_surfaces": [
+    "Explorer | warm ivory woven shirt",
+    "Explorer | charcoal cotton trousers"
+  ],
+  "changes": "Cloth UV2/tangents and seam vertex splits only; exact original canonical geometry/skin/rig/animations",
+  "native_status": "Corrected static dry candidate accepted; 12 native captures and reversible API tests pass. Native motion technical checks pass; temporal visual acceptance and gameplay remain unverified. Production remains off.",
+  "files": {
+    "assets/textures/avatar_finish/avatar_finish_candidate.glb": {
+      "bytes": 3830936,
+      "sha256": "3c02a9d08c218744972e78c248a758fc55bb1c57011df1d52b5c2e3097e9cc7a"
+    },
+    "assets/textures/avatar_finish/trousers_twill_normal.png.import": {
+      "bytes": 971,
+      "sha256": "13f2fe2e4733a1d82b6b976a58acf37a9283c387a16f89b699ddee59c5d784e6"
+    },
+    "assets/textures/avatar_finish/shirt_plain_normal.png": {
+      "bytes": 91876,
+      "sha256": "d7804f59feea100493f0d3545426c2c72a290a9380b6c67f0fd704d95e594008"
+    },
+    "assets/textures/avatar_finish/avatar_finish_candidate.glb.import": {
+      "bytes": 858,
+      "sha256": "63c5f2b70c57078dd4d9ca582b2e6cbe3a6a8222b4839708214aaafc97c95ca2"
+    },
+    "assets/textures/avatar_finish/shirt_plain_roughness.png.import": {
+      "bytes": 971,
+      "sha256": "e55ed5ddd15978d53cc2a81fdf66dc3aae1b3bd2853f7959102c58a0e0394d3d"
+    },
+    "assets/textures/avatar_finish/avatar_finish_candidate_manifest.json": {
+      "bytes": 2447,
+      "sha256": "eb0fded49faeb5af1d6e0e578f49eb36f41639365acc9e3df1732e2df1d88e55"
+    },
+    "assets/textures/avatar_finish/README.md": {
+      "bytes": 1202,
+      "sha256": "023cc1ddc0214a95f0cd0ea71043ffff4b540cb1424e3a979cfdf2d8868d9d4a"
+    },
+    "assets/textures/avatar_finish/shirt_plain_normal.png.import": {
+      "bytes": 962,
+      "sha256": "9f935d1a731e46b824815fa7d32aa005b68153c7afd2c03c0f36de74e9324108"
+    },
+    "assets/textures/avatar_finish/shirt_plain_roughness.png": {
+      "bytes": 27687,
+      "sha256": "b66d257e7cd369c8d8cf35f307bc1b4dbcf12b864d7725288a95daf0937f606e"
+    },
+    "assets/textures/avatar_finish/trousers_twill_roughness.png": {
+      "bytes": 22357,
+      "sha256": "bfa926b4495187406c617356bbbd62a7618d8618e7f2d05753e9044678e16805"
+    },
+    "assets/textures/avatar_finish/trousers_twill_roughness.png.import": {
+      "bytes": 980,
+      "sha256": "50d6506a28b112f4ce753ef7a3887da36c03f0a3d1fe1d3c13467898d029a8ce"
+    },
+    "assets/textures/avatar_finish/trousers_twill_normal.png": {
+      "bytes": 97050,
+      "sha256": "f950f8e16273db31a2f2bcd365cd17b46ba21103a83c6fd311c10c742732797d"
+    },
+    "tools/blender/avatar_finish/avatar_finish_candidate_motion_plan.md": {
+      "bytes": 8997,
+      "sha256": "a889310ecb0c6c662d2ca505322210918387f4cf501acdb3534c5a5c54750979"
+    },
+    "tools/blender/avatar_finish/generate_avatar_finish.py": {
+      "bytes": 6995,
+      "sha256": "b7e3556e876f32059aad3ae770efeb6268af6c2edb0c81f2dcdb2d537cfafc7d"
+    },
+    "tools/blender/avatar_finish/export_edited_avatar_finish_uv.py": {
+      "bytes": 3916,
+      "sha256": "a63fb048c620b6219a8c55a7b8b5b319d8dbfe67dc74ecb42aaf453f7da1e3bd"
+    },
+    "tools/blender/avatar_finish/build_avatar_finish_candidate.py": {
+      "bytes": 11999,
+      "sha256": "a63fd73768e5a7594a1e7c2007232e0150d2778c8cef663edd7ca7dac85f89d6"
+    },
+    "tools/blender/avatar_finish/prepare_native_fixture.py": {
+      "bytes": 2610,
+      "sha256": "c5427548b14d1af32ff687cbc116efa7a05b04bc515bdabe4ef9f68b59170ecd"
+    },
+    "tools/blender/avatar_finish/run_cpu_uv_build.py": {
+      "bytes": 1333,
+      "sha256": "190ab7afc490831afbb76f2f260dbea0fc2c54f30d7e796ed905ce3a32f2d9ee"
+    },
+    "tools/blender/avatar_finish/run_bounded_engine.py": {
+      "bytes": 2553,
+      "sha256": "e44d96dff84b66b6644dabf41f954c34a409a49a54e1495747bb73186ef08829"
+    },
+    "tools/blender/avatar_finish/.gdignore": {
+      "bytes": 59,
+      "sha256": "79d3920163da8848d08be349919d35723558980f61d113ea961c091ee6e8f7ba"
+    },
+    "tools/blender/avatar_finish/verify_avatar_finish_evidence.py": {
+      "bytes": 1376,
+      "sha256": "a04247c2820299dba8b0bad33cbee10fdf792d72cad9e38b7c23772f6e110be8"
+    },
+    "tools/blender/avatar_finish/avatar_finish_candidate_uv_source.blend": {
+      "bytes": 1329059,
+      "sha256": "cc3771a8fd16a8295920aaec42833a04939cae10884e3ff07bd0645bb6bf645b"
+    },
+    "tools/blender/avatar_finish/README.md": {
+      "bytes": 17393,
+      "sha256": "fbcf86623f83ab797f0800b15422b94956fa4e3f518eee98d876ab33cfa749e2"
+    },
+    "tools/blender/avatar_finish/avatar_finish_glb.py": {
+      "bytes": 4340,
+      "sha256": "0e5566fe9d82d9940858cdbec8d9cc0ffc06f8e714c28d47ae1a783a0fb5fd02"
+    },
+    "tools/blender/avatar_finish/sync_avatar_finish_source_materials.py": {
+      "bytes": 708,
+      "sha256": "655eacfd3ae390da042fc7a041b4414a593beab57553e500e6bfee584f04e6f7"
+    },
+    "tools/blender/avatar_finish/avatar_finish_candidate_uv_source.blend1": {
+      "bytes": 1329900,
+      "sha256": "7aeb3a4d6bce98aae1a8beb63a9211975de75c25c86416302cd0a5f7551fbf84"
+    },
+    "tools/blender/avatar_finish/run_native_avatar_finish_candidate.sh": {
+      "bytes": 3485,
+      "sha256": "bf8eaa96c29f4feb7c49ad4677b9582d0e690caaf6f23543afaa490b28e7794f"
+    },
+    "scripts/player/avatar_finish_candidate.gd": {
+      "bytes": 9837,
+      "sha256": "c763daef62dbbf5c3f7bd7a14e54c1a83c91f922f9e24b75ce918b6a1269f166"
+    },
+    "shaders/avatar_finish_candidate.gdshader": {
+      "bytes": 5098,
+      "sha256": "76f0bd9f72d55eb8cb44e2a19446a551a0d900b6e741516c9adff455ede73948"
+    },
+    "tests/avatar_finish_candidate_native.gd": {
+      "bytes": 4960,
+      "sha256": "fb0c3870ff73045771fc3fb3cfc7c1d702b678b8ed20f434fe0e443cdca909b4"
+    },
+    "tests/avatar_finish_candidate_contract.py": {
+      "bytes": 6412,
+      "sha256": "e27287ed1daff251817029a053e8c9b9c91cfc6b5593df8e4602052f1160977d"
+    },
+    "tests/avatar_finish_candidate_motion.gd": {
+      "bytes": 14768,
+      "sha256": "c93fc0ebec56dba6c188ad6e1856d7b4c6086fdc8f90382ca42cda3e30075831"
+    },
+    "tests/avatar_finish_candidate_motion_staging_contract.py": {
+      "bytes": 3260,
+      "sha256": "994c60b20c04e8e24ee356ce03c2c75e14c4bbbeab650ddb09d8dbd5b2f78773"
+    },
+    "tools/blender/avatar_finish/prepare_avatar_finish_candidate_motion.py": {
+      "bytes": 5284,
+      "sha256": "8a388925edd908e282f2b62487898e2d5ceb3fcab785f216576012b52069a19d"
+    },
+    "tools/blender/avatar_finish/run_native_avatar_finish_candidate_motion.sh": {
+      "bytes": 4774,
+      "sha256": "4a8e2c5222b96cef592c47fd6e10008701e25711908a10db7e0f84058e84e3ed"
+    },
+    "tools/blender/avatar_finish/verify_avatar_finish_motion.py": {
+      "bytes": 44091,
+      "sha256": "510a04a5b7b306f86e221838029d61d7223ebc0fdb9074b482e18268a3bd8f54"
+    },
+    "tools/blender/avatar_finish/avatar_finish_candidate_tangent_audit.py": {
+      "bytes": 9911,
+      "sha256": "71354c8f502d721f7ddffd9612b8166b6aa4eb52e145aeaa10f489ed6d5e548b"
+    },
+    "tools/blender/avatar_finish/avatar_finish_candidate_temporal_residuals.py": {
+      "bytes": 22363,
+      "sha256": "a618646b5c12cdcaaa4d446b183989c357fd1eef30ae0299d5be31384797d1f2"
+    }
+  },
+  "native_evidence": "tools/blender/avatar_finish/audit/native-20261022T201118Z",
+  "accepted_native_evidence_hashes": {
+    "tools/blender/avatar_finish/audit/native-20261022T201118Z/stage_manifest.json": "326324c20489b99fbf0ac7ba8cd0e4e1f6b1ba5ef0ee9d11d7039016446dfd2f",
+    "tools/blender/avatar_finish/audit/native-20261022T201118Z/completed_exit_receipt.json": "adfbaead6d8748d35796acd27aa9cf231c916ca63c9c3f828e5ca664330fe612",
+    "tools/blender/avatar_finish/audit/native-20261022T201118Z/capture_hashes.json": "4b4d9e5c140156c3ba69b6e3561672a52c1ceac8eba8be30f74591afb5265313",
+    "tools/blender/avatar_finish/audit/native-20261022T201118Z/avatar_finish_candidate_visual_review.json": "b8bd7bc6edeb0e3666621ea8fb6a6ed36d3a158237af38b69110d6f143a2faf2"
+  },
+  "motion_status": "Owner-launched native motion technical pass: 480 frames / 240 exact pairs, three decoded-pixel-verified FFV1 clips. Independent temporal playback review and production approval remain pending.",
+  "motion_readiness_evidence": "tools/blender/avatar_finish/audit/avatar_finish_candidate_motion_ready.json",
+  "motion_native_evidence": "tools/blender/avatar_finish/audit/motion-native-20261022T204109Z-14778",
+  "motion_current_evidence": "tools/blender/avatar_finish/audit/avatar_finish_candidate_motion_current_evidence.json",
+  "supplemental_cpu_audits": {
+    "tools/blender/avatar_finish/audit/avatar_finish_candidate_tangent_direction_audit.json": {
+      "bytes": 8301,
+      "sha256": "16f9cfec160e4c36505e240551d14b180d613019261f0d987a73842e34a1acf4"
+    },
+    "tools/blender/avatar_finish/audit/motion-native-20261022T204109Z-14778/avatar_finish_candidate_temporal_residuals.json": {
+      "bytes": 39687,
+      "sha256": "6e8d36d75768750131fd4c6d4f774d9e89119ba829b2e70316ad5a0fc0afd2d2"
+    }
+  },
+  "updated_utc": "2026-10-22T21:17:30.292492+00:00",
+  "integration_status": "As of 2026-10-22 21:17 UTC, owner is validating an opt-in --avatar-fabric-finish path in the full native bath. No gameplay acceptance is asserted by this material package.",
+  "material_portability": "Cloth-only Blend packs generated PNGs and Principled nodes, not the full rig. Candidate GLB preserves original PBR material/image/texture tables; runtime helper/shader binds new cloth maps. No standalone cloth-PBR GLB export is supplied."
+}

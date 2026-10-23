@@ -1,0 +1,58 @@
+{
+  "targets": {
+    "linux.x86_64": {
+      "filename": "libsource_water.linux.x86_64.so",
+      "bytes": 16608,
+      "sha256": "827062785093d6763dc1bbb6f67caeb1cc6fa5b47a12f096464cff2cb4d9f530",
+      "format": "ELF64 little endian",
+      "machine": 62,
+      "exports": [
+        "source_water_library_init"
+      ],
+      "dependencies": [],
+      "executable_stack": false,
+      "runtime_verified": true
+    },
+    "android.arm64": {
+      "filename": "libsource_water.android.arm64.so",
+      "bytes": 15064,
+      "sha256": "f4a5edfa64d52ee01452a9f80fb13688a27aef577061d17fb9e088e6bc03c60e",
+      "format": "ELF64 little endian",
+      "machine": 183,
+      "exports": [
+        "source_water_library_init"
+      ],
+      "dependencies": [],
+      "executable_stack": false,
+      "runtime_verified": false
+    },
+    "windows.x86_64": {
+      "filename": "source_water.windows.x86_64.dll",
+      "bytes": 14848,
+      "sha256": "fbad35d391c5d3d74e39118a26a50f6544bbe57e38e41407daf538c3940efa92",
+      "format": "PE32+ DLL",
+      "machine": 34404,
+      "exports": [
+        "source_water_library_init"
+      ],
+      "dependencies": [],
+      "crt_entry_point": null,
+      "runtime_verified": false
+    }
+  },
+  "source_sha256": {
+    "source_water.c": "a99398eb53c4f235db77e4927d7d2e96dd9ba54daf2afffdc665a0ef84fd8363",
+    "readback_core.h": "082c7c1e05850972305db8b8c96f39387227b5163edf512a8d052762db2cbe8b",
+    "occlusion_core.h": "89a78d6134f1a862835fadab1bf9fccfd37b9f460658f8eaf1c656c867df21fa",
+    "particle_gate_core.h": "933e86404da8d42824914547c160ffc3c31983896c963edc5487622659182a0f",
+    "particle_gate_binding.inc": "d70682b2ada1fc15b8fcfb57ac49fc0c8ce2323cdf6c4614db5bb3609d6382ea",
+    "vendor/gdextension_interface.h": "6228db9a0be9bb154a89911a69ee7ec767f2d40004b3ed5b1d08eebf90bcd16b",
+    "build.sh": "4ea31d3e4eaaf2f424a060534a822019c12e6cfa7f8e4e0c230378c15de241be"
+  },
+  "notes": [
+    "Windows and Android artifacts are cross-built and statically audited, not executed on those platforms.",
+    "Linux is verified by the Godot 4.6.3 headless contract and typed ABI suites.",
+    "Android ELF load alignment is compatible with 16 KiB pages.",
+    "No C, C++, compiler-rt, Godot-cpp, or OS-library runtime imports."
+  ]
+}

@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://btkiaebjob8bh"
+path="res://.godot/imported/swe_round_probe.glsl-eccf3f94ce76d90ccfaf31f30d4dbb4d.res"
+
+[deps]
+
+source_file="res://shaders/source_water/swe_round_probe.glsl"
+dest_files=["res://.godot/imported/swe_round_probe.glsl-eccf3f94ce76d90ccfaf31f30d4dbb4d.res"]
+
+[params]
+

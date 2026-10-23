@@ -1,104 +1,45 @@
-# BEYOND THE BASIN | PoolCore
+# Beyond the Basin · Godot 版本
 
-**深水之外** — 一座没有出口的室内泳池。第一人称探索、种子地图、釉面瓷砖、随流漂浮的道具、交互浪花与浮沫，以及带本地时间戳的 CCD 镜头。
+这是独立的 Godot 工程分支。仓库根目录的 `project.godot` 是入口；原 Web 游戏保留在 `main` 分支，不需要 npm、浏览器壳或 Web 构建流程。
 
-## 本地运行
+当前代码对应 **WaterFeel 0.6.2（2026-10-23）+ SeedGuard1**。这是开发候选版本，不是已通过目标 Windows 显卡验收的稳定版，也没有达到照片级写实目标。
 
-需要 Node.js 22.13 或更新版本，以及启用硬件加速、支持 WebGL2 的桌面浏览器。开发验收使用 Microsoft Edge；画质与帧率依赖 GPU 和分辨率。
+## 打开和运行
 
-局部三维浪花还需要 WebGPU，建议通过 localhost 或 HTTPS 在 Edge 中运行。不支持 WebGPU 时，仍保留浅水水面、波纹与浮沫。
+1. 下载或克隆本分支，使用 Godot **4.6 Standard** 打开根目录 `project.godot`。实际验证基准为 **4.6.3**，不要把允许尝试其他版本理解成已验证兼容。
+2. 等待首次资源导入，再运行主场景。PC 使用 Forward+，需要支持对应图形后端的设备。
+3. 保留 `native/source_water/` 下的描述文件与平台辅助库。它们加速原有 CPU 工作，不替换水体方程。缺失或不支持时有 GDScript 回退，但编辑器可能报告扩展载入错误。
 
-```sh
-npm ci
-npm run dev -- --host 127.0.0.1 --port 3000
-```
+本源码不附带 Godot 编辑器、Windows 游戏 EXE/PCK 或 APK。Windows 导出配置已保留；需安装匹配的官方导出模板。运行游戏读取 GLB，不要求安装 Blender；编辑模型与重建几何的基准为 Blender 4.3.2。
 
-打开 http://localhost:3000 。生产构建与运行：
+## 世界与交互
 
-```sh
-npm run build
-npm start
-```
+- 首次默认原仓库的种子随机场景。主页可选择 Original、Expanded 或 Formal，并保存出生地。
+- Expanded 保留新增设施房间；Formal 保留连接的主池厅、回廊、侧池、露台和圆浴池。
+- WASD 移动，鼠标视角，Shift 快走/跑，Space 跳，E 交互，左键拖动物品，右键投掷，滚轮上推远、下拉近，Esc 菜单，H 隐藏界面。
+- 主菜单包含画质和水体设置。侧池/圆浴池有可操作的回水阀；它们是可选探索内容，不要求开启才能通行。
+- SeedGuard1 对三个主页种子入口统一检查有符号 64 位整数，错误输入会提示而不是改变当前世界。
 
-## 性能验证
+## 编辑入口
 
-本轮先优化 WebGL 主路径，完整 WebGPU 迁移另行推进。实施状态、固定 3 ms 预算的过渡时间取舍、手持道具折射回归及真实 Edge 基准见 [性能验收记录](docs/performance-2026-09-22.md)。`npm run benchmark:build` 显式生成支持本地 QA 与完整数据导出的优化构建；正常生产构建不开放 QA 接口。
+- `scripts/`、`shaders/`、`scenes/`：Godot 逻辑、原水体算法的引擎适配、角色、UI。
+- `assets/`：正式 GLB、贴图、音效与必要资源。`assets/cache/source_terrain/` 是匹配几何的运行加速数据，不是 `.godot` 临时缓存。
+- `tools/blender/`：可编辑 Blend、生成器、参考图和导出工具。各 `.gdignore` 是有意隔离作者文件。
+- `native/source_water/`：CPU 辅助库、C 源码、构建方法与许可。
+- `docs/`：功能、资产和验证边界。历史候选报告不代表本次整套游戏验收。
 
-## 手机版（Android APK）
+人物仍是项目自制的程序化模型，带骨架、蒙皮与动画，不是扫描人物。布料 GLB 的最终材质由 Godot 脚本/shader 绑定，独立模型查看器不会自动复现全部效果。修改池底、碰撞或水深后，需要重新生成匹配地形缓存并检查实际行走。
 
-游戏可打包成完全离线的 Android 应用：WebView 壳加载打包进 APK 的静态页面，触屏设备自动启用虚拟摇杆与按键。构建需要 Android SDK（`ANDROID_HOME` 已配置即可）和 JDK 17+（脚本会自动在 `%USERPROFILE%\.jdks` 中寻找，本机已装 `temurin-17`）：
+## 当前已知问题
 
-```sh
-npm run apk          # vite 打包 web → 写入 APK assets → gradle assembleDebug
-```
+- 从主页实时切换世界时出现黑色/荧光绿画面的根因尚未确认，不能称为已修复。分阶段退场与保护已集成，但不等于目标设备问题已通过。
+- “重启到所选世界”是可选的完整退出/重开方式，只在有完整启动参数契约的交付启动器下支持。直接从编辑器运行时会拒绝并提示，不会猜测启动参数或自动重启。
+- 最终完整封包的两次云端图形启动在就绪前被外部终止。精确封包 CPU、受控人物和局部源工程水体检查通过，不能代替完整 Windows 图形验证。
+- 云端 llvmpipe 的耗时不是 Windows 显卡或手机帧率。浅水边缘、动作、光照和材质仍有继续改进空间。
+- Android 源码和既有配置保留，但当前迭代暂停手机版，没有因这个分支发布而构建或验证新 APK。
 
-产物在 `dist-apk/BeyondTheBasin-PoolCore-debug.apk`，安装：`adb install -r dist-apk/BeyondTheBasin-PoolCore-debug.apk`。只重打 web 资产可跑 `npm run apk:web` 后用 `powershell -File build-apk.ps1 -SkipWeb` 收尾。
+## 来源与许可
 
-触屏操作：左侧摇杆移动（推满快走）、右侧滑动转视角、轻点水面/道具互动，「跳」「拿起」「投掷」圆形按键，右上 ☰ 暂停；系统返回键同样呼出暂停菜单。
+源项目基线：[66a4543602d9e774db07c2da12ce1d40d522532c](https://github.com/YBZSG/beyond-the-basin/tree/66a4543602d9e774db07c2da12ce1d40d522532c)。水体移植保留原 SWE、细波、APIC-MPM 和光子焦散算法的来源及说明，不把简化滚动贴图当成原算法。
 
-## 单文件 HTML 版
-
-把整个游戏（JS、CSS、音效、水波纹理）打进一个 HTML 文件，双击即可游玩，也便于直接分发：
-
-```sh
-npm run single
-```
-
-产物为 `dist-single/BEYOND-THE-BASIN-PoolCore-single.html`。桌面端使用键鼠，手机浏览器自动启用触屏；实际音频和 WebGPU 支持取决于浏览器及运行环境，推荐 Edge。
-
-## 操作
-
-| 操作 | 按键 |
-| --- | --- |
-| 移动 / 快走 / 跳跃 | WASD / Shift / 空格 |
-| 进入、环视、暂停 | 点击进入水中 / 鼠标 / Esc |
-| 扰动水面 | 低头左键点击；涉水移动也会产生波纹 |
-| 拖动、拿起、放下 | 左键拖动 / E |
-| 投掷、调整持物距离 | 按住右键蓄力、松开投掷 / 滚轮 |
-| 攀爬梯子 | 靠近按 E，再按 W/S |
-| 镜头、焦散、间接光 | F / C / V |
-| 返回起点 | R |
-
-暂停菜单可直接前往旧泳池、高拱门大厅、连通浴池、跳台高廊和夜间浴场；它们也通过门洞相连。周围加载 5×5 个区块，近处 3×3 区块参与主要灯光更新；远处按种子生成、回收。
-
-## 画面与实现
-
-- Three.js / WebGL2、React、Vinext / Vite。
-- 瓷砖按非金属釉面着色，粗糙反射采用预过滤环境探针；金属物体另有 BVH 反射。
-- 体素锥追踪提供近似静态间接光，区块加载分阶段更新。
-- 主水体保留 GPU 浅水求解器，计算传播波、柱子绕流、道具浮力与尾流；独立细波场表现脚步和水滴回落的涟漪。平静时仅保留克制的微表面细节。
-- 强冲击产生局部 WebGPU MLS-MPM / APIC 液体域，通过各向异性表面核和 Narrow-Range 深度过滤重建浪花；压力、重力与碰撞决定形状，没有固定数量的模板突起。
-- 次级水滴采用真实实例椭球几何，回水产生一次微小涟漪。浮沫是随流平流、扩散和衰减的连续密度场，贴着物体轮廓显示，避免按方形网格排开。
-- 水体具有 Low / Medium / High / Ultra 四档质量，以及波高、波速、泡沫存留和光学层调节；静态建筑按材质合批，减少实时阴影的绘制开销。
-- 焦散由波面反射、Snell 折射和光束面积变化实时计算，使用渲染目标积累并平滑；不是播放焦散纹样图片。入射段采用建筑遮挡掩码，出射段检查场景三角形。
-- CCD 模式包含适度桶形畸变、暗角、轻微偏色与本机实时日期时间。
-
-当前是高度场与有预算的局部三维液体混合模拟，不是全池三维流体求解。局部液体最多同时运行 3 个域，每域最多 18,000 粒子；屏幕空间重建仍受可见内容和分辨率限制。焦散接收范围以所在区块池底及边界墙为主，区块切换存在光照与探针更新成本，帧率依赖设备。
-
-水体结构见 [水体增量升级](docs/water-upgrade.md)，浪花算法、泡沫边界及来源见 [浪花与浮沫](docs/whitewater.md)。MLS-MPM 参考并改编自 [Splash](https://github.com/matsuoka-601/Splash)，[MIT 许可](docs/licenses/Splash-MIT.txt)随仓库保留。
-
-## 检查
-
-```sh
-npm run typecheck
-npm run lint
-npm test
-npm run build
-```
-
-单元测试覆盖地图复现、碰撞、抓取投掷、浮力随流、水滴回水、体素更新和波纹衰减。`tests/pool-water-boundary-gpu.mjs` 检查圆柱与斜墙边的泡沫保持和渲染覆盖；`tests/pool-liquid-gpu.mjs` 检查实际 WebGPU 的重力、惯性与压力。这些 GPU 脚本通过本地 headed Edge 的 Playwright CLI 执行，独立于 `npm test`。
-
-## 目录
-
-- `app/pool-vct/engine.ts`：场景、地图、输入、灯光与后处理
-- `app/pool-vct/world.ts`：种子布局、体素场、瓷砖着色
-- `app/pool-vct/water-system.ts`：交互波面、焦散与光线遮挡
-- `app/pool-vct/shallow-water.ts`、`water-optics.ts`：浅水求解、连续浮沫与水面光学
-- `app/pool-vct/liquid-mpm.ts`、`liquid-mpm-shader.ts`：局部三维液体计算
-- `app/pool-vct/liquid-surface-pass.ts`、`splash-particles.ts`：液体表面重建与次级水滴
-- `app/pool-vct/physics.ts`：玩家与道具物理
-- `app/pool-vct/rt.ts`：BVH 反射
-- `app/pool-vct/PoolVCT.tsx`：菜单与摄像机界面
-- `tests/`：自动化检查
-
-本仓库发布当前 Web 主版本；旧实验入口、UE 工程、本地部署配置、备份与工具缓存不包含在内。第三方来源见 [ATTRIBUTIONS.md](ATTRIBUTIONS.md)。
+资产与第三方代码许可见 `CREDITS.md`、`docs/licenses/`、`docs/SOURCE_LIQUID_LICENSES.md` 及各资源 NOTICE。没有复制 POOLS 游戏资产，也不为原项目或用户提供的音效擅自添加新的整体开源许可证。

@@ -1,0 +1,7 @@
+Current five-room authored wing and reusable arch asset. Direct GLB geometry; no rendered-pixel claim.
+formal_arcade.glb: 32072 normals inspected, 0 invalid/non-unit; 145 nodes; 5 material roles
+formal_arch.glb: 4294 normals inspected, 0 invalid/non-unit; 19 nodes; 3 material roles
+formal_bath.glb: 84282 normals inspected, 0 invalid/non-unit; 754 nodes; 7 material roles
+formal_mainhall.glb: 125568 normals inspected, 0 invalid/non-unit; 468 nodes; 7 material roles
+formal_sidepool.glb: 28976 normals inspected, 0 invalid/non-unit; 114 nodes; 7 material roles
+formal_terrace.glb: 58432 normals inspected, 0 invalid/non-unit; 239 nodes; 7 material roles

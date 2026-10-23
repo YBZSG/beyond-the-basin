@@ -1,0 +1,307 @@
+{
+  "units": "metres",
+  "coordinates": "Godot Y up; room origins on 32 m x/z grid",
+  "main": {
+    "coord": [
+      -1,
+      -1
+    ],
+    "size": [
+      22,
+      20
+    ],
+    "ceiling": 4.8,
+    "basin": [
+      16,
+      12
+    ],
+    "basin_floor": -0.12,
+    "deck": 0.52,
+    "water": 0.32,
+    "stairs": [
+      0.38,
+      0.24,
+      0.1,
+      -0.04
+    ],
+    "east_portal": [
+      16,
+      -0.72,
+      0
+    ],
+    "south_portal": [
+      0,
+      -0.72,
+      16
+    ],
+    "north_portal": [
+      0,
+      -0.72,
+      -16
+    ],
+    "north_clear_width": 6.0
+  },
+  "arcade": {
+    "coord": [
+      0,
+      -1
+    ],
+    "size": [
+      24.8,
+      6
+    ],
+    "ceiling": 4.1,
+    "deck": 0.52,
+    "water": false,
+    "west_portal": [
+      -16,
+      -0.72,
+      0
+    ],
+    "north_portal": [
+      0,
+      -0.72,
+      -16
+    ],
+    "north_clear_width": 6.0,
+    "structural_frames": 4
+  },
+  "sidepool": {
+    "coord": [
+      -1,
+      0
+    ],
+    "size": [
+      14,
+      14
+    ],
+    "ceiling": 3.9,
+    "basin": [
+      8,
+      8
+    ],
+    "basin_floor": -0.52,
+    "deck": 0.52,
+    "water": 0.32,
+    "stairs": [
+      0.37142857142857144,
+      0.22285714285714286,
+      0.07428571428571429,
+      -0.07428571428571429,
+      -0.22285714285714286,
+      -0.37142857142857144
+    ],
+    "north_portal": [
+      0,
+      -0.72,
+      -16
+    ],
+    "stair_risers": 7,
+    "stair_tread": 0.65,
+    "stair_width": 4.8,
+    "stair_entry_z": -4.0,
+    "stair_direction_z": 1,
+    "water_depth": 0.8400000000000001,
+    "stair_centres_z": [
+      -3.675,
+      -3.025,
+      -2.375,
+      -1.725,
+      -1.0749999999999997,
+      -0.4249999999999998
+    ],
+    "stair_riser_height": 0.14857142857142858,
+    "stair_run": 3.9000000000000004,
+    "stair_floor_landing_z": -0.09999999999999964,
+    "stair_count_note": "Six solid treads plus the basin floor form seven equal risers; no zero-height stair.",
+    "depth_contract": "Geometry-only floor/walls/stairs/proxies update; water +0.32, source 1.04 m cap and 1.25/1.10 m swim latch unchanged."
+  },
+  "terrace": {
+    "coord": [
+      0,
+      -2
+    ],
+    "size": [
+      20,
+      18
+    ],
+    "ceiling": 4.2,
+    "basin": [
+      12,
+      8
+    ],
+    "basin_floor": 0.1,
+    "deck": 0.52,
+    "water": 0.32,
+    "stairs": [
+      0.38,
+      0.24
+    ],
+    "stair_width": 4.0,
+    "open_sky_rectangle": [
+      -6,
+      -4.5,
+      12,
+      9
+    ],
+    "west_portal": [
+      -16,
+      -0.72,
+      0
+    ],
+    "south_portal": [
+      0,
+      -0.72,
+      16
+    ],
+    "portal_clear_width": 6.0
+  },
+  "bath": {
+    "coord": [
+      -1,
+      -2
+    ],
+    "inner_radius": 8.8,
+    "outer_radius": 9.16,
+    "ceiling_edge": 4.6,
+    "ceiling_oculus": 5.58,
+    "oculus_radius": 1.8,
+    "oculus_glass_y": 6.025,
+    "basin_radius": 4.8,
+    "south_stair_alcove": [
+      -1.8,
+      4.45,
+      3.6,
+      1.55
+    ],
+    "basin_floor": -0.62,
+    "deck": 0.52,
+    "water": 0.32,
+    "stairs": [
+      0.35714285714285715,
+      0.19428571428571428,
+      0.03142857142857142,
+      -0.13142857142857145,
+      -0.29428571428571426,
+      -0.4571428571428572
+    ],
+    "stair_width": 3.6,
+    "east_portal": [
+      16,
+      -0.72,
+      0
+    ],
+    "south_portal": [
+      0,
+      -0.72,
+      16
+    ],
+    "portal_clear_width": 6.0,
+    "stair_risers": 7,
+    "stair_tread": 0.65,
+    "stair_entry_z": 6.0,
+    "stair_direction_z": -1,
+    "water_depth": 0.94,
+    "stair_centres_z": [
+      5.675,
+      5.025,
+      4.375,
+      3.725,
+      3.0749999999999997,
+      2.425
+    ],
+    "stair_riser_height": 0.16285714285714287,
+    "stair_run": 3.9000000000000004,
+    "stair_floor_landing_z": 2.0999999999999996,
+    "stair_count_note": "Six solid treads plus the basin floor form seven equal risers; no zero-height stair.",
+    "depth_contract": "Geometry-only floor/walls/stairs/proxies update; water +0.32, source 1.04 m cap and 1.25/1.10 m swim latch unchanged."
+  },
+  "connections": [
+    [
+      "main",
+      "arcade"
+    ],
+    [
+      "main",
+      "sidepool"
+    ],
+    [
+      "main",
+      "bath"
+    ],
+    [
+      "bath",
+      "terrace"
+    ],
+    [
+      "terrace",
+      "arcade"
+    ]
+  ],
+  "retained_connector_enclosures": {
+    "main_east_widths": [
+      8,
+      6
+    ],
+    "main_south_widths": [
+      8,
+      8
+    ],
+    "arcade_west_widths": [
+      6,
+      6
+    ],
+    "sidepool_north_widths": [
+      8,
+      8
+    ],
+    "wall_thickness": 0.24,
+    "roof_underside": 3.15,
+    "roof_thickness": 0.2,
+    "rooflight_clear_width": 0.8,
+    "rooflight_glass_y": 3.48,
+    "original_ramp_geometry": "unchanged"
+  },
+  "materials": [
+    "Formal_Ceramic",
+    "Formal_Plaster",
+    "Formal_Coping",
+    "Formal_Metal",
+    "Formal_Drain",
+    "Formal_Glazing",
+    "Formal_Collision"
+  ],
+  "collision": "Objects named COLLISION_; use create_convex_shape(true,false) individually. Never convex-hull a whole room, arch or ring. Preserve rotated local sector transforms for exact OBB terrain extraction. Disable proxy visibility.",
+  "uv": "UV0 world metres; tile pitch .1m in runtime material. UV2 packed nonoverlapping smart projection, unbaked. Runtime may regenerate for desired lightmap texel density.",
+  "provenance": "Original procedural Blender sources; formal mainhall reconstructed from recovered concept and runtime reference, with authored connected terrace and curved bath.",
+  "fixed_fittings": {
+    "scope": "Fixed, closed, non-interactive maintenance fittings; no wall openings or water emitters",
+    "mainhall": [
+      "4 basin return covers",
+      "1 waterline skimmer face",
+      "1 tool-fastened tiled access cover"
+    ],
+    "terrace": [
+      "4 shallow-basin return covers",
+      "1 waterline skimmer face"
+    ],
+    "sidepool": [
+      "2 basin return covers",
+      "1 waterline skimmer face",
+      "450 mm-high built-in west bench; 1.87 m clear deck passage"
+    ],
+    "arcade": [
+      "Shallow closed service cabinet behind existing bench line"
+    ],
+    "grates": {
+      "clear_slot_mm": 5,
+      "rib_width_mm": 12,
+      "panel_joint_mm": 3,
+      "finish": "Existing brushed stainless role"
+    },
+    "original_mainhall_diffuse_receivers_unchanged": 145,
+    "new_mainhall_diffuse_receivers": 2,
+    "original_collision_proxies_unchanged": 516,
+    "new_local_collision_proxies": 21
+  }
+}

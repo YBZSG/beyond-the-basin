@@ -1,0 +1,203 @@
+class_name PoolWorld
+extends Node3D
+## Source-parity room layout with collision-first, nearest-first 5x5 streaming.
+signal room_changed(coord: Vector2i, layout: Dictionary)
+signal room_loaded(room: Node3D, coord: Vector2i, layout: Dictionary)
+signal world_ready
+signal streaming_completed
+const Formal = preload("res://scripts/world/formal_rooms.gd")
+const FormalBuilder = preload("res://scripts/world/formal_room_builder.gd")
+var formal_mode: bool = false
+var expanded_mode: bool = false
+const ROOM := 32.0
+const WATER_LEVEL := .32
+const GROUND := -.78
+const STREAM_RADIUS := 2
+const Catalog := preload("res://scripts/world/room_catalog.gd")
+const Builder := preload("res://scripts/world/room_builder.gd")
+var seed_value: int = 1337
+var material_library: RefCounted
+var resident_rooms: Dictionary = {}
+var current_room := Vector2i.ZERO
+var is_ready: bool = false
+var _initialized: bool = false
+var _queue: Array[Vector2i] = []
+var _builders: Dictionary = {}
+var _desired: Dictionary = {}
+var _layouts: Dictionary = {}
+var _visited: Dictionary = {}
+var profile_counters: Dictionary = {"shell_builds":0,"interior_builds":0,"retirements":0,"transitions":0,"last_transition_ms":0.0,"max_transition_ms":0.0,"last_shell_ms":0.0,"last_interior_ms":0.0}
+
+func initialize(world_seed: int, materials: RefCounted) -> void:
+	seed_value=world_seed
+	material_library=materials
+	for room in resident_rooms.values(): room.queue_free()
+	resident_rooms.clear()
+	_queue.clear()
+	_builders.clear()
+	_layouts.clear()
+	_visited.clear()
+	is_ready=false
+	_initialized=true
+	current_room=Formal.COORDS[0] if formal_mode else Vector2i.ZERO
+	_request_stream(current_room)
+	# The current room's floor and complete collision exist before a player can spawn.
+	ensure_room_ready(current_room)
+	is_ready=true
+	_visited[current_room]=true
+	world_ready.emit()
+	room_changed.emit(current_room,get_layout(current_room))
+
+func get_room_coord(pos: Vector3) -> Vector2i:
+	return Vector2i(int(floor((pos.x+16.0)/ROOM)),int(floor((pos.z+16.0)/ROOM)))
+
+func get_layout(coord: Vector2i) -> Dictionary:
+	if not _layouts.has(coord): _layouts[coord]=Formal.layout(coord,seed_value) if formal_mode else Catalog.room_layout(coord,seed_value,expanded_mode)
+	return _layouts[coord]
+
+func current_room_ready() -> bool:
+	return is_room_ready(current_room)
+
+func is_room_ready(coord: Vector2i) -> bool:
+	return resident_rooms.has(coord) and resident_rooms[coord].get_meta("complete",false)
+
+func get_discovered_count() -> int:
+	return _visited.size()
+
+func get_spawn_position(coord: Vector2i = Vector2i.ZERO) -> Vector3:
+	if formal_mode:
+		if coord not in Formal.COORDS: coord=Formal.COORDS[0]
+		ensure_room_ready(coord)
+		return Formal.spawn(coord)
+	ensure_room_ready(coord)
+	if expanded_mode and get_layout(coord).get("expanded",false):
+		return preload("res://scripts/world/expanded_room_catalog.gd").spawn(coord)
+	# A common cardinal approach remains clear of room-specific furniture and WFC cells.
+	return Vector3(coord.x*ROOM,-.64,coord.y*ROOM+14.0)
+
+func teleport_to_room(coord: Vector2i) -> Vector3:
+	update_player_position(Vector3(coord.x*ROOM,0,coord.y*ROOM))
+	return get_spawn_position(coord)
+
+func ensure_room_ready(coord: Vector2i) -> Node3D:
+	if formal_mode and coord in Formal.COORDS:
+		# Every authored shell, mesh and collider already exists after _request_stream.
+		# Explicit early travel must not publish the target ahead of its predecessors:
+		# room_loaded insertion order is also the exact optical BVH input order.
+		# Finish only the finite catalog prefix; ordinary source streaming is untouched.
+		for earlier: Vector2i in Formal.COORDS:
+			if not resident_rooms.has(earlier): _create_shell(earlier)
+			if not is_room_ready(earlier): _finish_room(earlier)
+			if earlier == coord: break
+		return resident_rooms[coord]
+	if not resident_rooms.has(coord): _create_shell(coord)
+	if not is_room_ready(coord): _finish_room(coord)
+	return resident_rooms[coord]
+
+func update_player_position(pos: Vector3) -> void:
+	if not _initialized: return
+	var coord:=get_room_coord(pos)
+	if formal_mode and coord not in Formal.COORDS: return
+	if coord==current_room: return
+	var transition_start:=Time.get_ticks_usec()
+	current_room=coord
+	_request_stream(coord)
+	# Handles arbitrarily distant teleport safely, rather than waiting over an empty room.
+	ensure_room_ready(coord)
+	_visited[coord]=true
+	room_changed.emit(coord,get_layout(coord))
+	profile_counters.transitions+=1
+	profile_counters.last_transition_ms=float(Time.get_ticks_usec()-transition_start)/1000.0
+	profile_counters.max_transition_ms=maxf(profile_counters.max_transition_ms,profile_counters.last_transition_ms)
+
+func _request_stream(center: Vector2i) -> void:
+	_desired.clear()
+	_queue.clear()
+	var candidates: Array[Vector2i] = []
+	if formal_mode:
+		for coord in Formal.COORDS:
+			_desired[coord]=true
+			if not resident_rooms.has(coord): _create_shell(coord)
+			if not is_room_ready(coord): _queue.append(coord)
+		return
+	for z in range(center.y-STREAM_RADIUS,center.y+STREAM_RADIUS+1):
+		for x in range(center.x-STREAM_RADIUS,center.x+STREAM_RADIUS+1):
+			var coord:=Vector2i(x,z)
+			_desired[coord]=true
+			candidates.append(coord)
+	candidates.sort_custom(func(a: Vector2i,b: Vector2i) -> bool:
+		var da: int = (a-center).length_squared()
+		var db: int = (b-center).length_squared()
+		return da<db if da!=db else (a.y<b.y if a.y!=b.y else a.x<b.x))
+	# All destination floor/wall collisions are installed immediately. Only detailed
+	# interiors are queued, so fast walking never outruns terrain or portal walls.
+	for coord in candidates:
+		if not resident_rooms.has(coord): _create_shell(coord)
+		_set_room_distance_class(resident_rooms[coord],coord,center)
+		if not is_room_ready(coord): _queue.append(coord)
+	if _queue.is_empty(): _retire_old_rooms()
+
+func _set_room_distance_class(room: Node3D,coord: Vector2i,center: Vector2i) -> void:
+	# In original engine.ts all 25 rooms retain geometry, props and collision.
+	# Only the inner 3 x 3 contributes lights and reflection-BVH meshes.
+	# Preserve that distinction without deleting/reseeding outer-ring content.
+	var far:bool=not formal_mode and maxi(absi(coord.x-center.x),absi(coord.y-center.y))>1
+	room.set_meta("far",far)
+	var layout:Dictionary=room.get_meta("layout",{})
+	layout["far"]=far
+
+func _create_shell(coord: Vector2i) -> void:
+	var stage_start:=Time.get_ticks_usec()
+	var room:=Node3D.new()
+	room.name="Room_%s_%s" % [coord.x,coord.y]
+	room.position=Vector3(coord.x*ROOM,0,coord.y*ROOM)
+	room.set_meta("coord",coord)
+	room.set_meta("complete",false)
+	add_child(room)
+	resident_rooms[coord]=room
+	var layout:=get_layout(coord)
+	room.set_meta("layout",layout)
+	room.set_meta("variant",layout.variant)
+	_set_room_distance_class(room,coord,current_room)
+	var builder:RefCounted=FormalBuilder.new(room,layout,material_library) if formal_mode else Builder.new(room,layout,material_library)
+	_builders[coord]=builder
+	builder.build_shell()
+	profile_counters.shell_builds+=1
+	profile_counters.last_shell_ms=float(Time.get_ticks_usec()-stage_start)/1000.0
+
+func _finish_room(coord: Vector2i) -> void:
+	if not _builders.has(coord): return
+	var stage_start:=Time.get_ticks_usec()
+	var builder: RefCounted = _builders[coord]
+	builder.build_interior()
+	_builders.erase(coord)
+	_queue.erase(coord)
+	room_loaded.emit(resident_rooms[coord],coord,get_layout(coord))
+	profile_counters.interior_builds+=1
+	profile_counters.last_interior_ms=float(Time.get_ticks_usec()-stage_start)/1000.0
+
+func _process(_delta: float) -> void:
+	if not _initialized or _queue.is_empty(): return
+	# One fully atomic interior per frame. Nearby rooms are finished before outer ring.
+	var coord: Vector2i = _queue.pop_front()
+	if _desired.has(coord): _finish_room(coord)
+	if _queue.is_empty():
+		_retire_old_rooms()
+		streaming_completed.emit()
+
+func _retire_old_rooms() -> void:
+	for coord in resident_rooms.keys():
+		if _desired.has(coord): continue
+		profile_counters.retirements+=1
+		resident_rooms[coord].queue_free()
+		resident_rooms.erase(coord)
+		_builders.erase(coord)
+		_layouts.erase(coord)
+
+func complete_pending_streaming() -> void:
+	# Used by deterministic capture/export validation after normal startup.
+	# Gameplay continues to use nearest-first incremental _process streaming.
+	for coord in _queue.duplicate():
+		if _desired.has(coord): _finish_room(coord)
+	_retire_old_rooms()
+	streaming_completed.emit()
