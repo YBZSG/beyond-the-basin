@@ -8,6 +8,8 @@
 
 最新 `0.6.4-mobile-8400-avatar` 已修复手机版人物被桌面条件挡住的问题，恢复人物、服装和动画；请安装 `PoolCore-Mobile-8400-AvatarFix.apk`。详见 [人物恢复更新](docs/ANDROID-AVATAR-FIX-20261023.md)。
 
+**[下载安卓 APK（0.6.4，人物恢复版）](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.4-android/PoolCore-Mobile-8400-AvatarFix.apk)** · [GitHub 发布页与安装说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.4-android)
+
 ## 打开和运行
 
 1. 下载或克隆本分支，使用 Godot **4.6 Standard** 打开根目录 `project.godot`。实际验证基准为 **4.6.3**，不要把允许尝试其他版本理解成已验证兼容。
