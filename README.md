@@ -6,6 +6,8 @@
 
 当前本地分支新增 **天玑 8400 / 12GB Android 适配**：移除手机版立体水花管线，保留动态水面、折射、焦散与倒影；减少常驻房间、限制高分屏像素预算，默认 High / 30 FPS 上限。已用 Godot 4.7 实际导出并校验 ARM64 APK，说明与验证边界见 [Android 8400 移植](docs/ANDROID-8400-20261023.md)。APK 与图形日志位于 `output/`；此目录不提交 Git。
 
+最新 `0.6.4-mobile-8400-avatar` 已修复手机版人物被桌面条件挡住的问题，恢复人物、服装和动画；请安装 `PoolCore-Mobile-8400-AvatarFix.apk`。详见 [人物恢复更新](docs/ANDROID-AVATAR-FIX-20261023.md)。
+
 ## 打开和运行
 
 1. 下载或克隆本分支，使用 Godot **4.6 Standard** 打开根目录 `project.godot`。实际验证基准为 **4.6.3**，不要把允许尝试其他版本理解成已验证兼容。

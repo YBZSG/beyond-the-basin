@@ -19,6 +19,9 @@ func _inspect(host: Node3D) -> int:
 	var water: Node3D = game.water
 	var quality: Node = game.get_node("MobileRuntime").quality
 	report.saved_frame_cap = quality.frame_cap
+	_check(is_instance_valid(game.avatar), "Mobile player body was not created")
+	if is_instance_valid(game.avatar):
+		_check(bool(game.avatar.get_debug_state().loaded), "Mobile player body failed to load")
 	# Compare wall timing uncapped; gameplay keeps its saved/default cap.
 	Engine.max_fps = 0
 	_check(water._liquid == null and water._whitewater == null and water._liquid_surface == null, "Splash resources were allocated")

@@ -27,9 +27,12 @@ with zipfile.ZipFile(apk) as z:
  assert not any(n.lower().endswith(('.keystore','.jks','.pem','.p12')) for n in names)
  # This preset exports editable GDScript text (script_export_mode=0).
  checked_scripts=[]
- for relative in ['scripts/water/source_water_runtime.gd','scripts/mobile/pool_mobile_capabilities.gd','scripts/mobile/pool_mobile_profile.gd','scripts/mobile/pool_mobile_quality.gd','scripts/world/pool_world.gd','scripts/main.gd']:
+ for relative in ['scripts/water/source_water_runtime.gd','scripts/mobile/pool_mobile_capabilities.gd','scripts/mobile/pool_mobile_profile.gd','scripts/mobile/pool_mobile_quality.gd','scripts/world/pool_world.gd','scripts/main.gd','scripts/player/pool_avatar.gd','scripts/player/avatar_finish_candidate.gd']:
   assert z.read('assets/'+relative)==(root/relative).read_bytes(),relative
   checked_scripts.append(relative)
+ avatar_import='assets/assets/textures/avatar_finish/avatar_finish_candidate.glb.import'
+ imported_avatar=re.search(r'^path="res://([^"]+)"',z.read(avatar_import).decode(),re.MULTILINE)
+ assert imported_avatar and 'assets/'+imported_avatar.group(1) in names,'Missing exported player model'
  assert not any(n.startswith(('assets/docs/','assets/tests/','assets/tools/')) for n in names)
  elf_alignment={}
  for name in names:
@@ -53,6 +56,7 @@ report={'apk':apk.name,'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.re
  'private_signing_material_in_apk':False,'device_install_tested':False,'phone_performance_tested':False,
  'elf_load_alignment':elf_alignment,'mobile_splash_pipeline':'disabled at startup',
  'script_source_byte_exact':checked_scripts,
+ 'player_avatar_resource_present':True,
  'manifest':manifest.splitlines(),'warnings':(signature_warnings+'\n'+manifest_warnings).strip()}
 path=apk.with_suffix('.verification.json');path.write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps({k:v for k,v in report.items() if k not in ['source_assets_byte_exact','manifest']},indent=2))

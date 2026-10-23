@@ -223,17 +223,16 @@ func _create_world() -> void:
 	player.pause_requested.connect(func(): set_menu(true))
 	props.attach_player(player)
 	avatar = null
-	if MainhallPreview.desktop_allowed():
-		avatar = AvatarScript.new()
-		if "--legacy-avatar-model" not in OS.get_cmdline_user_args():
-			avatar.model_path = AvatarFinishScript.CANDIDATE_PATH
-		avatar.setup(player)
-		_avatar_finish = AvatarFinishScript.new() if "--legacy-avatar-model" not in OS.get_cmdline_user_args() else null
-		_avatar_finish_status = _avatar_finish.apply_to(avatar,_avatar_fabric_enabled and "--no-avatar-fabric-finish" not in OS.get_cmdline_user_args()) if _avatar_finish != null else {"enabled":false}
-		if _avatar_finish != null and int(_avatar_finish_status.get("applied_surfaces",0)) != 2:
-			push_warning("Avatar fabric surfaces were not both applied: " + str(_avatar_finish_status))
-		avatar.visible = _avatar_enabled
-		avatar.process_mode = Node.PROCESS_MODE_INHERIT if _avatar_enabled else Node.PROCESS_MODE_DISABLED
+	avatar = AvatarScript.new()
+	if "--legacy-avatar-model" not in OS.get_cmdline_user_args():
+		avatar.model_path = AvatarFinishScript.CANDIDATE_PATH
+	avatar.setup(player)
+	_avatar_finish = AvatarFinishScript.new() if "--legacy-avatar-model" not in OS.get_cmdline_user_args() else null
+	_avatar_finish_status = _avatar_finish.apply_to(avatar,_avatar_fabric_enabled and "--no-avatar-fabric-finish" not in OS.get_cmdline_user_args()) if _avatar_finish != null else {"enabled":false}
+	if _avatar_finish != null and int(_avatar_finish_status.get("applied_surfaces",0)) != 2:
+		push_warning("Avatar fabric surfaces were not both applied: " + str(_avatar_finish_status))
+	avatar.visible = _avatar_enabled
+	avatar.process_mode = Node.PROCESS_MODE_INHERIT if _avatar_enabled else Node.PROCESS_MODE_DISABLED
 	# Native SSR is not the source water reflection. Its late separate-specular
 	# merge conflicts with the exact opaque FogExp2 pass; formal rooms retain it.
 	lighting.set_source_fog_model(_spawn_mode!="formal")
@@ -823,9 +822,9 @@ func _build_interface() -> void:
 	if is_instance_valid(_exploration_notes): _exploration_notes.add_menu_summary(column)
 	_gi_check=_add_check(column,"原生间接光 / SDFGI",_gi_on,func(v):_set_gi(v);_save_settings())
 	_caustics_check=_add_check(column,"水下焦散 / CAUSTICS",_caustics_on,func(v):_caustics_on=v;_apply_live_water("set_caustics",[v]);_save_settings())
+	_add_check(column,"显示角色身体 / PLAYER BODY",_avatar_enabled,_set_avatar_enabled)
+	_add_check(column,"衣物织纹 / CLOTH FINISH",_avatar_fabric_enabled,_set_avatar_fabric_enabled)
 	if MainhallPreview.desktop_allowed():
-		_add_check(column,"显示角色身体 / PLAYER BODY",_avatar_enabled,_set_avatar_enabled)
-		_add_check(column,"衣物织纹 / CLOTH FINISH",_avatar_fabric_enabled,_set_avatar_fabric_enabled)
 		_add_check(column,"主厅设施互动 / QUIET VALVES",_facility_enabled,_set_facility_enabled)
 		_add_check(column,"深水步行减速 / DEPTH RESPONSE",_depth_wading_enabled,func(v):
 			_depth_wading_enabled=v
