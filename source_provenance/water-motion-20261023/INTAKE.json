@@ -1,0 +1,18 @@
+{
+  "archives": [
+    {
+      "archive": "PoolCore-PC-Water-Motion-Editable-Assets-20261023.zip",
+      "files": 50,
+      "crc_pass": true,
+      "manifest_hashes_pass": true
+    },
+    {
+      "archive": "PoolCore-PC-Water-Motion-Code-Tests-20261023.zip",
+      "files": 68,
+      "crc_pass": true,
+      "manifest_hashes_pass": true
+    }
+  ],
+  "accepted": "Character, hands, bounded foot clearance, UI; existing broad waves preserved. Splash runtime/settings/shader excluded.",
+  "backup": "G:\\godot_PoolCore\\backups\\before-PC-Motion-20261024"
+}

@@ -18,7 +18,7 @@ static func create(source: Environment) -> Environment:
 
 static func _is_lighting(name: String) -> bool:
  # These disabled capture-only postprocessing groups cannot affect illumination.
- return not (name.begins_with("tonemap_") or name.begins_with("glow_") or name.begins_with("adjustment_") or name.begins_with("resource_") or name=="script")
+ return not (name.begins_with("pathtracing_") or name.begins_with("tonemap_") or name.begins_with("glow_") or name.begins_with("adjustment_") or name.begins_with("resource_") or name=="script")
 
 static func synchronize(source: Environment, capture: Environment) -> bool:
  if source==null or capture==null: return false
@@ -46,6 +46,7 @@ static func synchronize_live(source: Environment, capture: Environment) -> bool:
  return changed
 
 static func _enforce_linear(capture: Environment) -> void:
+ if capture.has_method("set_pathtracing_enabled"): capture.set("pathtracing_enabled",false)
  if capture.tonemap_mode!=Environment.TONE_MAPPER_LINEAR: capture.tonemap_mode=Environment.TONE_MAPPER_LINEAR
  if capture.tonemap_exposure!=1.0: capture.tonemap_exposure=1.0
  if capture.glow_enabled: capture.glow_enabled=false

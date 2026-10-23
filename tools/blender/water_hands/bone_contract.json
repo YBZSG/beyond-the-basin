@@ -1,0 +1,438 @@
+{
+  "original_node_identities_and_parent_indices_equal": true,
+  "original_node_transforms_and_socket_locations_equal": true,
+  "joints": [
+    {
+      "skin_joint_index": 0,
+      "node_index": 41,
+      "name": "Root",
+      "parent_node_index": 44,
+      "parent_name": "ExplorerRig",
+      "original": true
+    },
+    {
+      "skin_joint_index": 1,
+      "node_index": 40,
+      "name": "Hips",
+      "parent_node_index": 41,
+      "parent_name": "Root",
+      "original": true
+    },
+    {
+      "skin_joint_index": 2,
+      "node_index": 31,
+      "name": "Spine",
+      "parent_node_index": 40,
+      "parent_name": "Hips",
+      "original": true
+    },
+    {
+      "skin_joint_index": 3,
+      "node_index": 30,
+      "name": "Chest",
+      "parent_node_index": 31,
+      "parent_name": "Spine",
+      "original": true
+    },
+    {
+      "skin_joint_index": 4,
+      "node_index": 1,
+      "name": "Neck",
+      "parent_node_index": 30,
+      "parent_name": "Chest",
+      "original": true
+    },
+    {
+      "skin_joint_index": 5,
+      "node_index": 0,
+      "name": "Head",
+      "parent_node_index": 1,
+      "parent_name": "Neck",
+      "original": true
+    },
+    {
+      "skin_joint_index": 6,
+      "node_index": 15,
+      "name": "Shoulder_R",
+      "parent_node_index": 30,
+      "parent_name": "Chest",
+      "original": true
+    },
+    {
+      "skin_joint_index": 7,
+      "node_index": 14,
+      "name": "UpperArm_R",
+      "parent_node_index": 15,
+      "parent_name": "Shoulder_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 8,
+      "node_index": 13,
+      "name": "Forearm_R",
+      "parent_node_index": 14,
+      "parent_name": "UpperArm_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 9,
+      "node_index": 12,
+      "name": "Hand_R",
+      "parent_node_index": 13,
+      "parent_name": "Forearm_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 10,
+      "node_index": 3,
+      "name": "Index1_R",
+      "parent_node_index": 12,
+      "parent_name": "Hand_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 11,
+      "node_index": 2,
+      "name": "Index2_R",
+      "parent_node_index": 3,
+      "parent_name": "Index1_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 12,
+      "node_index": 5,
+      "name": "Middle1_R",
+      "parent_node_index": 12,
+      "parent_name": "Hand_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 13,
+      "node_index": 4,
+      "name": "Middle2_R",
+      "parent_node_index": 5,
+      "parent_name": "Middle1_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 14,
+      "node_index": 7,
+      "name": "Ring1_R",
+      "parent_node_index": 12,
+      "parent_name": "Hand_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 15,
+      "node_index": 6,
+      "name": "Ring2_R",
+      "parent_node_index": 7,
+      "parent_name": "Ring1_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 16,
+      "node_index": 9,
+      "name": "Little1_R",
+      "parent_node_index": 12,
+      "parent_name": "Hand_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 17,
+      "node_index": 8,
+      "name": "Little2_R",
+      "parent_node_index": 9,
+      "parent_name": "Little1_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 18,
+      "node_index": 11,
+      "name": "Thumb1_R",
+      "parent_node_index": 12,
+      "parent_name": "Hand_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 19,
+      "node_index": 10,
+      "name": "Thumb2_R",
+      "parent_node_index": 11,
+      "parent_name": "Thumb1_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 20,
+      "node_index": 29,
+      "name": "Shoulder_L",
+      "parent_node_index": 30,
+      "parent_name": "Chest",
+      "original": true
+    },
+    {
+      "skin_joint_index": 21,
+      "node_index": 28,
+      "name": "UpperArm_L",
+      "parent_node_index": 29,
+      "parent_name": "Shoulder_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 22,
+      "node_index": 27,
+      "name": "Forearm_L",
+      "parent_node_index": 28,
+      "parent_name": "UpperArm_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 23,
+      "node_index": 26,
+      "name": "Hand_L",
+      "parent_node_index": 27,
+      "parent_name": "Forearm_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 24,
+      "node_index": 17,
+      "name": "Index1_L",
+      "parent_node_index": 26,
+      "parent_name": "Hand_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 25,
+      "node_index": 16,
+      "name": "Index2_L",
+      "parent_node_index": 17,
+      "parent_name": "Index1_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 26,
+      "node_index": 19,
+      "name": "Middle1_L",
+      "parent_node_index": 26,
+      "parent_name": "Hand_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 27,
+      "node_index": 18,
+      "name": "Middle2_L",
+      "parent_node_index": 19,
+      "parent_name": "Middle1_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 28,
+      "node_index": 21,
+      "name": "Ring1_L",
+      "parent_node_index": 26,
+      "parent_name": "Hand_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 29,
+      "node_index": 20,
+      "name": "Ring2_L",
+      "parent_node_index": 21,
+      "parent_name": "Ring1_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 30,
+      "node_index": 23,
+      "name": "Little1_L",
+      "parent_node_index": 26,
+      "parent_name": "Hand_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 31,
+      "node_index": 22,
+      "name": "Little2_L",
+      "parent_node_index": 23,
+      "parent_name": "Little1_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 32,
+      "node_index": 25,
+      "name": "Thumb1_L",
+      "parent_node_index": 26,
+      "parent_name": "Hand_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 33,
+      "node_index": 24,
+      "name": "Thumb2_L",
+      "parent_node_index": 25,
+      "parent_name": "Thumb1_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 34,
+      "node_index": 35,
+      "name": "UpperLeg_R",
+      "parent_node_index": 40,
+      "parent_name": "Hips",
+      "original": true
+    },
+    {
+      "skin_joint_index": 35,
+      "node_index": 34,
+      "name": "LowerLeg_R",
+      "parent_node_index": 35,
+      "parent_name": "UpperLeg_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 36,
+      "node_index": 33,
+      "name": "Foot_R",
+      "parent_node_index": 34,
+      "parent_name": "LowerLeg_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 37,
+      "node_index": 32,
+      "name": "Toe_R",
+      "parent_node_index": 33,
+      "parent_name": "Foot_R",
+      "original": true
+    },
+    {
+      "skin_joint_index": 38,
+      "node_index": 39,
+      "name": "UpperLeg_L",
+      "parent_node_index": 40,
+      "parent_name": "Hips",
+      "original": true
+    },
+    {
+      "skin_joint_index": 39,
+      "node_index": 38,
+      "name": "LowerLeg_L",
+      "parent_node_index": 39,
+      "parent_name": "UpperLeg_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 40,
+      "node_index": 37,
+      "name": "Foot_L",
+      "parent_node_index": 38,
+      "parent_name": "LowerLeg_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 41,
+      "node_index": 36,
+      "name": "Toe_L",
+      "parent_node_index": 37,
+      "parent_name": "Foot_L",
+      "original": true
+    },
+    {
+      "skin_joint_index": 42,
+      "node_index": 45,
+      "name": "Index3_L",
+      "parent_node_index": 16,
+      "parent_name": "Index2_L",
+      "original": false
+    },
+    {
+      "skin_joint_index": 43,
+      "node_index": 46,
+      "name": "Middle3_L",
+      "parent_node_index": 18,
+      "parent_name": "Middle2_L",
+      "original": false
+    },
+    {
+      "skin_joint_index": 44,
+      "node_index": 47,
+      "name": "Ring3_L",
+      "parent_node_index": 20,
+      "parent_name": "Ring2_L",
+      "original": false
+    },
+    {
+      "skin_joint_index": 45,
+      "node_index": 48,
+      "name": "Little3_L",
+      "parent_node_index": 22,
+      "parent_name": "Little2_L",
+      "original": false
+    },
+    {
+      "skin_joint_index": 46,
+      "node_index": 49,
+      "name": "Thumb3_L",
+      "parent_node_index": 24,
+      "parent_name": "Thumb2_L",
+      "original": false
+    },
+    {
+      "skin_joint_index": 47,
+      "node_index": 50,
+      "name": "WristSupport_L",
+      "parent_node_index": 27,
+      "parent_name": "Forearm_L",
+      "original": false
+    },
+    {
+      "skin_joint_index": 48,
+      "node_index": 51,
+      "name": "Index3_R",
+      "parent_node_index": 2,
+      "parent_name": "Index2_R",
+      "original": false
+    },
+    {
+      "skin_joint_index": 49,
+      "node_index": 52,
+      "name": "Middle3_R",
+      "parent_node_index": 4,
+      "parent_name": "Middle2_R",
+      "original": false
+    },
+    {
+      "skin_joint_index": 50,
+      "node_index": 53,
+      "name": "Ring3_R",
+      "parent_node_index": 6,
+      "parent_name": "Ring2_R",
+      "original": false
+    },
+    {
+      "skin_joint_index": 51,
+      "node_index": 54,
+      "name": "Little3_R",
+      "parent_node_index": 8,
+      "parent_name": "Little2_R",
+      "original": false
+    },
+    {
+      "skin_joint_index": 52,
+      "node_index": 55,
+      "name": "Thumb3_R",
+      "parent_node_index": 10,
+      "parent_name": "Thumb2_R",
+      "original": false
+    },
+    {
+      "skin_joint_index": 53,
+      "node_index": 56,
+      "name": "WristSupport_R",
+      "parent_node_index": 13,
+      "parent_name": "Forearm_R",
+      "original": false
+    }
+  ]
+}

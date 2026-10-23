@@ -3,8 +3,8 @@ render_mode unshaded, fog_disabled, depth_draw_never, cull_back;
 // Direct port of water-optics.ts WATER_FRAGMENT from Beyond the Basin 66a4543.
 // API-only changes: Godot screen/depth inputs, reverse-Z reconstruction, world
 // floating-origin offset, output/tone mapping and mirror-capture uniforms.
-// Original Snell offset, Schlick, Beer coefficients, foam advection/noise and
-// debug branches are retained. Caustics are applied to receiver materials,
+// Original Snell offset, Schlick, Beer coefficients, foam advection and
+// debug branches are retained; pore modulation is continuous on PC. Caustics are applied to receiver materials,
 // NEVER an unrelated procedural texture multiplied into transmission.
 #include "res://shaders/source_water/shared_waves.gdshaderinc"
 #include "res://shaders/source_water/wind_ripples.gdshaderinc"
@@ -78,9 +78,9 @@ float foamField(vec2 p){
   return density;
 }
 float foamNoise(vec2 p){
-  vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
-  vec4 h=fract(sin(vec4(dot(i,vec2(127.1,311.7)),dot(i+vec2(1,0),vec2(127.1,311.7)),dot(i+vec2(0,1),vec2(127.1,311.7)),dot(i+vec2(1,1),vec2(127.1,311.7))))*43758.5453);
-  return mix(mix(h.x,h.y,f.x),mix(h.z,h.w,f.x),f.y);
+  // Continuous bounded modulation: the previous lattice noise exposed hard
+  // rectangular seams on the PC water surface. No cell hash or extra texture.
+  return .5+.25*sin(p.x*4.13+sin(p.y*3.71))+.25*sin(p.y*4.57+sin(p.x*3.17));
 }
 void fragment(){
   vec2 p=worldPosition.xz-domain_origin;

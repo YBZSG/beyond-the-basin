@@ -1,0 +1,21 @@
+--- a/servers/rendering/renderer_rd/effects/dlss.cpp
++++ b/servers/rendering/renderer_rd/effects/dlss.cpp
+@@ -56,6 +56,7 @@
+ 	sl::DLSSOptions currentDlssOptions;
+ 	sl::DLSSOptimalSettings currentOptimalSettings;
+ 	sl::DLSSDOptions currentDlssDOptions; // DLSS Ray Reconstruction options
++	bool reported_sr_dispatch = false;
+ 
+ 	DLSSContextInner();
+ 	virtual ~DLSSContextInner();
+@@ -525,6 +526,10 @@
+ 			if (result != sl::Result::eOk) {
+ 				ERR_FAIL_MSG("Failed to call streamline slEvaluateFeature for DLSS Super Resolution. Result: " + String(StreamlineContext::result_to_string(result)));
+ 			}
++			if (!context->reported_sr_dispatch) {
++				print_verbose(vformat("PoolCore DLSS SR dispatch OK: viewport=%d input=%dx%d output=%dx%d mode=%d", (unsigned int)context->viewport, p_params.internal_size.x, p_params.internal_size.y, context->currentDlssOptions.outputWidth, context->currentDlssOptions.outputHeight, (int)context->currentDlssOptions.mode));
++				context->reported_sr_dispatch = true;
++			}
+ 		}
+ 	}
+ 

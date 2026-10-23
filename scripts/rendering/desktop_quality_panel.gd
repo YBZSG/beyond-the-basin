@@ -8,6 +8,7 @@ const SHADOW_SIZES := [1024, 2048, 4096, 8192]
 const REFLECTION_SIZES := [256, 384, 512, 768, 1024, 1536, 2048]
 const REFLECTION_INTERVALS := [0, 1, 2, 3, 5]
 const CAUSTIC_INTERVALS := [0, 1, 2, 3, 4, 5, 6]
+const DLSS_SCALES := {"Quality":2.0 / 3.0, "Balanced":0.58, "Performance":0.5, "DLAA":1.0}
 const PRESETS := {
 	"Low": {"caustic_interval":2, "scale":0.75, "msaa":0, "taa":false, "shadows":false, "shadow_size":1024, "reflection_size":256, "reflection_interval":3, "water":"Low", "caustics":false, "gi":false, "ssao":false, "ssil":false, "glow":false},
 	"Medium": {"caustic_interval":1, "scale":0.9, "msaa":1, "taa":false, "shadows":true, "shadow_size":2048, "reflection_size":512, "reflection_interval":1, "water":"Medium", "caustics":true, "gi":false, "ssao":true, "ssil":false, "glow":true},
@@ -16,7 +17,7 @@ const PRESETS := {
 }
 var main: Node
 var preset := "High"
-var settings: Dictionary = PRESETS.High.duplicate()
+var settings: Dictionary = preset_settings("High")
 var settings_path := SETTINGS_PATH
 var _water: Node
 var _water_applied_quality := ""
@@ -36,6 +37,52 @@ var _applied: Dictionary = {}
 var apply_counts: Dictionary = {}
 var _pc_shadow_profile := PCShadowProfile.new()
 var pc_shadow_status: Dictionary = {}
+var dlss_status: Dictionary = {}
+var frame_generation_status: Dictionary = {}
+var raytracing_status: Dictionary = {}
+
+static func dlss_support() -> Dictionary:
+	# Query the optional NVIDIA API dynamically so stock Godot still loads this script.
+	if not is_desktop_session() or DisplayServer.get_name() == "headless":
+		return {"available":false, "reason":"需要桌面图形设备"}
+	if RenderingServer.get_current_rendering_method() != "forward_plus":
+		return {"available":false, "reason":"需要 Forward+ 渲染器"}
+	if not Engine.has_singleton("Streamline") or not ClassDB.class_has_integer_constant("Viewport", "SCALING_3D_MODE_DLSS"):
+		return {"available":false, "reason":"当前引擎未集成 DLSS"}
+	var streamline := Engine.get_singleton("Streamline")
+	if not streamline.has_method("get_capability") or not ClassDB.class_has_integer_constant("Streamline", "STREAMLINE_CAPABILITY_DLSS"):
+		return {"available":false, "reason":"当前引擎缺少 DLSS 能力检测"}
+	var capability := ClassDB.class_get_integer_constant("Streamline", "STREAMLINE_CAPABILITY_DLSS")
+	if not bool(streamline.call("get_capability", capability)):
+		return {"available":false, "reason":"显卡、驱动或 DLSS 运行库不可用"}
+	return {"available":true, "reason":"", "mode":ClassDB.class_get_integer_constant("Viewport", "SCALING_3D_MODE_DLSS")}
+
+static func nvidia_feature_support(capability_name: String) -> Dictionary:
+	var base := dlss_support()
+	if not base.available: return base
+	if not ClassDB.class_has_integer_constant("Streamline", capability_name):
+		return {"available":false, "reason":"引擎缺少此功能"}
+	var capability := ClassDB.class_get_integer_constant("Streamline", capability_name)
+	if not bool(Engine.get_singleton("Streamline").call("get_capability", capability)):
+		return {"available":false, "reason":"显卡、驱动或运行库不支持"}
+	return {"available":true, "reason":""}
+
+static func raytracing_support() -> Dictionary:
+	var support := nvidia_feature_support("STREAMLINE_CAPABILITY_DLSS_RR")
+	if not support.available: return support
+	if not ClassDB.class_has_method("Environment", "set_pathtracing_enabled") or not ClassDB.class_has_integer_constant("RenderingDevice", "SUPPORTS_RAYTRACING_PIPELINE"):
+		return {"available":false, "reason":"当前引擎不支持硬件路径追踪"}
+	var device := RenderingServer.get_rendering_device()
+	if device == null or not device.has_feature(ClassDB.class_get_integer_constant("RenderingDevice", "SUPPORTS_RAYTRACING_PIPELINE")):
+		return {"available":false, "reason":"当前图形设备不支持硬件光追"}
+	return {"available":true, "reason":""}
+
+static func preset_settings(value: String) -> Dictionary:
+	var result: Dictionary = PRESETS[value].duplicate()
+	result.dlss = "Quality"
+	result.frame_generation = true
+	result.raytracing = false
+	return result
 
 static func is_desktop_session() -> bool:
 	return not (OS.has_feature("android") or OS.has_feature("ios") or "--mobile-preview" in OS.get_cmdline_user_args())
@@ -60,7 +107,7 @@ func configure(host: Node, path: String = SETTINGS_PATH) -> void:
 	# Keep an existing Ultra choice when migrating; never auto-select a lower tier.
 	var previous := str(main.get("_quality"))
 	preset = previous if previous in PRESET_NAMES else "High"
-	settings = PRESETS[preset].duplicate()
+	settings = preset_settings(preset)
 	settings.gi = bool(main.get("_gi_on"))
 	settings.caustics = bool(main.get("_caustics_on"))
 	# Preserve an explicitly saved source advanced-water cadence on first migration.
@@ -77,7 +124,7 @@ func load_settings(path: String = "") -> void:
 	if config.load(settings_path if path.is_empty() else path) != OK: return
 	var saved_preset := str(config.get_value("graphics", "preset", "High"))
 	preset = saved_preset if saved_preset in PRESET_NAMES else "High"
-	settings = PRESETS[preset].duplicate()
+	settings = preset_settings(preset)
 	for key: String in settings:
 		settings[key] = _validated(key, config.get_value("graphics", key, settings[key]), settings[key])
 
@@ -92,6 +139,8 @@ func save_settings(path: String = "") -> Error:
 
 func _validated(key: String, value: Variant, fallback: Variant) -> Variant:
 	match key:
+		"dlss":
+			if value is String and (value == "Off" or DLSS_SCALES.has(value)): return value
 		"scale":
 			if (value is float or value is int) and is_finite(float(value)):
 				return clampf(float(value), 0.5, 1.5)
@@ -114,7 +163,7 @@ func _validated(key: String, value: Variant, fallback: Variant) -> Variant:
 func select_preset(value: String) -> void:
 	if value not in PRESET_NAMES: return
 	preset = value
-	settings = PRESETS[value].duplicate()
+	settings = preset_settings(value)
 	apply_settings()
 	save_settings()
 
@@ -134,18 +183,49 @@ func apply_settings() -> void:
 	if not is_instance_valid(main): return
 	var viewport := main.get_viewport()
 	var support := supported_features(RenderingServer.get_current_rendering_method())
-	var desired_taa := bool(settings.taa) and bool(support.taa)
-	var viewport_changed := _changed("viewport", [viewport.get_instance_id(), settings.scale, settings.msaa, settings.taa, support.taa])
+	dlss_status = dlss_support()
+	dlss_status.requested = str(settings.get("dlss", "Quality"))
+	dlss_status.active = bool(dlss_status.available) and DLSS_SCALES.has(dlss_status.requested)
+	var desired_mode := int(dlss_status.mode) if dlss_status.active else int(Viewport.SCALING_3D_MODE_BILINEAR)
+	var desired_scale := float(DLSS_SCALES[dlss_status.requested]) if dlss_status.active else float(settings.scale)
+	var desired_msaa := int(Viewport.MSAA_DISABLED) if dlss_status.active else int(settings.msaa)
+	var desired_taa := bool(settings.taa) and bool(support.taa) and not bool(dlss_status.active)
+	var viewport_changed := _changed("viewport", [viewport.get_instance_id(), desired_mode, desired_scale, desired_msaa, desired_taa])
 	# World regeneration keeps this Viewport but the host reapplies legacy AA.
 	# A cached settings signature alone cannot prove the actual state still matches.
 	# Reconcile only this group; keep every saved override and all other caches.
-	var viewport_drifted := viewport.scaling_3d_mode != Viewport.SCALING_3D_MODE_BILINEAR or not is_equal_approx(viewport.scaling_3d_scale, float(settings.scale)) or viewport.msaa_3d != int(settings.msaa) or viewport.use_taa != desired_taa
+	var viewport_drifted := int(viewport.scaling_3d_mode) != desired_mode or not is_equal_approx(viewport.scaling_3d_scale, desired_scale) or viewport.msaa_3d != desired_msaa or viewport.use_taa != desired_taa
 	if viewport_changed or viewport_drifted:
 		if not viewport_changed: apply_counts["viewport"] = int(apply_counts.get("viewport", 0)) + 1
-		viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
-		viewport.scaling_3d_scale = float(settings.scale)
-		viewport.msaa_3d = int(settings.msaa)
+		# Set compatible intermediate values; each setter reconfigures the renderer.
+		# In particular, do not briefly enable DLSS with legacy TAA or 125% scale.
+		viewport.use_taa = false
+		if int(viewport.scaling_3d_mode) != desired_mode:
+			viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+		viewport.set("msaa_3d", desired_msaa)
+		viewport.scaling_3d_scale = desired_scale
+		viewport.set("scaling_3d_mode", desired_mode)
 		viewport.use_taa = desired_taa
+	dlss_status.scale = desired_scale
+	frame_generation_status = nvidia_feature_support("STREAMLINE_CAPABILITY_DLSS_G")
+	var reflex := nvidia_feature_support("STREAMLINE_CAPABILITY_REFLEX")
+	frame_generation_status.available = bool(frame_generation_status.available) and bool(reflex.available)
+	if not reflex.available: frame_generation_status.reason = "Reflex 不可用：" + str(reflex.reason)
+	frame_generation_status.requested = bool(settings.frame_generation)
+	frame_generation_status.active = bool(frame_generation_status.available) and bool(dlss_status.active) and bool(settings.frame_generation)
+	if ClassDB.class_has_method("Viewport", "set_frame_generation"):
+		# Reflex stays on with DLSS, including during a frame-generation shutdown.
+		if bool(reflex.available):
+			var parameter := ClassDB.class_get_integer_constant("Streamline", "STREAMLINE_PARAM_REFLEX_MODE")
+			Engine.get_singleton("Streamline").call("set_parameter", parameter, 1)
+		viewport.set("frame_generation", bool(frame_generation_status.active))
+	raytracing_status = raytracing_support()
+	var world := main.get("world") as Node
+	if is_instance_valid(world) and (bool(world.get("formal_mode")) or bool(world.get("expanded_mode"))):
+		raytracing_status.available = false
+		raytracing_status.reason = "当前仅适配原泳池场景"
+	raytracing_status.requested = bool(settings.raytracing)
+	raytracing_status.active = bool(raytracing_status.available) and bool(dlss_status.active) and bool(settings.raytracing)
 	var atlas_changed := _changed("shadow_atlas", [viewport.get_instance_id(), settings.shadow_size])
 	if atlas_changed:
 		viewport.positional_shadow_atlas_size = int(settings.shadow_size)
@@ -181,6 +261,13 @@ func apply_settings() -> void:
 	_environment = environment_node.environment if is_instance_valid(environment_node) else null
 	var lighting_changed := false
 	if _environment:
+		if _changed("raytracing", [_environment.get_instance_id(), raytracing_status.active, water_replaced]):
+			_set_rt_materials(bool(raytracing_status.active))
+			if _environment.has_method("set_pathtracing_enabled"):
+				_environment.set("pathtracing_samples_per_pixel", 1)
+				_environment.set("pathtracing_max_bounces", 3)
+				_environment.set("pathtracing_denoiser", 1)
+				_environment.set("pathtracing_enabled", bool(raytracing_status.active))
 		lighting_changed = _changed("environment", [_environment.get_instance_id(), settings.gi, settings.ssao, settings.ssil, settings.glow, support])
 		if lighting_changed:
 			_environment.sdfgi_enabled = (bool(main.call("effective_gi_requested",bool(settings.gi))) if main.has_method("effective_gi_requested") else bool(settings.gi)) and support.gi
@@ -195,6 +282,26 @@ func apply_settings() -> void:
 		if main.has_method("_capture_lighting_changed"): main.call("_capture_lighting_changed")
 		else: _water.call("refresh_capture_lighting")
 	_refresh_interface()
+
+func _set_rt_materials(enabled: bool) -> void:
+	# The raster shader's pixel derivatives have no meaning in a ray-hit stage.
+	# Keep all textures/parameters; the RT variant uses distance-based filtering.
+	var pairs := {"res://shaders/pc_source_ceramic.gdshader":"res://shaders/pc_source_ceramic_rt.gdshader", "res://shaders/source_architecture.gdshader":"res://shaders/source_architecture_rt.gdshader"}
+	var materials: Array = []
+	var library := main.get("materials") as RefCounted
+	if library and library.has_method("_receiver_materials"):
+		materials.append_array(library.call("_receiver_materials"))
+	for node in main.find_children("*", "GeometryInstance3D", true, false):
+		materials.append_array([node.material_override, node.material_overlay])
+		if node is MeshInstance3D and node.mesh:
+			for index in node.mesh.get_surface_count(): materials.append(node.get_active_material(index))
+		elif node is MultiMeshInstance3D and node.multimesh and node.multimesh.mesh:
+			for index in node.multimesh.mesh.get_surface_count(): materials.append(node.multimesh.mesh.surface_get_material(index))
+	for material in materials:
+		if material is ShaderMaterial and material.shader:
+			for raster: String in pairs:
+				if material.shader.resource_path in [raster, pairs[raster]]:
+					material.shader = load(pairs[raster] if enabled else raster)
 
 func _apply_pc_shadow_profile(environment_node: WorldEnvironment) -> bool:
 	var sun := environment_node.get_node_or_null("ApertureSun") as DirectionalLight3D if is_instance_valid(environment_node) else null
@@ -301,6 +408,9 @@ func _build_panel() -> void:
 	_preset_selector.custom_minimum_size.y = 38
 	_preset_selector.item_selected.connect(func(index: int): select_preset(PRESET_NAMES[index]))
 	column.add_child(_preset_selector)
+	_add_option(column, "NVIDIA DLSS / DLAA", "dlss", ["关闭 / Off", "质量 / Quality", "平衡 / Balanced", "性能 / Performance", "原生抗锯齿 / DLAA"], ["Off", "Quality", "Balanced", "Performance", "DLAA"])
+	_add_check(column, "NVIDIA 帧生成 2× + Reflex", "frame_generation")
+	_add_check(column, "原泳池硬件路径追踪 + 光线重建（实验）", "raytracing")
 	_scale_label = Label.new()
 	column.add_child(_scale_label)
 	_scale = HSlider.new()
@@ -389,22 +499,37 @@ func _add_check(parent: Node, text: String, key: String) -> void:
 func _refresh_interface() -> void:
 	if not is_instance_valid(_preset_selector): return
 	_preset_selector.select(PRESET_NAMES.find(preset))
-	var custom: bool = settings != PRESETS[preset]
+	var custom: bool = settings != preset_settings(preset)
 	_summary.text = "%s%s · 立即生效 / LIVE" % [preset, " + 自定义 / CUSTOM" if custom else ""]
 	_scale.set_value_no_signal(float(settings.scale) * 100.0)
 	_scale_label.text = "3D 渲染比例 / RESOLUTION SCALE: %d%%" % roundi(float(settings.scale) * 100.0)
+	var dlss_active := bool(dlss_status.get("active", false))
+	_scale.editable = not dlss_active
+	if dlss_active:
+		_scale_label.text = "DLSS %s · 内部渲染 %d%% · 菜单保持原生清晰度" % [settings.dlss, roundi(float(dlss_status.scale) * 100.0)]
 	for key: String in _options:
 		var option := _options[key] as OptionButton
+		option.disabled = (key == "dlss" and not bool(dlss_status.get("available", false))) or (key == "msaa" and dlss_active)
 		for index in option.item_count:
 			if option.get_item_metadata(index) == settings[key]: option.select(index)
 	var renderer := RenderingServer.get_current_rendering_method()
 	var support := supported_features(renderer)
 	for key: String in _checks:
 		var check := _checks[key] as CheckButton
-		check.disabled = not bool(support.get(key, true))
+		check.disabled = not bool(support.get(key, true)) or (key == "taa" and dlss_active)
+		if key == "frame_generation": check.disabled = not bool(frame_generation_status.get("available", false)) or not dlss_active
+		if key == "raytracing": check.disabled = not bool(raytracing_status.get("available", false)) or not dlss_active
+		if key in ["gi", "ssao", "ssil"] and bool(raytracing_status.get("active", false)): check.disabled = true
 		check.set_pressed_no_signal(bool(settings[key]) and not check.disabled)
-		check.tooltip_text = "当前渲染器不支持；保存的选择会在兼容的渲染器下启用。" if check.disabled else ""
-	_notes.text = "移动视角时反射始终逐帧更新；更新间隔仅用于静止视角。当前渲染器：%s。High 默认保持原生高画质；Ultra 启用 125%% 超采样、8× MSAA 和更高精度。选择预设会重置下面的单项设置，修改会自动保存。" % renderer
+		check.tooltip_text = "DLSS 已负责时间抗锯齿；关闭 DLSS 后恢复保存的选择。" if key == "taa" and dlss_active else ("当前渲染器不支持；保存的选择会在兼容的渲染器下启用。" if check.disabled else "")
+	_notes.text = "DLSS 默认 Quality；DLAA 使用原生分辨率。启用时由 DLSS 负责抗锯齿和渲染比例，关闭后恢复原有比例、MSAA 与 TAA。水体模拟、反射精度和菜单分辨率独立保留。"
+	_notes.text += "\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。"
+	_notes.text += "\n实验光追：建筑、人物使用硬件路径追踪与 DLSS 光线重建；透明水面保留原波浪、平面反射及焦散。首次开启需要编译材质；性能开销较大。"
+	if not bool(frame_generation_status.get("available", false)): _notes.text += "\n帧生成不可用：" + str(frame_generation_status.get("reason", "Reflex 不可用"))
+	if not bool(raytracing_status.get("available", false)): _notes.text += "\n光追不可用：" + str(raytracing_status.get("reason", ""))
+	if not bool(dlss_status.get("available", false)):
+		_notes.text += "\nDLSS 不可用：%s。当前使用保存的常规渲染设置。" % str(dlss_status.get("reason", ""))
+	_notes.text += "\n移动视角时反射始终逐帧更新；更新间隔仅用于静止视角。当前渲染器：%s。关闭 DLSS 时 High 默认原生分辨率，Ultra 默认 125%% 超采样与 8× MSAA。选择预设会重置单项设置，修改自动保存。" % renderer
 	_notes.text += "\n水体精度改变模拟、细波纹和水面网格；反射宽度与刷新频率独立可调。关闭阴影不会开启原本不投影的灯光。High / Ultra 默认逐帧计算焦散；这提高动画连续性，也增加 GPU 负担，不改变光子数量或波浪公式。"
 	_notes.text += "\nPC 近景阴影采用 5/14/60/120 米分配，保留原最远覆盖；High/Ultra 增加软阴影采样。更高滤波可能增加 GPU 负担，不会改变角色轮廓。"
 	if renderer != "forward_plus":

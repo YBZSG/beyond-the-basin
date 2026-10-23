@@ -243,6 +243,7 @@ func _copy_capture_environment() -> void:
 	var capture: Environment = _source_environment.duplicate(true)
 	capture.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	capture.tonemap_exposure = 1.0
+	if capture.has_method("set_pathtracing_enabled"): capture.set("pathtracing_enabled", false)
 	capture.glow_enabled = false
 	capture.adjustment_enabled = false
 	_camera.environment = capture

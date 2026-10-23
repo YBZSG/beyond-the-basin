@@ -1,0 +1,109 @@
+{
+  "actual_static_physics_rays": true,
+  "air_release": {
+    "last_lifts": [
+      0.0,
+      0.0
+    ],
+    "max_per_tick_step_m": 0.01,
+    "max_rotation_step_120hz_deg": 2.58361382243206,
+    "starting_lift": 0.137553638603284
+  },
+  "failures": [],
+  "flat_changed_samples": 0,
+  "integrated": false,
+  "passed": true,
+  "ramp": {
+    "after_min_m": 0.000999615987141933,
+    "before_min_m": -0.138395097851753,
+    "capped_samples": 0,
+    "degrees": 21.1398248086577,
+    "max_length_error_m": 5.36441802978516e-07,
+    "max_lift_step_120hz_m": 0.00794592971659737,
+    "max_target_error_m": 6.0349702835083e-07,
+    "unsolved_samples": 0
+  },
+  "release_walltime": {
+    "actual_weighted_sole_max_residual_m_by_hz": {
+      "120": [
+        0.0052754208445549,
+        0.000144504316267557,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "15": [
+        0.0052754208445549,
+        0.000144504316267557,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "30": [
+        0.0052754208445549,
+        0.000144504316267557,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "60": [
+        0.0052754208445549,
+        0.000144504316267557,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "finite_delta_cap_seconds": 0.1,
+    "maximum_endpoint_difference_m": 0.0,
+    "sample_times_seconds": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ]
+  },
+  "samples": 480,
+  "software_cpu_microcost_us": {
+    "flat_hint_max": 53,
+    "flat_hint_p50": 2,
+    "flat_hint_p95": 2,
+    "ramp_max": 2726,
+    "ramp_p50": 398,
+    "ramp_p95": 508,
+    "scope": "helper only, cached bone transforms, actual static rays; not target-PC FPS"
+  },
+  "transition_release": {
+    "jump": {
+      "actual_weighted_sole_vertices_per_frame": 608,
+      "final_extra_lift_or_hover_m": 0.0,
+      "maximum_horizontal_change_m": 4.32390521609705e-07,
+      "maximum_residual_step_120hz_m": 0.0100001022219658,
+      "stop_rotation_step_deg": 0.0,
+      "unreachable_frames": 0
+    },
+    "ramp_to_flat_stop": {
+      "actual_weighted_sole_vertices_per_frame": 608,
+      "final_extra_lift_or_hover_m": 0.0,
+      "maximum_horizontal_change_m": 5.51544303561968e-07,
+      "maximum_residual_step_120hz_m": 0.0100001767277718,
+      "stop_rotation_step_deg": 2.58361382243206,
+      "unreachable_frames": 0
+    },
+    "swim": {
+      "actual_weighted_sole_vertices_per_frame": 608,
+      "final_extra_lift_or_hover_m": 0.0,
+      "maximum_horizontal_change_m": 3.58867481509151e-07,
+      "maximum_residual_step_120hz_m": 0.0100002288818359,
+      "stop_rotation_step_deg": 0.0,
+      "unreachable_frames": 0
+    }
+  },
+  "unexpected_bone_changes": 0,
+  "source_sha256": {
+    "scripts/player/avatar_foot_clearance.gd": "1719e90efea243559a275faaaf2fd8d20e53410aba9e0ba8707d4db432c4642f",
+    "tests/water_motion/foot_clearance_contract.gd": "2eb5d54fafcd2fad0af078d97dad78c9b2051f04d8c1c5526df4611a34a772d2"
+  },
+  "verified_utc": "2026-10-23T15:07:28.380197+00:00"
+}

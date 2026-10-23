@@ -1,0 +1,238 @@
+{
+  "result": "Pass for this bounded exact-pack native-motion scope, with documented limitations; not a blanket visual/performance signoff",
+  "target_sha256": "2235bcc855e409ebd3a60c89715df94136d47ebc4d3d9145b8917e6eab9bcea9",
+  "target_bytes": 160389924,
+  "pack_hash_unchanged_after_child": true,
+  "packed_resource_hashes": {
+    "checked": 350,
+    "mismatches": [],
+    "pass": true,
+    "required": true
+  },
+  "production_filesystem_fallback": false,
+  "external_native_helper_sha256": "827062785093d6763dc1bbb6f67caeb1cc6fa5b47a12f096464cff2cb4d9f530",
+  "renderer": "Godot 4.6.3, Vulkan 1.4.305 Forward+, llvmpipe LLVM 19.1.7",
+  "recording": {
+    "physics_hz": 60,
+    "avatar_update_hz": 60,
+    "capture_hz": 10,
+    "simulated_seconds": 30.6,
+    "frames": 87,
+    "resolution": [
+      640,
+      360
+    ],
+    "video_seconds": 8.7,
+    "realtime_fps_claim": false
+  },
+  "lifecycle": {
+    "exit_code": 0,
+    "abort": null,
+    "wall_seconds": 112.371,
+    "peak_rss_kib": 1248764,
+    "output_bytes": 8679526
+  },
+  "godot_errors": [],
+  "rig": {
+    "bone_count": 54,
+    "original_42_missing": [],
+    "added_12_missing": [],
+    "finite_transform_errors": 0,
+    "max_pose_scale_error": 2.50339508056641e-06,
+    "max_link_length_error_m": 5.36441802978516e-07,
+    "hand_torso_ellipsoid_overlap_probes": 0,
+    "max_visible_hand_wall_penetration_m": 0.0,
+    "max_head_wall_penetration_m": 0.0,
+    "max_body_wall_penetration_m": 0.0,
+    "max_steady_forward_swim_rotation_step_degrees": 8.83059704487951,
+    "worst_rotation": {
+      "angle_deg": 18.8897111874652,
+      "bone": "Hand_L",
+      "mode": "ground",
+      "physical_time": 19.6666666666668,
+      "stroke_phase": 0.0
+    }
+  },
+  "fabric": {
+    "applied_surfaces": 2,
+    "enabled": true,
+    "skipped": [],
+    "uv2_tangents": {
+      "finite": true,
+      "surfaces": 2,
+      "tangent_values": 52012,
+      "uv2_values": 13003
+    }
+  },
+  "cpu_visual_update_rates": {
+    "rates_hz": [
+      15,
+      30,
+      60
+    ],
+    "checks": {
+      "same_source_hashes": true,
+      "controller_endpoints_identical": true,
+      "gait_phase_identical": true,
+      "events_identical": true,
+      "no_hidden_action_clock_advances": true,
+      "release_counter_matches_actual_two_events": true,
+      "finite_scale_link_contract": true,
+      "physical_time_and_velocity_traces_identical": true
+    },
+    "pass": true,
+    "report": "../review-final-rate-comparison.json"
+  },
+  "first_person_swim": {
+    "inspected": [
+      "motion-77.jpg",
+      "motion-81.jpg",
+      "motion-86.jpg"
+    ],
+    "camera_pitch_radians": -1.05,
+    "eye_clearance_range_m": [
+      0.118948197364807,
+      0.119981503486633
+    ],
+    "visible_result": "Arms/open hands and torso visible through stroke. No head-interior obstruction in inspected views; hands leave the field of view during extension."
+  },
+  "segments": [
+    {
+      "name": "walk_start_turn",
+      "first": "motion-00.jpg",
+      "last": "motion-05.jpg",
+      "frames": 6,
+      "actual_first_physics_s": 0.966666666666668,
+      "actual_last_physics_s": 1.46666666666667
+    },
+    {
+      "name": "shallow_044_wade",
+      "first": "motion-06.jpg",
+      "last": "motion-09.jpg",
+      "frames": 4,
+      "actual_first_physics_s": 3.06666666666666,
+      "actual_last_physics_s": 3.36666666666666
+    },
+    {
+      "name": "ramp_foot_support",
+      "first": "motion-10.jpg",
+      "last": "motion-13.jpg",
+      "frames": 4,
+      "actual_first_physics_s": 5.86666666666665,
+      "actual_last_physics_s": 6.16666666666665
+    },
+    {
+      "name": "deep_forward_swim",
+      "first": "motion-14.jpg",
+      "last": "motion-32.jpg",
+      "frames": 19,
+      "actual_first_physics_s": 7.06666666666665,
+      "actual_last_physics_s": 8.86666666666669
+    },
+    {
+      "name": "idle_tread",
+      "first": "motion-33.jpg",
+      "last": "motion-38.jpg",
+      "frames": 6,
+      "actual_first_physics_s": 9.46666666666672,
+      "actual_last_physics_s": 9.96666666666674
+    },
+    {
+      "name": "ramp_exit",
+      "first": "motion-39.jpg",
+      "last": "motion-44.jpg",
+      "frames": 6,
+      "actual_first_physics_s": 13.4666666666669,
+      "actual_last_physics_s": 13.9666666666669
+    },
+    {
+      "name": "ordinary_jump",
+      "first": "motion-45.jpg",
+      "last": "motion-48.jpg",
+      "frames": 4,
+      "actual_first_physics_s": 17.166666666667,
+      "actual_last_physics_s": 17.466666666667
+    },
+    {
+      "name": "egg_carry_jump",
+      "first": "motion-49.jpg",
+      "last": "motion-60.jpg",
+      "frames": 12,
+      "actual_first_physics_s": 18.6666666666669,
+      "actual_last_physics_s": 19.7666666666668
+    },
+    {
+      "name": "charge_release_recover",
+      "first": "motion-61.jpg",
+      "last": "motion-70.jpg",
+      "frames": 10,
+      "actual_first_physics_s": 20.6666666666668,
+      "actual_last_physics_s": 21.5666666666667
+    },
+    {
+      "name": "duck_ordinary_drop",
+      "first": "motion-71.jpg",
+      "last": "motion-72.jpg",
+      "frames": 2,
+      "actual_first_physics_s": 22.4666666666667,
+      "actual_last_physics_s": 22.5666666666667
+    },
+    {
+      "name": "swim_wall_limbs",
+      "first": "motion-73.jpg",
+      "last": "motion-76.jpg",
+      "frames": 4,
+      "actual_first_physics_s": 24.3666666666666,
+      "actual_last_physics_s": 24.6666666666665
+    },
+    {
+      "name": "deep_swim_first_person_down",
+      "first": "motion-77.jpg",
+      "last": "motion-86.jpg",
+      "frames": 10,
+      "actual_first_physics_s": 28.6666666666663,
+      "actual_last_physics_s": 29.5666666666663
+    }
+  ],
+  "remaining_limits": [
+    {
+      "condition": "30.9637-degree synthetic shallow connector, outside 30-degree helper cap",
+      "worst_sole_m": -0.107036266326904,
+      "physics_s": 4.31666666666666
+    },
+    {
+      "condition": "Flat/ramp seam rejects discontinuous planes",
+      "sole_m": -0.061942777633667,
+      "trace_label_s": 5.4
+    },
+    {
+      "condition": "Early swim-to-wade blend excludes foot correction",
+      "sole_m": -0.049656,
+      "trace_label_s": 13.5
+    },
+    "Carry landing Hand_L changes 18.89 degrees per 60Hz tick at19.667s; retained diagnostic and inspected image, not silently hidden.",
+    "Hand/body overlap is an approximate torso-ellipsoid probe, not exact triangle collision.",
+    "Wall guard prevented penetration in this controlled approach; upright player capsule does not protect horizontal limbs generally.",
+    "Water is a labelled controlled plane, not the source192 GPU water renderer. No full-world or target-PC FPS acceptance."
+  ],
+  "visual_review_scope": "Representative native frames from every material action plus complete labelled continuous windows in MP4; not every pixel of every pose.",
+  "release_status": "approved for bounded PC incremental release",
+  "full_project": false,
+  "source_commit": "9d009ff9c5a41ccf873a00ad5dc553a9b7a0338b",
+  "runtime_source_count": 20,
+  "windows_launcher_executed": false,
+  "full_world_tested": false,
+  "android_exported": false,
+  "github_written": false,
+  "ui_preview_scope": "after02 visual preview; minor help-text wording changed afterward, not exact final UI byte identity",
+  "hand_material_scope": "Procedural game-grade hands; no new authored hand normal map. Existing architectural normal/roughness materials unchanged.",
+  "archive_verification": "See separately delivered independent archive verification and delivery receipt; archives must be checked after assembly.",
+  "evidence_hashes": {
+    "ACCEPTANCE-SUMMARY.json": "243fa7c7da3e8d643d9221585559ff03d0e2d78dc1923e526e77bc50abe769eb",
+    "ACCEPTANCE-SUMMARY.md": "66a74684a75f3de8013714442fc2b29f8879be88335d2b7072a2c7b8b0bbf778",
+    "report.json": "0de8bc8334178e588efec8d614526d79eefc62c347cea8f70eb1e404ce710afe",
+    "process.json": "17416cefe245d2ce2c8edfbb2a931c9bc8d9572486f3519a99e1404dd3a91ce9",
+    "continuous-motion-segments.mp4": "d7def8613a07270881c53261022b0262f996ee00535a22c57256c5391253a7a2"
+  },
+  "runtime_manifest_sha256": "5116beba7634bf287970e2fdf40c35cc43ebf0ca7f3e57d0e7fb4531207047e5"
+}

@@ -1,0 +1,15 @@
+--- a/servers/rendering/renderer_rd/forward_clustered/render_raytracing.cpp
++++ b/servers/rendering/renderer_rd/forward_clustered/render_raytracing.cpp
+@@ -541,9 +541,9 @@
+ 				continue;
+ 			}
+ 			if (e->ptr) {
+-				if (e->ptr->blas.is_valid()) {
+-					rd->free_rid(e->ptr->blas);
+-				}
++				// The mesh index buffer may already have cascade-freed this BLAS
++				// during a map switch. Freeing owned_vb_full below retires a live
++				// BLAS too, matching the deformed-cache destructor's ownership.
+ 				memdelete(e->ptr);
+ 				e->ptr = nullptr;
+ 			}

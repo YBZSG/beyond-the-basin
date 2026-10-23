@@ -1,0 +1,14 @@
+{
+  "provenance": "Original deterministic numeric PBR data; no external source or photograph.",
+  "generator": "tools/materials/build_source_glaze.py",
+  "seed": 20261023,
+  "size": [
+    512,
+    512
+  ],
+  "repeat_metres": 0.5,
+  "relief_rms_metres": 6e-06,
+  "slope_encoding_scale": 4,
+  "channels": "linear RG = encoded normal XY; B = roughness; A = glaze variation",
+  "sha256": "0eee02ec01ed0538854c24387fcba9288abb2c7a1a4a717af21aa8d9f50fd908"
+}

@@ -1,0 +1,5 @@
+config_version=5
+[application]
+config/name="Isolated water-motion import"
+[rendering]
+renderer/rendering_method="gl_compatibility"

@@ -1,0 +1,17 @@
+{
+  "explorer_water_motion.glb": {
+    "bytes": 5892432,
+    "sha256": "14fe3123b8396899ecad56422fb89e11326d73be69a124bb0e4fc2ad7c802a59",
+    "mtime_utc": "2026-10-23T14:52:01.301268+00:00"
+  },
+  "explorer_water_motion.scn": {
+    "bytes": 2553924,
+    "sha256": "66f674c5f95b7f9a945b1e6ade7acee612b0e0951ef415348598c3d61b8a8f67",
+    "mtime_utc": "2026-10-23T14:52:08.595184+00:00"
+  },
+  "explorer_water_motion.blend": {
+    "bytes": 4824734,
+    "sha256": "eac3652cffcf87eed6cb9280be5489cbc1117cceaf49fafe1a0fa89194e993ca",
+    "mtime_utc": "2026-10-23T14:52:01.381432+00:00"
+  }
+}

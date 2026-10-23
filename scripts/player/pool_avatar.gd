@@ -10,6 +10,9 @@ const PLANAR_CLIP_MARKER: int = 1 << 19
 const PLANAR_CLIP_HEIGHT: float = 0.318
 const HandIK = preload("res://scripts/player/avatar_hand_ik.gd")
 const MotionRefinement = preload("res://scripts/player/explorer_motion_refinement.gd")
+const FootClearance = preload("res://scripts/player/avatar_foot_clearance.gd")
+const FingerPoses = preload("res://scripts/player/avatar_finger_poses.gd")
+const WaterActions = preload("res://scripts/player/avatar_water_actions.gd")
 const CarryContact = preload("res://scripts/player/avatar_carry_contact_candidate.gd")
 const AVATAR_SHADER: Shader = preload("res://shaders/avatar_body.gdshader")
 const HEAD_LAYER: int = 1 << 17 # Layer 18: visible in mirrors, hidden in first person.
@@ -70,10 +73,22 @@ var _last_gait_distance: float = 0.0
 var _pending_gait_distance: float = 0.0
 var _uses_locomotion_signal: bool = false
 var _ik_debug: Dictionary = {}
+var _foot_clearance: RefCounted
+var _foot_debug: Dictionary = {}
+var _finger_poses: RefCounted
+var _finger_debug: Dictionary = {}
 var _hand_ik: RefCounted
 var _motion_refinement: RefCounted
 var _motion_debug: Dictionary = {}
 var _motion_refinement_allowed: bool = true
+var _water_actions: RefCounted = WaterActions.new()
+var _action_clips_ready: bool = false
+var _action_sample: Dictionary = {}
+var _throw_start_pose: Dictionary = {}
+var _observed_release_serial: int = 0
+var _observed_action_epoch: int = -1
+var _wrist_supports: Array[Vector2i] = []
+var _swim_body_offset: Vector3 = Vector3.ZERO
 
 
 func _ready() -> void:
@@ -278,14 +293,14 @@ func _avatar_material(original: Material) -> ShaderMaterial:
 	return result
 
 func _discover_clips() -> void:
-	for wanted: String in REQUIRED_CLIPS:
+	for wanted: String in REQUIRED_CLIPS + WaterActions.ACTION_CLIPS:
 		for imported: StringName in _animation_player.get_animation_list():
 			# Blender/glTF names may have an action, armature or library prefix.
 			var leaf: String = String(imported).replace("|", "/").replace(":", "/").get_file()
 			if leaf.to_lower() == wanted.to_lower():
 				_clips[wanted] = imported
 				# glTF has no loop flag; imported authored cycles must loop at runtime.
-				_animation_player.get_animation(imported).loop_mode = Animation.LOOP_LINEAR
+				_animation_player.get_animation(imported).loop_mode = Animation.LOOP_NONE if wanted in ["JumpRise", "Land", "ThrowCharge", "ThrowRelease", "ThrowRecover"] else Animation.LOOP_LINEAR
 				break
 	var missing: Array[String] = []
 	for wanted: String in REQUIRED_CLIPS:
@@ -293,6 +308,14 @@ func _discover_clips() -> void:
 			missing.append(wanted)
 	if not missing.is_empty():
 		_load_error = "Missing avatar clips: " + ", ".join(missing)
+	_action_clips_ready = _motion_refinement_allowed
+	for clip: String in WaterActions.ACTION_CLIPS:
+		_action_clips_ready = _action_clips_ready and _clips.has(clip)
+	_wrist_supports.clear()
+	for side: String in ["L", "R"]:
+		var wrist: int = _skeleton.find_bone("WristSupport_" + side)
+		var hand: int = _skeleton.find_bone("Hand_" + side)
+		if wrist >= 0 and hand >= 0: _wrist_supports.append(Vector2i(wrist, hand))
 
 func _animation_node(clip: String) -> AnimationNodeAnimation:
 	var result := AnimationNodeAnimation.new()
@@ -308,7 +331,7 @@ func _build_animation_tree() -> void:
 	if not _clips.has("Idle"):
 		return
 	var graph := AnimationNodeBlendTree.new()
-	for clip: String in REQUIRED_CLIPS:
+	for clip: String in REQUIRED_CLIPS + (WaterActions.ACTION_CLIPS if _action_clips_ready else []):
 		graph.add_node(clip, _animation_node(clip))
 		graph.add_node(clip + "Seek", AnimationNodeTimeSeek.new())
 		graph.connect_node(clip + "Seek", 0, clip)
@@ -323,9 +346,24 @@ func _build_animation_tree() -> void:
 	graph.connect_node("MoveBlend", 1, "WadeBlend")
 	graph.add_node("SwimBlend", _blend_node())
 	graph.connect_node("SwimBlend", 0, "MoveBlend")
-	graph.connect_node("SwimBlend", 1, "SwimSeek")
+	if _action_clips_ready:
+		graph.add_node("SwimPose", _blend_node())
+		graph.connect_node("SwimPose", 0, "SwimIdleSeek")
+		graph.connect_node("SwimPose", 1, "SwimSeek")
+		graph.connect_node("SwimBlend", 1, "SwimPose")
+		graph.add_node("AirPose", _blend_node())
+		graph.connect_node("AirPose", 0, "JumpAirSeek")
+		graph.connect_node("AirPose", 1, "JumpRiseSeek")
+		graph.add_node("AirBlend", _blend_node())
+		graph.connect_node("AirBlend", 0, "SwimBlend")
+		graph.connect_node("AirBlend", 1, "AirPose")
+		graph.add_node("LandBlend", _blend_node())
+		graph.connect_node("LandBlend", 0, "AirBlend")
+		graph.connect_node("LandBlend", 1, "LandSeek")
+	else:
+		graph.connect_node("SwimBlend", 1, "SwimSeek")
 	graph.add_node("ClimbBlend", _blend_node())
-	graph.connect_node("ClimbBlend", 0, "SwimBlend")
+	graph.connect_node("ClimbBlend", 0, "LandBlend" if _action_clips_ready else "SwimBlend")
 	graph.connect_node("ClimbBlend", 1, "ClimbSeek")
 	var hold := _blend_node()
 	hold.filter_enabled = true
@@ -340,7 +378,28 @@ func _build_animation_tree() -> void:
 	graph.add_node("HoldBlend", hold)
 	graph.connect_node("HoldBlend", 0, "ClimbBlend")
 	graph.connect_node("HoldBlend", 1, "HoldSeek")
-	graph.connect_node("output", 0, "HoldBlend")
+	if _action_clips_ready:
+		graph.add_node("ReleasePose", _blend_node())
+		graph.connect_node("ReleasePose", 0, "ThrowReleaseSeek")
+		graph.connect_node("ReleasePose", 1, "ThrowRecoverSeek")
+		graph.add_node("ThrowPose", _blend_node())
+		graph.connect_node("ThrowPose", 0, "ReleasePose")
+		graph.connect_node("ThrowPose", 1, "ThrowChargeSeek")
+		var action_blend := _blend_node()
+		action_blend.filter_enabled = true
+		for path: NodePath in _hold_filter_paths: action_blend.set_filter_path(path, true)
+		# New finger/wrist channels retain the upper-body-only action boundary.
+		for clip: String in ["ThrowCharge", "ThrowRelease", "ThrowRecover"]:
+			var animation: Animation = _animation_player.get_animation(_clips[clip])
+			for track: int in animation.get_track_count():
+				var path: NodePath = animation.track_get_path(track)
+				if _is_upper_body_track(path): action_blend.set_filter_path(path, true)
+		graph.add_node("ThrowBlend", action_blend)
+		graph.connect_node("ThrowBlend", 0, "HoldBlend")
+		graph.connect_node("ThrowBlend", 1, "ThrowPose")
+		graph.connect_node("output", 0, "ThrowBlend")
+	else:
+		graph.connect_node("output", 0, "HoldBlend")
 	_tree = AnimationTree.new()
 	_tree.name = "AvatarAnimationTree"
 	add_child(_tree)
@@ -356,6 +415,11 @@ func _build_animation_tree() -> void:
 	_tree.advance(0.0)
 	_hand_ik = HandIK.new()
 	_hand_ik.setup(_skeleton)
+	_finger_poses = FingerPoses.new()
+	_finger_poses.setup(_skeleton)
+	if _action_clips_ready:
+		_foot_clearance = FootClearance.new()
+		_foot_clearance.setup(_skeleton, _model)
 	_motion_refinement = MotionRefinement.new()
 	_motion_refinement.setup(_skeleton)
 
@@ -385,6 +449,9 @@ func _integrate_locomotion(displacement: Vector3, delta: float, distance_overrid
 	if delta <= 0.0:
 		return
 	var enabled: bool = bool(_player_value("enabled", true))
+	if _action_clips_ready and _player.has_method("get_action_state"):
+		_water_actions.integrate(_player.call("get_action_state"), delta)
+		_action_sample = _water_actions.sample_times()
 	if _motion_refinement_allowed and motion_refinement_enabled and _motion_refinement != null:
 		_motion_refinement.integrate(displacement, delta, _player.global_rotation.y, int(_player_value("locomotion_epoch", 0)), enabled)
 	var climbing: bool = enabled and is_instance_valid(_player_value("climbing", null))
@@ -452,7 +519,7 @@ func _process(delta: float) -> void:
 	var swimming: bool = enabled and bool(_player_value("_swimming", false)) and not climbing
 	var wading: bool = enabled and bool(_player_value("_in_water", false)) and not swimming and not climbing
 	var held_body: RigidBody3D = _player_value("held", null)
-	var holding: bool = is_instance_valid(held_body) and not climbing and not swimming
+	var holding: bool = is_instance_valid(held_body) and not climbing and (not swimming or _action_clips_ready)
 	var carry_intent: float = 0.0
 	if holding:
 		var to_prop: Vector3 = held_body.global_position-(_player.global_position+Vector3.UP*1.30)
@@ -474,6 +541,8 @@ func _process(delta: float) -> void:
 	wanted_yaw = CarryContact.facing_yaw(wanted_yaw, _hold_blend)
 	_body_yaw = lerp_angle(_body_yaw,wanted_yaw,1.0-exp(-10.0*delta))
 	_model.rotation.y = _body_yaw
+	if _action_clips_ready:
+		_prepare_action_release()
 	_idle_clock += delta
 	if enabled:
 		_swim_clock += delta * clampf(0.65 + _target_speed * 0.12, 0.65, 1.25)
@@ -482,13 +551,77 @@ func _process(delta: float) -> void:
 	# Explicit time seeks sample all gait clips at one normalized phase. Zero
 	# additional advance avoids accidentally adding a second render-delta clock.
 	_tree.advance(0.0)
+	if _action_clips_ready:
+		_apply_swim_body_alignment(delta)
 	# Frame-local body mechanics precede terrain leg placement (when enabled)
 	# and grip IK. AnimationTree overwrites the correction every render.
 	if _motion_refinement_allowed and motion_refinement_enabled and _motion_refinement != null:
 		var terrain_depth: float = float(_player.call("_water_depth", _player.global_position)) if _player.has_method("_water_depth") else 0.0
-		_motion_debug = _motion_refinement.apply(_idle_clock, _gait_phase, _move_blend, _run_blend, _wade_blend, _hold_blend, maxf(_swim_blend, _climb_blend), _body_yaw, terrain_depth)
+		_motion_debug = _motion_refinement.apply(_idle_clock, _gait_phase, _move_blend, _run_blend, _wade_blend, _hold_blend, maxf(maxf(_swim_blend, _climb_blend), maxf(float(_action_sample.get("air_weight", 0.0)), float(_action_sample.get("landing_weight", 0.0)))), _body_yaw, terrain_depth)
+	if _foot_clearance != null:
+		var excluded: float = maxf(_swim_blend, maxf(_climb_blend, float(_action_sample.get("air_weight", 0.0))))
+		if not wading: excluded = 1.0
+		_foot_debug = _foot_clearance.apply(delta, _player.is_on_floor(), _gait_phase, _move_blend, excluded, int(_player_value("locomotion_epoch", 0)), Callable(), _player.get_floor_normal())
+	if _action_clips_ready: _apply_release_pose_transition()
 	if _hand_ik != null:
 		_ik_debug = _hand_ik.apply(_player_value("held", null), _player.global_basis, _hold_blend, delta)
+	if _finger_poses != null:
+		var finger_state: Dictionary = _water_actions.state.duplicate()
+		finger_state["state"] = "Jump" if float(_action_sample.get("air_weight", 0.0)) > 0.2 else _state
+		finger_state["authored_fingers"] = _action_clips_ready
+		_finger_debug = _finger_poses.apply(delta, held_body, float(_ik_debug.get("contact_weight", 0.0)), finger_state)
+	_apply_wrist_support()
+
+func _prepare_action_release() -> void:
+	var snapshot: Dictionary = _water_actions.state
+	var epoch: int = int(snapshot.get("epoch", 0))
+	if epoch != _observed_action_epoch:
+		_observed_action_epoch = epoch
+		_observed_release_serial = int(snapshot.get("throw_release_serial", 0))
+		_throw_start_pose.clear()
+	var serial: int = int(snapshot.get("throw_release_serial", 0))
+	if serial <= _observed_release_serial: return
+	_observed_release_serial = serial
+	_throw_start_pose.clear()
+	if str(snapshot.get("release_kind", "none")) != "throw": return
+	for bone: int in _skeleton.get_bone_count():
+		var name: String = _skeleton.get_bone_name(bone)
+		if _is_upper_body_track(NodePath("Skeleton:" + name)):
+			_throw_start_pose[bone] = _skeleton.get_bone_pose_rotation(bone)
+	if _hand_ik != null: _hand_ik.clear_contact()
+
+func _apply_release_pose_transition() -> void:
+	if _throw_start_pose.is_empty(): return
+	var age: float = float(_water_actions.state.get("throw_release_age", 99.0))
+	var blend: float = smoothstep(0.0, 0.12, age)
+	for bone: int in _throw_start_pose:
+		var before: Quaternion = _throw_start_pose[bone]
+		_skeleton.set_bone_pose_rotation(bone, before.slerp(_skeleton.get_bone_pose_rotation(bone), blend).normalized())
+	if blend >= 1.0: _throw_start_pose.clear()
+
+func _apply_swim_body_alignment(_delta: float) -> void:
+	# Anchor the already-blended pose, including the return to upright treading.
+	# A second lagged, stroke-weighted offset outlives the horizontal pose and
+	# lifts the chest into the eye when swimming stops. Keep the camera fixed;
+	# the animation blend itself supplies continuity, with no second pose lag.
+	var head: int = _skeleton.find_bone("Head")
+	var desired := Vector3.ZERO
+	if head >= 0 and is_instance_valid(_camera):
+		var head_in_model: Vector3 = _model.global_transform.affine_inverse() * (_skeleton.global_transform * _skeleton.get_bone_global_pose(head).origin)
+		var head_in_parent: Vector3 = _model.basis * head_in_model
+		var head_target := Vector3(0.0, _camera.position.y - 0.14, 0.16)
+		desired = (head_target - head_in_parent - body_visual_offset) * _swim_blend
+	_swim_body_offset = desired
+	_model.position = body_visual_offset + _swim_body_offset
+
+func _apply_wrist_support() -> void:
+	# Optional added weighted wrist zones follow half of the actual final hand
+	# delta AFTER authored pose and grip IK, never merely inert added bones.
+	for pair: Vector2i in _wrist_supports:
+		var rest: Quaternion = _skeleton.get_bone_rest(pair.y).basis.get_rotation_quaternion()
+		var delta: Quaternion = (rest.inverse() * _skeleton.get_bone_pose_rotation(pair.y)).normalized()
+		var support_rest: Quaternion = _skeleton.get_bone_rest(pair.x).basis.get_rotation_quaternion()
+		_skeleton.set_bone_pose_rotation(pair.x, (support_rest * Quaternion.IDENTITY.slerp(delta, 0.5)).normalized())
 
 func _seek_clip(clip: String, phase: float) -> void:
 	if _clips.has(clip):
@@ -506,8 +639,28 @@ func _write_animation_parameters() -> void:
 		_seek_clip(clip,_gait_phase)
 	_seek_clip("Idle",_idle_clock/2.4)
 	_seek_clip("Hold",_idle_clock/2.4)
-	_seek_clip("Swim",_swim_clock/1.5)
+	_seek_clip("Swim", float(_action_sample.get("swim_phase", 0.0)) if _action_clips_ready else _swim_clock/1.5)
 	_seek_clip("Climb",_climb_phase)
+	if _action_clips_ready:
+		_tree.set("parameters/SwimPose/blend_amount", float(_action_sample.get("swim_forward", 0.0)))
+		_tree.set("parameters/AirPose/blend_amount", float(_action_sample.get("air_rise", 0.0)))
+		_tree.set("parameters/AirBlend/blend_amount", float(_action_sample.get("air_weight", 0.0)))
+		_tree.set("parameters/LandBlend/blend_amount", float(_action_sample.get("landing_weight", 0.0)))
+		var kind: String = str(_action_sample.get("throw_kind", "none"))
+		_tree.set("parameters/ThrowBlend/blend_amount", float(_action_sample.get("throw_weight", 0.0)) * (1.0-_climb_blend))
+		_tree.set("parameters/ThrowPose/blend_amount", 1.0 if kind=="charging" else 0.0)
+		_tree.set("parameters/ReleasePose/blend_amount", 1.0 if kind=="recover" else 0.0)
+		_seek_clip("SwimIdle", float(_action_sample.get("swim_phase", 0.0)))
+		_seek_seconds("JumpRise", float(_action_sample.get("jump_rise_time", 0.0)))
+		_seek_clip("JumpAir", float(_action_sample.get("jump_air_phase", 0.0)))
+		_seek_seconds("Land", float(_action_sample.get("landing_time", 0.0)))
+		for clip: String in ["ThrowCharge", "ThrowRelease", "ThrowRecover"]:
+			_seek_seconds(clip, float(_action_sample.get("throw_time", 0.0)))
+
+func _seek_seconds(clip: String, seconds: float) -> void:
+	if _clips.has(clip):
+		var animation: Animation = _animation_player.get_animation(_clips[clip])
+		_tree.set("parameters/"+clip+"Seek/seek_request", clampf(seconds, 0.0, maxf(0.0, animation.length-0.000001)))
 
 func get_debug_state() -> Dictionary:
 	var walk_weight: float = clampf(_speed / WALK_SPEED, 0.0, 1.0)
@@ -517,6 +670,12 @@ func get_debug_state() -> Dictionary:
 		for bone: int in _skeleton.get_bone_count():
 			bones.append(_skeleton.get_bone_name(bone))
 	return {
+		"water_actions_ready": _action_clips_ready,
+		"water_actions": _action_sample.duplicate(),
+		"swim_body_offset": _swim_body_offset,
+		"finger_pose": _finger_debug,
+		"foot_clearance": _foot_debug,
+		"wrist_support_bones": _wrist_supports.size(),
 		"loaded": is_instance_valid(_model) and _tree != null and _load_error.is_empty(),
 		"error": _load_error,
 		"model_path": model_path,

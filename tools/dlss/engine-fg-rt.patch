@@ -1,0 +1,160 @@
+--- a/servers/rendering/renderer_rd/effects/dlss.cpp
++++ b/servers/rendering/renderer_rd/effects/dlss.cpp
+@@ -29,6 +29,7 @@
+ /**************************************************************************/
+ 
+ #include "dlss.h"
++#include "core/os/os.h"
+ 
+ #ifdef STREAMLINE_ENABLED
+ #define ENABLE_DLSS 1
+@@ -56,6 +57,11 @@
+ 	sl::DLSSOptions currentDlssOptions;
+ 	sl::DLSSOptimalSettings currentOptimalSettings;
+ 	sl::DLSSDOptions currentDlssDOptions; // DLSS Ray Reconstruction options
++	bool reported_sr_dispatch = false;
++	bool reported_rr_dispatch = false;
++	uint32_t fg_samples = 0;
++	uint64_t fg_presented = 0;
++	uint64_t fg_start_usec = 0;
+ 
+ 	DLSSContextInner();
+ 	virtual ~DLSSContextInner();
+@@ -146,6 +152,9 @@
+ static unsigned int g_dlss_viewportIndex = 1;
+ 
+ DLSSContextInner::~DLSSContextInner() {
++	if (StreamlineContext::get().dlssg_viewport == viewport) {
++		StreamlineContext::get().dlssg_disable();
++	}
+ 	g_dlss_freeViewportIndices.push_back((unsigned int)viewport);
+ }
+ 
+@@ -508,6 +517,30 @@
+ 		}
+ 	}
+ 
++	// QA only: query actual presentation counts on the render/present thread.
++	// A requested checkbox or game FPS does not prove interpolated frames were presented.
++	if (OS::get_singleton()->is_stdout_verbose() && p_params.dlss_g && StreamlineContext::get().dlssg_viewport == context->viewport && StreamlineContext::get().slDLSSGGetState) {
++		sl::DLSSGState state{};
++		sl::Result result = StreamlineContext::get().slDLSSGGetState(context->viewport, state, nullptr);
++		uint64_t now = OS::get_singleton()->get_ticks_usec();
++		if (context->fg_start_usec == 0) {
++			context->fg_start_usec = now;
++		} else {
++			context->fg_samples++;
++			context->fg_presented += state.numFramesActuallyPresented;
++		}
++		if (context->fg_samples >= 120) {
++			print_verbose(vformat("PoolCore DLSS FG state: result=%s status=%d game_frames=%d presented=%d elapsed_us=%d max_generated=%d", StreamlineContext::result_to_string(result), (uint32_t)state.status, context->fg_samples, context->fg_presented, now - context->fg_start_usec, state.numFramesToGenerateMax));
++			context->fg_samples = 0;
++			context->fg_presented = 0;
++			context->fg_start_usec = now;
++		}
++	} else {
++		context->fg_samples = 0;
++		context->fg_presented = 0;
++		context->fg_start_usec = 0;
++	}
++
+ 	// Evaluate DLSS Super Resolution or DLSS Ray Reconstruction
+ 	if (context->currentDlssOptions.mode != sl::DLSSMode::eOff) {
+ 		const sl::BaseStructure *inputs[] = { &context->viewport };
+@@ -519,11 +552,19 @@
+ 			if (result != sl::Result::eOk) {
+ 				ERR_FAIL_MSG("Failed to call streamline slEvaluateFeature for DLSS Ray Reconstruction. Result: " + String(StreamlineContext::result_to_string(result)));
+ 			}
++			if (!context->reported_rr_dispatch) {
++				print_verbose(vformat("PoolCore DLSS RR dispatch OK: viewport=%d input=%dx%d output=%dx%d", (unsigned int)context->viewport, p_params.internal_size.x, p_params.internal_size.y, context->currentDlssDOptions.outputWidth, context->currentDlssDOptions.outputHeight));
++				context->reported_rr_dispatch = true;
++			}
+ 		} else if (StreamlineContext::get().streamline_capabilities.dlss_available) {
+ 			// Use regular DLSS
+ 			result = StreamlineContext::get().slEvaluateFeature(sl::kFeatureDLSS, *StreamlineContext::get().last_token, inputs, 1, nativeCmdlist);
+ 			if (result != sl::Result::eOk) {
+ 				ERR_FAIL_MSG("Failed to call streamline slEvaluateFeature for DLSS Super Resolution. Result: " + String(StreamlineContext::result_to_string(result)));
++			}
++			if (!context->reported_sr_dispatch) {
++				print_verbose(vformat("PoolCore DLSS SR dispatch OK: viewport=%d input=%dx%d output=%dx%d mode=%d", (unsigned int)context->viewport, p_params.internal_size.x, p_params.internal_size.y, context->currentDlssOptions.outputWidth, context->currentDlssOptions.outputHeight, (int)context->currentDlssOptions.mode));
++				context->reported_sr_dispatch = true;
+ 			}
+ 		}
+ 	}
+--- a/servers/rendering/renderer_rd/forward_clustered/scene_shader_raytracing.cpp
++++ b/servers/rendering/renderer_rd/forward_clustered/scene_shader_raytracing.cpp
+@@ -578,6 +578,7 @@
+ 	bool detected_alpha_clip = false;
+ 	actions.usage_flag_pointers["ALPHA_SCISSOR_THRESHOLD"] = &detected_alpha_clip;
+ 	actions.usage_flag_pointers["ALPHA_HASH_SCALE"] = &detected_alpha_clip;
++	actions.usage_flag_pointers["DISCARD"] = &detected_alpha_clip;
+ 
+ 	HashMap<StringName, ShaderLanguage::ShaderNode::Uniform> uniform_sink;
+ 	actions.uniforms = &uniform_sink;
+@@ -1008,6 +1009,8 @@
+ 
+ 		{
+ 			String s = ctx.ch_template;
++			// Any-hit already rejected fragment discard hits before closest-hit.
++			s = s.insert(s.find("\n", s.find("#version")) + 1, "#define discard return\n");
+ 			s = s.replace("/* RT_CUSTOM_FRAGMENT_GLOBALS */", entry.fragment_globals);
+ 			s = s.replace("/* RT_CUSTOM_FRAGMENT_CODE */", fragment_code);
+ 			s = s.replace("/* RT_CUSTOM_UNIFORM_MEMBERS */", uniform_members);
+@@ -1018,6 +1021,7 @@
+ 		}
+ 		if (entry.uses_alpha_clip) {
+ 			String s = ctx.ah_template;
++			s = s.insert(s.find("\n", s.find("#version")) + 1, "#define discard ignoreIntersectionEXT\n");
+ 			s = s.replace("/* RT_CUSTOM_FRAGMENT_GLOBALS */", entry.fragment_globals);
+ 			s = s.replace("/* RT_CUSTOM_FRAGMENT_CODE */", fragment_code);
+ 			s = s.replace("/* RT_CUSTOM_UNIFORM_MEMBERS */", uniform_members);
+@@ -1111,6 +1115,7 @@
+ 					RD::SHADER_STAGE_CLOSEST_HIT, si.ch_src, RD::SHADER_LANGUAGE_GLSL, &error);
+ 		}
+ 		if (ch_spirv.is_empty()) {
++			WARN_PRINT("RT closest-hit compile: " + error);
+ 			_dump_failed_shader(si.ch_src, vformat("hg%d_v%x_closest_hit", i, p_task->rt_flags));
+ 			p_task->new_per_hg_shaders[i] = RID();
+ 			p_task->new_ready_mask[i] = false;
+@@ -1131,6 +1136,7 @@
+ 						RD::SHADER_STAGE_ANY_HIT, si.ah_src, RD::SHADER_LANGUAGE_GLSL, &error);
+ 			}
+ 			if (ah_spirv.is_empty()) {
++				WARN_PRINT("RT any-hit compile: " + error);
+ 				_dump_failed_shader(si.ah_src, vformat("hg%d_v%x_any_hit", i, p_task->rt_flags));
+ 				p_task->new_per_hg_shaders[i] = RID();
+ 				p_task->new_ready_mask[i] = false;
+--- a/servers/rendering/renderer_rd/forward_clustered/render_raytracing.cpp
++++ b/servers/rendering/renderer_rd/forward_clustered/render_raytracing.cpp
+@@ -209,7 +209,7 @@
+ 	// Specular Albedo: RGB specular reflection color (RGBA16F; needs the accuracy, fixes banding artifacts).
+ 	p_render_buffers->create_texture(RB_SCOPE_DLSS_RR, RB_TEX_DLSS_RR_SPECULAR_ALBEDO, RD::DATA_FORMAT_R16G16B16A16_SFLOAT, usage_bits, RD::TEXTURE_SAMPLES_1);
+ 	// Normal + Roughness: World space normals (RGB) + roughness (A).
+-	p_render_buffers->create_texture(RB_SCOPE_DLSS_RR, RB_TEX_DLSS_RR_NORMAL_ROUGHNESS, RD::DATA_FORMAT_R8G8B8A8_SNORM, usage_bits, RD::TEXTURE_SAMPLES_1);
++	p_render_buffers->create_texture(RB_SCOPE_DLSS_RR, RB_TEX_DLSS_RR_NORMAL_ROUGHNESS, RD::DATA_FORMAT_R16G16B16A16_SFLOAT, usage_bits, RD::TEXTURE_SAMPLES_1);
+ 	// Specular Hit Distance: Single channel distance (R16F is sufficient).
+ 	p_render_buffers->create_texture(RB_SCOPE_DLSS_RR, RB_TEX_DLSS_RR_SPECULAR_HIT_DIST, RD::DATA_FORMAT_R16_SFLOAT, usage_bits, RD::TEXTURE_SAMPLES_1);
+ }
+@@ -346,9 +346,8 @@
+ 				continue;
+ 			}
+ 			if (e->ptr) {
+-				if (e->ptr->blas.is_valid()) {
+-					rd->free_rid(e->ptr->blas);
+-				}
++				// owned_vb_full below cascade-frees a still-live BLAS. The mesh
++				// index buffer may already have freed it during scene teardown.
+ 				memdelete(e->ptr);
+ 				e->ptr = nullptr;
+ 			}
+--- a/servers/rendering/renderer_rd/shaders/raytracing/scene_raytracing_raygen.glsl
++++ b/servers/rendering/renderer_rd/shaders/raytracing/scene_raytracing_raygen.glsl
+@@ -21,7 +21,7 @@
+ #define RT_STAGE_RAYGEN 1
+ #include "raytracing_common_inc.glsl"
+ 
+-layout(set = 0, binding = 0, rgba32f) uniform image2D image;
++layout(set = 0, binding = 0, rgba16f) uniform image2D image;
+ layout(set = 0, binding = 1) uniform accelerationStructureEXT tlas;
+ 
+ layout(location = 0) rayPayloadEXT PathPayload payload;

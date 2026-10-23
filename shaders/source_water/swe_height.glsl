@@ -105,6 +105,10 @@ void sourceMain(){
   float convex=smoothstep(.04,.55,-lap/(DX*DX))*smoothstep(.009,.05,s.r);
   float activity=smoothstep(.012,.28,dot(flow,flow)+vertical*vertical);
   float crestAir=convex*activity*max(smoothstep(.03,.18,length(slope)),smoothstep(.06,.55,vertical));
+  // Broad wading waves have curvature without entraining air. Require motion
+  // relative to local gravity/depth before emitting crest foam; otherwise a
+  // stronger bow wave paints an opaque white sheet across the clear pool.
+  crestAir*=smoothstep(.10*critical,.40*critical,dot(flow,flow)+vertical*vertical);
   // Mix towards neighbours before adding fresh aeration. This cannot amplify
   // new foam via a Laplacian that uses a different (already decayed) centre.
   float neighbours=(foamNeighbour(c+ivec2(1,0),s.a)+foamNeighbour(c-ivec2(1,0),s.a)+foamNeighbour(c+ivec2(0,1),s.a)+foamNeighbour(c-ivec2(0,1),s.a))*.25;

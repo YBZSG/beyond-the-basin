@@ -1,0 +1,124 @@
+{
+  "neutral": {
+    "finite": true,
+    "edge_length_ratio_p01_p50_p99": [
+      0.9999849367580004,
+      1.0,
+      1.000012165797954
+    ],
+    "edge_length_ratio_min_max": [
+      0.9999346231204258,
+      1.0000624010877874
+    ],
+    "triangle_area_ratio_p01_p50_p99": [
+      0.999979502072212,
+      1.0,
+      1.0000162307457814
+    ],
+    "thumb_web_edge_ratio_p01_p99": [
+      0.9999861877965578,
+      1.0000093831295234
+    ],
+    "max_vertex_displacement_m": 2.687781460523086e-07
+  },
+  "relaxed": {
+    "finite": true,
+    "edge_length_ratio_p01_p50_p99": [
+      0.9605738437708028,
+      1.0,
+      1.0347859311308838
+    ],
+    "edge_length_ratio_min_max": [
+      0.8539360874617281,
+      1.2196249313988312
+    ],
+    "triangle_area_ratio_p01_p50_p99": [
+      0.9455901825812971,
+      1.0,
+      1.0521040029075568
+    ],
+    "thumb_web_edge_ratio_p01_p99": [
+      0.9642194629810621,
+      1.0298204699462907
+    ],
+    "max_vertex_displacement_m": 0.010711391904808291
+  },
+  "carry": {
+    "finite": true,
+    "edge_length_ratio_p01_p50_p99": [
+      0.9200363854017451,
+      1.0,
+      1.0710943522736223
+    ],
+    "edge_length_ratio_min_max": [
+      0.7363529567957495,
+      1.615491906997108
+    ],
+    "triangle_area_ratio_p01_p50_p99": [
+      0.886108726562855,
+      1.0,
+      1.110293544361152
+    ],
+    "thumb_web_edge_ratio_p01_p99": [
+      0.9174230152862917,
+      1.0796122793846032
+    ],
+    "max_vertex_displacement_m": 0.02297592017098186
+  },
+  "release": {
+    "finite": true,
+    "edge_length_ratio_p01_p50_p99": [
+      0.9830739434096901,
+      1.0,
+      1.014700319498814
+    ],
+    "edge_length_ratio_min_max": [
+      0.8923559745829692,
+      1.1480840480251446
+    ],
+    "triangle_area_ratio_p01_p50_p99": [
+      0.9762002614292394,
+      1.0,
+      1.0227364108831285
+    ],
+    "thumb_web_edge_ratio_p01_p99": [
+      0.9768026228586921,
+      1.0206903938845844
+    ],
+    "max_vertex_displacement_m": 0.004488430134351676
+  },
+  "swim": {
+    "finite": true,
+    "edge_length_ratio_p01_p50_p99": [
+      0.9888963396432794,
+      1.0,
+      1.0092672720633722
+    ],
+    "edge_length_ratio_min_max": [
+      0.8934909280164217,
+      1.1460745645058976
+    ],
+    "triangle_area_ratio_p01_p50_p99": [
+      0.9843771263684823,
+      1.0,
+      1.0152177898423804
+    ],
+    "thumb_web_edge_ratio_p01_p99": [
+      0.976828132755145,
+      1.0206129397255548
+    ],
+    "max_vertex_displacement_m": 0.0026096160253167395
+  },
+  "wrist_45": {
+    "weighted_support_area_ratio": 0.9908670113275907,
+    "inert_support_area_ratio": 0.9646400163443857,
+    "support_motion_max_m": 0.009640939643862782,
+    "support_radians": 0.39269908169872414
+  },
+  "wrist_70": {
+    "weighted_support_area_ratio": 0.9782455879809684,
+    "inert_support_area_ratio": 0.9195936959828933,
+    "support_motion_max_m": 0.014860206277788397,
+    "support_radians": 0.6108652381980153
+  }
+}

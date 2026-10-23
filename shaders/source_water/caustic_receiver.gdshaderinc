@@ -18,7 +18,11 @@ vec3 source_caustic_irradiance(vec3 p, vec3 wnr) {
         vec2 causticUv=p.xz/32.0+.5;
         if(p.y<.25&&p.y>-.8&&all(greaterThan(causticUv,vec2(0.0)))&&all(lessThan(causticUv,vec2(1.0)))) {
             float edgeFade=smoothstep(0.0,.04,min(min(causticUv.x,causticUv.y),min(1.0-causticUv.x,1.0-causticUv.y)));
+#ifdef POOLCORE_RT
+            irradiance+=textureLod(poolCaustics,causticUv,pcNearfieldFloorMipBias).rgb*causticGain*max(wnr.y,0.0)*edgeFade;
+#else
             irradiance+=texture(poolCaustics,causticUv,pcNearfieldFloorMipBias).rgb*causticGain*max(wnr.y,0.0)*edgeFade;
+#endif
         }
     } else if(abs(wnr.y)<.45&&p.y>-.75&&p.y<14.5) {
         // Preserve the original source expression exactly when using defaults.
@@ -36,7 +40,11 @@ vec3 source_caustic_irradiance(vec3 p, vec3 wnr) {
         float v=clamp((p.y+.75)/15.25,0.0,1.0);
         float uEdge=smoothstep(0.0,.025,u)*(1.0-smoothstep(.975,1.0,u));
         float vEdge=smoothstep(0.0,.002,v)*(1.0-smoothstep(.998,1.0,v));
+#ifdef POOLCORE_RT
+        irradiance+=textureLod(poolCausticsWalls,vec2(u,(wallId+v)*.25),1.15).rgb*causticGain*nearWall*uEdge*vEdge;
+#else
         irradiance+=texture(poolCausticsWalls,vec2(u,(wallId+v)*.25),1.15).rgb*causticGain*nearWall*uEdge*vEdge;
+#endif
     }
     return irradiance;
 }

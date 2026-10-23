@@ -125,7 +125,7 @@ func _ready() -> void:
 	if _qa:
 		world_seed = 250821
 		_ccd_on = false
-		_water_settings.clear()
+		if "--qa-user-water" not in OS.get_cmdline_user_args(): _water_settings.clear()
 		_water_visible=true
 	if MainhallPreview.desktop_allowed() and "--no-exploration-notes" not in OS.get_cmdline_user_args():
 		_exploration_notes = preload("res://scripts/gameplay/exploration_notes.gd").new()
@@ -174,6 +174,7 @@ func _ready() -> void:
 	preload("res://scripts/mobile/pool_mobile_runtime.gd").install(self)
 	if "--qa-legacy-quality" not in OS.get_cmdline_user_args():
 		preload("res://scripts/rendering/desktop_quality_panel.gd").install(self)
+	preload("res://scripts/ui/pool_interface_presentation.gd").install(self)
 
 func _initial_water_quality() -> String:
 	if preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session():
@@ -228,6 +229,8 @@ func _create_world() -> void:
 	avatar = AvatarScript.new()
 	if "--legacy-avatar-model" not in OS.get_cmdline_user_args():
 		avatar.model_path = AvatarFinishScript.CANDIDATE_PATH
+		if not preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session() and "--legacy-water-actions" not in OS.get_cmdline_user_args():
+			avatar.model_path = "res://assets/water_motion/explorer_water_motion.scn"
 	avatar.setup(player)
 	_avatar_finish = AvatarFinishScript.new() if "--legacy-avatar-model" not in OS.get_cmdline_user_args() else null
 	_avatar_finish_status = _avatar_finish.apply_to(avatar,_avatar_fabric_enabled and "--no-avatar-fabric-finish" not in OS.get_cmdline_user_args()) if _avatar_finish != null else {"enabled":false}
@@ -318,6 +321,8 @@ func _retire_world() -> void:
 	# dispose() detaches compositor/material aliases before it queues RD frees.
 	if is_instance_valid(water): water.dispose()
 	if is_instance_valid(_facility_devices): _facility_devices.clear()
+	# Audio survives world replacement; detach before the old player leaves the tree.
+	if is_instance_valid(pool_audio): pool_audio.attach_player(null, null)
 	for old_node in [world, water, props, player]:
 		if is_instance_valid(old_node):
 			old_node.process_mode = Node.PROCESS_MODE_DISABLED
@@ -1186,9 +1191,9 @@ func _save_settings(restart_mode: String = "", restart_seed: int = 0, atomic: bo
 	# A queued ordinary autosave must not undo the committed restart selection.
 	if _world_restart._requested and restart_mode.is_empty(): return ERR_BUSY
 	var config:=ConfigFile.new()
-	if atomic:
-		var loaded := config.load("user://settings.cfg")
-		if loaded != OK and loaded != ERR_FILE_NOT_FOUND: return loaded
+	# Preserve settings owned by other features on ordinary autosave too.
+	var loaded := config.load("user://settings.cfg")
+	if loaded != OK and loaded != ERR_FILE_NOT_FOUND: return loaded
 	config.set_value("game","seed",restart_seed if not restart_mode.is_empty() else world_seed)
 	config.set_value("game","spawn_mode",restart_mode if not restart_mode.is_empty() else (_pc_preview_return_spawn if _pc_mainhall_preview else _spawn_mode))
 	config.set_value("display","quality",_quality)
@@ -1269,7 +1274,7 @@ func _run_qa_capture() -> void:
 		set_menu(true)
 		world.complete_pending_streaming()
 	water.process_mode=Node.PROCESS_MODE_INHERIT;water.set_paused(false)
-	frames=clampi(frames,1,120)
+	frames=clampi(frames,1,3600 if "--qa-benchmark" in args else 120)
 	_menu.visible=false
 	hud_hidden=true
 	_room_title.visible=false
@@ -1315,6 +1320,14 @@ func _run_qa_capture() -> void:
 			if failure_file:failure_file.store_string(JSON.stringify(water.debug_stats(),"  "))
 			_safe_quit(2);return
 		props.set_enabled(true)
+	if "--qa-benchmark" in args:
+		# Measure the exported executable, without the editor or screenshot readbacks.
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		Engine.max_fps = 0
+		DisplayServer.window_move_to_foreground()
+		props.set_enabled(false)
+		for body in props.bodies: body.freeze = true
+		for frame in 120: await get_tree().process_frame
 	if "--qa-external-lighting-runner" in args:
 		if not qa_capture_hook.is_valid():
 			push_error("QA_LIGHTING_RUNNER: no capture hook was installed")
@@ -1323,17 +1336,21 @@ func _run_qa_capture() -> void:
 		var hook_result: int = await qa_capture_hook.call(self)
 		_safe_quit(hook_result)
 		return
+	if "--qa-benchmark" in args: print("POOLCORE_MEASURE_BEGIN release")
+	var focused_frames := 0
 	var frame_times:Array[float]=[]
 	var qa_impact_applied:=false
 	var previous_tick:=Time.get_ticks_usec()
 	for i in range(frames):
 		await get_tree().process_frame
+		if DisplayServer.window_is_focused(): focused_frames += 1
 		var now:=Time.get_ticks_usec();frame_times.append(float(now-previous_tick)/1000.0);previous_tick=now
 		if i>=6 and not qa_impact_applied and water.is_terrain_ready() and "--qa-impact" in args:
 			qa_impact_applied=true
 			var center:=Vector3(world.current_room.x*32,0,world.current_room.y*32)
 			water.splash(center+Vector3(0,.32,3.2),.32,{"u":.7,"v":-1.0,"vertical":-2.0,"radius":.12})
 		if i % 5 == 0: print("POOLCORE_QA_FRAME ",i," / ",frames)
+	if "--qa-benchmark" in args: print("POOLCORE_MEASURE_END release")
 	await RenderingServer.frame_post_draw
 	var image:=get_viewport().get_texture().get_image()
 	var err:=image.save_png(out)
@@ -1344,6 +1361,15 @@ func _run_qa_capture() -> void:
 	var total_time:=0.0
 	for value in frame_times:total_time+=value
 	state["actual_wall_timing"]={"frames":frames,"mean_ms":total_time/maxi(1,frames),"p95_ms":sorted_times[mini(sorted_times.size()-1,floori(sorted_times.size()*.95))],"samples_ms":frame_times,"physics_frames":Engine.get_physics_frames(),"note":"Actual wall-clock frame intervals on the reported device; includes scene warmup, not a phone benchmark."}
+	if "--qa-benchmark" in args:
+		state.actual_wall_timing.note = "Release executable; uncapped wall-clock intervals after 120 warmup frames; original fixed camera, props frozen, no screenshot readback in measured interval."
+	state["focused_frames"] = focused_frames
+	if OS.has_feature("editor") and ClassDB.class_has_integer_constant("Viewport", "RENDER_INFO_RT_TLAS_INSTANCES"):
+		state["rt_instances"] = get_viewport().call("get_render_info", 0, ClassDB.class_get_integer_constant("Viewport", "RENDER_INFO_RT_TLAS_INSTANCES"))
+	state["dlss"] = get_node("DesktopQuality").dlss_status.duplicate() if has_node("DesktopQuality") else {}
+	state["frame_generation"] = get_node("DesktopQuality").frame_generation_status.duplicate() if has_node("DesktopQuality") else {}
+	state["raytracing"] = get_node("DesktopQuality").raytracing_status.duplicate() if has_node("DesktopQuality") else {}
+	state["viewport_scaling"] = {"mode":get_viewport().scaling_3d_mode, "scale":get_viewport().scaling_3d_scale, "msaa":get_viewport().msaa_3d, "taa":get_viewport().use_taa}
 	state["capture_error"]=err
 	state["capture_size"]=[image.get_width(),image.get_height()]
 	state["camera"]={"position":player.camera.global_position,"transform":player.camera.global_transform,"fov":player.camera.fov}

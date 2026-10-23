@@ -1,0 +1,60 @@
+--- a/servers/rendering/renderer_rd/effects/copy_effects.cpp
++++ b/servers/rendering/renderer_rd/effects/copy_effects.cpp
+@@ -100,6 +100,7 @@
+ 		copy_modes.push_back("\n#define MODE_LINEARIZE_DEPTH_COPY\n");
+ 		copy_modes.push_back("\n#define MODE_OCTMAP_TO_PANORAMA\n");
+ 		copy_modes.push_back("\n#define MODE_OCTMAP_ARRAY_TO_PANORAMA\n");
++		copy_modes.push_back("\n#define MODE_SIMPLE_COPY\n#define DST_IMAGE_RG16F\n");
+ 
+ 		copy.shader.initialize(copy_modes);
+ 		memset(&copy.push_constant, 0, sizeof(CopyPushConstant));
+@@ -452,6 +453,9 @@
+ 	RD::Uniform u_dest_texture(RD::UNIFORM_TYPE_IMAGE, 0, p_dest_texture);
+ 
+ 	CopyMode mode = p_8_bit_dst ? COPY_MODE_SIMPLY_COPY_8BIT : COPY_MODE_SIMPLY_COPY;
++	if (RD::get_singleton()->texture_get_format(p_dest_texture).format == RD::DATA_FORMAT_R16G16_SFLOAT) {
++		mode = COPY_MODE_SIMPLY_COPY_RG16F;
++	}
+ 	RID shader = copy.shader.version_get_shader(copy.shader_version, mode);
+ 	ERR_FAIL_COND(shader.is_null());
+ 
+--- a/servers/rendering/renderer_rd/effects/copy_effects.h
++++ b/servers/rendering/renderer_rd/effects/copy_effects.h
+@@ -122,6 +122,7 @@
+ 		COPY_MODE_LINEARIZE_DEPTH,
+ 		COPY_MODE_OCTMAP_TO_PANORAMA,
+ 		COPY_MODE_OCTMAP_ARRAY_TO_PANORAMA,
++		COPY_MODE_SIMPLY_COPY_RG16F,
+ 		COPY_MODE_MAX,
+ 
+ 	};
+--- a/servers/rendering/renderer_rd/effects/taa.cpp
++++ b/servers/rendering/renderer_rd/effects/taa.cpp
+@@ -92,7 +92,6 @@
+ 
+ 	uint32_t view_count = p_render_buffers->get_view_count();
+ 	Size2i internal_size = p_render_buffers->get_internal_size();
+-	Size2i target_size = p_render_buffers->get_target_size();
+ 
+ 	bool just_allocated = false;
+ 	if (!p_render_buffers->has_texture(SNAME("taa"), SNAME("history"))) {
+@@ -123,7 +122,7 @@
+ 		}
+ 
+ 		copy_effects->copy_to_rect(internal_texture, taa_history, Rect2(0, 0, internal_size.x, internal_size.y));
+-		copy_effects->copy_to_rect(velocity_buffer, taa_prev_velocity, Rect2(0, 0, target_size.x, target_size.y));
++		copy_effects->copy_to_rect(velocity_buffer, taa_prev_velocity, Rect2(0, 0, internal_size.x, internal_size.y));
+ 	}
+ 
+ 	RD::get_singleton()->draw_command_end_label();
+--- a/servers/rendering/renderer_rd/shaders/effects/copy.glsl
++++ b/servers/rendering/renderer_rd/shaders/effects/copy.glsl
+@@ -60,6 +60,8 @@
+ layout(r32f, set = 3, binding = 0) uniform restrict writeonly image2D dest_buffer;
+ #elif defined(DST_IMAGE_8BIT)
+ layout(rgba8, set = 3, binding = 0) uniform restrict writeonly image2D dest_buffer;
++#elif defined(DST_IMAGE_RG16F)
++layout(rg16f, set = 3, binding = 0) uniform restrict writeonly image2D dest_buffer;
+ #else
+ layout(rgba16f, set = 3, binding = 0) uniform restrict writeonly image2D dest_buffer;
+ #endif

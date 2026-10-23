@@ -7,6 +7,7 @@ extends CompositorEffect
 const Fog=preload("res://scripts/rendering/source_volumetric_fog.gd")
 const SOURCE_DENSITIES: Array[float]=[.036,.043,.053,.066]
 const SOURCE_COLOR:=Color("22343d")
+const PC_DENSITY_SCALE := 0.65
 var density:=.036
 var available:=false
 var last_error:=""
@@ -27,6 +28,9 @@ var _gpu_enabled:=true
 var _separate_specular_disabled:=false
 
 func _init()->void:
+	# Main and reflection cameras receive the same density through set_density.
+	# Preserve the source exponential equation and exploration decay on PC.
+	if PoolMaterials.use_pc_source_finish(): density *= PC_DENSITY_SCALE
 	effect_callback_type=CompositorEffect.EFFECT_CALLBACK_TYPE_PRE_TRANSPARENT if RenderingServer.get_current_rendering_method()=="mobile" else CompositorEffect.EFFECT_CALLBACK_TYPE_POST_SKY
 	access_resolved_color=true
 	access_resolved_depth=false # We sample the actual opaque MSAA depth directly.
@@ -45,7 +49,8 @@ func frame(delta:float,_coord:Vector2i,layout:Dictionary)->void:
 	_native_authored=_formal or bool(layout.get("expanded",false))
 	var corrupt:=clampi(int(layout.get("corrupt",0)),0,3)
 	var dt:=clampf(delta,0.0,.2)
-	density+=(SOURCE_DENSITIES[corrupt]-density)*minf(1.0,dt*.6)
+	var target_density := SOURCE_DENSITIES[corrupt] * (PC_DENSITY_SCALE if PoolMaterials.use_pc_source_finish() else 1.0)
+	density+=(target_density-density)*minf(1.0,dt*.6)
 	_publish()
 
 ## Capture adapters copy the main-camera mood; they must not integrate it twice.

@@ -1,0 +1,77 @@
+{
+  "authored_pose_quaternion_one_minus_abs_dot_max": {
+    "Swim": 0.0,
+    "ThrowCharge": 0.0,
+    "Wade": 0.0
+  },
+  "engine": "4.6.3-stable (official)",
+  "errors": [],
+  "frame_rate_grips": {
+    "120": {
+      "curl_gain": 1.0,
+      "grip_weight": 1.0,
+      "max_delta": 0.257599055767059
+    },
+    "30": {
+      "curl_gain": 1.0,
+      "grip_weight": 1.0,
+      "max_delta": 0.257599055767059
+    },
+    "60": {
+      "curl_gain": 1.0,
+      "grip_weight": 1.0,
+      "max_delta": 0.257599979639053
+    }
+  },
+  "gpu_used": false,
+  "ordinary_drop": {
+    "first_frame_error": 0.0,
+    "settled_release_age": 0.14
+  },
+  "palm_anchors_godot": {
+    "L": {
+      "hand_local": [
+        -0.020927906036377,
+        0.0671776533126831,
+        0.00106415152549744
+      ],
+      "roundtrip_error_m": 0.000000108482090865891,
+      "skeleton_rest": [
+        0.39997985959053,
+        0.884058713912964,
+        -0.0275000371038914
+      ]
+    },
+    "R": {
+      "hand_local": [
+        0.0209339261054993,
+        0.0671775341033936,
+        0.00106227397918701
+      ],
+      "roundtrip_error_m": 0.0000000312236210220362,
+      "skeleton_rest": [
+        -0.399974048137665,
+        0.884056389331818,
+        -0.0275005903095007
+      ]
+    }
+  },
+  "passed": true,
+  "radius_grips": {
+    "0.1": {
+      "gain": 1.12,
+      "max_delta": 0.288510590791702
+    },
+    "0.17": {
+      "gain": 1.0,
+      "max_delta": 0.257599979639053
+    },
+    "0.35": {
+      "gain": 0.82,
+      "max_delta": 0.211231112480164
+    }
+  },
+  "regrab_cleared_release": true,
+  "relaxed_quaternion_error": 0.0,
+  "release_passthrough": true
+}

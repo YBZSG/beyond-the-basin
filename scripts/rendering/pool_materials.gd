@@ -143,10 +143,18 @@ func _is_daylit(node: Node) -> bool:
 func _normalize_role(role: String) -> String:
 	return role.trim_prefix("Quiet Wing / ").strip_edges().to_lower()
 
+static func use_pc_source_finish() -> bool:
+	return RenderingServer.get_current_rendering_method() == "forward_plus" and not (OS.has_feature("android") or OS.has_feature("ios") or "--mobile-preview" in OS.get_cmdline_user_args())
+
 func _source_ceramic(label:String,pigment:Color,two_tone:bool=false)->ShaderMaterial:
 	var material:=ShaderMaterial.new()
 	material.resource_name=label
 	material.shader=preload("res://shaders/source_ceramic.gdshader")
+	if use_pc_source_finish():
+		material.shader=preload("res://shaders/pc_source_ceramic.gdshader")
+		for uniform in _maps: material.set_shader_parameter(uniform,_maps[uniform])
+		material.set_shader_parameter("glaze_detail",preload("res://assets/textures/source_glaze/glaze_detail.png"))
+		material.set_shader_parameter("grout_pigment",pigment.darkened(0.25).lerp(Color("64746f"),0.28))
 	material.set_shader_parameter("pigment",pigment)
 	material.set_shader_parameter("two_tone",two_tone)
 	return material

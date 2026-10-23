@@ -141,11 +141,13 @@ func add_room_lights(room: Node3D, variant: int) -> void:
 	var rig:=Node3D.new();rig.name="NativeLighting";room.add_child(rig)
 	rig.set_meta("variant",variant)
 	var fixtures:Array=layout.get("fixtures",[])
+	var pc_source := PoolMaterials.use_pc_source_finish() and not bool(layout.get("expanded",false) or layout.get("formal",false))
 	for slot in fixtures.size():
 		var source:Dictionary=fixtures[slot]
 		var at:Vector3=source.position
 		var fixture:=PoolFixtureFlicker.new();fixture.name="SourceDoubleTube%d"%slot;fixture.position=at;rig.add_child(fixture)
-		var opal:=_make_opal(source.color)
+		var fixture_color: Color = source.color.lerp(Color("eef1eb"),0.42) if pc_source else source.color
+		var opal:=_make_opal(fixture_color)
 		var alive:=bool(source.get("alive",true))
 		if not alive:opal.albedo_color=Color(.14,.17,.18);opal.emission_enabled=false
 		var housing:=_materials.get_material("lamp_housing")
@@ -160,12 +162,13 @@ func add_room_lights(room: Node3D, variant: int) -> void:
 			mesh.set_meta("source_exclude_optics",true)
 		if alive:
 			var lamp:=OmniLight3D.new();lamp.name="SourcePointLight";lamp.omni_range=36.0;lamp.omni_attenuation=2.0
-			# Engine-specific photometric calibration, while original relative powers,
-			# positions, colors, survival and flicker remain unchanged. Liquid shader
-			# receives original Three intensity through this explicit conversion.
+			# PC calibrates tube flux and tint for the less veiled ceramic finish.
+			# Keep authored positions, relative powers, survival and flicker. Liquid
+			# receives the original Three intensity through this explicit conversion.
 			var original_power:=float(source.power)
-			_configure_local_light(lamp,source.color,original_power*.07,.32)
-			lamp.set_meta("source_power_per_energy",1.0/.07)
+			var power_scale := .115 if pc_source else .07
+			_configure_local_light(lamp,fixture_color,original_power*power_scale,.32)
+			lamp.set_meta("source_power_per_energy",1.0/power_scale)
 			lamp.set_meta("source_shadow_priority",true)
 			lamp.set_meta("source_shadow_managed",true)
 			lamp.set_meta("source_room_coord",room.get_meta("coord",Vector2i.ZERO))
@@ -243,7 +246,7 @@ func update_active_room(coord: Vector2i, layout: Dictionary) -> void:
 		_environment.background_mode=Environment.BG_SKY if authored else Environment.BG_COLOR
 		_environment.background_color=Color(["14262f","101f28","0c181f","080f14"][decay])
 		_set_formal_daylight_palette(authored)
-		_environment.ambient_light_color=Color("e9eded") if authored else Color("9dbacb")
+		_environment.ambient_light_color=Color("e9eded") if authored else (Color("b7c6ca") if PoolMaterials.use_pc_source_finish() else Color("9dbacb"))
 		_mood_tween.tween_property(_environment,"ambient_light_energy",(0.15 if expanded else (0.18 if formal else .095)),0.6)
 		var sun:=_world_environment.get_node_or_null("ApertureSun") as DirectionalLight3D
 		if sun:_mood_tween.tween_property(sun,"light_energy",FORMAL_SUN_ENERGY if authored and daylit and decay<2 else 0.0,0.6)

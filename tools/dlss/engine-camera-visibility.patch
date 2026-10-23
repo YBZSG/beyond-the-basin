@@ -1,0 +1,91 @@
+--- a/servers/rendering/renderer_rd/forward_clustered/render_raytracing.cpp
++++ b/servers/rendering/renderer_rd/forward_clustered/render_raytracing.cpp
+@@ -2276,6 +2276,7 @@
+ 		bool transform_moved;
+ 		RTMaterialData *mat_data;
+ 		uint32_t inst_flags;
++		uint32_t camera_mask;
+ 	};
+ 	LocalVector<PendingMMSurface> pending_mm_surfaces;
+ 
+@@ -2286,6 +2287,9 @@
+ 		if (!inst || !inst->data) {
+ 			continue;
+ 		}
++		// Primary visibility follows Camera3D.cull_mask; secondary rays retain
++		// off-camera geometry for reflections and shadows (e.g. the player's head).
++		const uint32_t camera_mask = (inst->layer_mask & p_render_data->scene_data->camera_visible_layers) ? 0xFF : 0xFE;
+ 		const Transform3D &instance_transform = inst->transform;
+ 
+ 		// Determine previous-frame transform for motion vectors.
+@@ -2361,7 +2365,7 @@
+ 				uint32_t inst_flags = RD::ACCELERATION_STRUCTURE_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT |
+ 						RD::ACCELERATION_STRUCTURE_INSTANCE_FORCE_OPAQUE_BIT;
+ 				instance_flags.push_back(inst_flags);
+-				instance_masks.push_back(0xFF);
++				instance_masks.push_back(camera_mask);
+ 			}
+ 			continue;
+ 		}
+@@ -2463,6 +2467,7 @@
+ 				pending.transform_moved = transform_moved;
+ 				pending.mat_data = mat_data;
+ 				pending.inst_flags = inst_flags;
++				pending.camera_mask = camera_mask;
+ 				pending_mm_surfaces.push_back(pending);
+ 
+ 				mm_surf = mm_surf->next;
+@@ -2618,7 +2623,7 @@
+ 				}
+ 			}
+ 			instance_flags.push_back(inst_flags);
+-			instance_masks.push_back(0xFF);
++			instance_masks.push_back(camera_mask);
+ 
+ 			surf = surf->next;
+ 		}
+@@ -2648,7 +2653,7 @@
+ 			material_data.push_back(pending.mat_data->data);
+ 			motion_indices.push_back(-1);
+ 			instance_flags.push_back(pending.inst_flags);
+-			instance_masks.push_back(0xFF);
++			instance_masks.push_back(pending.camera_mask);
+ #ifdef TOOLS_ENABLED
+ 			if (collect_render_info) {
+ 				tlas_instance_count++;
+@@ -2719,7 +2724,7 @@
+ 				}
+ 
+ 				instance_flags.push_back(pending.inst_flags);
+-				instance_masks.push_back(0xFF);
++				instance_masks.push_back(pending.camera_mask);
+ 			}
+ 
+ #ifdef TOOLS_ENABLED
+--- a/servers/rendering/renderer_rd/shaders/raytracing/scene_raytracing_raygen.glsl
++++ b/servers/rendering/renderer_rd/shaders/raytracing/scene_raytracing_raygen.glsl
+@@ -65,10 +65,14 @@
+ 
+ 		[[dont_unroll]] for (uint bounce = 0u; bounce <= max_bounces; bounce++) {
+ 			path_pack(payload, ps);
++			// Match raster primary visibility and the camera near plane, including
++			// oblique rays. Secondary rays still see hidden first-person geometry.
++			uint ray_mask = bounce == 0u ? 0x01u : 0xFFu;
++			float ray_min = bounce == 0u ? scene_data_block.data.z_near / max(-normalize(target.xyz).z, 0.001) : 0.001;
+ 
+ #ifdef USE_SER
+ 			hitObjectEXT hitObject;
+-			hitObjectTraceRayEXT(hitObject, tlas, RT_RAY_FLAGS, 0xFF, 0, 0, 0, ray_origin, 0.001, ray_dir, 10000.0, 0);
++			hitObjectTraceRayEXT(hitObject, tlas, RT_RAY_FLAGS, ray_mask, 0, 0, 0, ray_origin, ray_min, ray_dir, 10000.0, 0);
+ 
+ 			// Reorder with a coherence hint that has 8 bits
+ 			uint hint = 0;
+@@ -80,7 +84,7 @@
+ 
+ 			hitObjectExecuteShaderEXT(hitObject, 0);
+ #else
+-			traceRayEXT(tlas, RT_RAY_FLAGS, 0xFF, 0, 0, 0, ray_origin, 0.001, ray_dir, 10000.0, 0);
++			traceRayEXT(tlas, RT_RAY_FLAGS, ray_mask, 0, 0, 0, ray_origin, ray_min, ray_dir, 10000.0, 0);
+ #endif
+ 
+ 			ps = path_unpack(payload);

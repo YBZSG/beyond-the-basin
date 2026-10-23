@@ -67,6 +67,10 @@ func setup(skeleton: Skeleton3D) -> void:
 		inward = (inward - long_axis * inward.dot(long_axis)).normalized()
 		var palm_rest: Vector3 = hand_rest.origin.lerp(knuckle_rest, 0.78) + inward * PALM_THICKNESS
 		var palm_local: Vector3 = hand_rest.affine_inverse() * palm_rest
+		# Measured contact centres of the new continuous palm, not the older
+		# inflated 28 mm pad. Legacy 42-bone assets retain their original anchor.
+		if skeleton.find_bone("WristSupport_" + suffix) >= 0 and skeleton.find_bone("Middle3_" + suffix) >= 0:
+			palm_local = Vector3(-0.0209279060, 0.0671776533, 0.0010641515) if side == 1 else Vector3(0.0209339261, 0.0671775341, 0.0010622740)
 		var local_long: Vector3 = hand_rest.basis.inverse() * long_axis
 		var local_normal: Vector3 = hand_rest.basis.inverse() * inward
 		_arms.append({"side": side, "upper": upper, "forearm": forearm, "hand": hand,
@@ -243,3 +247,11 @@ func apply(held: RigidBody3D, avatar_basis: Basis, weight: float, delta: float) 
 	return {"valid": true, "reachable": reachable, "contact_weight": _contact_weight,
 		"desired_weight": desired_weight, "active": active, "arms": results,
 		"target_lag": solve_center.distance_to(raw_center), "persistent_overrides": false}
+
+func clear_contact() -> void:
+	# Physical throw has released the body. The avatar blends a captured local
+	# grip pose into followthrough; never continue targeting a stale world point.
+	_contact_weight = 0.0
+	_has_target = false
+	_body_id = 0
+	_has_frame = false
