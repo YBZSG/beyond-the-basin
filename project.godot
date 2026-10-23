@@ -46,10 +46,18 @@ pointing/emulate_mouse_from_touch.android=false
 [physics]
 
 common/physics_ticks_per_second=120
+common/physics_ticks_per_second.android=60
+common/max_physics_steps_per_frame.android=4
 common/max_physics_steps_per_frame.pc=16
 3d/physics_engine="Jolt Physics"
 
 [rendering]
+
+renderer/rendering_method.android="mobile"
+renderer/rendering_method.mobile="mobile"
+anti_aliasing/quality/screen_space_aa.android=2
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality.android=1
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality.android=1
 
 textures/vram_compression/import_etc2_astc=true
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3

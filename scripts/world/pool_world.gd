@@ -13,6 +13,7 @@ const ROOM := 32.0
 const WATER_LEVEL := .32
 const GROUND := -.78
 const STREAM_RADIUS := 2
+var stream_radius:int=1 if preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session() else STREAM_RADIUS
 const Catalog := preload("res://scripts/world/room_catalog.gd")
 const Builder := preload("res://scripts/world/room_builder.gd")
 var seed_value: int = 1337
@@ -120,8 +121,8 @@ func _request_stream(center: Vector2i) -> void:
 			if not resident_rooms.has(coord): _create_shell(coord)
 			if not is_room_ready(coord): _queue.append(coord)
 		return
-	for z in range(center.y-STREAM_RADIUS,center.y+STREAM_RADIUS+1):
-		for x in range(center.x-STREAM_RADIUS,center.x+STREAM_RADIUS+1):
+	for z in range(center.y-stream_radius,center.y+stream_radius+1):
+		for x in range(center.x-stream_radius,center.x+stream_radius+1):
 			var coord:=Vector2i(x,z)
 			_desired[coord]=true
 			candidates.append(coord)

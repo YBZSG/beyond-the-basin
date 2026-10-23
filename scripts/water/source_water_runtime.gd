@@ -19,7 +19,10 @@ const TerrainPrepare=preload("res://scripts/water/source_port/source_terrain_pre
 const Surface=preload("res://shaders/source_water_surface.gdshader")
 const NearfieldProfile=preload("res://scripts/water/pc_nearfield_water_profile.gd")
 const QUALITY={"Low":{"simulation":384,"surface":96,"ripple":192,"reflection":256},"Medium":{"simulation":384,"surface":192,"ripple":384,"reflection":384},"High":{"simulation":768,"surface":384,"ripple":768,"reflection":768},"Ultra":{"simulation":1152,"surface":512,"ripple":1152,"reflection":1536}}
+const MobileProfile=preload("res://scripts/mobile/pool_mobile_profile.gd")
 const LEVEL=.32
+var mobile_optimized:bool=MobileProfile.is_mobile_session()
+var quality_levels:Dictionary=MobileProfile.WATER_QUALITY if mobile_optimized else QUALITY
 var settings:Dictionary=Settings.DEFAULT.duplicate()
 var events:=Events.new()
 var quality: String="High"
@@ -103,6 +106,8 @@ func configure(library:RefCounted)->void:
  if _configured:return
  _configured=true
  _configure_initial_fields()
+ # Android retains SWE/ripples/optics, without allocating any 3D splash pipeline.
+ if mobile_optimized:return
  _liquid=Liquid.new();_whitewater=Whitewater.new()
  _refresh_particle_sampler()
  _whitewater.configure(_particle_sampler.surface_at,_particle_sampler.depth_at,func(x:float,z:float)->Vector2:return solver.flow_at(Vector2(x,z)))
@@ -117,12 +122,12 @@ func configure(library:RefCounted)->void:
 func _configure_initial_fields()->void:
  # This is cold zero-state initialization, not a live-water quality change.
  # Keep the existing configure(library) API for callers and fixture overrides.
- quality=quality if QUALITY.has(quality) else "High"
+ quality=quality if quality_levels.has(quality) else "High"
  settings.quality=quality
  _initialization_stats.initial_quality=quality
  solver.ready.connect(_solver_ready)
  solver.failed.connect(_failed)
- var selected:Dictionary=QUALITY[quality]
+ var selected:Dictionary=quality_levels[quality]
  var depth:=Image.create(int(selected.simulation),int(selected.simulation),false,Image.FORMAT_RF);depth.fill(Color(0,0,0))
  solver.configure(depth,int(selected.simulation),96.0,int(selected.ripple))
  _initialization_stats.solver_configure_calls+=1
@@ -144,8 +149,16 @@ func _failed(reason:String)->void:
  last_error=reason;push_error("Original source water unavailable: "+reason)
 func configure_camera(camera:Camera3D,environment:Environment)->void:
  _camera=camera
- planar=Planar.new();planar.name="SourcePlanarReflection";add_child(planar);planar.configure(camera,environment);planar.set_quality(QUALITY[quality].reflection)
- _compositor=Compositor.new();_compositor.compositor_effects=[_liquid_surface];camera.compositor=_compositor
+ planar=Planar.new()
+ if mobile_optimized:
+  planar.resolution=int(quality_levels[quality].reflection)
+  planar.capture_msaa=Viewport.MSAA_2X
+ planar.name="SourcePlanarReflection";add_child(planar);planar.configure(camera,environment);planar.set_quality(quality_levels[quality].reflection)
+ _compositor=Compositor.new()
+ if _liquid_surface:_compositor.compositor_effects=[_liquid_surface]
+ camera.compositor=_compositor
+ # This cubemap is consumed only by the volumetric splash compositor.
+ if mobile_optimized:return
  _probe=RoomProbe.new();_probe.name="OriginalRoomCubemap";add_child(_probe);_probe.configure(camera,environment);_probe.completed.connect(_liquid_surface.configure_environment)
 func refresh_capture_lighting()->void:
  if is_instance_valid(planar):planar.refresh_lighting()
@@ -186,6 +199,7 @@ func _update_probe_capture()->void:
   _request_probe_for_committed_target()
  _probe.update()
 func _probe_has_current_texture()->bool:
+ if mobile_optimized:return _probe_target_committed()
  # Kept output can still be displayed during preparation; QA/readiness must not
  # mistake that old-domain image for a completed requested-domain capture.
  return _probe_target_committed() and not _probe_capture_suspended and not _probe_lighting_refresh_pending and is_instance_valid(_probe) and _probe.texture!=null
@@ -215,7 +229,7 @@ func add_room(room:Node3D,coord:Vector2i,layout:Dictionary)->void:
  for rect:Rect2 in rects:
   var mesh:=PlaneMesh.new();mesh.size=rect.size
   # Preserve original96m surface vertex density, allocate to actual bounded region.
-  var density:float=float(QUALITY[quality].surface)/96.0
+  var density:float=float(quality_levels[quality].surface)/96.0
   mesh.subdivide_width=maxi(1,ceili(rect.size.x*density));mesh.subdivide_depth=maxi(1,ceili(rect.size.y*density))
   var instance:=MeshInstance3D.new();instance.mesh=mesh;instance.material_override=material;instance.position=Vector3(rect.get_center().x,LEVEL,rect.get_center().y);instance.layers=2;instance.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;instance.gi_mode=GeometryInstance3D.GI_MODE_DISABLED;instance.extra_cull_margin=.4;group.add_child(instance)
  _refresh_surface_visibility()
@@ -638,9 +652,9 @@ func _process(delta:float)->void:
  if _nearfield_profile:_nearfield_profile.refresh_context()
  if not enabled or _terrain_paused or not _terrain_ready:return
  _time+=maxf(0.0,delta)
- _refresh_particle_sampler()
+ if _liquid:_refresh_particle_sampler()
  var focus:=_local(_camera.global_position) if is_instance_valid(_camera) else Vector2.ZERO
- events.crest_spray(minf(delta,.05),func(x:float,z:float,power:float,_foam:float)->void:
+ if _liquid:events.crest_spray(minf(delta,.05),func(x:float,z:float,power:float,_foam:float)->void:
   if _liquid:
    var flow:=solver.flow_at(Vector2(x,z));_liquid.crest(x,z,power,{"u":flow.x,"v":flow.y}),focus)
  if _liquid:_liquid.frame(delta)
@@ -687,8 +701,9 @@ func impact(pos:Vector3,power:float)->void:
  splash(pos,power,{})
 func splash(pos:Vector3,power:float,direction:Dictionary={})->void:
  if not enabled or not is_water_at(pos):return
- _refresh_particle_sampler()
  wave_impact(pos,power)
+ if not _liquid and not _whitewater:return
+ _refresh_particle_sampler()
  var p:=_local(pos);var current:=solver.flow_at(p)
  var flow:Dictionary={"u":current.x,"v":current.y}
  if not direction.is_empty():
@@ -756,27 +771,27 @@ func _apply_settings()->void:
  events.apply_settings(settings)
  if is_instance_valid(planar):planar.enabled=enabled and bool(settings.reflection)
 func set_quality(value:String)->void:
- if not QUALITY.has(value):return
+ if not quality_levels.has(value):return
  var changed:=quality!=value;quality=value;settings.quality=value
  # Unrelated quality-panel controls may reapply this preset. Do not reset
  # reflection overrides, resize meshes or churn targets when nothing changed.
  if not changed:return
  if changed:
-  var image:Image=solver.get_depth_image();image.resize(QUALITY[value].simulation,QUALITY[value].simulation,Image.INTERPOLATE_NEAREST)
+  var image:Image=solver.get_depth_image();image.resize(quality_levels[value].simulation,quality_levels[value].simulation,Image.INTERPOLATE_NEAREST)
   _initialization_stats.quality_reconfigurations+=1
   _initialization_stats.solver_configure_calls+=1
   var previous=solver
   solver=Solver.new();solver.ready.connect(_solver_ready);solver.failed.connect(_failed)
-  solver.configure(image,QUALITY[value].simulation,96.0,QUALITY[value].ripple)
+  solver.configure(image,quality_levels[value].simulation,96.0,quality_levels[value].ripple)
   solver.inherit(previous);previous.dispose();events.set_solver(solver)
   caustics.configure(solver.get_state_texture(),solver.get_depth_texture(),solver.get_detail_texture())
   if _liquid_surface:_liquid_surface.configure(solver.get_state_texture(),solver.get_depth_texture(),solver.get_detail_texture())
   for group in _surfaces.values():
    for instance:MeshInstance3D in group.get_children():
-    var mesh:=instance.mesh as PlaneMesh;var density:float=float(QUALITY[value].surface)/96.0;mesh.subdivide_width=maxi(1,ceili(mesh.size.x*density));mesh.subdivide_depth=maxi(1,ceili(mesh.size.y*density))
+    var mesh:=instance.mesh as PlaneMesh;var density:float=float(quality_levels[value].surface)/96.0;mesh.subdivide_width=maxi(1,ceili(mesh.size.x*density));mesh.subdivide_depth=maxi(1,ceili(mesh.size.y*density))
  _apply_settings()
  caustics.set_quality(value)
- if is_instance_valid(planar):planar.set_quality(QUALITY[value].reflection)
+ if is_instance_valid(planar):planar.set_quality(quality_levels[value].reflection)
  _bind_all()
 func _rebuild_terrain()->void:
  # Retained synchronous reference for regression fixtures only. Live gameplay
@@ -897,6 +912,10 @@ func debug_stats()->Dictionary:
  result.initialization=_initialization_stats.duplicate()
  result.preparation=get_preparation_status()
  result.nearfield=nearfield_status()
+ result.mobile_optimized=mobile_optimized
+ result.volumetric_splashes=not mobile_optimized
+ result.cubemap_required=not mobile_optimized
+ result.surface_budget=quality_levels[quality].duplicate()
  result.merge({"terrain_ready":is_terrain_ready(),"terrain_pending":_terrain_applied_key!=_terrain_key(_requested_coord),"terrain_coord":Vector2i(roundi(domain_origin.x/32),roundi(domain_origin.y/32)),"requested_coord":_requested_coord,"terrain_cache_hits":_terrain_metrics.cache_hits,"terrain_cache_misses":_terrain_metrics.cache_misses,"terrain_jobs":_terrain_metrics.jobs,"terrain_commits":_terrain_metrics.commits,"terrain_cache_entries":_terrain_cache.size(),"terrain_stage_ms":_terrain_metrics.duplicate(true),"cpu_frame_stages_ms":_frame_stages.duplicate(),"cpu_frame_stage_max_ms":_frame_stage_max.duplicate(),"terrain_worker_running":preparation_pending(),"probe_scheduling":_probe_scheduling_diagnostics(),"probe":_probe.diagnostics() if is_instance_valid(_probe) else {}})
  result.merge({"rooms":_rooms.size(),"quality":quality,"field_resolution":solver.size,"impacts":interaction_count,"droplet_returns":ripple_returns,"caustics":caustics_enabled,"caustic_frames":caustics.caustic_frames,"caustic_error":caustics.last_error,"caustic_diagnostics":caustics.diagnostics(),"planar_ready":is_instance_valid(planar) and planar.capture_ready,"liquid":_liquid.stats() if _liquid else {},"whitewater":_whitewater.stats() if _whitewater else {},"liquid_render_frames":_liquid_surface.rendered_frames if _liquid_surface else 0,"liquid_shadow_buffer_allocations":_liquid_surface.shadow_buffer_allocations if _liquid_surface else 0,"liquid_shadow_buffer_reuses":_liquid_surface.shadow_buffer_reuses if _liquid_surface else 0,"liquid_error":_liquid_surface.last_error if _liquid_surface else "","cubemap_ready":_probe_has_current_texture(),"cubemap_available":is_instance_valid(_probe) and _probe.texture!=null,"source_commit":Solver.SOURCE_COMMIT,"last_error":last_error},true);return result
 func dispose()->void:

@@ -1,6 +1,7 @@
 extends Node
 ## Android-only quality controls. Presets and overrides survive app restarts.
 ## No desktop settings file or project-wide renderer values are changed here.
+const Profile := preload("res://scripts/mobile/pool_mobile_profile.gd")
 const SETTINGS_PATH := "user://mobile_settings.cfg"
 const PRESETS := {
 	"Low": {"scale":0.67, "aa":0, "shadow_size":512, "shadows":false, "reflections":false, "water":"Low", "caustics_refresh":6},
@@ -15,7 +16,8 @@ var reflections := true
 var screen_aa := Viewport.SCREEN_SPACE_AA_SMAA
 var touch_sensitivity := 1.0
 var caustics_refresh := 2
-var frame_cap := 60
+var frame_cap := 30
+var _window_size := Vector2i.ZERO
 var main: Node
 var _water: Node
 var _panel: PanelContainer
@@ -58,8 +60,8 @@ func load_settings(path: String = SETTINGS_PATH) -> void:
 	var migrated_aa := 0 if legacy_msaa == 0 else (1 if legacy_msaa == 1 else 2)
 	screen_aa = clampi(int(config.get_value("graphics", "screen_aa", migrated_aa)), 0, 2)
 	caustics_refresh = clampi(int(config.get_value("graphics", "caustics_refresh", PRESETS[preset].caustics_refresh)), 0, 6)
-	var saved_cap := int(config.get_value("graphics", "frame_cap", 60))
-	frame_cap = saved_cap if saved_cap in FRAME_CAPS else 60
+	var saved_cap := int(config.get_value("graphics", "frame_cap", 30))
+	frame_cap = saved_cap if saved_cap in FRAME_CAPS else 30
 	touch_sensitivity = clampf(float(config.get_value("controls", "sensitivity", 1.0)), 0.4, 2.0)
 
 func save_settings(path: String = SETTINGS_PATH) -> Error:
@@ -96,10 +98,12 @@ func apply_settings() -> void:
 	if not is_instance_valid(main): return
 	var viewport := main.get_viewport()
 	var shadow_size := int(PRESETS[preset].shadow_size)
-	if _changed("viewport", [viewport.get_instance_id(), resolution_scale, screen_aa]):
+	_window_size = main.get_window().size
+	var actual_scale := Profile.render_scale(_window_size, preset, resolution_scale)
+	if _changed("viewport", [viewport.get_instance_id(), actual_scale, screen_aa]):
 		# Main and reflection captures must share linear HDR scene units.
 		viewport.use_hdr_2d = true
-		viewport.scaling_3d_scale = resolution_scale
+		viewport.scaling_3d_scale = actual_scale
 		viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
 		# Mobile cannot resolve compositor main depth with MSAA. Source liquid
 		# internal 4x MSAA is separate and remains unchanged.
@@ -163,7 +167,7 @@ func _process(_delta: float) -> void:
 		set_process(false)
 		return
 	# Regenerate builds new water and calls desktop initialization. Reapply once.
-	if main.get("water") != _water: apply_settings()
+	if main.get("water") != _water or main.get_window().size != _window_size: apply_settings()
 	if _panel.visible and not bool(main.get("menu_open")): _panel.hide()
 
 func _build_panel() -> void:
@@ -211,7 +215,7 @@ func _build_panel() -> void:
 	_aa.item_selected.connect(func(index: int): screen_aa=index; apply_settings(); save_settings())
 	column.add_child(_aa)
 	var refresh_label := Label.new()
-	refresh_label.text = "原版光子焦散更新间隔 / CAUSTIC INTERVAL"
+	refresh_label.text = "动态焦散更新间隔 / CAUSTIC INTERVAL"
 	column.add_child(refresh_label)
 	_refresh = OptionButton.new()
 	for interval in range(7): _refresh.add_item("每次更新 / EVERY FRAME" if interval == 0 else "间隔 %d 帧 / %d FRAMES" % [interval, interval])
@@ -279,12 +283,12 @@ func _refresh_interface() -> void:
 	_refresh.select(caustics_refresh)
 	_cap.select(FRAME_CAPS.find(frame_cap))
 	var renderer := RenderingServer.get_current_rendering_method()
-	_notes.text = "渲染器：%s。使用原仓库浅水求解、APIC-MPM 水花、光子焦散和平面倒影，不替换成假水。预设可改变网格、渲染分辨率和阴影；帧率上限不保证手机能达到。" % renderer
+	_notes.text = "渲染器：%s。保留动态水面、涟漪、折射、焦散和平面倒影；手机版已移除立体水花和飞溅粒子。高画质控制在最长边 1600、短边 900 像素以内，再应用上方比例。" % renderer
 	if preset == "Low":
-		_notes.text += "\nLow 仍运行主浅水与 MPM 物理，但关闭细波、微法线、泡沫、焦散及倒影等外观层。"
+		_notes.text += "\nLow 保留主浅水，关闭细波、微法线、泡沫、焦散及倒影等外观层。"
 	if renderer != "forward_plus":
 		_notes.text += "\nMobile 不支持 Godot SDFGI、SSAO、SSIL、引擎 SSR、原生体积雾或 TAA。原仓库光束雾为独立光线步进效果，不是这些功能的冒牌替代。"
-	_notes.text += "\n主画面使用 FXAA/SMAA：Mobile 不支持主 MSAA 的合成器深度解析。原水花内部 4×MSAA 保留，Ultra 另用 125% 超采样。"
+	_notes.text += "\n主画面使用 FXAA/SMAA，平面倒影使用 2×MSAA。默认 30 帧上限以减少持续发热，可自行改为 60；实际帧率取决于设备。"
 	_notes.text += "\n画质自动保存。Ultra 增加显存、耗电和发热；真机兼容性与性能尚待验证。"
 
 func close_panel() -> void:

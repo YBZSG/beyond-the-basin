@@ -13,6 +13,7 @@ var mirror:Camera3D
 var source_camera:Camera3D
 var output:Texture2D
 var texture_matrix:=Projection.IDENTITY
+var capture_msaa:int=Viewport.MSAA_4X
 var resolution:=768
 var interval:=0
 var capture_ready:=false
@@ -29,7 +30,7 @@ func configure(camera:Camera3D, environment:Environment)->void:
  source_camera.cull_mask=source_camera.cull_mask & ~MARKER
  _environment=environment
  if viewport:return
- viewport=SubViewport.new();viewport.name="OriginalWaterMirror";viewport.size=Vector2i(resolution,resolution);viewport.disable_3d=false;viewport.use_hdr_2d=true;viewport.use_taa=false;viewport.transparent_bg=false;viewport.world_3d=camera.get_world_3d();viewport.render_target_update_mode=SubViewport.UPDATE_DISABLED;viewport.msaa_3d=Viewport.MSAA_4X;add_child(viewport)
+ viewport=SubViewport.new();viewport.name="OriginalWaterMirror";viewport.size=Vector2i(resolution,resolution);viewport.disable_3d=false;viewport.use_hdr_2d=true;viewport.use_taa=false;viewport.transparent_bg=false;viewport.world_3d=camera.get_world_3d();viewport.render_target_update_mode=SubViewport.UPDATE_DISABLED;viewport.msaa_3d=capture_msaa;add_child(viewport)
  mirror=Camera3D.new();mirror.cull_mask=1|AVATAR_BODY_LAYER|AVATAR_HEAD_LAYER|MARKER;mirror.current=true;viewport.add_child(mirror)
  # Capture linear HDR. Main viewport applies AgX/exposure once at composition.
  var capture_env:Environment=CaptureEnvironment.create(environment)

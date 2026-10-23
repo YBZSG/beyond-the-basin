@@ -174,6 +174,8 @@ func _ready() -> void:
 		preload("res://scripts/rendering/desktop_quality_panel.gd").install(self)
 
 func _initial_water_quality() -> String:
+	if preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session():
+		return preload("res://scripts/mobile/pool_mobile_profile.gd").initial_water_quality()
 	# Startup settings are already loaded. An installed desktop owner also
 	# carries independently customized water precision when rebuilding a world.
 	var requested := _quality.capitalize()
@@ -1079,7 +1081,7 @@ func _apply_quality(value: String) -> void:
 		# The source compositors operate on linear HDR scene color. This also
 		# covers explicit desktop Mobile launches without the touch UI adapter.
 		get_viewport().use_hdr_2d=true
-	if is_instance_valid(water): water.set_quality(value.capitalize())
+	if is_instance_valid(water) and not preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session(): water.set_quality(value.capitalize())
 
 func _attach_distance_fog(camera:Camera3D)->CompositorEffect:
 	var effect:=SourceDistanceFogScript.new()
@@ -1289,7 +1291,7 @@ func _run_qa_capture() -> void:
 	var sorted_times:=frame_times.duplicate();sorted_times.sort()
 	var total_time:=0.0
 	for value in frame_times:total_time+=value
-	state["actual_wall_timing"]={"frames":frames,"mean_ms":total_time/maxi(1,frames),"p95_ms":sorted_times[mini(sorted_times.size()-1,floori(sorted_times.size()*.95))],"samples_ms":frame_times,"physics_frames":Engine.get_physics_frames(),"note":"Actual wall-clock frame intervals on cloud llvmpipe software Vulkan; includes scene/cubemap warmup, not target PC hardware."}
+	state["actual_wall_timing"]={"frames":frames,"mean_ms":total_time/maxi(1,frames),"p95_ms":sorted_times[mini(sorted_times.size()-1,floori(sorted_times.size()*.95))],"samples_ms":frame_times,"physics_frames":Engine.get_physics_frames(),"note":"Actual wall-clock frame intervals on the reported device; includes scene warmup, not a phone benchmark."}
 	state["capture_error"]=err
 	state["capture_size"]=[image.get_width(),image.get_height()]
 	state["camera"]={"position":player.camera.global_position,"transform":player.camera.global_transform,"fov":player.camera.fov}

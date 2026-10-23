@@ -1,5 +1,5 @@
 extends RefCounted
-## Explicit requirements for the ORIGINAL SWE + APIC-MPM + photon pipeline.
+## Required SWE and photon pipeline; Android has no MPM/splash targets.
 ## This is a guard/report, never a replacement solver or a fake-water fallback.
 signal completed(report: Dictionary)
 var report: Dictionary = {"checked":false, "supported":false, "errors":[]}
@@ -15,10 +15,10 @@ func _inspect() -> void:
 		_publish.call_deferred(result)
 		return
 	var limits := [
-		["compute_invocations", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_INVOCATIONS, 128],
-		["compute_x", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_SIZE_X, 128],
+		["compute_invocations", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_INVOCATIONS, 64],
+		["compute_x", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_SIZE_X, 64],
 		["compute_y", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_SIZE_Y, 8],
-		["dispatch_x", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_COUNT_X, 4000],
+		["dispatch_x", RenderingDevice.LIMIT_MAX_COMPUTE_WORKGROUP_COUNT_X, 4096],
 		["storage_buffers", RenderingDevice.LIMIT_MAX_STORAGE_BUFFERS_PER_SHADER_STAGE, 4],
 		["storage_images", RenderingDevice.LIMIT_MAX_STORAGE_IMAGES_PER_SHADER_STAGE, 4],
 		["texture_size", RenderingDevice.LIMIT_MAX_TEXTURE_SIZE_2D, 2048],
@@ -35,7 +35,6 @@ func _inspect() -> void:
 		["RGBA16F storage/sampling/copy", RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT, sampled | storage | copy],
 		["R32F storage/sampling/copy", RenderingDevice.DATA_FORMAT_R32_SFLOAT, sampled | storage | copy],
 		["RGBA16F color/sampling/copy", RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT, sampled | color | copy],
-		["RGBA32F color/sampling/copy", RenderingDevice.DATA_FORMAT_R32G32B32A32_SFLOAT, sampled | color | copy],
 		["D32F depth attachment", RenderingDevice.DATA_FORMAT_D32_SFLOAT, RenderingDevice.TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT],
 	]
 	for item in formats:
