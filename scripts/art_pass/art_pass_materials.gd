@@ -86,6 +86,7 @@ func resolve(role: String, material_library: RefCounted) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = PBR_SHADER
 	material.resource_name = role
+	material.set_shader_parameter("glazed_ceramic", "tile_" in role or "coping_" in role)
 	if SOLID_ROLES.has(role):
 		material.set_shader_parameter("mapped", false)
 		material.set_shader_parameter("constant_color", Color(SOLID_ROLES[role].color))

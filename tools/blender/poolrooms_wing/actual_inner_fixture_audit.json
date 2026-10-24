@@ -1,0 +1,665 @@
+{
+  "passed": true,
+  "fixture_count": 4,
+  "old_side_fixture_objects": 0,
+  "housing_clear_corridor_width": 3.79,
+  "normal_walking_headroom": 0.415,
+  "fixtures": [
+    {
+      "object": "GalleryInnerPierFixture",
+      "housing_min": [
+        -2.0,
+        2.575,
+        -2.675
+      ],
+      "housing_max": [
+        -1.895,
+        2.825,
+        -2.325
+      ],
+      "light": {
+        "position": [
+          -1.765,
+          2.7,
+          -2.5
+        ],
+        "color": "edf0df",
+        "power": 14.0,
+        "power_scale": 1.0,
+        "alive": true,
+        "flicker": false,
+        "range": 6.5
+      },
+      "lens_hit": [
+        -1.895,
+        2.7,
+        -2.5
+      ],
+      "lens_normal": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "light_to_lens_distance": 0.13,
+      "normal_faces_corridor": true,
+      "housing_width": 0.35,
+      "pier_depth": 0.44,
+      "pier_edge_margin": 0.045,
+      "lens_material": "lamp",
+      "visibility_probes": [
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -7.5
+          ],
+          "distance": 5.7179,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -5.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            0.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            5.0
+          ],
+          "distance": 7.9966,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            7.5
+          ],
+          "distance": 10.3776,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -7.5
+          ],
+          "distance": 5.5744,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -5.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            0.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            5.0
+          ],
+          "distance": 7.8945,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            7.5
+          ],
+          "distance": 10.2992,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        }
+      ]
+    },
+    {
+      "object": "GalleryInnerPierFixture.001",
+      "housing_min": [
+        -2.0,
+        2.575,
+        2.325
+      ],
+      "housing_max": [
+        -1.895,
+        2.825,
+        2.675
+      ],
+      "light": {
+        "position": [
+          -1.765,
+          2.7,
+          2.5
+        ],
+        "color": "edf0df",
+        "power": 14.0,
+        "power_scale": 1.0,
+        "alive": true,
+        "flicker": false,
+        "range": 6.5
+      },
+      "lens_hit": [
+        -1.895,
+        2.7,
+        2.5
+      ],
+      "lens_normal": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "light_to_lens_distance": 0.13,
+      "normal_faces_corridor": true,
+      "housing_width": 0.35,
+      "pier_depth": 0.44,
+      "pier_edge_margin": 0.045,
+      "lens_material": "lamp",
+      "visibility_probes": [
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -7.5
+          ],
+          "distance": 10.3776,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -5.0
+          ],
+          "distance": 7.9966,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            0.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            5.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            7.5
+          ],
+          "distance": 5.7179,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -7.5
+          ],
+          "distance": 10.2992,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -5.0
+          ],
+          "distance": 7.8945,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            0.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            5.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            7.5
+          ],
+          "distance": 5.5744,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        }
+      ]
+    },
+    {
+      "object": "GalleryInnerPierFixture.002",
+      "housing_min": [
+        1.895,
+        2.575,
+        -2.675
+      ],
+      "housing_max": [
+        2.0,
+        2.825,
+        -2.325
+      ],
+      "light": {
+        "position": [
+          1.765,
+          2.7,
+          -2.5
+        ],
+        "color": "edf0df",
+        "power": 14.0,
+        "power_scale": 1.0,
+        "alive": true,
+        "flicker": false,
+        "range": 6.5
+      },
+      "lens_hit": [
+        1.895,
+        2.7,
+        -2.5
+      ],
+      "lens_normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "light_to_lens_distance": 0.13,
+      "normal_faces_corridor": true,
+      "housing_width": 0.35,
+      "pier_depth": 0.44,
+      "pier_edge_margin": 0.045,
+      "lens_material": "lamp",
+      "visibility_probes": [
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -7.5
+          ],
+          "distance": 5.7179,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -5.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            0.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            5.0
+          ],
+          "distance": 7.9966,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            7.5
+          ],
+          "distance": 10.3776,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -7.5
+          ],
+          "distance": 5.5744,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -5.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            0.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            5.0
+          ],
+          "distance": 7.8945,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            7.5
+          ],
+          "distance": 10.2992,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        }
+      ]
+    },
+    {
+      "object": "GalleryInnerPierFixture.003",
+      "housing_min": [
+        1.895,
+        2.575,
+        2.325
+      ],
+      "housing_max": [
+        2.0,
+        2.825,
+        2.675
+      ],
+      "light": {
+        "position": [
+          1.765,
+          2.7,
+          2.5
+        ],
+        "color": "edf0df",
+        "power": 14.0,
+        "power_scale": 1.0,
+        "alive": true,
+        "flicker": false,
+        "range": 6.5
+      },
+      "lens_hit": [
+        1.895,
+        2.7,
+        2.5
+      ],
+      "lens_normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "light_to_lens_distance": 0.13,
+      "normal_faces_corridor": true,
+      "housing_width": 0.35,
+      "pier_depth": 0.44,
+      "pier_edge_margin": 0.045,
+      "lens_material": "lamp",
+      "visibility_probes": [
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -7.5
+          ],
+          "distance": 10.3776,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            -5.0
+          ],
+          "distance": 7.9966,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            0.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            5.0
+          ],
+          "distance": 3.7343,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "centre_deck",
+          "target": [
+            0.0,
+            0.5600000023841858,
+            7.5
+          ],
+          "distance": 5.7179,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -7.5
+          ],
+          "distance": 10.2992,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            -5.0
+          ],
+          "distance": 7.8945,
+          "within_light_range": false,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            0.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            5.0
+          ],
+          "distance": 3.5105,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        },
+        {
+          "kind": "vault_underside",
+          "target": [
+            0.0,
+            4.420000076293945,
+            7.5
+          ],
+          "distance": 5.5744,
+          "within_light_range": true,
+          "visible": true,
+          "blocked_by": null
+        }
+      ]
+    }
+  ]
+}

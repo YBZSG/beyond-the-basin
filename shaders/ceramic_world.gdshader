@@ -172,31 +172,33 @@ void fragment() {
     ALBEDO=mix(mix(mortar,ceramic,face),plaster_pigment.rgb,plaster_mask);
 
     float batch=(surface.g-.5)*2.0;
-    float glaze=clamp(face_roughness+batch*.012-wet*.045,0.18,0.78);
+    float glaze=clamp(face_roughness*0.025+0.04+batch*.003-wet*.008,0.04,0.065);
     float rough=mix(glaze,0.82-wet*.12,grout);
     if (local_wet_finish_enabled && local_wet_finish_strength > 0.0) {
         // Porous joints remain substantially rougher than glazed faces.
-        float film_roughness = mix(0.18, 0.52, grout);
+        float film_roughness = mix(0.06, 0.68, grout);
         float damp_roughness = mix(0.025, 0.075, grout);
-        rough = mix(max(rough - damp_roughness * local_wet.y, 0.18), film_roughness, local_wet.x);
+        rough = mix(max(rough - damp_roughness * local_wet.y, mix(0.06, 0.65, grout)), film_roughness, local_wet.x);
     }
     vec3 perturbation=vec3(0.0,nx.y,-s.x*nx.x)*weights.x
                      +vec3(ny.x,0.0,-s.y*ny.y)*weights.y
                      +vec3(s.z*nz.x,nz.y,0.0)*weights.z;
     perturbation-=n*dot(n,perturbation);
-    perturbation*=normal_strength*detail*(1.0-plaster_mask)*(tile_face_only?0.0:1.0);
+    // Strong authored joint/bevel normals, quiet glossy tile interiors.
+    float bevel_normal=smoothstep(0.025,0.14,length(perturbation));
+    perturbation*=normal_strength*mix(0.08,1.0,bevel_normal)*detail*(1.0-plaster_mask)*(tile_face_only?0.0:1.0);
     vec3 mapped=normalize(n+perturbation);
     NORMAL=normalize((VIEW_MATRIX*vec4(mapped,0.0)).xyz);
     // Specular antialiasing only reacts to normal-map variation, not the true
     // curvature of modelled nosings. Distant ceramic retains broad calm gloss.
     vec3 dx=dFdx(mapped)-dFdx(n);
     vec3 dy=dFdy(mapped)-dFdy(n);
-    float variance=min(0.020,0.25*(dot(dx,dx)+dot(dy,dy)));
-    ROUGHNESS=mix(clamp(pow(pow(rough,4.0)+variance,0.25),0.18,0.95),0.84,plaster_mask);
+    float variance=min(0.00012,0.05*(dot(dx,dx)+dot(dy,dy)));
+    ROUGHNESS=mix(clamp(pow(pow(rough,4.0)+variance,0.25),0.04,0.95),0.84,plaster_mask);
     METALLIC=0.0;
     SPECULAR=mix(mix(0.5,0.34,grout),0.32,plaster_mask);
     CLEARCOAT=(coat_strength+wet*.06)*face*(1.0-plaster_mask);
-    CLEARCOAT_ROUGHNESS=0.24;
+    CLEARCOAT_ROUGHNESS=0.08;
     if (local_wet_finish_enabled && local_wet_finish_strength > 0.0) {
         // Godot 4.6.3: dielectric F0 = .16 * SPECULAR^2. Air/water
         // IOR 1.333 gives F0=.020373; SPECULAR=.356837. Blend in F0,

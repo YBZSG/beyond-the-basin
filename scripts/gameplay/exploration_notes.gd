@@ -3,7 +3,8 @@ extends Node
 ## Instantiated by the PC menu integration; stores only local world discoveries.
 const SCHEMA_VERSION := 1
 const DEFAULT_PATH := "user://exploration_notes_v1.json"
-const MODES := ["original", "formal", "expanded"]
+const MODES := ["original", "formal", "expanded", "poolrooms"]
+const POOLROOMS_MODULES := ["poolrooms_court", "poolrooms_lanes", "poolrooms_bath"]
 const MAX_WORLDS := 24
 const MAX_COORDS := 4096
 const MAX_ARCHETYPES := 32
@@ -89,6 +90,7 @@ func observe_player_room(world: Node, player_position: Vector3) -> bool:
 	if absf(player_position.x) > MAX_COORD_COMPONENT * 32.0 or absf(player_position.z) > MAX_COORD_COMPONENT * 32.0: return false
 	if not world.has_method("get_room_coord") or not world.has_method("get_layout") or not world.has_method("is_room_ready"): return false
 	var actual_mode := "formal" if bool(world.get("formal_mode")) else ("expanded" if bool(world.get("expanded_mode")) else "original")
+	if bool(world.get("poolrooms_mode")): actual_mode = "poolrooms"
 	if actual_mode != _active_mode or str(world.get("seed_value")) != _active_seed: return false
 	var coord: Vector2i = world.call("get_room_coord", player_position)
 	if coord != world.get("current_room") or not bool(world.call("is_room_ready", coord)): return false
@@ -133,14 +135,18 @@ static func _archetype(layout: Dictionary, mode: String) -> Dictionary:
 	if mode == "formal":
 		if not bool(layout.get("formal", false)) or bool(layout.get("expanded", false)) or variant < 8 or variant > 12: return {}
 		identity = "formal:" + str(variant)
-	elif mode == "expanded" and bool(layout.get("expanded", false)):
+	elif mode == "poolrooms" and bool(layout.get("poolrooms_wing", false)):
+		var module := str(layout.get("expanded_module", ""))
+		if variant < 15 or variant > 17 or module != POOLROOMS_MODULES[variant - 15]: return {}
+		identity = "poolrooms:" + module
+	elif mode in ["expanded", "poolrooms"] and bool(layout.get("expanded", false)):
 		var module := str(layout.get("expanded_module", ""))
 		if variant < 11 or variant > 14 or module != EXPANDED_MODULES[variant - 11]: return {}
 		if bool(layout.get("formal", false)): return {}
 		identity = "expanded:" + module
 	else:
 		if bool(layout.get("formal", false)) or bool(layout.get("expanded", false)) or variant < 0 or variant > 7: return {}
-		if mode == "expanded" and not bool(layout.get("expanded_mode", false)): return {}
+		if mode in ["expanded", "poolrooms"] and not bool(layout.get("expanded_mode", false)): return {}
 		if mode == "original" and bool(layout.get("expanded_mode", false)): return {}
 		identity = "original:" + str(variant)
 	var room_name: Variant = layout.get("name")
@@ -297,7 +303,8 @@ static func _valid_archetype_id(identity: Variant, mode: String) -> bool:
 	if not identity is String: return false
 	if mode == "formal": return identity in ["formal:8", "formal:9", "formal:10", "formal:11", "formal:12"]
 	if identity in ["original:0", "original:1", "original:2", "original:3", "original:4", "original:5", "original:6", "original:7"]: return true
-	return mode == "expanded" and identity.begins_with("expanded:") and identity.trim_prefix("expanded:") in EXPANDED_MODULES
+	if mode == "poolrooms" and identity.begins_with("poolrooms:"): return identity.trim_prefix("poolrooms:") in POOLROOMS_MODULES
+	return mode in ["expanded", "poolrooms"] and identity.begins_with("expanded:") and identity.trim_prefix("expanded:") in EXPANDED_MODULES
 
 static func _exact_keys(value: Dictionary, expected: Array) -> bool:
 	if value.size() != expected.size(): return false

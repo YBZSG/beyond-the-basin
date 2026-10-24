@@ -1,5 +1,7 @@
 # PoolCore DLSS runtime
 
+For the optional native Neural Rendering experiment, see [NR_README.md](NR_README.md).
+
 The normal Godot project remains loadable in stock Godot 4.7. The optional PC
 upscaler is detected through the NVIDIA fork's `Streamline.get_capability()`;
 neither GPU names nor the presence of a menu selection count as support.

@@ -241,13 +241,21 @@ func tower(x: float,z: float) -> void:
 		ladder(x+.55+(-.9 if y==5 else 0),z+1.55,y,z+.75)
 	sign_board(x-.65,3.6,z+.57,"禁止\n跳水")
 
+func _adjacent_layout(coord: Vector2i) -> Dictionary:
+	# Only the selected wing substitutes its three anchors; neighboring random
+	# shells must seal against that actual ceiling, not the old anchor catalog.
+	if layout.get("poolrooms_mode", false):
+		var wing = preload("res://scripts/poolrooms_wing/poolrooms_catalog.gd")
+		if wing.ANCHORS.has(coord): return wing.room_layout(coord, layout.seed)
+	return Catalog.room_layout(coord, layout.seed, layout.get("expanded_mode", false))
+
 func build_shell() -> void:
 	if layout.get("expanded", false):
 		_expansion_builder=ExpansionBuilder.new(self)
 		_expansion_builder.build_shell()
 		# Keep shared upper boundaries sealed when an adjacent original room is lower.
 		for offset in [Vector2i.RIGHT,Vector2i.DOWN]:
-			var adjacent: Dictionary=Catalog.room_layout(layout.coord+offset,layout.seed,true)
+			var adjacent: Dictionary=_adjacent_layout(layout.coord+offset)
 			var top: float=adjacent.ceiling
 			if float(layout.ceiling)>top:
 				box(offset.x*16,(float(layout.ceiling)+top)*.5,offset.y*16,.6 if offset.x else 32.0,float(layout.ceiling)-top,32.0 if offset.x else .6,"formal_plaster")
@@ -275,7 +283,7 @@ func build_shell() -> void:
 	box(0,(ceiling+5.4)/2,-16,8,ceiling-5.4,.6,"wall")
 	box(-16,(ceiling+5.4)/2,0,.6,ceiling-5.4,8,"wall")
 	for offset in [Vector2i(1,0),Vector2i(0,1)]:
-		var adjacent: Dictionary = Catalog.room_layout(layout.coord+offset,layout.seed,layout.get("expanded_mode",false))
+		var adjacent: Dictionary = _adjacent_layout(layout.coord+offset)
 		var top: float = adjacent.ceiling
 		if ceiling>top: box(offset.x*16,(ceiling+top)/2,offset.y*16,.6 if offset.x else 32.0,ceiling-top,32.0 if offset.x else .6,"pale")
 

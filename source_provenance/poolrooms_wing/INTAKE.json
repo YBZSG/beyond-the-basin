@@ -1,0 +1,21 @@
+{
+  "baseline_commit": "980531f6d25c6ba9581d20036dd6765319b5f93d",
+  "upstream_branch": "godot/waterfeel-20261023",
+  "previous_art_patch_sha256": "30820ae06e7883694c1cbc3bc609322609d0a28f003e6c34d0079d62fcd422d3",
+  "no_push": true,
+  "android_paused": true,
+  "no_engine_change": true,
+  "source_water_unchanged": true,
+  "source_archives": [
+    {
+      "name": "Cenji_BackroomsLevel37_Poolrooms_FREE.zip",
+      "bytes": 2088212,
+      "sha256": "1711cf7227be69b6f1d8cb802a16da84351177f5c6ef798104ed74cd72a45c6e"
+    },
+    {
+      "name": "no-diving-municipal-pool-props-free.zip",
+      "bytes": 588773,
+      "sha256": "00d353151b3f4fd3b7778dfa4b833b9ffc81a03628dee61bea3eb19f2ad43f40"
+    }
+  ]
+}

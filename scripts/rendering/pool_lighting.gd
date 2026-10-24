@@ -144,6 +144,9 @@ func add_room_lights(room: Node3D, variant: int) -> void:
 	var pc_source := PoolMaterials.use_pc_source_finish() and not bool(layout.get("expanded",false) or layout.get("formal",false))
 	for slot in fixtures.size():
 		var source:Dictionary=fixtures[slot]
+		if source.get("geometry", "") == "authored_wall":
+			_add_poolrooms_wall_light(rig, room, source, slot)
+			continue
 		var at:Vector3=source.position
 		var fixture:=PoolFixtureFlicker.new();fixture.name="SourceDoubleTube%d"%slot;fixture.position=at;rig.add_child(fixture)
 		var fixture_color: Color = source.color.lerp(Color("eef1eb"),0.42) if pc_source else source.color
@@ -180,6 +183,22 @@ func add_room_lights(room: Node3D, variant: int) -> void:
 		_configure_local_light(exit_lamp,Color("ff4a30"),7.0*.07,.12);exit_lamp.set_meta("source_power_per_energy",1.0/.07);exit_lamp.set_meta("source_shadow_managed",true);exit_lamp.set_meta("source_room_coord",room.get_meta("coord",Vector2i.ZERO));rig.add_child(exit_lamp);_source_lights.append(weakref(exit_lamp))
 	_add_reflection_probe(rig,ceiling,false)
 	_room_roots.append(weakref(rig))
+
+func _add_poolrooms_wall_light(rig: Node3D, room: Node3D, source: Dictionary, slot: int) -> void:
+	# This imported wall fixture already has its physical housing/lens in the GLB.
+	# Add only a matching light, not a second floating fluorescent tube.
+	var lamp := OmniLight3D.new()
+	lamp.name = "PoolroomsWallLight%d" % slot
+	lamp.position = source.position
+	lamp.omni_range = clampf(float(source.get("range", 12.0)), 1.0, 20.0)
+	lamp.omni_attenuation = 2.0
+	_configure_local_light(lamp, source.color, float(source.power) * .07, .18)
+	lamp.set_meta("source_power_per_energy", 1.0 / .07)
+	lamp.set_meta("source_shadow_priority", true)
+	lamp.set_meta("source_shadow_managed", true)
+	lamp.set_meta("source_room_coord", room.get_meta("coord", Vector2i.ZERO))
+	rig.add_child(lamp)
+	_source_lights.append(weakref(lamp))
 
 func update_source_view(camera:Camera3D)->void:
 	if _active_formal or not is_instance_valid(camera):return

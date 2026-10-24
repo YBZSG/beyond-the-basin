@@ -1,0 +1,13 @@
+{
+  "commit": "980531f6d25c6ba9581d20036dd6765319b5f93d",
+  "files": {
+    "room_catalog.gd": {
+      "source_sha256": "ffff9c03586029c22c2bc9a6c6ffd951ef46d9f359be1cc96d240abbc3e304b2",
+      "fixture_sha256": "e339f8dc84431d3890e740f33b3fa573e670740ee436f6aa6ce2a67e00865c8c"
+    },
+    "expanded_room_catalog.gd": {
+      "source_sha256": "f49a132d35d198d5a1b905fd25963363d411352a84c1bb2cafbfc481e06709a9",
+      "fixture_sha256": "4cc228d3152d7431e8ce2ebfaa86896f2f8afa6f2604504b9f0c797e3c9b054d"
+    }
+  }
+}

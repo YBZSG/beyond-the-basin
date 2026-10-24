@@ -78,13 +78,12 @@ func _material_for(role:String)->Material:
 		var authored: ShaderMaterial = art_pass_materials.resolve(role, library)
 		if authored != null: return authored
 	var source:Material=library.get_material(role)
-	# Only the expanded shower's dry-deck role gets the diagnostic matte coat.
-	# Shared formal/original resources and wet-basin materials remain untouched.
+	# Keep the shower's local ceramic instance and its glazed tile finish.
 	if role=="formal_dry_deck" and layout.get("expanded_module","")=="shower_changing" and source is ShaderMaterial:
 		if shower_dry_material==null:
 			shower_dry_material=source.duplicate(false) as ShaderMaterial
 			shower_dry_material.resource_name="Expanded / shower dry ceramic without clearcoat"
-			shower_dry_material.set_shader_parameter("coat_strength",0.0)
+			shower_dry_material.set_shader_parameter("coat_strength",0.18)
 			library.register_local_receiver(shower_dry_material, source as ShaderMaterial)
 		return shower_dry_material
 	# Explicit experimental opt-in: low-arched bath only. Shower and all other rooms,

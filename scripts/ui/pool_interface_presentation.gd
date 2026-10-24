@@ -293,7 +293,7 @@ func _collapse_empty_status(label: Label) -> void:
 
 func _world_selection_changed(index: int) -> void:
 	if not is_instance_valid(_world_note): return
-	var descriptions := ["原仓库场景\n保留原始房间与熟悉的水面交互。", "重做主池厅\n从宽阔的主池空间开始安静探索。", "扩展随机地图\n由世界种子生成更多相连的泳池空间。"]
+	var descriptions := ["原仓库场景\n保留原始房间与熟悉的水面交互。", "重做主池厅\n从宽阔的主池空间开始安静探索。", "扩展随机地图\n由世界种子生成更多相连的泳池空间。", "曲廊池区\n三处新池厅相连，外侧延续种子地图。"]
 	_world_note.text = descriptions[clampi(index, 0, descriptions.size() - 1)]
 
 func _panel_shell(panel: PanelContainer, scroll: ScrollContainer, title: Label, subtitle: String, back: Button) -> void:

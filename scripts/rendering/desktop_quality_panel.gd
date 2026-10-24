@@ -40,6 +40,7 @@ var pc_shadow_status: Dictionary = {}
 var dlss_status: Dictionary = {}
 var frame_generation_status: Dictionary = {}
 var raytracing_status: Dictionary = {}
+var _rt_material_refresh_pending := false
 
 static func dlss_support() -> Dictionary:
 	# Query the optional NVIDIA API dynamically so stock Godot still loads this script.
@@ -80,7 +81,8 @@ static func raytracing_support() -> Dictionary:
 static func preset_settings(value: String) -> Dictionary:
 	var result: Dictionary = PRESETS[value].duplicate()
 	result.dlss = "Quality"
-	result.frame_generation = true
+	result.nr = OS.get_environment("POOLCORE_DLSS_NR") == "1"
+	result.frame_generation = not result.nr
 	result.raytracing = false
 	return result
 
@@ -163,13 +165,18 @@ func _validated(key: String, value: Variant, fallback: Variant) -> Variant:
 func select_preset(value: String) -> void:
 	if value not in PRESET_NAMES: return
 	preset = value
+	var keep_nr := bool(settings.get("nr", false))
 	settings = preset_settings(value)
+	settings.nr = keep_nr
+	if keep_nr: settings.frame_generation = false
 	apply_settings()
 	save_settings()
 
 func set_option(key: String, value: Variant) -> void:
 	if not settings.has(key): return
 	settings[key] = _validated(key, value, settings[key])
+	if key == "nr" and bool(value): settings.frame_generation = false
+	if key == "frame_generation" and bool(value): settings.nr = false
 	apply_settings()
 	save_settings()
 
@@ -207,6 +214,7 @@ func apply_settings() -> void:
 		viewport.set("scaling_3d_mode", desired_mode)
 		viewport.use_taa = desired_taa
 	dlss_status.scale = desired_scale
+	OS.set_environment("POOLCORE_DLSS_NR", "1" if bool(settings.get("nr", false)) else "0")
 	frame_generation_status = nvidia_feature_support("STREAMLINE_CAPABILITY_DLSS_G")
 	var reflex := nvidia_feature_support("STREAMLINE_CAPABILITY_REFLEX")
 	frame_generation_status.available = bool(frame_generation_status.available) and bool(reflex.available)
@@ -220,10 +228,6 @@ func apply_settings() -> void:
 			Engine.get_singleton("Streamline").call("set_parameter", parameter, 1)
 		viewport.set("frame_generation", bool(frame_generation_status.active))
 	raytracing_status = raytracing_support()
-	var world := main.get("world") as Node
-	if is_instance_valid(world) and (bool(world.get("formal_mode")) or bool(world.get("expanded_mode"))):
-		raytracing_status.available = false
-		raytracing_status.reason = "当前仅适配原泳池场景"
 	raytracing_status.requested = bool(settings.raytracing)
 	raytracing_status.active = bool(raytracing_status.available) and bool(dlss_status.active) and bool(settings.raytracing)
 	var atlas_changed := _changed("shadow_atlas", [viewport.get_instance_id(), settings.shadow_size])
@@ -286,7 +290,7 @@ func apply_settings() -> void:
 func _set_rt_materials(enabled: bool) -> void:
 	# The raster shader's pixel derivatives have no meaning in a ray-hit stage.
 	# Keep all textures/parameters; the RT variant uses distance-based filtering.
-	var pairs := {"res://shaders/pc_source_ceramic.gdshader":"res://shaders/pc_source_ceramic_rt.gdshader", "res://shaders/source_architecture.gdshader":"res://shaders/source_architecture_rt.gdshader"}
+	var pairs := {"res://shaders/art_pass_pbr.gdshader":"res://shaders/art_pass_pbr_rt.gdshader", "res://shaders/ceramic_world.gdshader":"res://shaders/ceramic_world_rt.gdshader", "res://shaders/pc_source_ceramic.gdshader":"res://shaders/pc_source_ceramic_rt.gdshader", "res://shaders/source_architecture.gdshader":"res://shaders/source_architecture_rt.gdshader"}
 	var materials: Array = []
 	var library := main.get("materials") as RefCounted
 	if library and library.has_method("_receiver_materials"):
@@ -317,6 +321,13 @@ func _node_added(node: Node) -> void:
 	# Lighting is configured around add_child(), so read the authored state only
 	# after construction. Also covers newly streamed rooms and reseeding.
 	if node is Light3D: call_deferred("_apply_new_light", weakref(node))
+	if node is GeometryInstance3D and bool(raytracing_status.get("active", false)) and not _rt_material_refresh_pending:
+		_rt_material_refresh_pending = true
+		call_deferred("_refresh_streamed_rt_materials")
+
+func _refresh_streamed_rt_materials() -> void:
+	_rt_material_refresh_pending = false
+	if is_instance_valid(main): _set_rt_materials(bool(raytracing_status.get("active", false)))
 
 func _apply_new_light(reference: WeakRef) -> void:
 	var node := reference.get_ref() as Node
@@ -410,7 +421,8 @@ func _build_panel() -> void:
 	column.add_child(_preset_selector)
 	_add_option(column, "NVIDIA DLSS / DLAA", "dlss", ["关闭 / Off", "质量 / Quality", "平衡 / Balanced", "性能 / Performance", "原生抗锯齿 / DLAA"], ["Off", "Quality", "Balanced", "Performance", "DLAA"])
 	_add_check(column, "NVIDIA 帧生成 2× + Reflex", "frame_generation")
-	_add_check(column, "原泳池硬件路径追踪 + 光线重建（实验）", "raytracing")
+	_add_check(column, "原生神经渲染 NR（与帧生成互斥）", "nr")
+	_add_check(column, "全场景硬件光追 + 光线重建（水面保留光栅）", "raytracing")
 	_scale_label = Label.new()
 	column.add_child(_scale_label)
 	_scale = HSlider.new()
@@ -518,11 +530,18 @@ func _refresh_interface() -> void:
 		var check := _checks[key] as CheckButton
 		check.disabled = not bool(support.get(key, true)) or (key == "taa" and dlss_active)
 		if key == "frame_generation": check.disabled = not bool(frame_generation_status.get("available", false)) or not dlss_active
+		if key == "nr": check.disabled = not dlss_active or not FileAccess.file_exists(OS.get_executable_path().get_base_dir().path_join("nvngx_dlssnr.dll"))
 		if key == "raytracing": check.disabled = not bool(raytracing_status.get("available", false)) or not dlss_active
 		if key in ["gi", "ssao", "ssil"] and bool(raytracing_status.get("active", false)): check.disabled = true
 		check.set_pressed_no_signal(bool(settings[key]) and not check.disabled)
 		check.tooltip_text = "DLSS 已负责时间抗锯齿；关闭 DLSS 后恢复保存的选择。" if key == "taa" and dlss_active else ("当前渲染器不支持；保存的选择会在兼容的渲染器下启用。" if check.disabled else "")
 	_notes.text = "DLSS 默认 Quality；DLAA 使用原生分辨率。启用时由 DLSS 负责抗锯齿和渲染比例，关闭后恢复原有比例、MSAA 与 TAA。水体模拟、反射精度和菜单分辨率独立保留。"
+	var nr_note := "NR：关闭。帧生成开启时 NR 会旁路；两者不是同一功能。"
+	if bool(settings.get("nr", false)):
+		nr_note = "NR：已请求（画质变化较克制）；实际成功执行以日志 PoolCore NR dispatch OK 为准。"
+		if bool(frame_generation_status.get("active", false)): nr_note = "NR：被帧生成旁路，请关闭 FG。"
+		elif not dlss_active: nr_note = "NR：被 DLSS 关闭状态旁路。"
+	_notes.text += "\n" + nr_note
 	_notes.text += "\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。"
 	_notes.text += "\n实验光追：建筑、人物使用硬件路径追踪与 DLSS 光线重建；透明水面保留原波浪、平面反射及焦散。首次开启需要编译材质；性能开销较大。"
 	if not bool(frame_generation_status.get("available", false)): _notes.text += "\n帧生成不可用：" + str(frame_generation_status.get("reason", "Reflex 不可用"))

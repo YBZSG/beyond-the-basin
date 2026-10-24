@@ -6,7 +6,7 @@ const AvatarScript = preload("res://scripts/player/pool_avatar.gd")
 const ArtCharacter = preload("res://scripts/art_pass/character/art_character_selection.gd")
 const AvatarFinishScript = preload("res://scripts/player/avatar_finish_candidate.gd")
 const FacilityDevicesScript = preload("res://scripts/world/facility_devices_candidate.gd")
-const SPAWN_MODES := ["original", "formal", "expanded"]
+const SPAWN_MODES := ["original", "formal", "expanded", "poolrooms"]
 const SEED_INPUT_GUARD_REVISION := 1
 const PropsScript = preload("res://scripts/player/pool_props.gd")
 const WaterScript = preload("res://scripts/water/source_water_runtime.gd")
@@ -115,6 +115,7 @@ func _ready() -> void:
 	_load_settings()
 	if "--formal-hall" in OS.get_cmdline_user_args(): _spawn_mode="formal"
 	if "--expanded-world" in OS.get_cmdline_user_args(): _spawn_mode="expanded"
+	if "--poolrooms-wing" in OS.get_cmdline_user_args(): _spawn_mode="poolrooms"
 	if "--legacy-world" in OS.get_cmdline_user_args() or "--original-world" in OS.get_cmdline_user_args(): _spawn_mode="original"
 	_pc_preview_return_spawn = _spawn_mode
 	_pc_mainhall_preview = MainhallPreview.requested()
@@ -265,7 +266,8 @@ func _create_world() -> void:
 	player.camera.compositor.compositor_effects=effects
 	world = WorldScript.new()
 	world.formal_mode = _spawn_mode == "formal"
-	world.expanded_mode = _spawn_mode == "expanded"
+	world.expanded_mode = _spawn_mode in ["expanded", "poolrooms"]
+	world.poolrooms_mode = _spawn_mode == "poolrooms"
 	world.name = "SeededPoolWorld"
 	add_child(world)
 	world.room_loaded.connect(_on_room_loaded)
@@ -773,6 +775,7 @@ func _build_interface() -> void:
 	_spawn_select.add_item("原仓库场景 / ORIGINAL",0)
 	_spawn_select.add_item("重做主池厅 / FORMAL HALL",1)
 	_spawn_select.add_item("扩展随机地图 / EXPANDED",2)
+	_spawn_select.add_item("曲廊池区 / POOLROOMS WING",3)
 	_spawn_select.select(maxi(0,SPAWN_MODES.find(_spawn_mode)))
 	_spawn_select.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	spawn_row.add_child(_spawn_select)
@@ -1140,6 +1143,7 @@ func _rebuild_destinations() -> void:
 			_destinations.append(coord);_destination.add_item(world.get_layout(coord).name)
 		return
 	var variants: Array = [11,12,13,14,0,1,2,3,4,5,6,7] if world.expanded_mode else range(8)
+	if world.poolrooms_mode: variants = [15,16,17] + variants
 	for variant in variants:
 		var found:=false
 		for radius in range(0,9):

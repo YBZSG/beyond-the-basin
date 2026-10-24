@@ -1,0 +1,78 @@
+{
+  "contracts_unchanged": {
+    "crescent_court": {
+      "collision_boxes": true,
+      "water_steps": true,
+      "basin_steps": true,
+      "fixtures": true,
+      "water_rects": true,
+      "spawn_local": true,
+      "dry_route_ring": true
+    },
+    "vaulted_lanes": {
+      "collision_boxes": true,
+      "water_steps": true,
+      "basin_steps": true,
+      "fixtures": true,
+      "water_rects": true,
+      "spawn_local": true,
+      "dry_route_ring": true
+    },
+    "circular_bath": {
+      "collision_boxes": true,
+      "water_steps": true,
+      "basin_steps": true,
+      "fixtures": true,
+      "water_rects": true,
+      "spawn_local": true,
+      "dry_route_ring": true
+    }
+  },
+  "source_position_clouds": {
+    "crescent_court": {
+      "same_objects": true,
+      "unchanged_clouds": 10,
+      "components": 10,
+      "max_bound_delta": 0.0,
+      "face_count_changes": []
+    },
+    "vaulted_lanes": {
+      "same_objects": true,
+      "unchanged_clouds": 12,
+      "components": 12,
+      "max_bound_delta": 0.0,
+      "face_count_changes": []
+    },
+    "circular_bath": {
+      "same_objects": true,
+      "unchanged_clouds": 8,
+      "components": 8,
+      "max_bound_delta": 0.0,
+      "face_count_changes": []
+    }
+  },
+  "hashes": {
+    "crescent_court": {
+      "glb_sha256": "7d4e9c013256ecc0e04f2c79090c3305c3a58229c1568d29b5230de8cccdeef0",
+      "glb_bytes": 1107016,
+      "blend_sha256": "642f9f6ea2aef0156f3ab2bd26babc32ace8bb378900e714be8e007fcfb46fc3",
+      "visible_triangles": 6028,
+      "proxy_count": 159
+    },
+    "vaulted_lanes": {
+      "glb_sha256": "8e6342d2872e5b958be178e9d7e3c9f830c4f8029d3c5826af5aa20a15f559ba",
+      "glb_bytes": 1057900,
+      "blend_sha256": "2f2a2b6b0e26e724762a8d6e449ffec9cfcd1a02169b010ff21dbe4639683c3e",
+      "visible_triangles": 5936,
+      "proxy_count": 157
+    },
+    "circular_bath": {
+      "glb_sha256": "078a79dc01a40a828451c0b56bc7b4d130f9ae7e87e7b19b4f44ff8c72cc91c3",
+      "glb_bytes": 1051264,
+      "blend_sha256": "c055e593fff75ce030211e421cdf08a91d67c55119809380b7dc02a8ae461515",
+      "visible_triangles": 5268,
+      "proxy_count": 196
+    }
+  },
+  "geometry_audit_passed": true
+}

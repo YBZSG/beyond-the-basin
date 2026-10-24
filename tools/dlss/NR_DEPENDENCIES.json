@@ -1,0 +1,74 @@
+{
+  "engine_commit": "135dff3887a3d2ccf45cafbd9bdffa7b718e1e76",
+  "engine_archive_sha256": "8f9d9604270ccca92d14cc57afca142079476cbe050e0486a90b84da17ce907a",
+  "ngx_base_commit": "9981c6350dc58c0ce21f024fd65e31e851c31689",
+  "nr_package": "rtx-remix-ngx_sdk_dlnr@2",
+  "nr_url": "https://d1oqksizpb0e3d.cloudfront.net/rtx-remix-ngx_sdk_dlnr%402.7z",
+  "license": "NVIDIA RTX SDKs LICENSE; commercial-release notification required",
+  "files": {
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/lib/Windows_x86_64/rel/nvngx_dlssnr.dll": {
+      "bytes": 266424944,
+      "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f"
+    },
+    "ngx-base/lib/nvsdk_ngx_s.lib": {
+      "bytes": 3782490,
+      "sha256": "7b9a5239c1145af5f645ab472aa066f9ea79db36ac819562312aae69d65f3765"
+    },
+    "ngx-base/include/nvsdk_ngx.h": {
+      "bytes": 40289,
+      "sha256": "dc38e7467cf415379c9d12ae1b6e4a494c453ed92720fb53e92aecb523e7b848"
+    },
+    "ngx-base/include/nvsdk_ngx_defs.h": {
+      "bytes": 44313,
+      "sha256": "ea23f33497cd274860d1c25a97644fce807dcb0037c594547203343103fad03e"
+    },
+    "ngx-base/include/nvsdk_ngx_defs_vk.h": {
+      "bytes": 3196,
+      "sha256": "0a24d0861ace7d6b9362a67b7f08bea1b33ea123c5ce730b19133de8a891d031"
+    },
+    "ngx-base/include/nvsdk_ngx_helpers_vk.h": {
+      "bytes": 19720,
+      "sha256": "c192bff72138f12f770db48e12c1d8f712dfc81ea0e8e055ebb27d8dd1b31623"
+    },
+    "ngx-base/include/nvsdk_ngx_params.h": {
+      "bytes": 7744,
+      "sha256": "943bc8cc5cdae03b6303016fbad3183636f2335ae27a2d18776798c3b4efabbc"
+    },
+    "ngx-base/include/nvsdk_ngx_vk.h": {
+      "bytes": 38382,
+      "sha256": "2d364ce7132881eb669e9498fd570d74cba563b1fbebc82c235f8e1ad2dd8b6d"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx.h": {
+      "bytes": 41001,
+      "sha256": "96f21266a05ef06bb49f58c89de1a7845f2d9b1e0e0e069fe03740b8eaf0344d"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_defs_dlssnr.h": {
+      "bytes": 11465,
+      "sha256": "16b0ff55b136e6dd65ab8ef23b530e91f2f4fcd11f36d75e1175b9d99d7e0c5c"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_defs_vk.h": {
+      "bytes": 3302,
+      "sha256": "43b821c5d297d86165e6d2f96a476f5c30f2158c7d5a0451425c6b927abfec88"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_helpers_dlssnr.h": {
+      "bytes": 4399,
+      "sha256": "d173bc9436406e144c8f2b955424569ff7215207acb08240401928175e1207a1"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_helpers_dlssnr_vk.h": {
+      "bytes": 12640,
+      "sha256": "821f1434c8888db742310f09ce22571f3da4195afdf338c8d1c07f0296d8dce0"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_helpers_vk.h": {
+      "bytes": 19995,
+      "sha256": "754697d9faa93913985fc91fceae2073763461710d742a1f262ced2a7b6b62c9"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_params.h": {
+      "bytes": 7860,
+      "sha256": "51a1f94116cf82f95c63a2c197371ed22e08bddb09918d36cc6e2ac712753c80"
+    },
+    "packman-nr/cache/chk/rtx-remix-ngx_sdk_dlnr/2/include/nvsdk_ngx_vk.h": {
+      "bytes": 39150,
+      "sha256": "3be54d0103cce02174fd34912c60c9f40c73b5eec919e42613a2268c589c53ad"
+    }
+  }
+}

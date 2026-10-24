@@ -1,0 +1,49 @@
+{
+  "rooms": {
+    "crescent_court": {
+      "glb_sha256": "7d4e9c013256ecc0e04f2c79090c3305c3a58229c1568d29b5230de8cccdeef0",
+      "glb_bytes": 1107016,
+      "same_glb_as_normals_only": true,
+      "unchanged_contracts": {
+        "collision_boxes": true,
+        "water_steps": true,
+        "basin_steps": true,
+        "water_rects": true,
+        "spawn_local": true,
+        "dry_route_ring": true
+      },
+      "fixture_count": 4
+    },
+    "vaulted_lanes": {
+      "glb_sha256": "480fa53b1023df187995a818e18e5777a19b6c47e25e1abb81a6050b8179fdd6",
+      "glb_bytes": 1054012,
+      "same_glb_as_normals_only": false,
+      "unchanged_contracts": {
+        "collision_boxes": true,
+        "water_steps": true,
+        "basin_steps": true,
+        "water_rects": true,
+        "spawn_local": true,
+        "dry_route_ring": true
+      },
+      "fixture_count": 4
+    },
+    "circular_bath": {
+      "glb_sha256": "078a79dc01a40a828451c0b56bc7b4d130f9ae7e87e7b19b4f44ff8c72cc91c3",
+      "glb_bytes": 1051264,
+      "same_glb_as_normals_only": true,
+      "unchanged_contracts": {
+        "collision_boxes": true,
+        "water_steps": true,
+        "basin_steps": true,
+        "water_rects": true,
+        "spawn_local": true,
+        "dry_route_ring": true
+      },
+      "fixture_count": 4
+    }
+  },
+  "geometry_audit_passed": true,
+  "fixture_audit_passed": true,
+  "glb_lens_normals_passed": true
+}

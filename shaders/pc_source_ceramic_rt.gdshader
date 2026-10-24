@@ -56,25 +56,28 @@ void fragment() {
 
     vec2 xy = texture(scan_normal,uv).rg*2.0-1.0;
     // Quarter-scale decoding of the authored 6 um glaze height variation.
-    xy += (micro.rg*2.0-1.0)*0.25*face*(1.0-0.6*wet);
+    // Keep the atlas brick edges independently raised; suppress only glaze noise.
+    float bevel_normal = smoothstep(0.025,0.14,length(xy));
+    xy *= mix(0.08,1.0,bevel_normal);
+    xy += (micro.rg*2.0-1.0)*0.02*face*(1.0-0.6*wet);
     float footprint = max(0.001, distance(CAMERA_POSITION_WORLD, world_position) / 600.0);
     float detail = 1.0-smoothstep(0.025,0.15,footprint);
-    vec3 perturbation = (tangent*xy.x+bitangent*xy.y)*0.68*detail;
+    vec3 perturbation = (tangent*xy.x+bitangent*xy.y)*detail;
     perturbation -= n*dot(n,perturbation);
     vec3 mapped = normalize(n+perturbation);
     NORMAL = normalize((VIEW_MATRIX*vec4(mapped,0.0)).xyz);
 
     // Tiles, porous mortar and thin water film retain distinct BRDFs.
-    float glaze = 0.32 + batch*0.018 + (micro.b-0.5)*0.06 - wet*0.075;
+    float glaze = 0.055 + batch*0.003 + (micro.b-0.5)*0.008 - wet*0.01;
     float rough = mix(glaze,0.81-wet*0.12,grout);
     // Filter subpixel glaze with the ray distance footprint.
-    float variance = 0.004 * (1.0-detail);
-    ROUGHNESS = clamp(pow(pow(rough,4.0)+variance,0.25),0.20,0.92);
+    float variance = 0.000006 * (1.0-detail);
+    ROUGHNESS = clamp(pow(pow(rough,4.0)+variance,0.25),0.04,0.92);
     METALLIC = 0.0;
     // F0 for water is about .0204, lower than a dry ceramic glaze (.04).
     SPECULAR = sqrt(mix(0.25,0.12733,wet))*mix(0.72,1.0,face);
-    CLEARCOAT = 0.16*face*(1.0-wet);
-    CLEARCOAT_ROUGHNESS = 0.26;
+    CLEARCOAT = 0.22*face*(1.0-0.4*wet);
+    CLEARCOAT_ROUGHNESS = 0.08;
     EMISSION = vec3(0.0);
     if (causticGain>0.0) {
         EMISSION=ALBEDO*source_caustic_irradiance(world_position-vec3(source_domain_origin.x,0.0,source_domain_origin.y),n)/3.14159265359;

@@ -19,6 +19,9 @@ parser.add_argument("--release", action="store_true")
 parser.add_argument("--script", default="check_dlss.gd")
 parser.add_argument("--fg", choices=["on","off"])
 parser.add_argument("--rt", choices=["on","off"])
+parser.add_argument("--nr", choices=["on", "off"])
+parser.add_argument("--nr-capture", action="store_true", help="Read back the exact NR input/output; do not use this run for timing")
+parser.add_argument("--nr-expect-bypass", action="store_true", help="Require no successful NR dispatch (missing runtime fallback check)")
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[2]
 out = root / "output/dlss" / args.name
@@ -29,6 +32,13 @@ profile = appdata / relative
 profile.mkdir(parents=True)
 for name in ["settings.cfg", "desktop_quality.cfg"]:
     shutil.copy2(Path(os.environ["APPDATA"]) / relative / name, profile / name)
+if args.nr is not None:
+    cfg = profile / "desktop_quality.cfg"
+    saved = cfg.read_text(encoding="utf8")
+    for key, value in [("dlss", '"DLAA"'), ("frame_generation", "false"), ("raytracing", "true" if args.rt == "on" else "false")]:
+        setting = key + "=" + value
+        saved = re.sub(r"^" + key + r"=.*$", lambda _: setting, saved, flags=re.M) if re.search(r"^" + key + "=", saved, re.M) else saved + "\n" + setting + "\n"
+    cfg.write_text(saved, encoding="utf8")
 if args.release:
     assert args.case in ["Off", "Quality", "Balanced", "Performance", "DLAA"]
     cfg = profile / "desktop_quality.cfg"
@@ -42,6 +52,12 @@ if args.release:
     cfg.write_text(saved, encoding="utf8")
 env = os.environ.copy()
 env["APPDATA"] = str(appdata)
+if args.nr is not None:
+    env["POOLCORE_DLSS_NR"] = "1" if args.nr == "on" else "0"
+if args.nr_capture:
+    env["POOLCORE_NR_CAPTURE"] = str(out / "paired")
+else:
+    env.pop("POOLCORE_NR_CAPTURE", None)
 # This machine has a global ReShade layer whose DLL fails initialization (1114).
 # Disable that external injector only for this child process, as in our launcher.
 env["DISABLE_VK_LAYER_reshade_1"] = "1"
@@ -62,13 +78,26 @@ else:
         "--original-world", "--no-exploration-notes", "--dlss-case=" + args.case,
         "--dlss-out=" + str(out)]
 (out / "command.json").write_text(json.dumps(cmd, indent=2), encoding="utf8")
-with (out / "engine.log").open("w", encoding="utf8") as log:
-    process = subprocess.run(cmd, cwd=args.engine.parent, env=env, stdout=log,
-                             stderr=subprocess.STDOUT, timeout=600)
+with (out / "engine.log").open("w", encoding="utf8") as log, (out / "gpu.csv").open("w", encoding="utf8") as gpu_log:
+    telemetry = None
+    if args.nr is not None and shutil.which("nvidia-smi"):
+        telemetry = subprocess.Popen(["nvidia-smi", "--query-gpu=timestamp,memory.used,utilization.gpu", "--format=csv,noheader", "--loop-ms=1000"], stdout=gpu_log, stderr=subprocess.STDOUT, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    try:
+        process = subprocess.run(cmd, cwd=args.engine.parent, env=env, stdout=log,
+                                 stderr=subprocess.STDOUT, timeout=600)
+    finally:
+        if telemetry is not None:
+            telemetry.terminate()
+            telemetry.wait(timeout=10)
 print(json.dumps({"output": str(out), "exit_code": process.returncode}))
 log_text = (out / "engine.log").read_text(encoding="utf8")
 failures = re.findall(r"^(?:SCRIPT ERROR|SHADER ERROR|ERROR:|WARNING: (?:Dumped failed shader|RT .*compile).*|Image \(binding:).*$", log_text, re.M)
 print(log_text[-2500:])
 if failures:
     print("RENDER_ERRORS", json.dumps(sorted(set(failures))[:25]))
-raise SystemExit(process.returncode or bool(failures))
+nr_dispatch = "PoolCore NR dispatch OK" in log_text
+nr_failure = False
+if args.nr == "on":
+    nr_failure = nr_dispatch if args.nr_expect_bypass else not nr_dispatch or "PoolCore NR evaluate FAILED" in log_text
+    print("NR_DISPATCH", nr_dispatch, "EXPECTED_BYPASS", args.nr_expect_bypass)
+raise SystemExit(process.returncode or bool(failures) or nr_failure)

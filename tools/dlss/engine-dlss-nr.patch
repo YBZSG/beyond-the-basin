@@ -1,0 +1,257 @@
+--- a/SConstruct
++++ b/SConstruct
+@@ -1267,6 +1267,10 @@
+ Export("env")
+ 
+ SConscript("core/SCsub")
++if env["use_streamline"] and os.environ.get("POOLCORE_NR_SDK") and os.environ.get("POOLCORE_NGX_SDK"):
++    env.Prepend(CPPPATH=[os.path.join(os.environ["POOLCORE_NR_SDK"], "include"), os.path.join(os.environ["POOLCORE_NGX_SDK"], "include")])
++    env.Append(LIBS=[File(os.path.join(os.environ["POOLCORE_NGX_SDK"], "lib", "nvsdk_ngx_s.lib"))])
++
+ SConscript("servers/SCsub")
+ SConscript("scene/SCsub")
+ if env.editor_build:
+--- a/servers/rendering/renderer_rd/renderer_scene_render_rd.cpp
++++ b/servers/rendering/renderer_rd/renderer_scene_render_rd.cpp
+@@ -29,6 +29,7 @@
+ /**************************************************************************/
+ 
+ #include "renderer_scene_render_rd.h"
++#include "effects/dlss_nr.h"
+ 
+ #ifdef WINDOWS_ENABLED
+ #include <windows.h>
+@@ -934,6 +935,13 @@
+ 
+ 		RD::get_singleton()->draw_command_end_label();
+ 	}
++
++	if (can_use_storage && !dest_is_msaa_2d && !texture_storage->render_target_is_using_hdr(render_target)) {
++        const auto *scene = p_render_data->scene_data;
++        bool reset_nr = scene->cam_transform.origin.distance_to(scene->prev_cam_transform.origin) > 1.0;
++        reset_nr |= scene->cam_transform.basis.get_column(2).dot(scene->prev_cam_transform.basis.get_column(2)) < 0.7;
++        RendererRD::DLSSNR::process(rb, texture_storage->render_target_get_rd_texture(render_target), scene->taa_jitter * Vector2(rb->get_internal_size()) * 0.5f, reset_nr);
++    }
+ 
+ 	texture_storage->render_target_disable_clear_request(render_target);
+ }
+@@ -1931,6 +1939,7 @@
+ }
+ 
+ RendererSceneRenderRD::~RendererSceneRenderRD() {
++	RendererRD::DLSSNR::shutdown();
+ 	if (forward_id_storage) {
+ 		memdelete(forward_id_storage);
+ 	}
+--- a/servers/rendering/renderer_rd/effects/SCsub
++++ b/servers/rendering/renderer_rd/effects/SCsub
+@@ -6,6 +6,8 @@
+ Import("env")
+ 
+ env_effects = env.Clone()
++if env["use_streamline"] and env["vulkan"]:
++    env_effects.Prepend(CPPPATH=["#thirdparty/vulkan/include"])
+ 
+ # metal-cpp headers for Metal FX
+ if env["metal"]:
+--- /dev/null
++++ b/servers/rendering/renderer_rd/effects/dlss_nr.cpp
+@@ -0,0 +1,184 @@
++// This software contains source code provided by NVIDIA Corporation.
++// PoolCore experimental NGX neural rendering integration. SDK remains separately licensed.
++#include "dlss_nr.h"
++#if defined(STREAMLINE_ENABLED) && __has_include(<nvsdk_ngx_helpers_dlssnr_vk.h>)
++#include "core/os/os.h"
++#include "core/config/engine.h"
++#include "core/io/image.h"
++#include "servers/rendering/renderer_rd/effects/copy_effects.h"
++#include "servers/rendering/renderer_rd/framebuffer_cache_rd.h"
++#include "servers/rendering/renderer_rd/storage_rd/texture_storage.h"
++#define VOLK_VULKAN_H_PATH "thirdparty/vulkan/include/vulkan/vulkan.h"
++#include "thirdparty/volk/volk.h"
++#include <nvsdk_ngx_helpers_dlssnr_vk.h>
++#include <string>
++
++namespace {
++struct NRState {
++ VkDevice device = VK_NULL_HANDLE;
++ NVSDK_NGX_Parameter *params = nullptr;
++ NVSDK_NGX_Handle *feature = nullptr;
++ bool initialized = false;
++ bool failed = false;
++ Size2i size;
++ RID input, output, depth, velocity, mask;
++ RID primary_target;
++ Vector2 jitter;
++ bool reset = true;
++ uint64_t frames = 0;
++ uint64_t last_time = 0;
++ uint64_t last_frame = UINT64_MAX;
++ bool captured = false;
++ bool request_reported = false;
++} nr;
++
++void nr_log(const char *message, NVSDK_NGX_Logging_Level, NVSDK_NGX_Feature) {
++ print_line(String("PoolCore NR NGX: ") + String::utf8(message));
++}
++
++NVSDK_NGX_Resource_VK resource(RID rid, bool write) {
++ auto *rd = RD::get_singleton();
++ auto f = rd->texture_get_format(rid);
++ VkImageSubresourceRange range = { (VkImageAspectFlags)(f.format == RD::DATA_FORMAT_D32_SFLOAT || f.format == RD::DATA_FORMAT_D24_UNORM_S8_UINT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT), 0, 1, 0, 1 };
++ return NVSDK_NGX_Create_ImageView_Resource_VK(
++   (VkImageView)rd->get_driver_resource(RD::DRIVER_RESOURCE_TEXTURE_VIEW, rid),
++   (VkImage)rd->get_driver_resource(RD::DRIVER_RESOURCE_TEXTURE, rid), range,
++   (VkFormat)rd->get_driver_resource(RD::DRIVER_RESOURCE_TEXTURE_DATA_FORMAT, rid), f.width, f.height, write);
++}
++
++void evaluate(RenderingDeviceDriver *driver, RDD::CommandBufferID id, void *) {
++ auto *rd = RD::get_singleton();
++ VkCommandBuffer cmd = (VkCommandBuffer)driver->command_buffer_get_native_handle(id);
++ if (nr.failed) { return; }
++ if (!nr.initialized) {
++   nr.device = (VkDevice)rd->get_driver_resource(RD::DRIVER_RESOURCE_LOGICAL_DEVICE);
++   String path = OS::get_singleton()->get_executable_path().get_base_dir();
++   auto path16 = path.utf16();
++   std::wstring wide(path16.get_data(), path16.get_data() + path16.length());
++   const wchar_t *search = wide.c_str();
++   NVSDK_NGX_FeatureCommonInfo info = {};
++   info.PathListInfo.Path = &search;
++   info.PathListInfo.Length = 1;
++   info.LoggingInfo.LoggingCallback = nr_log;
++   info.LoggingInfo.MinimumLoggingLevel = NVSDK_NGX_LOGGING_LEVEL_ON;
++   auto result = NVSDK_NGX_VULKAN_Init_with_ProjectID("756cd5cb-4ef5-4737-a48d-50b0d1bf5f28", NVSDK_NGX_ENGINE_TYPE_CUSTOM, "Godot-4.8-PoolCore", wide.c_str(),
++      (VkInstance)rd->get_driver_resource(RD::DRIVER_RESOURCE_TOPMOST_OBJECT),
++      (VkPhysicalDevice)rd->get_driver_resource(RD::DRIVER_RESOURCE_PHYSICAL_DEVICE), nr.device, vkGetInstanceProcAddr, vkGetDeviceProcAddr, &info);
++   print_line(vformat("PoolCore NR init result=0x%x", (unsigned int)result));
++   if (NVSDK_NGX_FAILED(result)) { nr.failed = true; return; }
++   nr.initialized = true;
++   result = NVSDK_NGX_VULKAN_GetCapabilityParameters(&nr.params);
++   int available = 0;
++   if (!NVSDK_NGX_FAILED(result)) { nr.params->Get(NVSDK_NGX_Parameter_DLSSNR_Available, &available); }
++   print_line(vformat("PoolCore NR capability result=0x%x available=%d", (unsigned int)result, available));
++   if (NVSDK_NGX_FAILED(result) || !available) { nr.failed = true; return; }
++ }
++ if (!nr.feature) {
++   // Use the SDK's version-pinned recommended network rather than forcing a lightweight one.
++   int preset = OS::get_singleton()->get_environment("POOLCORE_NR_PRESET") == "B" ? (int)NVSDK_NGX_DLSSNR_Hint_Render_Preset_B : (int)NVSDK_NGX_DLSSNR_Hint_Render_Preset_Default;
++   nr.params->Set(NVSDK_NGX_Parameter_DLSSNR_Hint_Render_Preset, preset);
++   NVSDK_NGX_DLSSNR_Create_Params create = { (unsigned int)nr.size.x, (unsigned int)nr.size.y };
++   auto result = NGX_VULKAN_CREATE_DLSSNR_EXT1(nr.device, cmd, 1, 1, &nr.feature, nr.params, &create);
++   print_line(vformat("PoolCore NR create result=0x%x size=%dx%d preset=%d", (unsigned int)result, nr.size.x, nr.size.y, preset));
++   if (NVSDK_NGX_FAILED(result)) { nr.failed = true; return; }
++ }
++ auto color = resource(nr.input, false), output = resource(nr.output, true), depth = resource(nr.depth, false), mv = resource(nr.velocity, false), mask = resource(nr.mask, false);
++ auto mv_size = rd->texture_get_format(nr.velocity);
++ auto depth_size = rd->texture_get_format(nr.depth);
++ NVSDK_NGX_VK_DLSSNR_Eval_Params p = {};
++ p.pInColor = &color; p.pInOutput = &output; p.pInDepth = &depth; p.pInMVec = &mv;
++ p.pInControlMask = &mask;
++ p.InEnabled = 1; p.InReset = nr.reset || nr.frames == 0; p.InDepthInverted = 1;
++ p.InIntensity = 1.0f; p.InLocalToneStrength = 0.1f; p.InLocalStructureStrength = 0.5f;
++ p.InMVecScaleX = (float)mv_size.width; p.InMVecScaleY = (float)mv_size.height;
++ p.InColorSubrectSize = { (unsigned int)nr.size.x, (unsigned int)nr.size.y };
++ p.InOutputSubrectSize = p.InColorSubrectSize;
++ p.InControlMaskSubrectSize = p.InColorSubrectSize;
++ p.InMVecSubrectSize = {mv_size.width, mv_size.height}; p.InDepthSubrectSize = {depth_size.width, depth_size.height};
++ nr.params->Set(NVSDK_NGX_Parameter_Jitter_Offset_X, (float)nr.jitter.x);
++ nr.params->Set(NVSDK_NGX_Parameter_Jitter_Offset_Y, (float)nr.jitter.y);
++ auto result = NGX_VULKAN_EVALUATE_DLSSNR_EXT(cmd, nr.feature, nr.params, &p);
++ if (NVSDK_NGX_FAILED(result)) {
++   print_line(vformat("PoolCore NR evaluate FAILED result=0x%x; bypass next frame", (unsigned int)result));
++   nr.failed = true;
++   VkMemoryBarrier barrier = { VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT };
++   vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 1, &barrier, 0, nullptr, 0, nullptr);
++   VkImageCopy region = {};
++   region.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
++   region.dstSubresource = region.srcSubresource;
++   region.extent = {(uint32_t)nr.size.x, (uint32_t)nr.size.y, 1};
++   vkCmdCopyImage(cmd, color.Resource.ImageViewInfo.Image, VK_IMAGE_LAYOUT_GENERAL, output.Resource.ImageViewInfo.Image, VK_IMAGE_LAYOUT_GENERAL, 1, &region);
++ } else if ((nr.frames++ % 120) == 0) {
++   print_line(vformat("PoolCore NR dispatch OK frame=%d color=%dx%d mv=%dx%d reverseZ=1 tone=0.1 structure=0.5", nr.frames, nr.size.x, nr.size.y, mv_size.width, mv_size.height));
++ }
++}
++}
++
++void RendererRD::DLSSNR::process(const Ref<RenderSceneBuffersRD> &rb, RID target, Vector2 jitter, bool reset) {
++ auto *rd = RD::get_singleton();
++ if (OS::get_singleton()->get_environment("POOLCORE_DLSS_NR") != "1") { return; }
++ if (!nr.request_reported) { print_line("PoolCore NR requested: waiting for eligible SDR Vulkan main viewport; successful dispatch is reported separately."); nr.request_reported = true; }
++ if (nr.failed || rd->get_device_api_name().to_lower() != "vulkan" || rb->get_view_count() != 1 || rb->get_target_size().x < 960) { return; }
++ if (rb->get_frame_generation()) { WARN_PRINT_ONCE("PoolCore NR bypassed: turn frame generation OFF for the isolated NR prototype."); return; }
++ // Existing DLSS decodes Godot's invalid MV markers. Restrict this prototype to its real inputs.
++ if (rb->get_scaling_3d_mode() != RSE::VIEWPORT_SCALING_3D_MODE_DLSS || !rb->get_velocity_buffer(false).is_valid()) { WARN_PRINT_ONCE("PoolCore NR bypassed: this prototype requires active DLSS SR/DLAA motion inputs."); return; }
++ // Lock the first eligible main-size target. Other ordinary viewports must not
++ // overwrite callback state while this frame's render graph is still recording.
++ if (nr.primary_target.is_null()) { nr.primary_target = rb->get_render_target(); }
++ if (nr.primary_target != rb->get_render_target()) { return; }
++ const Size2i size = rb->get_target_size();
++ if (nr.feature && size != nr.size) {
++   vkDeviceWaitIdle(nr.device);
++   NVSDK_NGX_VULKAN_ReleaseFeature(nr.feature); nr.feature = nullptr; nr.frames = 0;
++ }
++ nr.size = size;
++ const uint32_t usage = RD::TEXTURE_USAGE_SAMPLING_BIT | RD::TEXTURE_USAGE_STORAGE_BIT | RD::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT | RD::TEXTURE_USAGE_CAN_COPY_FROM_BIT | RD::TEXTURE_USAGE_CAN_COPY_TO_BIT;
++ RID previous_input = nr.input;
++ nr.input = rb->create_texture(SNAME("PoolCoreNR"), SNAME("input"), RD::DATA_FORMAT_R16G16B16A16_SFLOAT, usage, RD::TEXTURE_SAMPLES_1, size, 1, 1, true, true);
++ nr.output = rb->create_texture(SNAME("PoolCoreNR"), SNAME("output"), RD::DATA_FORMAT_R16G16B16A16_SFLOAT, usage, RD::TEXTURE_SAMPLES_1, size, 1, 1, true, true);
++ RID previous_mask = nr.mask;
++ nr.mask = rb->create_texture(SNAME("PoolCoreNR"), SNAME("control_mask"), RD::DATA_FORMAT_R8G8B8A8_UNORM, usage, RD::TEXTURE_SAMPLES_1, size, 1, 1, true, false);
++ if (previous_mask != nr.mask) { rd->texture_clear(nr.mask, Color(1, 1, 1, 0), 0, 1, 0, 1); }
++ uint64_t now = OS::get_singleton()->get_ticks_usec();
++ uint64_t frame = Engine::get_singleton()->get_frames_drawn();
++ nr.depth = rb->get_depth_texture(0); nr.velocity = rb->get_velocity_buffer(false, 0); nr.jitter = jitter;
++ nr.reset = reset || previous_input != nr.input || nr.last_frame + 1 != frame || now - nr.last_time > 250000;
++ nr.last_time = now;
++ nr.last_frame = frame;
++ auto *copy = RendererRD::CopyEffects::get_singleton();
++ // Tonemapper has encoded SDR sRGB; this plain copy does no second tone/gamma conversion.
++ copy->copy_to_fb_rect(target, FramebufferCacheRD::get_singleton()->get_cache(nr.input), Rect2i(Point2i(), size));
++ // Deterministic initial output; first failing dispatch displays the unprocessed frame.
++ rd->texture_copy(nr.input, nr.output, Vector3(), Vector3(), Vector3(size.x, size.y, 1), 0, 0, 0, 0);
++ RD::CallbackResource resources[5];
++ RID ids[] = {nr.input, nr.output, nr.depth, nr.velocity, nr.mask};
++ for (int i = 0; i < 5; i++) { resources[i].rid = ids[i]; resources[i].usage = RD::CALLBACK_RESOURCE_USAGE_GENERAL; }
++ rd->driver_callback_add(evaluate, nullptr, VectorView<RD::CallbackResource>(resources, 5));
++ // Opt-in exact-frame evidence only. Readback stalls are excluded from timing runs.
++ String capture = OS::get_singleton()->get_environment("POOLCORE_NR_CAPTURE");
++ if (!capture.is_empty() && !nr.captured && nr.frames >= 120) {
++   auto before = rd->texture_get_data(nr.input, 0);
++   auto after = rd->texture_get_data(nr.output, 0);
++   Ref<Image> a = Image::create_from_data(size.x, size.y, false, Image::FORMAT_RGBAH, before);
++   Ref<Image> b = Image::create_from_data(size.x, size.y, false, Image::FORMAT_RGBAH, after);
++   a->convert(Image::FORMAT_RGBA8); b->convert(Image::FORMAT_RGBA8);
++   a->save_png(capture + "-input.png"); b->save_png(capture + "-output.png");
++   nr.captured = true;
++   print_line("PoolCore NR paired capture: " + capture);
++ }
++ copy->copy_to_fb_rect(nr.output, FramebufferCacheRD::get_singleton()->get_cache(target), Rect2i(Point2i(), size));
++}
++
++void RendererRD::DLSSNR::shutdown() {
++ if (nr.initialized) {
++   vkDeviceWaitIdle(nr.device);
++   if (nr.feature) { NVSDK_NGX_VULKAN_ReleaseFeature(nr.feature); }
++   if (nr.params) { NVSDK_NGX_VULKAN_DestroyParameters(nr.params); }
++   NVSDK_NGX_VULKAN_Shutdown1(nr.device);
++ }
++ nr = NRState();
++}
++#else
++void RendererRD::DLSSNR::process(const Ref<RenderSceneBuffersRD> &, RID, Vector2, bool) {}
++void RendererRD::DLSSNR::shutdown() {}
++#endif
+--- /dev/null
++++ b/servers/rendering/renderer_rd/effects/dlss_nr.h
+@@ -0,0 +1,11 @@
++#pragma once
++#include "servers/rendering/renderer_rd/storage_rd/render_scene_buffers_rd.h"
++
++namespace RendererRD {
++// Experimental single-view SDR path; called after tonemapping, before Canvas/HUD.
++class DLSSNR {
++public:
++ static void process(const Ref<RenderSceneBuffersRD> &rb, RID target, Vector2 jitter, bool reset);
++ static void shutdown();
++};
++}

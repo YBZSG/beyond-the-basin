@@ -11,6 +11,7 @@ uniform float repeat_metres = 0.8;
 uniform float normal_strength : hint_range(0.0, 2.0) = 1.0;
 uniform float dielectric_specular : hint_range(0.0, 1.0) = 0.5;
 uniform bool mapped = true;
+uniform bool glazed_ceramic = false;
 uniform vec4 constant_color : source_color = vec4(1.0);
 uniform float constant_roughness = 0.85;
 uniform bool planar_clip_enabled = true;
@@ -33,14 +34,19 @@ void fragment() {
     vec3 channels = mapped ? texture(orm, uv).rgb : vec3(1.0, constant_roughness, 0.0);
     ALBEDO = mapped ? texture(base_color, uv).rgb : constant_color.rgb;
     NORMAL_MAP = mapped ? texture(normal_gl, uv).rgb : vec3(0.5, 0.5, 1.0);
-    NORMAL_MAP_DEPTH = normal_strength;
+    // Preserve the authored per-tile bevel and recessed joints while damping
+    // only the tiny glaze noise on each broad, polished tile face.
+    float edge_normal = smoothstep(0.025, 0.14, length(NORMAL_MAP.xy*2.0-1.0));
+    NORMAL_MAP_DEPTH = normal_strength * (glazed_ceramic ? mix(0.08, 1.0, edge_normal) : 1.0);
     AO = channels.r;
     // AO is local material relief, not a baked lightmap or an albedo stain.
     AO_LIGHT_AFFECT = 0.0;
-    ROUGHNESS = clamp(channels.g, 0.12, 1.0);
-    METALLIC = channels.b;
+    float grout = smoothstep(0.55, 0.65, channels.g);
+    ROUGHNESS = glazed_ceramic ? mix(0.05 + (channels.g-0.3)*0.01, 0.82, grout) : clamp(channels.g, 0.12, 1.0);
+    METALLIC = glazed_ceramic ? 0.0 : channels.b;
     SPECULAR = dielectric_specular;
-    CLEARCOAT = 0.0;
+    CLEARCOAT = glazed_ceramic ? 0.20*(1.0-grout) : 0.0;
+    CLEARCOAT_ROUGHNESS = 0.08;
     EMISSION = vec3(0.0);
     if (causticGain > 0.0) {
         vec3 irradiance = source_caustic_irradiance(

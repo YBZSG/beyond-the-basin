@@ -9,6 +9,8 @@ const Formal = preload("res://scripts/world/formal_rooms.gd")
 const FormalBuilder = preload("res://scripts/world/formal_room_builder.gd")
 var formal_mode: bool = false
 var expanded_mode: bool = false
+var poolrooms_mode: bool = false
+const PoolroomsWing = preload("res://scripts/poolrooms_wing/poolrooms_catalog.gd")
 const ROOM := 32.0
 const WATER_LEVEL := .32
 const GROUND := -.78
@@ -53,7 +55,12 @@ func get_room_coord(pos: Vector3) -> Vector2i:
 	return Vector2i(int(floor((pos.x+16.0)/ROOM)),int(floor((pos.z+16.0)/ROOM)))
 
 func get_layout(coord: Vector2i) -> Dictionary:
-	if not _layouts.has(coord): _layouts[coord]=Formal.layout(coord,seed_value) if formal_mode else Catalog.room_layout(coord,seed_value,expanded_mode)
+	if not _layouts.has(coord):
+		if poolrooms_mode and PoolroomsWing.ANCHORS.has(coord):
+			_layouts[coord] = PoolroomsWing.room_layout(coord,seed_value)
+		else:
+			_layouts[coord]=Formal.layout(coord,seed_value) if formal_mode else Catalog.room_layout(coord,seed_value,expanded_mode)
+	if poolrooms_mode: _layouts[coord]["poolrooms_mode"] = true
 	return _layouts[coord]
 
 func current_room_ready() -> bool:
@@ -71,6 +78,8 @@ func get_spawn_position(coord: Vector2i = Vector2i.ZERO) -> Vector3:
 		ensure_room_ready(coord)
 		return Formal.spawn(coord)
 	ensure_room_ready(coord)
+	if poolrooms_mode and get_layout(coord).get("poolrooms_wing",false):
+		return get_layout(coord).spawn_local + Vector3(coord.x*ROOM,0,coord.y*ROOM)
 	if expanded_mode and get_layout(coord).get("expanded",false):
 		return preload("res://scripts/world/expanded_room_catalog.gd").spawn(coord)
 	# A common cardinal approach remains clear of room-specific furniture and WFC cells.
