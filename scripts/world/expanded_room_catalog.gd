@@ -2,6 +2,7 @@ class_name ExpandedPoolRoomCatalog
 extends RefCounted
 ## Optional maintained facility modules. The original SourceRandom stream is untouched.
 const RandomSource := preload("res://scripts/world/source_random.gd")
+const ArtPassSelection := preload("res://scripts/art_pass/art_pass_selection.gd")
 const ROOM := 32.0
 const GROUND := -0.78
 const FLOOR_TOP := -0.72
@@ -31,7 +32,7 @@ static func room_layout(coord: Vector2i, seed_value: int, module_index: int) -> 
 	var result := {
 		"coord":coord, "seed":seed_value, "variant":FIRST_VARIANT+module_index,
 		"expanded_mode":true, "expanded":true, "expanded_module":MODULES[module_index],
-		"geometry_path":"res://assets/models/expansion/"+MODULES[module_index]+".glb",
+		"geometry_path":ArtPassSelection.room_geometry(MODULES[module_index],"res://assets/models/expansion/"+MODULES[module_index]+".glb"),
 		"name":NAMES[module_index], "subtitle":SUBTITLES[module_index],
 		"ceiling":CEILINGS[module_index], "interior_ceiling":INNER_CEILINGS[module_index],
 		"daylight":daylight, "corrupt":0, "tint":rng.next(), "ducks":0,

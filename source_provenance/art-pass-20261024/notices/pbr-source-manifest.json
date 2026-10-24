@@ -1,0 +1,654 @@
+{
+  "provenance": "Original deterministic dimensioned procedural PBR material authorship. No scans, photographs, AI image generation, external assets, or upsampled sources.",
+  "generator": "tools/materials/art_pass/build_material_family.py",
+  "seed": 20261024,
+  "material_revision": "surface_finish_v2",
+  "surface_finish": {
+    "tile_pigment_batch_multiplier": 0.004,
+    "paint_roughness_mean": 0.43,
+    "paint_roughness_spatial_multiplier": 0.002,
+    "paint_normal": "Intentional neutral 8-bit [128,128,255]; smooth filtered coating, not measured microdetail.",
+    "native_acceptance_evidence": "output/art-pass/shower-finish-comparison-01/report.json",
+    "native_scope": "Accepted same-camera stock Godot 4.6 llvmpipe art comparison, not target-PC or NVIDIA RT validation.",
+    "historical_bytes": "assets/materials/art_pass/archive/pre_surface_finish_v2/"
+  },
+  "units": "metres",
+  "normal_convention": "OpenGL tangent +X/+Y/+Z; PNG rows down, tangent Y up. Encode (-dH/dX,+dH/dImageY,1), normalized.",
+  "orm_channels": {
+    "R": "local material AO",
+    "G": "perceptual roughness",
+    "B": "metallic",
+    "A_if_present": "tile face coverage"
+  },
+  "uv_contract": "UV1 stores metres. Reference material scales UV by 1/repeat_metres. Blender/glTF binding uses equivalent Mapping scale, not both baked UV normalization and scale. Steel +U follows brushing. Meshes supply correct tangents; no mirrored normal basis guessing.",
+  "tile_geometry": {
+    "tile_pitch_metres": 0.1,
+    "tile_face_metres": 0.09820000000000001,
+    "joint_width_metres": 0.0018,
+    "edge_ease_metres": 0.0006,
+    "joint_relief_metres": 0.00028,
+    "crown_peak_metres": 8e-06,
+    "glaze_height_rms_metres": 5e-06,
+    "tiles_per_axis": 8,
+    "grout_coverage": 0.03439244627952576
+  },
+  "other_material_relief_metres": {
+    "plaster_broad_trowel_rms": 7e-05,
+    "plaster_fine_aggregate_rms": 2e-05,
+    "coping_broad_rms": 2e-05,
+    "coping_fine_grain_rms": 1.6e-05,
+    "steel_brushing_rms": 6e-06,
+    "storage_paint_orange_peel_rms": 0.0
+  },
+  "source_texture_bytes": 4960466,
+  "source_cap_bytes": 45000000,
+  "expected_bc7_bc5_with_mips_bytes": 63613604,
+  "runtime_notes": [
+    "These .tres files are standard PBR reference materials; they do not replace the project dynamic-caustic receiver automatically.",
+    "All tile/other albedo maps are sRGB. Normals and ORM are linear; normal G is not inverted on import.",
+    "Mipmaps and anisotropic sampling enabled; no negative mip bias, sharpening filter or parallax/displacement shader.",
+    "AO affects ambient only in reference materials and is not multiplied into albedo. Never bake room lighting, static shadows or caustics into these maps.",
+    "Wet variants are restricted to authored narrow basin/drain adjacency surfaces, not all surfaces at a common height. No additional clearcoat is used.",
+    "Physical relief values are restrained authored assumptions, not measurements of a sampled real object."
+  ],
+  "materials": {
+    "art_pass_tile_blue": {
+      "albedo": "tile_blue_albedo_2k.png",
+      "normal_gl": "tile_normal_gl_2k.png",
+      "orm": "tile_blue_orm_2k.png",
+      "repeat_metres": 0.8,
+      "uv_scale": 1.25,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 1.0,
+      "specular": 0.5,
+      "note": "100 mm pitch. UV1 input in metres. Dry reference; preserve custom caustic receiver at runtime."
+    },
+    "art_pass_tile_blue_wet": {
+      "albedo": "tile_blue_albedo_2k.png",
+      "normal_gl": "tile_normal_gl_2k.png",
+      "orm": "tile_blue_wet_orm_2k.png",
+      "repeat_metres": 0.8,
+      "uv_scale": 1.25,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 0.85,
+      "specular": 0.35683669,
+      "note": "Only authored narrow wet-edge material zones. Single-lobe water-film approximation, no clearcoat or new water surface."
+    },
+    "art_pass_tile_pearl": {
+      "albedo": "tile_pearl_albedo_2k.png",
+      "normal_gl": "tile_normal_gl_2k.png",
+      "orm": "tile_pearl_orm_2k.png",
+      "repeat_metres": 0.8,
+      "uv_scale": 1.25,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 1.0,
+      "specular": 0.5,
+      "note": "100 mm pitch. UV1 input in metres. Dry reference; preserve custom caustic receiver at runtime."
+    },
+    "art_pass_tile_pearl_wet": {
+      "albedo": "tile_pearl_albedo_2k.png",
+      "normal_gl": "tile_normal_gl_2k.png",
+      "orm": "tile_pearl_wet_orm_2k.png",
+      "repeat_metres": 0.8,
+      "uv_scale": 1.25,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 0.85,
+      "specular": 0.35683669,
+      "note": "Only authored narrow wet-edge material zones. Single-lobe water-film approximation, no clearcoat or new water surface."
+    },
+    "art_pass_plaster_oyster": {
+      "albedo": "plaster_oyster_albedo_2k.png",
+      "normal_gl": "plaster_normal_gl_2k.png",
+      "orm": "plaster_orm_2k.png",
+      "repeat_metres": 2.0,
+      "uv_scale": 0.5,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 1.0,
+      "specular": 0.5,
+      "note": ""
+    },
+    "art_pass_storage_green": {
+      "albedo": "storage_green_albedo_512.png",
+      "normal_gl": "storage_normal_gl_512.png",
+      "orm": "storage_orm_512.png",
+      "repeat_metres": 0.5,
+      "uv_scale": 2.0,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 1.0,
+      "specular": 0.5,
+      "note": "Accepted smooth filtered dielectric coating. Neutral normal is intentional; roughness retains unresolved coating response."
+    },
+    "art_pass_coping_ivory": {
+      "albedo": "coping_ivory_albedo_1k.png",
+      "normal_gl": "coping_normal_gl_1k.png",
+      "orm": "coping_orm_1k.png",
+      "repeat_metres": 1.0,
+      "uv_scale": 1.0,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 1.0,
+      "specular": 0.5,
+      "note": ""
+    },
+    "art_pass_coping_ivory_wet": {
+      "albedo": "coping_ivory_albedo_1k.png",
+      "normal_gl": "coping_normal_gl_1k.png",
+      "orm": "coping_wet_orm_1k.png",
+      "repeat_metres": 1.0,
+      "uv_scale": 1.0,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 0.0,
+      "normal_strength": 1.0,
+      "specular": 0.35683669,
+      "note": "Restrict to authored water-adjacent zones. Never apply across every coping slab."
+    },
+    "art_pass_steel_brushed": {
+      "albedo": "steel_brushed_albedo_512.png",
+      "normal_gl": "steel_normal_gl_512.png",
+      "orm": "steel_orm_512.png",
+      "repeat_metres": 0.25,
+      "uv_scale": 4.0,
+      "albedo_multiplier_srgb": "FFFFFF",
+      "metallic": 1.0,
+      "normal_strength": 1.0,
+      "specular": 0.5,
+      "note": "Use genuine mesh tangents and align U with brushing. Directional normal/roughness only; no anisotropic shader dependency."
+    }
+  },
+  "files": {
+    "tile_normal_gl_2k.png": {
+      "bytes": 240176,
+      "sha256": "9be0de12e34463cb41237644d9433f2fa10e55807c19491ab1e906804e8ea2ef",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "normal",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "100 mm ceramic with 1.8 mm grout, 0.6 mm edge ease and 0.28 mm joint relief; +Y OpenGL.",
+      "channel_min": [
+        84,
+        85,
+        244
+      ],
+      "channel_max": [
+        171,
+        171,
+        255
+      ]
+    },
+    "tile_blue_albedo_2k.png": {
+      "bytes": 210157,
+      "sha256": "892df897317838f0b0395ae9df954daaa87d00f6df3dbd45773801c450d82930",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 3,
+      "color_space": "sRGB",
+      "kind": "albedo",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "Unlit material pigment only; no AO, shadow, caustic, specular highlight or photographic input.",
+      "channel_min": [
+        147,
+        184,
+        184
+      ],
+      "channel_max": [
+        167,
+        193,
+        201
+      ]
+    },
+    "tile_blue_orm_2k.png": {
+      "bytes": 254794,
+      "sha256": "f3458e09c1fdafda5b88681ded008e95e00a4b1e7f8883c6f3b8f42779c42dae",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 4,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "Linear R local height-horizon AO / G perceptual roughness / B metallic=0 / A tile-face coverage.",
+      "channel_min": [
+        249,
+        77,
+        0,
+        0
+      ],
+      "channel_max": [
+        255,
+        217,
+        0,
+        255
+      ]
+    },
+    "tile_blue_wet_orm_2k.png": {
+      "bytes": 212571,
+      "sha256": "6a3d972bb2568d0950c888f8984f405acbb67e27e13fe3d6d733e91fab48d91d",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 4,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "Wet-zone variant, not a global floor finish. Assign only authored basin/drain adjacency surfaces.",
+      "channel_min": [
+        249,
+        55,
+        0,
+        0
+      ],
+      "channel_max": [
+        255,
+        172,
+        0,
+        255
+      ]
+    },
+    "tile_pearl_albedo_2k.png": {
+      "bytes": 191667,
+      "sha256": "907a464ad3ca7950db382c9d7d4eaf3cd8749518e2759e76cb13ac6735be87f1",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 3,
+      "color_space": "sRGB",
+      "kind": "albedo",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "Unlit material pigment only; no AO, shadow, caustic, specular highlight or photographic input.",
+      "channel_min": [
+        178,
+        190,
+        184
+      ],
+      "channel_max": [
+        218,
+        223,
+        220
+      ]
+    },
+    "tile_pearl_orm_2k.png": {
+      "bytes": 254541,
+      "sha256": "60b18c6d1e46d9f927f916911807dfa6aa96eca8047162f784ab0365c881fb6e",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 4,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "Linear R local height-horizon AO / G perceptual roughness / B metallic=0 / A tile-face coverage.",
+      "channel_min": [
+        249,
+        125,
+        0,
+        0
+      ],
+      "channel_max": [
+        255,
+        217,
+        0,
+        255
+      ]
+    },
+    "tile_pearl_wet_orm_2k.png": {
+      "bytes": 212571,
+      "sha256": "6a3d972bb2568d0950c888f8984f405acbb67e27e13fe3d6d733e91fab48d91d",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 4,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 0.8,
+      "texels_per_metre": 2560.0,
+      "description": "Wet-zone variant, not a global floor finish. Assign only authored basin/drain adjacency surfaces.",
+      "channel_min": [
+        249,
+        55,
+        0,
+        0
+      ],
+      "channel_max": [
+        255,
+        172,
+        0,
+        255
+      ]
+    },
+    "plaster_oyster_albedo_2k.png": {
+      "bytes": 73629,
+      "sha256": "923eb7075e013771235edb8f349698b06bd4de6f6ac63098c08ee08e451316f5",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 3,
+      "color_space": "sRGB",
+      "kind": "albedo",
+      "repeat_metres": 2.0,
+      "texels_per_metre": 1024.0,
+      "description": "Oyster mineral plaster with only restrained trowel pigment variation; no baked shading.",
+      "channel_min": [
+        219,
+        219,
+        211
+      ],
+      "channel_max": [
+        223,
+        223,
+        215
+      ]
+    },
+    "plaster_normal_gl_2k.png": {
+      "bytes": 1325360,
+      "sha256": "3c9efd6e2c511fcd806212231acd5c22e15952add2c4823a046cc9e087c7ff0b",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "normal",
+      "repeat_metres": 2.0,
+      "texels_per_metre": 1024.0,
+      "description": "70 um broad trowel relief plus 20 um fine aggregate; original height-derived +Y normal.",
+      "channel_min": [
+        124,
+        124,
+        255
+      ],
+      "channel_max": [
+        131,
+        131,
+        255
+      ]
+    },
+    "plaster_orm_2k.png": {
+      "bytes": 1047377,
+      "sha256": "491d7e4dff32069414af51b4d7e76456033e28973e216a5dca3772173d5d9a1b",
+      "size": [
+        2048,
+        2048
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 2.0,
+      "texels_per_metre": 1024.0,
+      "description": "Linear R near-white local microcavity AO / G matte roughness / B metallic=0.",
+      "channel_min": [
+        255,
+        201,
+        0
+      ],
+      "channel_max": [
+        255,
+        227,
+        0
+      ]
+    },
+    "storage_normal_gl_512.png": {
+      "bytes": 1489,
+      "sha256": "71d432413a10aab25e5dee0aa377a1ca29dddef8eb2e30584135268d218c9d96",
+      "size": [
+        512,
+        512
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "normal",
+      "repeat_metres": 0.5,
+      "texels_per_metre": 1024.0,
+      "description": "Intentional neutral tangent normal [128,128,255] for a smooth filtered coating; no resolved orange peel or claimed measured microdetail.",
+      "channel_min": [
+        128,
+        128,
+        255
+      ],
+      "channel_max": [
+        128,
+        128,
+        255
+      ]
+    },
+    "storage_green_albedo_512.png": {
+      "bytes": 1492,
+      "sha256": "a1b8c6c8eed36c2df1ac869a11b953674a5730181c7a2e9174b9e90ff65010b0",
+      "size": [
+        512,
+        512
+      ],
+      "channels": 3,
+      "color_space": "sRGB",
+      "kind": "albedo",
+      "repeat_metres": 0.5,
+      "texels_per_metre": 1024.0,
+      "description": "Green-gray opaque paint pigment.",
+      "channel_min": [
+        99,
+        123,
+        118
+      ],
+      "channel_max": [
+        99,
+        123,
+        118
+      ]
+    },
+    "storage_orm_512.png": {
+      "bytes": 29472,
+      "sha256": "52aa037a6c746609eeef6718c62f76bcdbe01c9682b8f0e336d04e028e8611b7",
+      "size": [
+        512,
+        512
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 0.5,
+      "texels_per_metre": 1024.0,
+      "description": "Linear dielectric paint: AO=1 / roughness .43 plus restrained .002 field variation / metallic=0.",
+      "channel_min": [
+        255,
+        108,
+        0
+      ],
+      "channel_max": [
+        255,
+        111,
+        0
+      ]
+    },
+    "coping_ivory_albedo_1k.png": {
+      "bytes": 49483,
+      "sha256": "93e52fcdceec6c3da4cc71a5a4364df698d5beda1320a90e75c86bac918c26d8",
+      "size": [
+        1024,
+        1024
+      ],
+      "channels": 3,
+      "color_space": "sRGB",
+      "kind": "albedo",
+      "repeat_metres": 1.0,
+      "texels_per_metre": 1024.0,
+      "description": "Ivory fine mineral/porcelain coping. No tiled grid; slab joints and bevels belong to geometry.",
+      "channel_min": [
+        217,
+        218,
+        210
+      ],
+      "channel_max": [
+        223,
+        224,
+        215
+      ]
+    },
+    "coping_normal_gl_1k.png": {
+      "bytes": 306414,
+      "sha256": "dce269a20e44f30ff9c8312f3e5ba39caaba7893a0eb1186b0e69f39cfebbe39",
+      "size": [
+        1024,
+        1024
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "normal",
+      "repeat_metres": 1.0,
+      "texels_per_metre": 1024.0,
+      "description": "Quiet honed fine-grain surface, distinct from glaze and rough plaster.",
+      "channel_min": [
+        125,
+        125,
+        255
+      ],
+      "channel_max": [
+        131,
+        131,
+        255
+      ]
+    },
+    "coping_orm_1k.png": {
+      "bytes": 257008,
+      "sha256": "15ea5a593384c35375e58754db3c1e5961285e4e30912eb64213027d16d7156e",
+      "size": [
+        1024,
+        1024
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 1.0,
+      "texels_per_metre": 1024.0,
+      "description": "Linear R near-white material AO / G honed roughness / B metallic=0.",
+      "channel_min": [
+        255,
+        94,
+        0
+      ],
+      "channel_max": [
+        255,
+        122,
+        0
+      ]
+    },
+    "coping_wet_orm_1k.png": {
+      "bytes": 232603,
+      "sha256": "1309a5b10a00752a69efc46d4a9b23523eb338ed5d98509d671c7d77c953e41f",
+      "size": [
+        1024,
+        1024
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 1.0,
+      "texels_per_metre": 1024.0,
+      "description": "Localized wet coping zone only; no gloss across the entire deck.",
+      "channel_min": [
+        255,
+        59,
+        0
+      ],
+      "channel_max": [
+        255,
+        81,
+        0
+      ]
+    },
+    "steel_brushed_albedo_512.png": {
+      "bytes": 15044,
+      "sha256": "49bfa71365dbe3c4b530dcacf774d2745620ca7aa54734ff497a769b95b0b885",
+      "size": [
+        512,
+        512
+      ],
+      "channels": 3,
+      "color_space": "sRGB",
+      "kind": "albedo",
+      "repeat_metres": 0.25,
+      "texels_per_metre": 2048.0,
+      "description": "Neutral stainless reflectance pigment; lines run along texture U. No photographed glare.",
+      "channel_min": [
+        199,
+        202,
+        202
+      ],
+      "channel_max": [
+        203,
+        206,
+        206
+      ]
+    },
+    "steel_normal_gl_512.png": {
+      "bytes": 19060,
+      "sha256": "9f9f0a9179029314a1737f8399963a4694b86be709dad79aa2ecc4c9377ce719",
+      "size": [
+        512,
+        512
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "normal",
+      "repeat_metres": 0.25,
+      "texels_per_metre": 2048.0,
+      "description": "6 um directional brushing height, U along the fabricated rail or plate brushing; visible above8-bit normal quantization.",
+      "channel_min": [
+        127,
+        125,
+        255
+      ],
+      "channel_max": [
+        128,
+        130,
+        255
+      ]
+    },
+    "steel_orm_512.png": {
+      "bytes": 25558,
+      "sha256": "63518fab1a8492dbe90f2426caa1a76882ed493e84659df4699ae6d4a25f98ab",
+      "size": [
+        512,
+        512
+      ],
+      "channels": 3,
+      "color_space": "linear",
+      "kind": "orm",
+      "repeat_metres": 0.25,
+      "texels_per_metre": 2048.0,
+      "description": "Linear R AO=1 / G roughness / B metallic=1. No diffuse green paint.",
+      "channel_min": [
+        255,
+        69,
+        255
+      ],
+      "channel_max": [
+        255,
+        90,
+        255
+      ]
+    }
+  }
+}

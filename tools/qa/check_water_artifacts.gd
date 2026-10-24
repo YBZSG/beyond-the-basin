@@ -14,10 +14,39 @@ func _run() -> void:
 	root.add_child(game)
 func _check(ok: bool, message: String) -> void:
 	if not ok: report.errors.append(message)
-func _capture(label: String) -> void:
+func _capture(label: String) -> Image:
 	for frame in 45: await process_frame
 	await RenderingServer.frame_post_draw
-	_check(root.get_texture().get_image().save_png(destination.path_join(label + ".png")) == OK, "Capture failed: " + label)
+	var image := root.get_texture().get_image()
+	_check(image.save_png(destination.path_join(label + ".png")) == OK, "Capture failed: " + label)
+	return image
+
+func _floor_color(image: Image) -> Dictionary:
+	# These four entrance rooms have neutral ceramic floors and corrupt=0.
+	# Detect the saturated green reflection-atlas failure, not artistic grading.
+	var green := 0
+	var samples := 0
+	for y in range(int(image.get_height() * .60), int(image.get_height() * .85), 8):
+		for x in range(int(image.get_width() * .40), int(image.get_width() * .60), 8):
+			var color := image.get_pixel(x, y)
+			if color.g > color.r * 1.5 and color.b < color.g * .35: green += 1
+			samples += 1
+	return {"samples":samples, "saturated_green_fraction":float(green) / max(samples, 1)}
+
+func _wait_for_room(game: Node3D) -> bool:
+	# A warp can start a fresh streaming batch and rebase the water domain.
+	# physics_frame fires BEFORE the world's physics callback; explicitly publish
+	# this teleport so readiness cannot accidentally describe the previous room.
+	game.world.update_player_position(game.player.global_position)
+	game.world.complete_pending_streaming()
+	var started := Time.get_ticks_msec()
+	while not game.water.is_terrain_ready() or not game.water._probe_has_current_texture() or not game.world.get_meta("art_reflection_ready", false):
+		if Time.get_ticks_msec() - started > 180000:
+			report.errors.append("Room optics readiness timed out: " + str(game.water._probe_scheduling_diagnostics()))
+			return false
+		await process_frame
+	return true
+
 func _inspect(game: Node3D) -> int:
 	report.version = ProjectSettings.get_setting("application/config/version")
 	var panel := game.get_node("DesktopQuality")
@@ -80,7 +109,7 @@ func _inspect(game: Node3D) -> int:
 		game.player.warp_to(origin+Vector3(0,.60,9.8),origin+Vector3(0,1.6,0))
 		game.player.set_enabled(false)
 		game.player.camera.rotation.x = -.62
-		await physics_frame
+		if not await _wait_for_room(game): break
 		var missing: Array = []
 		var space: PhysicsDirectSpaceState3D = game.player.get_world_3d().direct_space_state
 		for z in range(-15,16):
@@ -88,9 +117,23 @@ func _inspect(game: Node3D) -> int:
 				var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(origin+Vector3(x,.58,z),origin+Vector3(x,-2,z),1))
 				if hit.is_empty(): missing.append(Vector2i(x,z))
 		var module: String = game.world.get_layout(coord).expanded_module
-		report.rooms.append({"module":module,"floor_samples":961,"missing":missing})
+		var geometry: String = game.world.get_layout(coord).geometry_path
+		if preload("res://scripts/art_pass/art_pass_selection.gd").is_enabled():
+			_check(geometry.begins_with("res://assets/models/art_pass/"), "Authored room fell back to old geometry: " + module)
 		_check(missing.is_empty(),"Floor collision gaps: "+module)
-		await _capture("04-"+module)
+		var shot := await _capture("04-"+module)
+		var color := _floor_color(shot)
+		_check(color.saturated_green_fraction < .5, "Neutral room has corrupted green reflections: " + module)
+		var active_probes: Array = game.world.find_children("*", "ReflectionProbe", true, false)
+		for probe: ReflectionProbe in active_probes:
+			_check(probe.visible and probe.update_mode == ReflectionProbe.UPDATE_ONCE, "Room probe left hidden or updating every frame: " + module)
+		report.rooms.append({"module":module,"geometry":geometry,"floor_samples":961,"missing":missing,"color":color,"probes":active_probes.size()})
+	var probes := game.find_children("*", "ReflectionProbe", true, false)
+	report.reflection_probes = probes.size()
+	report.reflection_refresh = {"phase": game.world.get_meta("art_reflection_phase", "missing"), "ready": game.world.get_meta("art_reflection_ready", false), "revision": game.world.get_meta("art_reflection_revision", -1), "terrain":game.water.is_terrain_ready(), "cube":game.water._probe_has_current_texture()}
+	_check(not probes.is_empty(), "Room reflections are missing")
+	for probe: ReflectionProbe in probes:
+		_check(probe.visible and probe.update_mode == ReflectionProbe.UPDATE_ONCE, "Reflection probe left hidden or updating every frame")
 	# Preference survives a return to the supported original map.
 	game._spawn_mode = "original"
 	await game.regenerate(250821)

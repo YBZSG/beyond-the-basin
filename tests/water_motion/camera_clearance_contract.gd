@@ -2,6 +2,7 @@ extends SceneTree
 ## Actual skinned body samples through swim/start/stop, without GPU claims.
 const Player = preload("res://scripts/player/pool_player.gd")
 const Avatar = preload("res://scripts/player/pool_avatar.gd")
+const Selection = preload("res://scripts/art_pass/character/art_character_selection.gd")
 const RigProbe = preload("res://tests/water_motion/rig_motion_contract.gd")
 var report: Dictionary = {"errors": [], "rates": []}
 class SwimWater extends Node3D:
@@ -24,9 +25,12 @@ func _run() -> void:
 		player.set_water(water)
 		player.warp_to(Vector3(0,-1.16,0), Vector3(0,0.44,-10))
 		player.enabled = true
-		var avatar := Avatar.new()
+		var avatar: Node3D = Selection.script_or_original(Avatar).new()
 		avatar.model_path = "res://assets/water_motion/explorer_water_motion.scn"
+		Selection.apply_selected_model(avatar)
 		avatar.setup(player)
+		if Selection.is_enabled() and not bool(avatar.get_debug_state().get("natural_hand_contract", {}).get("valid", false)):
+			report.errors.append("Selected art model failed its imported bone contract")
 		avatar.set_process(false)
 		var probe := RigProbe.new()
 		probe.setup(avatar._model, avatar._skeleton)

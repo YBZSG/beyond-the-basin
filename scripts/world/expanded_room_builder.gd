@@ -2,6 +2,7 @@ class_name ExpandedPoolRoomBuilder
 extends RefCounted
 ## Compact imported facility architecture. No full-room trimesh collision.
 const Expansion := preload("res://scripts/world/expanded_room_catalog.gd")
+const ArtPassMaterials := preload("res://scripts/art_pass/art_pass_materials.gd")
 static var scene_cache: Dictionary={}
 static var proxy_cache: Dictionary={}
 var host: WeakRef
@@ -14,6 +15,7 @@ var triangle_count: int=0
 var proxy_count: int=0
 var shower_dry_material: ShaderMaterial
 var local_wet_materials: Dictionary = {}
+var art_pass_materials: RefCounted
 # Native water-level A/B showed only a local edge highlight, not an accepted
 # wet-atmosphere improvement. Keep this material experiment OFF by default.
 var local_wet_finish_requested: bool = "--pc-local-wet-finish" in OS.get_cmdline_user_args()
@@ -71,6 +73,10 @@ func _visit(node: Node) -> void:
 	for child in node.get_children(): _visit(child)
 
 func _material_for(role:String)->Material:
+	if role.begins_with("art_pass_"):
+		if art_pass_materials == null: art_pass_materials = ArtPassMaterials.new()
+		var authored: ShaderMaterial = art_pass_materials.resolve(role, library)
+		if authored != null: return authored
 	var source:Material=library.get_material(role)
 	# Only the expanded shower's dry-deck role gets the diagnostic matte coat.
 	# Shared formal/original resources and wet-basin materials remain untouched.

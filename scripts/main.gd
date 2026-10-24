@@ -3,6 +3,7 @@ extends Node3D
 const WorldScript = preload("res://scripts/world/pool_world.gd")
 const PlayerScript = preload("res://scripts/player/pool_player.gd")
 const AvatarScript = preload("res://scripts/player/pool_avatar.gd")
+const ArtCharacter = preload("res://scripts/art_pass/character/art_character_selection.gd")
 const AvatarFinishScript = preload("res://scripts/player/avatar_finish_candidate.gd")
 const FacilityDevicesScript = preload("res://scripts/world/facility_devices_candidate.gd")
 const SPAWN_MODES := ["original", "formal", "expanded"]
@@ -226,11 +227,12 @@ func _create_world() -> void:
 	player.pause_requested.connect(func(): set_menu(true))
 	props.attach_player(player)
 	avatar = null
-	avatar = AvatarScript.new()
+	avatar = ArtCharacter.script_or_original(AvatarScript).new()
 	if "--legacy-avatar-model" not in OS.get_cmdline_user_args():
 		avatar.model_path = AvatarFinishScript.CANDIDATE_PATH
 		if not preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session() and "--legacy-water-actions" not in OS.get_cmdline_user_args():
 			avatar.model_path = "res://assets/water_motion/explorer_water_motion.scn"
+	ArtCharacter.apply_selected_model(avatar)
 	avatar.setup(player)
 	_avatar_finish = AvatarFinishScript.new() if "--legacy-avatar-model" not in OS.get_cmdline_user_args() else null
 	_avatar_finish_status = _avatar_finish.apply_to(avatar,_avatar_fabric_enabled and "--no-avatar-fabric-finish" not in OS.get_cmdline_user_args()) if _avatar_finish != null else {"enabled":false}
@@ -902,6 +904,7 @@ func _set_filter(index: int) -> void:
 
 func _on_world_streamed() -> void:
 	if _retiring_world: return
+	_refresh_authored_reflections()
 	# SDFGI does not continuously rebuild static geometry added during streaming.
 	# Refresh after the atomic streaming batch, not once per newly created mesh.
 	if not effective_gi_requested(_gi_on) or not environment.environment or RenderingServer.get_current_rendering_method() != "forward_plus": return
@@ -913,6 +916,41 @@ func _on_world_streamed() -> void:
 	environment.environment.sdfgi_enabled=false
 	await get_tree().process_frame
 	if ticket==_gi_refresh_ticket and is_instance_valid(world) and world.get_instance_id()==source_world_id and is_instance_valid(environment) and effective_gi_requested(_gi_on) and RenderingServer.get_current_rendering_method() == "forward_plus": environment.environment.sdfgi_enabled=true
+
+func _refresh_authored_reflections() -> void:
+	if DisplayServer.get_name() == "headless" or not is_instance_valid(world) or not world.expanded_mode: return
+	if not preload("res://scripts/art_pass/art_pass_selection.gd").is_enabled(): return
+	var current_world: Node3D = world
+	var revision := int(world.profile_counters.shell_builds)
+	if int(world.get_meta("art_reflection_revision", -1)) == revision: return
+	world.set_meta("art_reflection_revision", revision)
+	world.set_meta("art_reflection_ready", false)
+	world.set_meta("art_reflection_phase", "waiting_optics")
+	var probes: Array[WeakRef] = []
+	# Cold one-shot captures during an authored-room rebuild can retain green
+	# specular data. Wait for the complete geometry and optical preparation, then
+	# invalidate each cached probe once. No per-frame reflection rendering.
+	for probe: ReflectionProbe in world.find_children("*", "ReflectionProbe", true, false):
+		probe.visible = false
+		probes.append(weakref(probe))
+	while is_instance_valid(current_world) and world == current_world and not _retiring_world:
+		if int(current_world.get_meta("art_reflection_revision", -1)) != revision: return
+		if water.is_terrain_ready() and water._probe_has_current_texture(): break
+		await get_tree().process_frame
+	if not is_instance_valid(current_world) or world != current_world or _retiring_world: return
+	current_world.set_meta("art_reflection_phase", "waiting_draw")
+	for frame in 2: await RenderingServer.frame_post_draw
+	if not is_instance_valid(current_world) or world != current_world or _retiring_world: return
+	if int(current_world.get_meta("art_reflection_revision", -1)) != revision: return
+	for reference: WeakRef in probes:
+		var probe := reference.get_ref() as ReflectionProbe
+		if probe == null: continue
+		var offset := probe.origin_offset
+		probe.origin_offset = offset + Vector3(.001, 0, 0)
+		probe.origin_offset = offset
+		probe.visible = true
+	current_world.set_meta("art_reflection_ready", true)
+	current_world.set_meta("art_reflection_phase", "ready")
 
 func _build_water_panel(ui: Control) -> void:
 	_advanced=PanelContainer.new()

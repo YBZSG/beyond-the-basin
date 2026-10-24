@@ -1,0 +1,34 @@
+{
+  "baseline_commit": "36b85ddf7f566d433254728ed68dd1d858068123",
+  "source_archives": [
+    {
+      "file": "PoolCore-Art-20261024-Hand-Editable.zip",
+      "bytes": 7067623,
+      "sha256": "1699f39bce5701e7dcd4b5f37805c95ae2cc950ae2628e7de841f3b5f36f9799"
+    },
+    {
+      "file": "PoolCore-Art-20261024-Hand-Regeneration-Inputs.zip",
+      "bytes": 16358978,
+      "sha256": "faca6817cf42b0a48d2eabf0b6dea33278d170111c47e9090bfc0b390bec2a10"
+    },
+    {
+      "file": "PoolCore-Art-20261024-Hand-Regeneration-Pipeline.zip",
+      "bytes": 17295488,
+      "sha256": "9ba72445ff73f8af94feea5bd9a5dcf09774477d68d5d0992c9a917dfb5aff23"
+    },
+    {
+      "file": "PoolCore-Art-20261024-Room-Authoring.zip",
+      "bytes": 13446571,
+      "sha256": "114bc628f99d96f1c6de1680e35b8ebdb1704f27e4ab1bead823213c2efd93df"
+    },
+    {
+      "file": "PoolCore-Art-20261024-Runtime-Source-Patch.zip",
+      "bytes": 13937339,
+      "sha256": "30820ae06e7883694c1cbc3bc609322609d0a28f003e6c34d0079d62fcd422d3"
+    }
+  ],
+  "payload_additions": 73,
+  "payload_modified_hooks": 3,
+  "authoring_packages": "Preserved separately; authoring project and diagnostic contracts are not overlaid on the game.",
+  "friend_evidence": "Godot 4.6.3 source evidence; current target validation is recorded separately."
+}

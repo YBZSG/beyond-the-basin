@@ -39,6 +39,10 @@ func _capture(game: Node3D, label: String) -> void:
 
 func _inspect(game: Node3D) -> int:
 	report.version = ProjectSettings.get_setting("application/config/version")
+	if preload("res://scripts/art_pass/character/art_character_selection.gd").is_enabled():
+		var avatar_state: Dictionary = game.avatar.get_debug_state()
+		report.natural_hand_contract = avatar_state.get("natural_hand_contract", {})
+		_check(bool(report.natural_hand_contract.get("valid", false)), "Authored hand fell back to the old model")
 	var panel := game.get_node("DesktopQuality")
 	panel.set_option("frame_generation", false)
 	panel.set_option("raytracing", false)
