@@ -12,6 +12,9 @@ uniform float normal_strength : hint_range(0.0, 2.0) = 1.0;
 uniform float dielectric_specular : hint_range(0.0, 1.0) = 0.5;
 uniform bool mapped = true;
 uniform bool glazed_ceramic = false;
+uniform float glaze_roughness : hint_range(0.06, 0.25) = 0.105;
+uniform float glaze_reference_roughness : hint_range(0.0, 1.0) = 0.33;
+uniform float grout_roughness : hint_range(0.5, 1.0) = 0.82;
 uniform vec4 constant_color : source_color = vec4(1.0);
 uniform float constant_roughness = 0.85;
 uniform bool planar_clip_enabled = true;
@@ -31,7 +34,7 @@ void fragment() {
     // Water depth, collision, dynamics and capture ownership are not changed.
     if (planar_clip_enabled && (CAMERA_VISIBLE_LAYERS & 524288u) != 0u && world_position.y < 0.318) discard;
     vec2 uv = UV / max(repeat_metres, 0.001);
-    vec3 channels = mapped ? texture(orm, uv).rgb : vec3(1.0, constant_roughness, 0.0);
+    vec4 channels = mapped ? texture(orm, uv) : vec4(1.0, constant_roughness, 0.0, 1.0);
     ALBEDO = mapped ? texture(base_color, uv).rgb : constant_color.rgb;
     NORMAL_MAP = mapped ? texture(normal_gl, uv).rgb : vec3(0.5, 0.5, 1.0);
     // Preserve the authored per-tile bevel and recessed joints while damping
@@ -41,12 +44,16 @@ void fragment() {
     AO = channels.r;
     // AO is local material relief, not a baked lightmap or an albedo stain.
     AO_LIGHT_AFFECT = 0.0;
-    float grout = smoothstep(0.55, 0.65, channels.g);
-    ROUGHNESS = glazed_ceramic ? mix(0.05 + (channels.g-0.3)*0.01, 0.82, grout) : clamp(channels.g, 0.12, 1.0);
+    // Authored ORM alpha is linear tile-face coverage, NOT transparency.
+    // It survives mip filtering without turning pearl/wet faces into grout.
+    // RGB coping maps sample alpha=1; their joints are modelled separately.
+    float grout = 1.0 - channels.a;
+    float glaze = clamp(glaze_roughness + clamp(channels.g - glaze_reference_roughness, -0.08, 0.08) * 0.06, 0.06, 0.25);
+    ROUGHNESS = glazed_ceramic ? mix(glaze, grout_roughness, grout) : clamp(channels.g, 0.12, 1.0);
     METALLIC = glazed_ceramic ? 0.0 : channels.b;
     SPECULAR = dielectric_specular;
     CLEARCOAT = glazed_ceramic ? 0.20*(1.0-grout) : 0.0;
-    CLEARCOAT_ROUGHNESS = 0.08;
+    CLEARCOAT_ROUGHNESS = 0.12;
     EMISSION = vec3(0.0);
     if (causticGain > 0.0) {
         vec3 irradiance = source_caustic_irradiance(

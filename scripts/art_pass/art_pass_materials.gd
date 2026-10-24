@@ -77,6 +77,16 @@ const ROLES := {
   }
 }
 const SOLID_ROLES := {"art_pass_joint": {"color":"707C77", "roughness":0.85}, "art_pass_inlet_dark": {"color":"25302F", "roughness":0.72}}
+# Finite glossy ceramic, with the existing pigment/normal/tile scale untouched.
+# The second value is the old authored ORM face baseline, not a grout threshold.
+const CERAMIC_FINISH := {
+	"art_pass_tile_blue": Vector3(0.105, 0.33, 0.82),
+	"art_pass_tile_blue_wet": Vector3(0.085, 0.235, 0.68),
+	"art_pass_tile_pearl": Vector3(0.115, 0.52, 0.82),
+	"art_pass_tile_pearl_wet": Vector3(0.085, 0.235, 0.68),
+	"art_pass_coping_ivory": Vector3(0.12, 0.425, 0.82),
+	"art_pass_coping_ivory_wet": Vector3(0.09, 0.27, 0.68),
+}
 var _materials: Dictionary = {}
 
 func resolve(role: String, material_library: RefCounted) -> ShaderMaterial:
@@ -86,7 +96,12 @@ func resolve(role: String, material_library: RefCounted) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = PBR_SHADER
 	material.resource_name = role
-	material.set_shader_parameter("glazed_ceramic", "tile_" in role or "coping_" in role)
+	material.set_shader_parameter("glazed_ceramic", CERAMIC_FINISH.has(role))
+	if CERAMIC_FINISH.has(role):
+		var finish: Vector3 = CERAMIC_FINISH[role]
+		material.set_shader_parameter("glaze_roughness", finish.x)
+		material.set_shader_parameter("glaze_reference_roughness", finish.y)
+		material.set_shader_parameter("grout_roughness", finish.z)
 	if SOLID_ROLES.has(role):
 		material.set_shader_parameter("mapped", false)
 		material.set_shader_parameter("constant_color", Color(SOLID_ROLES[role].color))

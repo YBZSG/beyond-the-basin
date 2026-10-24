@@ -1,0 +1,83 @@
+diff --git a/scripts/world/pool_world.gd b/scripts/world/pool_world.gd
+index 2449143..299f51a 100644
+--- a/scripts/world/pool_world.gd
++++ b/scripts/world/pool_world.gd
+@@ -16,6 +16,9 @@ const WATER_LEVEL := .32
+ const GROUND := -.78
+ const STREAM_RADIUS := 2
+ var stream_radius:int=1 if preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session() else STREAM_RADIUS
++# Keep the immediate 3x3 collision neighborhood; finish missing far-ring rooms
++# one atomic job per process frame. Rollback preserves the former shell timing.
++var staged_outer_shells: bool = "--legacy-synchronous-shells" not in OS.get_cmdline_user_args()
+ const Catalog := preload("res://scripts/world/room_catalog.gd")
+ const Builder := preload("res://scripts/world/room_builder.gd")
+ var seed_value: int = 1337
+@@ -29,7 +32,7 @@ var _builders: Dictionary = {}
+ var _desired: Dictionary = {}
+ var _layouts: Dictionary = {}
+ var _visited: Dictionary = {}
+-var profile_counters: Dictionary = {"shell_builds":0,"interior_builds":0,"retirements":0,"transitions":0,"last_transition_ms":0.0,"max_transition_ms":0.0,"last_shell_ms":0.0,"last_interior_ms":0.0}
++var profile_counters: Dictionary = {"shell_builds":0,"interior_builds":0,"retirements":0,"transitions":0,"last_transition_ms":0.0,"max_transition_ms":0.0,"last_shell_ms":0.0,"last_interior_ms":0.0,"synchronous_shell_builds":0,"staged_shell_builds":0,"last_request_shells":0,"last_request_queued_shells":0,"stream_jobs":0,"last_stream_job_ms":0.0,"max_stream_job_ms":0.0,"stream_job_total_ms":0.0}
+ 
+ func initialize(world_seed: int, materials: RefCounted) -> void:
+ 	seed_value=world_seed
+@@ -139,11 +142,23 @@ func _request_stream(center: Vector2i) -> void:
+ 		var da: int = (a-center).length_squared()
+ 		var db: int = (b-center).length_squared()
+ 		return da<db if da!=db else (a.y<b.y if a.y!=b.y else a.x<b.x))
+-	# All destination floor/wall collisions are installed immediately. Only detailed
+-	# interiors are queued, so fast walking never outruns terrain or portal walls.
++	# The current room and its eight neighbors retain immediate floor/wall
++	# collisions, even after a rapid crossing or distant position change. At a
++	# settled ordinary crossing these shells already exist in the previous 5x5.
++	# Missing outer-ring shells join the same nearest-first completion queue;
++	# total final residency, RNG, room_loaded order and room contents are unchanged.
++	profile_counters.last_request_shells=0
++	profile_counters.last_request_queued_shells=0
+ 	for coord in candidates:
+-		if not resident_rooms.has(coord): _create_shell(coord)
+-		_set_room_distance_class(resident_rooms[coord],coord,center)
++		var immediate:bool=not staged_outer_shells or maxi(absi(coord.x-center.x),absi(coord.y-center.y))<=1
++		if not resident_rooms.has(coord) and immediate:
++			_create_shell(coord)
++			profile_counters.last_request_shells+=1
++			profile_counters.synchronous_shell_builds+=1
++		if resident_rooms.has(coord):
++			_set_room_distance_class(resident_rooms[coord],coord,center)
++		else:
++			profile_counters.last_request_queued_shells+=1
+ 		if not is_room_ready(coord): _queue.append(coord)
+ 	if _queue.is_empty(): _retire_old_rooms()
+ 
+@@ -188,9 +203,19 @@ func _finish_room(coord: Vector2i) -> void:
+ 
+ func _process(_delta: float) -> void:
+ 	if not _initialized or _queue.is_empty(): return
+-	# One fully atomic interior per frame. Nearby rooms are finished before outer ring.
++	# One atomic room job per frame, including its shell if the far ring is new.
++	# Never leave a partially built collider or publish a partial room interior.
++	var stage_start:=Time.get_ticks_usec()
+ 	var coord: Vector2i = _queue.pop_front()
+-	if _desired.has(coord): _finish_room(coord)
++	if _desired.has(coord):
++		if not resident_rooms.has(coord):
++			_create_shell(coord)
++			profile_counters.staged_shell_builds+=1
++		_finish_room(coord)
++	profile_counters.stream_jobs+=1
++	profile_counters.last_stream_job_ms=float(Time.get_ticks_usec()-stage_start)/1000.0
++	profile_counters.max_stream_job_ms=maxf(profile_counters.max_stream_job_ms,profile_counters.last_stream_job_ms)
++	profile_counters.stream_job_total_ms+=profile_counters.last_stream_job_ms
+ 	if _queue.is_empty():
+ 		_retire_old_rooms()
+ 		streaming_completed.emit()
+@@ -208,6 +233,8 @@ func complete_pending_streaming() -> void:
+ 	# Used by deterministic capture/export validation after normal startup.
+ 	# Gameplay continues to use nearest-first incremental _process streaming.
+ 	for coord in _queue.duplicate():
+-		if _desired.has(coord): _finish_room(coord)
++		if _desired.has(coord):
++			if not resident_rooms.has(coord): _create_shell(coord)
++			_finish_room(coord)
+ 	_retire_old_rooms()
+ 	streaming_completed.emit()

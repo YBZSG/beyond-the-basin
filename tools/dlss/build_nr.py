@@ -22,7 +22,7 @@ assert (nr_sdk / "include/nvsdk_ngx_helpers_dlssnr_vk.h").is_file(), nr_sdk
 assert (ngx_sdk / "include/nvsdk_ngx_defs.h").is_file(), ngx_sdk
 assert (ngx_sdk / "lib/nvsdk_ngx_s.lib").is_file(), ngx_sdk
 if args.apply:
-    for name in ["engine-taa-rg16f.patch", "engine-fg-rt.patch", "engine-camera-visibility.patch", "engine-scene-retirement.patch", "engine-dlss-nr.patch"]:
+    for name in ["engine-taa-rg16f.patch", "engine-fg-rt.patch", "engine-camera-visibility.patch", "engine-scene-retirement.patch", "engine-dlss-nr.patch", "engine-dlss-nr-controls.patch"]:
         # Git checkouts may expose patches as CRLF on Windows; git apply needs LF.
         with tempfile.TemporaryDirectory(prefix="poolcore-nr-patch-") as directory:
             patch = Path(directory) / name

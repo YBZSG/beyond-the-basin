@@ -1,0 +1,202 @@
+{
+  "update_id": "nr-transition-tiles-20261024-01",
+  "baseline_commit": "4876a68adab536d0d41dd147e93566a4f534ecf8",
+  "repository": "https://github.com/YBZSG/beyond-the-basin",
+  "branch": "godot/waterfeel-20261023",
+  "type": "source_update_not_full_project_or_engine",
+  "experimental_world_staging_applied": false,
+  "files": [
+    {
+      "path": "scripts/art_pass/art_pass_materials.gd",
+      "bytes": 4925,
+      "sha256": "dfc40116907ca34bd25dd23326dbcbfd6c64bfc341be0901fedf9e4f6c1b7ffd",
+      "before_sha256": "f65261b58b6737e146999da84ff6bbfa4aebb8d9c6813ac84a6df53abbdd4846"
+    },
+    {
+      "path": "scripts/main.gd",
+      "bytes": 94664,
+      "sha256": "620dc5bc762d0bb16a25d426e63b72f5d8d084446f3db86774d99628e148fd45",
+      "before_sha256": "f080f540c6969769faf6ae193aa7f60ce0feacf0a0fbcaa0fe73cb3966969f77"
+    },
+    {
+      "path": "scripts/rendering/desktop_quality_panel.gd",
+      "bytes": 34744,
+      "sha256": "48026013022eae63ceebb92b739999ba1384b945f63c2de7da965fb95f795e19",
+      "before_sha256": "90a92fafd7e9f04dfe3a421cc5d4380ece196517d58566c4fb93bfb591b5be0f"
+    },
+    {
+      "path": "scripts/rendering/nr_control_settings.gd",
+      "bytes": 3322,
+      "sha256": "18134cf5464a6c6f4fbfb440934a9c0d94d08c54d84bc11bc4dce5bd3b1ed6e0",
+      "before_sha256": null
+    },
+    {
+      "path": "scripts/rendering/rt_material_refresh.gd",
+      "bytes": 6765,
+      "sha256": "aa21fea9ca24221072afcc171af3bf08961becac06374a9525debf02de244284",
+      "before_sha256": null
+    },
+    {
+      "path": "shaders/art_pass_pbr.gdshader",
+      "bytes": 3480,
+      "sha256": "76649704af544660a2abca2ed9b2129d0191f041d21fb7bd750462031015dd80",
+      "before_sha256": "311196e74204b5498459f3b308048789d8f5052f30b047dca038eeca2895d303"
+    },
+    {
+      "path": "shaders/art_pass_pbr_rt.gdshader",
+      "bytes": 3519,
+      "sha256": "b3fe6f02a7b4198d47d33b32113de161dc468a34871dc284376abeb347a3bbe1",
+      "before_sha256": "13d11b61750637ca4d793f3b6f51719188bdea96012f26768e139bf024b41a26"
+    },
+    {
+      "path": "shaders/ceramic_world.gdshader",
+      "bytes": 13191,
+      "sha256": "8cd39f4de7d09e725faa784016fff2e0cedee35e7cb5f803191e2630be393a1c",
+      "before_sha256": "7be3bb67661501c62bb1d8c82642e06996930380d173a8dabf3cc03c6fdb1cb6"
+    },
+    {
+      "path": "shaders/ceramic_world_rt.gdshader",
+      "bytes": 10708,
+      "sha256": "9c97cbb07aa689c828f15c007cc90fdb1f32fc3f191f13cf1089d0155df39625",
+      "before_sha256": "ecd10e734f5d82c910b26ac9bd8b62f4a16d09ff1a3ec5107feaa15ce7fce04d"
+    },
+    {
+      "path": "shaders/pc_source_ceramic.gdshader",
+      "bytes": 4463,
+      "sha256": "cea8eab6770511e8974828fb9685cfea8e11c248e1f13f2cbfa80ffbd9e08ba6",
+      "before_sha256": "85ae35d5484e2d1acbb476eb62ad5730256cda6b0b5e7b4e75d6173dfbb42a82"
+    },
+    {
+      "path": "shaders/pc_source_ceramic_rt.gdshader",
+      "bytes": 4545,
+      "sha256": "57d4770ea255c45c5a64e8d0ae6cfe0eaa1dcee6f45cda84e296405e4df3fbec",
+      "before_sha256": "ccc084df62f886f5b53afd6e5699d21bf19f6e441c3ec8eaf75f14b7024b4c77"
+    },
+    {
+      "path": "tests/nr_controls/README.md",
+      "bytes": 9278,
+      "sha256": "6851a755fdeef0bff343c65bff96a68a474d7dce92166965b0b3140db0ade5bd",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/nr_controls/control_settings_contract.gd",
+      "bytes": 3976,
+      "sha256": "de1c245bede20557e56ab72cb8a18f88df64bd552f595c8ef8e735f1f031fc0d",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/nr_controls/native_validation.cpp",
+      "bytes": 1862,
+      "sha256": "bf02c5d11406bbd2840d591124e54c81bef3641f7f4f3d142bfa732f35d09759",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/nr_controls/panel_layout_contract.gd",
+      "bytes": 2386,
+      "sha256": "9143727a7ef2cd984bcd4fd0e62057c0b2a8ae44f1c1aa77d1468b7927f98534",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/nr_controls/test_nr_contracts.py",
+      "bytes": 13448,
+      "sha256": "f1aee83c0f5af66381d3fb03a03477ca949da3462ba4f2f1994bb6ac9e97d0f6",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/README.md",
+      "bytes": 13712,
+      "sha256": "d3b1ce64c51e516e5e581dc3a016e476258be7c2284e2baffbc82c26d0105d9e",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/fixtures/pool_world_4876a68.gd.txt",
+      "bytes": 8949,
+      "sha256": "a0ebc2d9a49b359b57e1f2887288d326f22c5c78da46cd44bec3a3e69e74cd5b",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/fixtures/pool_world_staged_candidate.gd.txt",
+      "bytes": 10595,
+      "sha256": "40bb9a7c97bbd5b870a0ea3bae178a6b68c4dc96223e71d95c833a3b80160110",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/rt_material_refresh_contract.gd",
+      "bytes": 16263,
+      "sha256": "9c0a37d225c102703507af34b3bd712462b57279f25e7daa4d75a9f88eee8050",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/rt_production_stream_contract.gd",
+      "bytes": 11816,
+      "sha256": "d8627ae575be56c426f45c2d79aef4ec8fb7a662e1ec1298f6a120a619feadbc",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/rt_real_world_benchmark.gd",
+      "bytes": 9383,
+      "sha256": "c9930e47261f5a2ac7bdca0d6414ee7d9f531536741e09f4a5318a77695ce72e",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/shell_staging_contract.gd",
+      "bytes": 19948,
+      "sha256": "cb0dcfbaf21eac400e25763c68c4798eec4f8cb51c3ebbebbe6eb7d56ae1ba7d",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/room_transition/staged_shells_opt_in.patch",
+      "bytes": 4704,
+      "sha256": "7923c11f78a336d114951379486d9f9ce07f4477f85e44f8655733af37e70cad",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/tile_finish/README.md",
+      "bytes": 3512,
+      "sha256": "a8f216f718fb256949480ab6a6a54eb5c2cf97adaadd4b364276563e907ea347",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/tile_finish/imported_alpha_contract.gd",
+      "bytes": 2530,
+      "sha256": "7a87ed7d03879288818583437fc45fa3a71273bc14f8b82534291093ffeef55f",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/tile_finish/raster_lab.gd",
+      "bytes": 8798,
+      "sha256": "b9dead00fac9315e223d3fc9bf646430d92f64cbd78155aa178008fa66fc901a",
+      "before_sha256": null
+    },
+    {
+      "path": "tests/tile_finish/test_tile_finish.py",
+      "bytes": 5707,
+      "sha256": "488ff496f2906a6b107e67640a0d791dea75fc60ed904c2f9cb1d0f37bdaacf9",
+      "before_sha256": null
+    },
+    {
+      "path": "tools/dlss/NR_README.md",
+      "bytes": 6987,
+      "sha256": "376c41b484710545b3a90b59b36693d4564ccccc7e61d76032ccb5a35d2637b6",
+      "before_sha256": "e3e2870b33cba9eb8ad047bc9ec274ea5c9ca56789d3629e1ebb784b73abd699"
+    },
+    {
+      "path": "tools/dlss/build_nr.py",
+      "bytes": 2065,
+      "sha256": "2fd0a0d4514e3b4853cf464e3e1e53802c229223e793274711f7312713cfd484",
+      "before_sha256": "8747cc491d1ad2fb57f1d0d42cc37bd586c8056c23678cf6dac76a10586a1509"
+    },
+    {
+      "path": "tools/dlss/engine-dlss-nr-controls.patch",
+      "bytes": 36963,
+      "sha256": "c9cf980b17aee329e10406e95e581a1054511cfe6b143606368f049db0ac00f8",
+      "before_sha256": null
+    },
+    {
+      "path": "tools/dlss/run_qa.py",
+      "bytes": 7615,
+      "sha256": "bcebd8a769aab34c9d08c1b151bdc339ab19cc6977259ed3e2a3da8d8cfc48af",
+      "before_sha256": "231d6ffa59df462ef1119af3184eefc51e70c9e0d3ef8fce96d10aed9c2a565d"
+    }
+  ]
+}

@@ -1,0 +1,5082 @@
+{
+	"assertions": [
+		{
+			"detail": {
+				"frames": 25,
+				"resident_rooms": 25
+			},
+			"label": "normal one-interior-per-frame stream settles to 25 rooms",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "initial_expanded_world all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "initial_expanded_world actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "initial_expanded_world actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "initial_expanded_world actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "initial_expanded_world actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "initial_expanded_world production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "initial_expanded_world actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 0 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 1 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 2 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 3 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 4 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 5 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 6 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 7 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 8 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 9 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 10 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 11 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 12 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 13 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 14 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 15 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 16 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 17 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 18 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 19 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 20 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 21 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 22 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 23 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 24 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 25 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 26 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 27 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 28 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 29 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 30 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 31 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound ordinary cardinal crossing builds exactly five entering shells",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 32 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 33 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 34 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 35 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 36 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 37 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 38 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 39 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 40 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 41 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 42 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 43 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 44 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 45 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 46 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 47 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 48 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 49 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 50 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 51 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 52 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 53 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 54 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 55 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 56 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 57 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 58 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 59 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 60 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 61 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 62 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "outbound step 63 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": {
+				"frames": 0,
+				"resident_rooms": 25
+			},
+			"label": "normal one-interior-per-frame stream settles to 25 rooms",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "after_cardinal_crossing all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_cardinal_crossing actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_cardinal_crossing actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_cardinal_crossing actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_cardinal_crossing actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_cardinal_crossing production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_cardinal_crossing actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 0 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 1 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 2 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 3 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 4 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 5 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 6 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 7 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 8 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 9 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 10 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 11 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 12 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 13 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 14 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 15 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 16 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 17 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 18 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 19 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 20 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 21 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 22 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 23 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 24 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 25 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 26 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 27 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 28 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 29 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 30 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 31 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 32 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return ordinary cardinal crossing builds exactly five entering shells",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 33 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 34 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 35 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 36 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 37 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 38 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 39 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 40 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 41 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 42 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 43 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 44 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 45 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 46 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 47 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 48 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 49 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 50 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 51 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 52 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 53 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 54 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 55 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 56 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 57 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 58 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 59 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 60 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 61 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 62 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "return step 63 has ready destination and real architecture below",
+			"pass": true
+		},
+		{
+			"detail": {
+				"frames": 0,
+				"resident_rooms": 25
+			},
+			"label": "normal one-interior-per-frame stream settles to 25 rooms",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "after_boundary_reversal all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_boundary_reversal actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_boundary_reversal actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_boundary_reversal actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_boundary_reversal actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_boundary_reversal production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "after_boundary_reversal actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "one continuous 32m outbound and return produces exactly two ordinary crossings",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "crossing and return create ten entering shells, no distant-teleport batch",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "late streamed production-local materials receive RT variants",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "disabled_after_return all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "disabled_after_return actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "disabled_after_return actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "disabled_after_return actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "disabled_after_return actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "disabled_after_return production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "disabled_after_return actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "rapid_toggles_restore_raster all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid_toggles_restore_raster actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid_toggles_restore_raster actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid_toggles_restore_raster actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid_toggles_restore_raster actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid_toggles_restore_raster production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid_toggles_restore_raster actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "material toggles preserve every collision node shape transform and enable state",
+			"pass": true
+		},
+		{
+			"detail": {
+				"frames": 25,
+				"resident_rooms": 25
+			},
+			"label": "normal one-interior-per-frame stream settles to 25 rooms",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "world replacement rejects queued detached old-world geometry",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "helper weak references do not retain retired production world",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "replacement_world_rt all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_rt actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_rt actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_rt actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_rt actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_rt production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_rt actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": [],
+			"label": "replacement_world_raster all eligible live/library materials match selected mode",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_raster actual production material family present: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_raster actual production material family present: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_raster actual production material family present: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_raster actual production material family present: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_raster production collision shapes remain installed",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "replacement_world_raster actual room-local receiver materials exercised",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "world replacement and final toggle leave no stale pending references",
+			"pass": true
+		}
+	],
+	"checks": 190,
+	"crossing_calls": [
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": true,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				16.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 5,
+			"step_m": 0.5,
+			"update_player_position_ms": 23.972
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": true,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				15.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 5,
+			"step_m": 0.5,
+			"update_player_position_ms": 12.52
+		}
+	],
+	"display_server": "headless",
+	"elapsed_ms": 2094.635,
+	"engine": {
+		"build": "official",
+		"hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (official)",
+		"timestamp": 0
+	},
+	"failures": [],
+	"hardware_rt_enabled": false,
+	"inspection_ms": 55.755,
+	"material_batches": [
+		{
+			"already_correct": 4,
+			"apply_ms": 2.953,
+			"collect_ms": 5.092,
+			"discarded_nodes": 110,
+			"duplicate_materials": 1975,
+			"enabled": true,
+			"geometry_visited": 2044,
+			"kind": "pending",
+			"material_occurrences": 2074,
+			"queued_nodes": 2154,
+			"shader_changes": 91,
+			"shader_load_failures": 0,
+			"shader_loads": 1,
+			"total_ms": 8.053,
+			"unique_materials": 99,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.032,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.039,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.023,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.0,
+			"collect_ms": 0.019,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.022,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 1,
+			"apply_ms": 0.024,
+			"collect_ms": 0.06,
+			"discarded_nodes": 32,
+			"duplicate_materials": 9,
+			"enabled": true,
+			"geometry_visited": 9,
+			"kind": "pending",
+			"material_occurrences": 12,
+			"queued_nodes": 41,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.089,
+			"unique_materials": 3,
+			"unmatched_materials": 2
+		},
+		{
+			"already_correct": 6,
+			"apply_ms": 0.049,
+			"collect_ms": 0.149,
+			"discarded_nodes": 161,
+			"duplicate_materials": 38,
+			"enabled": true,
+			"geometry_visited": 38,
+			"kind": "pending",
+			"material_occurrences": 52,
+			"queued_nodes": 199,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.204,
+			"unique_materials": 14,
+			"unmatched_materials": 8
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.023,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.0,
+			"collect_ms": 0.021,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.025,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.029,
+			"collect_ms": 0.081,
+			"discarded_nodes": 80,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 99,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.113,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.022,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.026,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.023,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.021,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.027,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.047,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.021,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 1,
+			"apply_ms": 0.018,
+			"collect_ms": 0.039,
+			"discarded_nodes": 32,
+			"duplicate_materials": 9,
+			"enabled": true,
+			"geometry_visited": 9,
+			"kind": "pending",
+			"material_occurrences": 12,
+			"queued_nodes": 41,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.06,
+			"unique_materials": 3,
+			"unmatched_materials": 2
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.029,
+			"collect_ms": 0.075,
+			"discarded_nodes": 72,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 91,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.107,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.0,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.023,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.029,
+			"collect_ms": 0.125,
+			"discarded_nodes": 78,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 97,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.158,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.026,
+			"collect_ms": 0.075,
+			"discarded_nodes": 74,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 93,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.104,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.021,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 6,
+			"apply_ms": 0.091,
+			"collect_ms": 0.16,
+			"discarded_nodes": 161,
+			"duplicate_materials": 38,
+			"enabled": true,
+			"geometry_visited": 38,
+			"kind": "pending",
+			"material_occurrences": 52,
+			"queued_nodes": 199,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.255,
+			"unique_materials": 14,
+			"unmatched_materials": 8
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.029,
+			"collect_ms": 0.091,
+			"discarded_nodes": 84,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 103,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.124,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 5,
+			"apply_ms": 0.038,
+			"collect_ms": 0.121,
+			"discarded_nodes": 117,
+			"duplicate_materials": 29,
+			"enabled": true,
+			"geometry_visited": 29,
+			"kind": "pending",
+			"material_occurrences": 40,
+			"queued_nodes": 146,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.164,
+			"unique_materials": 11,
+			"unmatched_materials": 6
+		},
+		{
+			"already_correct": 5,
+			"apply_ms": 0.036,
+			"collect_ms": 0.11,
+			"discarded_nodes": 117,
+			"duplicate_materials": 29,
+			"enabled": true,
+			"geometry_visited": 29,
+			"kind": "pending",
+			"material_occurrences": 40,
+			"queued_nodes": 146,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.15,
+			"unique_materials": 11,
+			"unmatched_materials": 6
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.026,
+			"collect_ms": 0.08,
+			"discarded_nodes": 84,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 103,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.109,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 6,
+			"apply_ms": 0.266,
+			"collect_ms": 0.774,
+			"discarded_nodes": 52,
+			"duplicate_materials": 431,
+			"enabled": true,
+			"geometry_visited": 453,
+			"kind": "pending",
+			"material_occurrences": 462,
+			"queued_nodes": 505,
+			"shader_changes": 24,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 1.045,
+			"unique_materials": 31,
+			"unmatched_materials": 1
+		},
+		{
+			"already_correct": 2,
+			"apply_ms": 0.018,
+			"collect_ms": 0.049,
+			"discarded_nodes": 23,
+			"duplicate_materials": 12,
+			"enabled": true,
+			"geometry_visited": 11,
+			"kind": "pending",
+			"material_occurrences": 16,
+			"queued_nodes": 34,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.071,
+			"unique_materials": 4,
+			"unmatched_materials": 2
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.021,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.019,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.022,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 1,
+			"apply_ms": 0.016,
+			"collect_ms": 0.039,
+			"discarded_nodes": 32,
+			"duplicate_materials": 9,
+			"enabled": true,
+			"geometry_visited": 9,
+			"kind": "pending",
+			"material_occurrences": 12,
+			"queued_nodes": 41,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.057,
+			"unique_materials": 3,
+			"unmatched_materials": 2
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.022,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 4,
+			"apply_ms": 0.171,
+			"collect_ms": 0.393,
+			"discarded_nodes": 39,
+			"duplicate_materials": 153,
+			"enabled": true,
+			"geometry_visited": 157,
+			"kind": "pending",
+			"material_occurrences": 166,
+			"queued_nodes": 196,
+			"shader_changes": 8,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.571,
+			"unique_materials": 13,
+			"unmatched_materials": 1
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.023,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.026,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.032,
+			"collect_ms": 0.131,
+			"discarded_nodes": 72,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 91,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.167,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.027,
+			"collect_ms": 0.171,
+			"discarded_nodes": 78,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 97,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.201,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.025,
+			"collect_ms": 0.086,
+			"discarded_nodes": 84,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 103,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.113,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 5,
+			"apply_ms": 0.038,
+			"collect_ms": 0.284,
+			"discarded_nodes": 117,
+			"duplicate_materials": 29,
+			"enabled": true,
+			"geometry_visited": 29,
+			"kind": "pending",
+			"material_occurrences": 40,
+			"queued_nodes": 146,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.326,
+			"unique_materials": 11,
+			"unmatched_materials": 6
+		},
+		{
+			"already_correct": 4,
+			"apply_ms": 1.265,
+			"collect_ms": 4.395,
+			"discarded_nodes": 111,
+			"duplicate_materials": 1975,
+			"enabled": true,
+			"geometry_visited": 2044,
+			"kind": "pending",
+			"material_occurrences": 2074,
+			"queued_nodes": 2155,
+			"shader_changes": 91,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 5.667,
+			"unique_materials": 99,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.024,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.029,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.024,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.0,
+			"collect_ms": 0.019,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.023,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 1,
+			"apply_ms": 0.017,
+			"collect_ms": 0.037,
+			"discarded_nodes": 32,
+			"duplicate_materials": 9,
+			"enabled": true,
+			"geometry_visited": 9,
+			"kind": "pending",
+			"material_occurrences": 12,
+			"queued_nodes": 41,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.056,
+			"unique_materials": 3,
+			"unmatched_materials": 2
+		},
+		{
+			"already_correct": 6,
+			"apply_ms": 0.048,
+			"collect_ms": 0.161,
+			"discarded_nodes": 161,
+			"duplicate_materials": 38,
+			"enabled": true,
+			"geometry_visited": 38,
+			"kind": "pending",
+			"material_occurrences": 52,
+			"queued_nodes": 199,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.215,
+			"unique_materials": 14,
+			"unmatched_materials": 8
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.024,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.0,
+			"collect_ms": 0.019,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.022,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.027,
+			"collect_ms": 0.078,
+			"discarded_nodes": 80,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 99,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.108,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.018,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.021,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.019,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.022,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.023,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.02,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.022,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.017,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.021,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 1,
+			"apply_ms": 0.018,
+			"collect_ms": 0.041,
+			"discarded_nodes": 32,
+			"duplicate_materials": 9,
+			"enabled": true,
+			"geometry_visited": 9,
+			"kind": "pending",
+			"material_occurrences": 12,
+			"queued_nodes": 41,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.062,
+			"unique_materials": 3,
+			"unmatched_materials": 2
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.028,
+			"collect_ms": 0.108,
+			"discarded_nodes": 72,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 91,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.14,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.022,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.026,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.03,
+			"collect_ms": 0.129,
+			"discarded_nodes": 78,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 97,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.165,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.028,
+			"collect_ms": 0.113,
+			"discarded_nodes": 74,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 93,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.146,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.081,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 4,
+			"kind": "pending",
+			"material_occurrences": 0,
+			"queued_nodes": 4,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.084,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		{
+			"already_correct": 6,
+			"apply_ms": 0.047,
+			"collect_ms": 0.176,
+			"discarded_nodes": 161,
+			"duplicate_materials": 38,
+			"enabled": true,
+			"geometry_visited": 38,
+			"kind": "pending",
+			"material_occurrences": 52,
+			"queued_nodes": 199,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.229,
+			"unique_materials": 14,
+			"unmatched_materials": 8
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.028,
+			"collect_ms": 0.084,
+			"discarded_nodes": 84,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 103,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.116,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		},
+		{
+			"already_correct": 5,
+			"apply_ms": 0.037,
+			"collect_ms": 0.113,
+			"discarded_nodes": 117,
+			"duplicate_materials": 29,
+			"enabled": true,
+			"geometry_visited": 29,
+			"kind": "pending",
+			"material_occurrences": 40,
+			"queued_nodes": 146,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.153,
+			"unique_materials": 11,
+			"unmatched_materials": 6
+		},
+		{
+			"already_correct": 5,
+			"apply_ms": 0.036,
+			"collect_ms": 0.109,
+			"discarded_nodes": 117,
+			"duplicate_materials": 29,
+			"enabled": true,
+			"geometry_visited": 29,
+			"kind": "pending",
+			"material_occurrences": 40,
+			"queued_nodes": 146,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.148,
+			"unique_materials": 11,
+			"unmatched_materials": 6
+		},
+		{
+			"already_correct": 3,
+			"apply_ms": 0.027,
+			"collect_ms": 0.175,
+			"discarded_nodes": 84,
+			"duplicate_materials": 19,
+			"enabled": true,
+			"geometry_visited": 19,
+			"kind": "pending",
+			"material_occurrences": 26,
+			"queued_nodes": 103,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.207,
+			"unique_materials": 7,
+			"unmatched_materials": 4
+		}
+	],
+	"max_update_player_position_ms": 23.972,
+	"mode": "expanded",
+	"pass": true,
+	"phases": [
+		{
+			"collision_shapes": 2894,
+			"eligible_materials": 123,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 91,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2336,
+			"inspection_ms": 8.156,
+			"local_receiver_refs": 91,
+			"phase": "initial_expanded_world",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 46,
+				"cached_shaders": 4,
+				"discarded_nodes": 1202,
+				"duplicate_materials": 2241,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 1,
+				"geometry_visited": 2358,
+				"last": {
+					"already_correct": 3,
+					"apply_ms": 0.026,
+					"collect_ms": 0.08,
+					"discarded_nodes": 84,
+					"duplicate_materials": 19,
+					"enabled": true,
+					"geometry_visited": 19,
+					"kind": "pending",
+					"material_occurrences": 26,
+					"queued_nodes": 103,
+					"shader_changes": 0,
+					"shader_load_failures": 0,
+					"shader_loads": 0,
+					"total_ms": 0.109,
+					"unique_materials": 7,
+					"unmatched_materials": 4
+				},
+				"last_total_ms": 0.109,
+				"material_occurrences": 2471,
+				"max_total_ms": 8.053,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 25,
+				"queue_requests": 3560,
+				"shader_changes": 123,
+				"shader_load_failures": 0,
+				"shader_loads": 4,
+				"total_ms": 15.725,
+				"unique_materials": 230,
+				"unmatched_materials": 61
+			},
+			"unique_materials": 184,
+			"world_profile": {
+				"interior_builds": 25,
+				"last_interior_ms": 7.268,
+				"last_shell_ms": 0.583,
+				"last_transition_ms": 0.0,
+				"max_transition_ms": 0.0,
+				"retirements": 0,
+				"shell_builds": 25,
+				"transitions": 0
+			}
+		},
+		{
+			"collision_shapes": 2931,
+			"eligible_materials": 139,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 107,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2580,
+			"inspection_ms": 9.228,
+			"local_receiver_refs": 107,
+			"phase": "after_cardinal_crossing",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 55,
+				"cached_shaders": 4,
+				"discarded_nodes": 1309,
+				"duplicate_materials": 2693,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 1,
+				"geometry_visited": 2843,
+				"last": {
+					"already_correct": 0,
+					"apply_ms": 0.001,
+					"collect_ms": 0.018,
+					"discarded_nodes": 0,
+					"duplicate_materials": 0,
+					"enabled": true,
+					"geometry_visited": 4,
+					"kind": "pending",
+					"material_occurrences": 0,
+					"queued_nodes": 4,
+					"shader_changes": 0,
+					"shader_load_failures": 0,
+					"shader_loads": 0,
+					"total_ms": 0.022,
+					"unique_materials": 0,
+					"unmatched_materials": 0
+				},
+				"last_total_ms": 0.022,
+				"material_occurrences": 2961,
+				"max_total_ms": 8.053,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 31,
+				"queue_requests": 4152,
+				"shader_changes": 147,
+				"shader_load_failures": 0,
+				"shader_loads": 4,
+				"total_ms": 16.963,
+				"unique_materials": 268,
+				"unmatched_materials": 66
+			},
+			"unique_materials": 186,
+			"world_profile": {
+				"interior_builds": 30,
+				"last_interior_ms": 0.065,
+				"last_shell_ms": 6.48,
+				"last_transition_ms": 23.964,
+				"max_transition_ms": 23.964,
+				"retirements": 5,
+				"shell_builds": 30,
+				"transitions": 1
+			}
+		},
+		{
+			"collision_shapes": 2894,
+			"eligible_materials": 123,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 91,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2336,
+			"inspection_ms": 10.037,
+			"local_receiver_refs": 91,
+			"phase": "after_boundary_reversal",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 73,
+				"cached_shaders": 4,
+				"discarded_nodes": 1699,
+				"duplicate_materials": 2932,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 1,
+				"geometry_visited": 3090,
+				"last": {
+					"already_correct": 5,
+					"apply_ms": 0.038,
+					"collect_ms": 0.284,
+					"discarded_nodes": 117,
+					"duplicate_materials": 29,
+					"enabled": true,
+					"geometry_visited": 29,
+					"kind": "pending",
+					"material_occurrences": 40,
+					"queued_nodes": 146,
+					"shader_changes": 0,
+					"shader_load_failures": 0,
+					"shader_loads": 0,
+					"total_ms": 0.326,
+					"unique_materials": 11,
+					"unmatched_materials": 6
+				},
+				"last_total_ms": 0.326,
+				"material_occurrences": 3245,
+				"max_total_ms": 8.053,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 37,
+				"queue_requests": 4789,
+				"shader_changes": 155,
+				"shader_load_failures": 0,
+				"shader_loads": 4,
+				"total_ms": 18.367,
+				"unique_materials": 313,
+				"unmatched_materials": 85
+			},
+			"unique_materials": 184,
+			"world_profile": {
+				"interior_builds": 35,
+				"last_interior_ms": 10.357,
+				"last_shell_ms": 0.547,
+				"last_transition_ms": 12.513,
+				"max_transition_ms": 23.964,
+				"retirements": 10,
+				"shell_builds": 35,
+				"transitions": 2
+			}
+		},
+		{
+			"collision_shapes": 2894,
+			"eligible_materials": 123,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 91,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2336,
+			"inspection_ms": 7.134,
+			"local_receiver_refs": 91,
+			"phase": "disabled_after_return",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 73,
+				"cached_shaders": 8,
+				"discarded_nodes": 1699,
+				"duplicate_materials": 5266,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 2,
+				"geometry_visited": 5426,
+				"last": {
+					"already_correct": 0,
+					"apply_ms": 1.444,
+					"collect_ms": 5.637,
+					"discarded_nodes": 0,
+					"duplicate_materials": 2334,
+					"enabled": false,
+					"geometry_visited": 2336,
+					"kind": "full",
+					"material_occurrences": 2518,
+					"queued_nodes": 0,
+					"shader_changes": 123,
+					"shader_load_failures": 0,
+					"shader_loads": 4,
+					"total_ms": 7.09,
+					"unique_materials": 184,
+					"unmatched_materials": 61
+				},
+				"last_total_ms": 7.09,
+				"material_occurrences": 5763,
+				"max_total_ms": 8.053,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 37,
+				"queue_requests": 4789,
+				"shader_changes": 278,
+				"shader_load_failures": 0,
+				"shader_loads": 8,
+				"total_ms": 25.457,
+				"unique_materials": 497,
+				"unmatched_materials": 146
+			},
+			"unique_materials": 184,
+			"world_profile": {
+				"interior_builds": 35,
+				"last_interior_ms": 10.357,
+				"last_shell_ms": 0.547,
+				"last_transition_ms": 12.513,
+				"max_transition_ms": 23.964,
+				"retirements": 10,
+				"shell_builds": 35,
+				"transitions": 2
+			}
+		},
+		{
+			"collision_shapes": 2894,
+			"eligible_materials": 123,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 91,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2336,
+			"inspection_ms": 5.634,
+			"local_receiver_refs": 91,
+			"phase": "rapid_toggles_restore_raster",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 73,
+				"cached_shaders": 8,
+				"discarded_nodes": 1699,
+				"duplicate_materials": 9934,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 4,
+				"geometry_visited": 10098,
+				"last": {
+					"already_correct": 0,
+					"apply_ms": 1.287,
+					"collect_ms": 6.782,
+					"discarded_nodes": 0,
+					"duplicate_materials": 2334,
+					"enabled": false,
+					"geometry_visited": 2336,
+					"kind": "full",
+					"material_occurrences": 2518,
+					"queued_nodes": 0,
+					"shader_changes": 123,
+					"shader_load_failures": 0,
+					"shader_loads": 0,
+					"total_ms": 8.078,
+					"unique_materials": 184,
+					"unmatched_materials": 61
+				},
+				"last_total_ms": 8.078,
+				"material_occurrences": 10799,
+				"max_total_ms": 8.078,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 37,
+				"queue_requests": 4789,
+				"shader_changes": 524,
+				"shader_load_failures": 0,
+				"shader_loads": 8,
+				"total_ms": 39.318,
+				"unique_materials": 865,
+				"unmatched_materials": 268
+			},
+			"unique_materials": 184,
+			"world_profile": {
+				"interior_builds": 35,
+				"last_interior_ms": 10.357,
+				"last_shell_ms": 0.547,
+				"last_transition_ms": 12.513,
+				"max_transition_ms": 23.964,
+				"retirements": 10,
+				"shell_builds": 35,
+				"transitions": 2
+			}
+		},
+		{
+			"collision_shapes": 2894,
+			"eligible_materials": 123,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 91,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2336,
+			"inspection_ms": 9.081,
+			"local_receiver_refs": 91,
+			"phase": "replacement_world_rt",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 119,
+				"cached_shaders": 8,
+				"discarded_nodes": 2902,
+				"duplicate_materials": 14509,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 5,
+				"geometry_visited": 14792,
+				"last": {
+					"already_correct": 3,
+					"apply_ms": 0.027,
+					"collect_ms": 0.175,
+					"discarded_nodes": 84,
+					"duplicate_materials": 19,
+					"enabled": true,
+					"geometry_visited": 19,
+					"kind": "pending",
+					"material_occurrences": 26,
+					"queued_nodes": 103,
+					"shader_changes": 0,
+					"shader_load_failures": 0,
+					"shader_loads": 0,
+					"total_ms": 0.207,
+					"unique_materials": 7,
+					"unmatched_materials": 4
+				},
+				"last_total_ms": 0.207,
+				"material_occurrences": 15755,
+				"max_total_ms": 8.078,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 62,
+				"queue_requests": 8350,
+				"shader_changes": 738,
+				"shader_load_failures": 0,
+				"shader_loads": 8,
+				"total_ms": 53.178,
+				"unique_materials": 1246,
+				"unmatched_materials": 389
+			},
+			"unique_materials": 184,
+			"world_profile": {
+				"interior_builds": 25,
+				"last_interior_ms": 7.391,
+				"last_shell_ms": 0.72,
+				"last_transition_ms": 0.0,
+				"max_transition_ms": 0.0,
+				"retirements": 0,
+				"shell_builds": 25,
+				"transitions": 0
+			}
+		},
+		{
+			"collision_shapes": 2894,
+			"eligible_materials": 123,
+			"families": {
+				"res://shaders/art_pass_pbr.gdshader": 91,
+				"res://shaders/ceramic_world.gdshader": 8,
+				"res://shaders/pc_source_ceramic.gdshader": 6,
+				"res://shaders/source_architecture.gdshader": 18
+			},
+			"geometry_count": 2336,
+			"inspection_ms": 6.485,
+			"local_receiver_refs": 91,
+			"phase": "replacement_world_raster",
+			"resident_rooms": 25,
+			"router": {
+				"already_correct": 119,
+				"cached_shaders": 8,
+				"discarded_nodes": 2902,
+				"duplicate_materials": 16843,
+				"duplicate_queue_requests": 0,
+				"full_refreshes": 6,
+				"geometry_visited": 17128,
+				"last": {
+					"already_correct": 0,
+					"apply_ms": 1.333,
+					"collect_ms": 5.759,
+					"discarded_nodes": 0,
+					"duplicate_materials": 2334,
+					"enabled": false,
+					"geometry_visited": 2336,
+					"kind": "full",
+					"material_occurrences": 2518,
+					"queued_nodes": 0,
+					"shader_changes": 123,
+					"shader_load_failures": 0,
+					"shader_loads": 0,
+					"total_ms": 7.103,
+					"unique_materials": 184,
+					"unmatched_materials": 61
+				},
+				"last_total_ms": 7.103,
+				"material_occurrences": 18273,
+				"max_total_ms": 8.078,
+				"pending_cleared": 0,
+				"pending_nodes": 0,
+				"pending_refreshes": 62,
+				"queue_requests": 8350,
+				"shader_changes": 861,
+				"shader_load_failures": 0,
+				"shader_loads": 8,
+				"total_ms": 60.281,
+				"unique_materials": 1430,
+				"unmatched_materials": 450
+			},
+			"unique_materials": 184,
+			"world_profile": {
+				"interior_builds": 25,
+				"last_interior_ms": 7.391,
+				"last_shell_ms": 0.72,
+				"last_transition_ms": 0.0,
+				"max_transition_ms": 0.0,
+				"retirements": 0,
+				"shell_builds": 25,
+				"transitions": 0
+			}
+		}
+	],
+	"route": [
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				0.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.006
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				1.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				1.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				2.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				2.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				3.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				3.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				4.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				4.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				5.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				5.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				6.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				6.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				7.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				7.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				8.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				8.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				9.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				9.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				10.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				10.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				11.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				11.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				12.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				12.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				13.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				13.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				14.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				14.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				15.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				15.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": true,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				16.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 5,
+			"step_m": 0.5,
+			"update_player_position_ms": 23.972
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				16.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.007
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				17.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				17.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				18.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				18.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				19.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				19.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				20.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				20.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				21.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				21.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				22.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				22.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				23.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				23.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				24.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				24.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				25.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				25.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				26.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.025
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				26.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				27.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				27.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				28.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				28.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.006
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				29.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				29.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				30.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				30.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				31.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				31.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "outbound",
+			"position": [
+				32.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				31.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.006
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				31.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				30.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				30.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				29.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				29.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				28.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				28.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				27.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				27.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				26.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				26.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				25.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				25.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.008
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				24.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.006
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				24.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				23.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				23.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				22.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				22.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				21.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				21.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				20.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				20.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				19.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				19.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				18.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				18.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				17.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				17.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				16.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				16.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": true,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				15.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 5,
+			"step_m": 0.5,
+			"update_player_position_ms": 12.52
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				15.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.006
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				14.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				14.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 30,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				13.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				13.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				12.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				12.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				11.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				11.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				10.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				10.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				9.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				9.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				8.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				8.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				7.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				7.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				6.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				6.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				5.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				5.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				4.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				4.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.007
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				3.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				3.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.004
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				2.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				2.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				1.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				1.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.005
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				0.5,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.003
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"crossing": false,
+			"current_room_ready": true,
+			"floor_hit": true,
+			"leg": "return",
+			"position": [
+				0.0,
+				0.600000023841858,
+				0.0
+			],
+			"resident_rooms": 25,
+			"shells_added": 0,
+			"step_m": 0.5,
+			"update_player_position_ms": 0.002
+		}
+	],
+	"scope": "Real production PoolWorld/RoomBuilder/PoolMaterials, 5x5 resident streaming, actual collision floor rays and shader selection in CPU-headless Godot. Controlled positions advance by 0.5m, not a Player/controller traversal. No water runtime, lights/probes, graphical rendering, hardware RT/DLSS/FG or Windows frame-time acceptance.",
+	"seed": 250821,
+	"source_sha256": {
+		"scripts/rendering/pool_materials.gd": "e8b89f21c37d21c355dc19761223ee0853aa44e8ed2c6231c377add2e6a80955",
+		"scripts/rendering/rt_material_refresh.gd": "aa21fea9ca24221072afcc171af3bf08961becac06374a9525debf02de244284",
+		"scripts/world/expanded_room_builder.gd": "7407bf327ec408050516a7687e269898758ddc63eabddaa785edec4de7fcc74a",
+		"scripts/world/pool_world.gd": "a0ebc2d9a49b359b57e1f2887288d326f22c5c78da46cd44bec3a3e69e74cd5b",
+		"scripts/world/room_builder.gd": "9c1f55b68bf674e087ebf933a6c47f33608b81a63053bdd706d71a435a263bb2",
+		"tests/room_transition/rt_production_stream_contract.gd": "8ffb21b3978890b1bf52795e29115e9b3a7240dfd1c8d6110c3f8cb3b3faebcc"
+	},
+	"transitions": [
+		{
+			"coord": [
+				0,
+				0
+			],
+			"process_frame": 0
+		},
+		{
+			"coord": [
+				1,
+				0
+			],
+			"process_frame": 64
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"process_frame": 145
+		},
+		{
+			"coord": [
+				0,
+				0
+			],
+			"process_frame": 184
+		}
+	]
+}

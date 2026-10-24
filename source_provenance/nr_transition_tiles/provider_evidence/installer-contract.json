@@ -1,0 +1,54 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "pass": true,
+      "name": "Conflicting local edits rejected before any update writes"
+    },
+    {
+      "pass": true,
+      "name": "Conflict rejection creates no backup/update state"
+    },
+    {
+      "pass": true,
+      "name": "Exact baseline check passes on Chinese/spaced path"
+    },
+    {
+      "pass": true,
+      "name": "Check mode does not change files"
+    },
+    {
+      "pass": true,
+      "name": "Apply succeeds with exact baseline"
+    },
+    {
+      "pass": true,
+      "name": "Every applied payload exactly matches manifest"
+    },
+    {
+      "pass": true,
+      "name": "Unrelated user file preserved"
+    },
+    {
+      "pass": true,
+      "name": "Rollback refuses to overwrite post-update edits"
+    },
+    {
+      "pass": true,
+      "name": "Rollback succeeds after conflict resolved"
+    },
+    {
+      "pass": true,
+      "name": "Rollback restores every original byte and removes new files from active source tree"
+    },
+    {
+      "pass": true,
+      "name": "New files preserved in rollback quarantine"
+    },
+    {
+      "pass": true,
+      "name": "Unrelated file unchanged after rollback"
+    }
+  ],
+  "scope": "Filesystem source-update installer only; no target engine/game executed."
+}

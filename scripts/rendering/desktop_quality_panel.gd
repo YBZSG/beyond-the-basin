@@ -1,6 +1,8 @@
 extends Node
 ## Desktop-only, live graphics controls. Android retains its independent runtime.
 ## The preset is the starting point; every override is saved independently.
+const NRControls = preload("res://scripts/rendering/nr_control_settings.gd")
+const RTMaterialRefresh = preload("res://scripts/rendering/rt_material_refresh.gd")
 const PCShadowProfile = preload("res://scripts/rendering/pc_indoor_shadow_candidate.gd")
 const SETTINGS_PATH := "user://desktop_quality.cfg"
 const PRESET_NAMES := ["Low", "Medium", "High", "Ultra"]
@@ -41,6 +43,12 @@ var dlss_status: Dictionary = {}
 var frame_generation_status: Dictionary = {}
 var raytracing_status: Dictionary = {}
 var _rt_material_refresh_pending := false
+var _rt_material_router := RTMaterialRefresh.new()
+var _nr_controls := NRControls.new()
+var nr_status: Dictionary = {}
+var _nr_sliders: Dictionary = {}
+var _nr_labels: Dictionary = {}
+var _nr_status_poll := 0.0
 
 static func dlss_support() -> Dictionary:
 	# Query the optional NVIDIA API dynamically so stock Godot still loads this script.
@@ -81,6 +89,7 @@ static func raytracing_support() -> Dictionary:
 static func preset_settings(value: String) -> Dictionary:
 	var result: Dictionary = PRESETS[value].duplicate()
 	result.dlss = "Quality"
+	result.merge(NRControls.DEFAULTS, true)
 	result.nr = OS.get_environment("POOLCORE_DLSS_NR") == "1"
 	result.frame_generation = not result.nr
 	result.raytracing = false
@@ -105,6 +114,7 @@ static func supported_features(renderer: String) -> Dictionary:
 
 func configure(host: Node, path: String = SETTINGS_PATH) -> void:
 	main = host
+	_rt_material_router.configure(host)
 	settings_path = path
 	# Keep an existing Ultra choice when migrating; never auto-select a lower tier.
 	var previous := str(main.get("_quality"))
@@ -129,6 +139,7 @@ func load_settings(path: String = "") -> void:
 	settings = preset_settings(preset)
 	for key: String in settings:
 		settings[key] = _validated(key, config.get_value("graphics", key, settings[key]), settings[key])
+	NRControls.normalize(settings)
 
 func save_settings(path: String = "") -> Error:
 	var config := ConfigFile.new()
@@ -140,6 +151,7 @@ func save_settings(path: String = "") -> Error:
 	return result
 
 func _validated(key: String, value: Variant, fallback: Variant) -> Variant:
+	if key in NRControls.DEFAULTS: return NRControls.validate(key, value, fallback)
 	match key:
 		"dlss":
 			if value is String and (value == "Off" or DLSS_SCALES.has(value)): return value
@@ -166,7 +178,10 @@ func select_preset(value: String) -> void:
 	if value not in PRESET_NAMES: return
 	preset = value
 	var keep_nr := bool(settings.get("nr", false))
+	var keep_nr_controls: Dictionary = {}
+	for key: String in NRControls.DEFAULTS: keep_nr_controls[key] = settings[key]
 	settings = preset_settings(value)
+	settings.merge(keep_nr_controls, true)
 	settings.nr = keep_nr
 	if keep_nr: settings.frame_generation = false
 	apply_settings()
@@ -175,8 +190,8 @@ func select_preset(value: String) -> void:
 func set_option(key: String, value: Variant) -> void:
 	if not settings.has(key): return
 	settings[key] = _validated(key, value, settings[key])
-	if key == "nr" and bool(value): settings.frame_generation = false
-	if key == "frame_generation" and bool(value): settings.nr = false
+	if key == "nr" and bool(settings[key]): settings.frame_generation = false
+	if key == "frame_generation" and bool(settings[key]): settings.nr = false
 	apply_settings()
 	save_settings()
 
@@ -187,6 +202,9 @@ func _changed(group: String, signature: Array) -> bool:
 	return true
 
 func apply_settings() -> void:
+	NRControls.normalize(settings)
+	_nr_controls.publish(settings)
+	nr_status = _nr_controls.read_status()
 	if not is_instance_valid(main): return
 	var viewport := main.get_viewport()
 	var support := supported_features(RenderingServer.get_current_rendering_method())
@@ -288,24 +306,10 @@ func apply_settings() -> void:
 	_refresh_interface()
 
 func _set_rt_materials(enabled: bool) -> void:
-	# The raster shader's pixel derivatives have no meaning in a ray-hit stage.
-	# Keep all textures/parameters; the RT variant uses distance-based filtering.
-	var pairs := {"res://shaders/art_pass_pbr.gdshader":"res://shaders/art_pass_pbr_rt.gdshader", "res://shaders/ceramic_world.gdshader":"res://shaders/ceramic_world_rt.gdshader", "res://shaders/pc_source_ceramic.gdshader":"res://shaders/pc_source_ceramic_rt.gdshader", "res://shaders/source_architecture.gdshader":"res://shaders/source_architecture_rt.gdshader"}
-	var materials: Array = []
-	var library := main.get("materials") as RefCounted
-	if library and library.has_method("_receiver_materials"):
-		materials.append_array(library.call("_receiver_materials"))
-	for node in main.find_children("*", "GeometryInstance3D", true, false):
-		materials.append_array([node.material_override, node.material_overlay])
-		if node is MeshInstance3D and node.mesh:
-			for index in node.mesh.get_surface_count(): materials.append(node.get_active_material(index))
-		elif node is MultiMeshInstance3D and node.multimesh and node.multimesh.mesh:
-			for index in node.multimesh.mesh.get_surface_count(): materials.append(node.multimesh.mesh.surface_get_material(index))
-	for material in materials:
-		if material is ShaderMaterial and material.shader:
-			for raster: String in pairs:
-				if material.shader.resource_path in [raster, pairs[raster]]:
-					material.shader = load(pairs[raster] if enabled else raster)
+	_rt_material_router.refresh_all(enabled)
+
+func rt_material_refresh_stats() -> Dictionary:
+	return _rt_material_router.get_stats()
 
 func _apply_pc_shadow_profile(environment_node: WorldEnvironment) -> bool:
 	var sun := environment_node.get_node_or_null("ApertureSun") as DirectionalLight3D if is_instance_valid(environment_node) else null
@@ -321,13 +325,15 @@ func _node_added(node: Node) -> void:
 	# Lighting is configured around add_child(), so read the authored state only
 	# after construction. Also covers newly streamed rooms and reseeding.
 	if node is Light3D: call_deferred("_apply_new_light", weakref(node))
-	if node is GeometryInstance3D and bool(raytracing_status.get("active", false)) and not _rt_material_refresh_pending:
-		_rt_material_refresh_pending = true
-		call_deferred("_refresh_streamed_rt_materials")
+	if node is GeometryInstance3D and bool(raytracing_status.get("active", false)):
+		_rt_material_router.queue_node(node)
+		if not _rt_material_refresh_pending:
+			_rt_material_refresh_pending = true
+			call_deferred("_refresh_streamed_rt_materials")
 
 func _refresh_streamed_rt_materials() -> void:
 	_rt_material_refresh_pending = false
-	if is_instance_valid(main): _set_rt_materials(bool(raytracing_status.get("active", false)))
+	if is_instance_valid(main): _rt_material_router.refresh_pending(bool(raytracing_status.get("active", false)))
 
 func _apply_new_light(reference: WeakRef) -> void:
 	var node := reference.get_ref() as Node
@@ -347,6 +353,11 @@ func _apply_light(node: Node) -> void:
 
 func _process(_delta: float) -> void:
 	if not is_instance_valid(main): return
+	_nr_status_poll += _delta
+	if _nr_status_poll >= 0.5:
+		_nr_status_poll = 0.0
+		nr_status = _nr_controls.read_status()
+		if is_instance_valid(_panel) and _panel.visible: _refresh_interface()
 	if not bool(main.get("_booted")):
 		set_process(false)
 		return
@@ -422,6 +433,10 @@ func _build_panel() -> void:
 	_add_option(column, "NVIDIA DLSS / DLAA", "dlss", ["关闭 / Off", "质量 / Quality", "平衡 / Balanced", "性能 / Performance", "原生抗锯齿 / DLAA"], ["Off", "Quality", "Balanced", "Performance", "DLAA"])
 	_add_check(column, "NVIDIA 帧生成 2× + Reflex", "frame_generation")
 	_add_check(column, "原生神经渲染 NR（与帧生成互斥）", "nr")
+	_add_option(column, "NR 叠加层数 / EXPERIMENTAL", "nr_layers", ["1 层 · 默认", "2 层 · 实验", "3 层 · 高开销", "4 层 · 很高开销"], [1,2,3,4])
+	_add_nr_slider(column, "NR 混合强度 / INTENSITY", "nr_intensity")
+	_add_nr_slider(column, "NR 局部色调 / TONE", "nr_tone")
+	_add_nr_slider(column, "NR 结构细节 / STRUCTURE", "nr_structure")
 	_add_check(column, "全场景硬件光追 + 光线重建（水面保留光栅）", "raytracing")
 	_scale_label = Label.new()
 	column.add_child(_scale_label)
@@ -500,6 +515,23 @@ func _add_option(parent: Node, text: String, key: String, labels: Array, values:
 	row.add_child(option)
 	parent.add_child(row)
 
+func _add_nr_slider(parent: Node, text: String, key: String) -> void:
+	var label := Label.new()
+	label.set_meta("caption", text)
+	parent.add_child(label)
+	_nr_labels[key] = label
+	var slider := HSlider.new()
+	slider.min_value = 0.0
+	slider.max_value = 1.0
+	slider.step = 0.05
+	slider.custom_minimum_size.y = 28
+	slider.value_changed.connect(func(value: float): set_option(key, value))
+	parent.add_child(slider)
+	_nr_sliders[key] = slider
+
+func _nr_controls_available() -> bool:
+	return bool(nr_status.get("acknowledged", false)) and bool(nr_status.get("fresh", false)) and bool(nr_status.get("supported", false)) and nr_status.get("capability", "unknown") == "available" and bool(dlss_status.get("active", false)) and bool(settings.nr)
+
 func _add_check(parent: Node, text: String, key: String) -> void:
 	var check := CheckButton.new()
 	check.text = text
@@ -516,12 +548,19 @@ func _refresh_interface() -> void:
 	_scale.set_value_no_signal(float(settings.scale) * 100.0)
 	_scale_label.text = "3D 渲染比例 / RESOLUTION SCALE: %d%%" % roundi(float(settings.scale) * 100.0)
 	var dlss_active := bool(dlss_status.get("active", false))
+	var nr_controls_available := _nr_controls_available()
+	for key: String in _nr_sliders:
+		var slider: HSlider = _nr_sliders[key]
+		slider.set_value_no_signal(float(settings[key]))
+		slider.editable = nr_controls_available
+		slider.tooltip_text = "实验 NR 参数，不增加场景真实光照；高层数增加耗时和显存，可能破坏水面或手部细节。" if nr_controls_available else "需要新版 NR 引擎确认能力，并先开启 NR；旧引擎不伪装支持新参数。"
+		_nr_labels[key].text = "%s: %.2f" % [_nr_labels[key].get_meta("caption"), float(settings[key])]
 	_scale.editable = not dlss_active
 	if dlss_active:
 		_scale_label.text = "DLSS %s · 内部渲染 %d%% · 菜单保持原生清晰度" % [settings.dlss, roundi(float(dlss_status.scale) * 100.0)]
 	for key: String in _options:
 		var option := _options[key] as OptionButton
-		option.disabled = (key == "dlss" and not bool(dlss_status.get("available", false))) or (key == "msaa" and dlss_active)
+		option.disabled = (key == "dlss" and not bool(dlss_status.get("available", false))) or (key == "msaa" and dlss_active) or (key == "nr_layers" and not nr_controls_available)
 		for index in option.item_count:
 			if option.get_item_metadata(index) == settings[key]: option.select(index)
 	var renderer := RenderingServer.get_current_rendering_method()
@@ -536,11 +575,17 @@ func _refresh_interface() -> void:
 		check.set_pressed_no_signal(bool(settings[key]) and not check.disabled)
 		check.tooltip_text = "DLSS 已负责时间抗锯齿；关闭 DLSS 后恢复保存的选择。" if key == "taa" and dlss_active else ("当前渲染器不支持；保存的选择会在兼容的渲染器下启用。" if check.disabled else "")
 	_notes.text = "DLSS 默认 Quality；DLAA 使用原生分辨率。启用时由 DLSS 负责抗锯齿和渲染比例，关闭后恢复原有比例、MSAA 与 TAA。水体模拟、反射精度和菜单分辨率独立保留。"
-	var nr_note := "NR：关闭。帧生成开启时 NR 会旁路；两者不是同一功能。"
+	var nr_note := "NR：关闭。NR 与帧生成不是同一功能，二者互斥。"
 	if bool(settings.get("nr", false)):
-		nr_note = "NR：已请求（画质变化较克制）；实际成功执行以日志 PoolCore NR dispatch OK 为准。"
+		if not bool(nr_status.get("acknowledged", false)):
+			nr_note = "NR：旧引擎单层请求；未确认新参数接口。叠加与强度设置需重新编译新版引擎，当前不声称生效。"
+		elif bool(nr_status.get("current_request_applied", false)):
+			nr_note = "NR：原生已执行 %d 层（请求 %d 层）；强度 %.2f / 色调 %.2f / 结构 %.2f。" % [int(nr_status.applied_layers), int(settings.nr_layers), float(settings.nr_intensity), float(settings.nr_tone), float(settings.nr_structure)]
+		else:
+			nr_note = "NR：请求 %d 层，未确认当前参数执行。%s" % [int(settings.nr_layers), str(nr_status.get("reason", nr_status.get("state", "等待原生状态")))]
 		if bool(frame_generation_status.get("active", false)): nr_note = "NR：被帧生成旁路，请关闭 FG。"
 		elif not dlss_active: nr_note = "NR：被 DLSS 关闭状态旁路。"
+	nr_note += "\n叠加是独立历史的串联 NR 实验，默认 1 层；2–4 层增加 GPU 工作和显存，不保证更好，不用于掩盖切房间卡顿。"
 	_notes.text += "\n" + nr_note
 	_notes.text += "\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。"
 	_notes.text += "\n实验光追：建筑、人物使用硬件路径追踪与 DLSS 光线重建；透明水面保留原波浪、平面反射及焦散。首次开启需要编译材质；性能开销较大。"

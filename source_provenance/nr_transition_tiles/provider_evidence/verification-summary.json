@@ -1,0 +1,30 @@
+{
+  "baseline": "4876a68adab536d0d41dd147e93566a4f534ecf8",
+  "remote_main": "66a4543602d9e774db07c2da12ce1d40d522532c",
+  "remote_changed": false,
+  "delivery": "source-only candidate",
+  "production_world_unchanged": true,
+  "water_sources_changed": false,
+  "native_nr_engine_built": false,
+  "target_windows_tested": false,
+  "new_graphical_images": false,
+  "graphics_blocker": "No available display; local Xorg display socket creation denied (EPERM). No bypass attempted.",
+  "nr_tests": 15,
+  "tile_cpu_tests": 4,
+  "nr_patch_sha256": "c9cf980b17aee329e10406e95e581a1054511cfe6b143606368f049db0ac00f8",
+  "independent_review": [
+    "callback enqueue ownership/RID validation",
+    "callback graph execution stages",
+    "independent feature handles and complete-chain fallback",
+    "53-bit revisions and fresh matching applied values",
+    "Windows environment API owned-buffer transport; future Unix port unsupported"
+  ],
+  "known_limits": [
+    "NR whole-engine/SDK ABI and GPU lifecycle not compiled or executed",
+    "No NR layer visual quality, temporal stability, GPU cost or VRAM acceptance",
+    "No tile render A/B",
+    "Room CPU gains do not establish whole-frame or FG jelly resolution",
+    "Staged outer-shell experiment NOT installed; cache identity unchanged",
+    "Inherited NR locked-main-target replacement remains unresolved"
+  ]
+}

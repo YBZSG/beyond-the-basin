@@ -68,7 +68,7 @@ void fragment() {
     NORMAL = normalize((VIEW_MATRIX*vec4(mapped,0.0)).xyz);
 
     // Tiles, porous mortar and thin water film retain distinct BRDFs.
-    float glaze = 0.055 + batch*0.003 + (micro.b-0.5)*0.008 - wet*0.01;
+    float glaze = clamp(0.105 + batch*0.004 + (micro.b-0.5)*0.008 - wet*0.018, 0.075, 0.14);
     float rough = mix(glaze,0.81-wet*0.12,grout);
     // Filter subpixel glaze with the ray distance footprint.
     float variance = 0.000006 * (1.0-detail);
@@ -77,7 +77,7 @@ void fragment() {
     // F0 for water is about .0204, lower than a dry ceramic glaze (.04).
     SPECULAR = sqrt(mix(0.25,0.12733,wet))*mix(0.72,1.0,face);
     CLEARCOAT = 0.22*face*(1.0-0.4*wet);
-    CLEARCOAT_ROUGHNESS = 0.08;
+    CLEARCOAT_ROUGHNESS = 0.12;
     EMISSION = vec3(0.0);
     if (causticGain>0.0) {
         EMISSION=ALBEDO*source_caustic_irradiance(world_position-vec3(source_domain_origin.x,0.0,source_domain_origin.y),n)/3.14159265359;

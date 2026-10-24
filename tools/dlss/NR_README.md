@@ -1,5 +1,9 @@
 # Native DLSS Neural Rendering prototype
 
+> 2026-10-24 controls update: this delivery is source-only. The earlier Windows
+> build and dispatch observations below belong to the pre-existing repository
+> handoff, not validation of the new 1–4-layer patch. No updated EXE/PCK is included.
+
 This optional engine patch calls NVIDIA's NGX Vulkan NR API with real scene color,
 depth and decoded Godot motion vectors. It does not replace Super Resolution with
 a renamed DLL. The SDR scene is processed after tonemapping and before Canvas/HUD.
@@ -10,7 +14,8 @@ and an explicit NR control mutually exclusive with frame generation.
 The isolated Windows test build uses the matching patched editor executable as a
 game runtime. It is a local experimental build, not a new release export template.
 Use `Launch-PoolCore-NR.cmd` and `Launch-PoolCore-NR-Off.cmd` in the packaged folder.
-Both use the packaged `profile/` and restore DLAA, FG off and RT off at startup.
+Both use the packaged `profile/`. They set NR on/off; NR-on also forces FG off.
+They preserve saved DLSS, RT and other graphics choices.
 They preserve the ReShade Vulkan-layer exclusion used by the normal launcher.
 The existing installed player profile is not modified.
 
@@ -22,7 +27,8 @@ The prototype deliberately does not combine NR with FG.
 ## Dependencies and rebuilding
 
 - NVIDIA Godot commit `135dff3887a3d2ccf45cafbd9bdffa7b718e1e76`.
-- The four existing engine patches from README.md, followed by `engine-dlss-nr.patch`.
+- The four existing engine patches from README.md, followed by `engine-dlss-nr.patch`
+  and the additive `engine-dlss-nr-controls.patch`. The original NR patch stays unchanged.
 - NR package `rtx-remix-ngx_sdk_dlnr@2`, obtained from the official Remix Packman
   dependency and remote configuration. `NR_DEPENDENCIES.json` records the official
   URL and exact downloaded files. Keep this SDK outside the repository.
@@ -45,8 +51,26 @@ license, alongside the existing signed Streamline runtime.
 
 Runtime opt-in: `POOLCORE_DLSS_NR=1`. The SDK-recommended, version-pinned network
 is the default. `POOLCORE_NR_PRESET=B` explicitly selects its lightweight fallback.
-Tone strength is 0.1, structure strength 0.5, intensity 1, with an explicit full
-control mask. These conservative settings retain the pool's original atmosphere.
+The original defaults remain tone strength 0.1, structure strength 0.5, intensity 1,
+with an explicit full control mask and one evaluation.
+
+### Optional controls and experimental layers (source-only update)
+
+The additive controls patch accepts a finite 0–1 intensity/local-tone/local-structure
+snapshot and an optional 1–4-layer chain. Each layer owns a separate feature/history
+and output; it consumes the preceding layer's color. It is not repeated SR or a cosmetic
+pass-count label. The same scene depth/MV guides are reused across the chain, which is
+an explicit approximation. More layers add processing and memory cost and are not
+promised to improve quality; default remains one. Water simulation/material settings
+and the FG exclusion are unchanged.
+
+The panel/native contract uses `POOLCORE_NR_CONTROL_V1` requests and a current-process,
+fresh `POOLCORE_NR_STATUS_V1` acknowledgement. Applied layers are reported only after
+all native evaluations return success; missing/old-engine status is not success.
+The source update does not update an existing packaged EXE. A matching rebuilt engine
+is required. Full native compilation, GPU dispatch, visual/motion quality, timing and
+memory checks have **not** been performed for the new layer/control code.
+See [source contracts, status schema and validation gate](../../tests/nr_controls/README.md).
 
 ## Verification and limits
 

@@ -172,13 +172,16 @@ void fragment() {
     ALBEDO=mix(mix(mortar,ceramic,face),plaster_pigment.rgb,plaster_mask);
 
     float batch=(surface.g-.5)*2.0;
-    float glaze=clamp(face_roughness*0.025+0.04+batch*.003-wet*.008,0.04,0.065);
+    // Low but finite glaze width: recognizable reflections, not a mirror lobe.
+    float glaze=clamp(0.095+face_roughness*0.045+batch*.004-wet*.018,0.075,0.14);
     float rough=mix(glaze,0.82-wet*.12,grout);
     if (local_wet_finish_enabled && local_wet_finish_strength > 0.0) {
         // Porous joints remain substantially rougher than glazed faces.
-        float film_roughness = mix(0.06, 0.68, grout);
-        float damp_roughness = mix(0.025, 0.075, grout);
-        rough = mix(max(rough - damp_roughness * local_wet.y, mix(0.06, 0.65, grout)), film_roughness, local_wet.x);
+        float film_roughness = mix(0.08, 0.68, grout);
+        float damp_roughness = mix(0.015, 0.075, grout);
+        // Zero masks must leave the original dry finish exactly unchanged.
+        rough = mix(rough, max(rough - damp_roughness, mix(0.075, 0.65, grout)), local_wet.y);
+        rough = mix(rough, film_roughness, local_wet.x);
     }
     vec3 perturbation=vec3(0.0,nx.y,-s.x*nx.x)*weights.x
                      +vec3(ny.x,0.0,-s.y*ny.y)*weights.y
@@ -198,7 +201,7 @@ void fragment() {
     METALLIC=0.0;
     SPECULAR=mix(mix(0.5,0.34,grout),0.32,plaster_mask);
     CLEARCOAT=(coat_strength+wet*.06)*face*(1.0-plaster_mask);
-    CLEARCOAT_ROUGHNESS=0.08;
+    CLEARCOAT_ROUGHNESS=0.12;
     if (local_wet_finish_enabled && local_wet_finish_strength > 0.0) {
         // Godot 4.6.3: dielectric F0 = .16 * SPECULAR^2. Air/water
         // IOR 1.333 gives F0=.020373; SPECULAR=.356837. Blend in F0,

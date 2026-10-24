@@ -1103,7 +1103,14 @@ func _diagnostics_payload() -> Dictionary:
 	# Read-only runtime facts. Never includes local paths, account details or keys.
 	var result:Dictionary={"format":1,"application_version":str(ProjectSettings.get_setting("application/config/version","development")),"engine":str(Engine.get_version_info().get("string","unknown")),"platform":OS.get_name(),"renderer":RenderingServer.get_current_rendering_method(),"gpu":RenderingServer.get_video_adapter_name(),"seed":world_seed,"spawn_mode":_spawn_mode,"quality":_quality,"frame_times":_frame_metrics.summary(),"gi_refreshes":_gi_refresh_tracker.accepted,"gi_duplicate_notifications":_gi_refresh_tracker.duplicates}
 	result.render_state=_render_diagnostics_state()
-	if is_instance_valid(world):result.resident_rooms=world.resident_rooms.size()
+	if is_instance_valid(world):
+		result.resident_rooms=world.resident_rooms.size()
+		result.room_streaming=world.profile_counters.duplicate(true)
+	if has_node("DesktopQuality"):
+		var panel := get_node("DesktopQuality")
+		result.rt_material_refresh=panel.rt_material_refresh_stats()
+		result.nr=panel.nr_status.duplicate(true)
+		result.graphics_settings=panel.settings.duplicate(true)
 	if is_instance_valid(player):result.position=str(player.global_position)
 	if is_instance_valid(water) and water.has_method("debug_stats"):
 		var state:Dictionary=water.debug_stats()
@@ -1411,6 +1418,9 @@ func _run_qa_capture() -> void:
 	state["dlss"] = get_node("DesktopQuality").dlss_status.duplicate() if has_node("DesktopQuality") else {}
 	state["frame_generation"] = get_node("DesktopQuality").frame_generation_status.duplicate() if has_node("DesktopQuality") else {}
 	state["raytracing"] = get_node("DesktopQuality").raytracing_status.duplicate() if has_node("DesktopQuality") else {}
+	state["rt_material_refresh"] = get_node("DesktopQuality").rt_material_refresh_stats() if has_node("DesktopQuality") else {}
+	state["nr"] = get_node("DesktopQuality").nr_status.duplicate(true) if has_node("DesktopQuality") else {}
+	state["room_streaming"] = world.profile_counters.duplicate(true)
 	state["viewport_scaling"] = {"mode":get_viewport().scaling_3d_mode, "scale":get_viewport().scaling_3d_scale, "msaa":get_viewport().msaa_3d, "taa":get_viewport().use_taa}
 	state["capture_error"]=err
 	state["capture_size"]=[image.get_width(),image.get_height()]

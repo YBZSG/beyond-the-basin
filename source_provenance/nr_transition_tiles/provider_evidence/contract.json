@@ -1,0 +1,2011 @@
+{
+	"assertions": [
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/art_pass_pbr.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/art_pass_pbr_rt.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/ceramic_world.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/ceramic_world_rt.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/pc_source_ceramic.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/pc_source_ceramic_rt.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/source_architecture.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "production shader loads: res://shaders/source_architecture_rt.gdshader",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "full toggle converts shader pair 0",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "full toggle converts shader pair 1",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "full toggle converts shader pair 2",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "full toggle converts shader pair 3",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "full toggle includes uninstanced library receiver",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 5.931,
+				"collect_ms": 0.06,
+				"discarded_nodes": 0,
+				"duplicate_materials": 8,
+				"enabled": true,
+				"geometry_visited": 4,
+				"kind": "full",
+				"material_occurrences": 13,
+				"queued_nodes": 0,
+				"shader_changes": 5,
+				"shader_load_failures": 0,
+				"shader_loads": 4,
+				"total_ms": 5.999,
+				"unique_materials": 5,
+				"unmatched_materials": 0
+			},
+			"label": "full toggle deduplicates library and geometry material references",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "repeated same-state full refresh performs no loads or assignments",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "deferred override overlay shared and cloned materials convert",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.013,
+				"collect_ms": 0.018,
+				"discarded_nodes": 0,
+				"duplicate_materials": 4,
+				"enabled": true,
+				"geometry_visited": 3,
+				"kind": "pending",
+				"material_occurrences": 7,
+				"queued_nodes": 3,
+				"shader_changes": 3,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.033,
+				"unique_materials": 3,
+				"unmatched_materials": 0
+			},
+			"label": "pending refresh visits only unique queued nodes and materials",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "conversion retains shader parameter values",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "conversion preserves texture and material resource identity",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "MeshInstance base and surface override materials convert",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "MultiMesh surface and overlay materials convert",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "MultiMesh material override converts without replacing its surface material",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "non-target shader and standard materials remain unchanged",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.001,
+				"collect_ms": 0.008,
+				"discarded_nodes": 4,
+				"duplicate_materials": 0,
+				"enabled": true,
+				"geometry_visited": 0,
+				"kind": "pending",
+				"material_occurrences": 0,
+				"queued_nodes": 4,
+				"shader_changes": 0,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.009,
+				"unique_materials": 0,
+				"unmatched_materials": 0
+			},
+			"label": "freed detached queued-for-deletion and outside-host nodes are ignored",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "discarded live nodes retain their original shaders",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "full disable consumes pending work and restores raster materials",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "stale deferred callback after full refresh is harmless",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid on-off toggles restore every supported route",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "rapid toggles restore MultiMesh override and overlay",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "deferred flush honors latest enabled state",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "world replacement rejects detached old geometry and handles new geometry",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "configure replacement clears pending references",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "freed host is safe",
+			"pass": true
+		},
+		{
+			"detail": 8,
+			"label": "at most eight shader resources cached with no load failures",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 0 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 0",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.066,
+				"collect_ms": 0.095,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.204,
+				"queue_ms": 0.038,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 4,
+				"total_ms": 0.166,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 0",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 1 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 1",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.057,
+				"collect_ms": 0.072,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.164,
+				"queue_ms": 0.031,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.133,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 1",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 2 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 2",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.06,
+				"collect_ms": 0.129,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.232,
+				"queue_ms": 0.038,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.194,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 2",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 3 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 3",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.051,
+				"collect_ms": 0.066,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.145,
+				"queue_ms": 0.025,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.12,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 3",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 4 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 4",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.057,
+				"collect_ms": 0.096,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.196,
+				"queue_ms": 0.037,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.159,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 4",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 5 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 5",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.052,
+				"collect_ms": 0.066,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.146,
+				"queue_ms": 0.026,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.12,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 5",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 6 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 6",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.057,
+				"collect_ms": 0.099,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.198,
+				"queue_ms": 0.037,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.161,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 6",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 7 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 7",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.052,
+				"collect_ms": 0.064,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.144,
+				"queue_ms": 0.026,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.118,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 7",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 8 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 8",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.064,
+				"collect_ms": 0.123,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.229,
+				"queue_ms": 0.037,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.192,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 8",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 9 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 9",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.051,
+				"collect_ms": 0.063,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.143,
+				"queue_ms": 0.027,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.116,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 9",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 10 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 10",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.058,
+				"collect_ms": 0.099,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.203,
+				"queue_ms": 0.041,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.162,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 10",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 0 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 0 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 1 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 2 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 3 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 4 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 5 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 6 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "benchmark batch 11 order 1 material 7 is correct",
+			"pass": true
+		},
+		{
+			"detail": null,
+			"label": "baseline visits every resident geometry in batch 11",
+			"pass": true
+		},
+		{
+			"detail": {
+				"already_correct": 0,
+				"apply_ms": 0.055,
+				"collect_ms": 0.098,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.186,
+				"queue_ms": 0.031,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.155,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"label": "candidate visits only entrant geometry and eight unique materials in batch 11",
+			"pass": true
+		}
+	],
+	"benchmark": {
+		"base_shared_materials": 32,
+		"baseline": [
+			{
+				"apply_ms": 187.823,
+				"collect_ms": 7.976,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 195.801
+			},
+			{
+				"apply_ms": 185.708,
+				"collect_ms": 6.369,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 192.078
+			},
+			{
+				"apply_ms": 171.724,
+				"collect_ms": 5.562,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 177.287
+			},
+			{
+				"apply_ms": 178.594,
+				"collect_ms": 5.505,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 184.101
+			},
+			{
+				"apply_ms": 175.937,
+				"collect_ms": 6.01,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 181.95
+			},
+			{
+				"apply_ms": 176.871,
+				"collect_ms": 6.251,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 183.124
+			},
+			{
+				"apply_ms": 171.043,
+				"collect_ms": 5.608,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 176.653
+			},
+			{
+				"apply_ms": 169.06,
+				"collect_ms": 5.744,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 174.805
+			},
+			{
+				"apply_ms": 175.485,
+				"collect_ms": 5.926,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 181.413
+			},
+			{
+				"apply_ms": 173.389,
+				"collect_ms": 6.02,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 179.41
+			},
+			{
+				"apply_ms": 172.724,
+				"collect_ms": 5.551,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 178.276
+			},
+			{
+				"apply_ms": 169.688,
+				"collect_ms": 5.65,
+				"geometry_visited": 5040,
+				"material_array_entries": 15152,
+				"shader_load_and_setter_attempts": 10112,
+				"total_ms": 175.34
+			}
+		],
+		"baseline_total": {
+			"max_ms": 195.801,
+			"mean_ms": 181.6865,
+			"median_ms": 181.413,
+			"min_ms": 174.805,
+			"samples": 12
+		},
+		"batches": 12,
+		"candidate": [
+			{
+				"already_correct": 0,
+				"apply_ms": 0.066,
+				"collect_ms": 0.095,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.204,
+				"queue_ms": 0.038,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 4,
+				"total_ms": 0.166,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.057,
+				"collect_ms": 0.072,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.164,
+				"queue_ms": 0.031,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.133,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.06,
+				"collect_ms": 0.129,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.232,
+				"queue_ms": 0.038,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.194,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.051,
+				"collect_ms": 0.066,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.145,
+				"queue_ms": 0.025,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.12,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.057,
+				"collect_ms": 0.096,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.196,
+				"queue_ms": 0.037,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.159,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.052,
+				"collect_ms": 0.066,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.146,
+				"queue_ms": 0.026,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.12,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.057,
+				"collect_ms": 0.099,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.198,
+				"queue_ms": 0.037,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.161,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.052,
+				"collect_ms": 0.064,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.144,
+				"queue_ms": 0.026,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.118,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.064,
+				"collect_ms": 0.123,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.229,
+				"queue_ms": 0.037,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.192,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.051,
+				"collect_ms": 0.063,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.143,
+				"queue_ms": 0.027,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.116,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.058,
+				"collect_ms": 0.099,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.203,
+				"queue_ms": 0.041,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.162,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			{
+				"already_correct": 0,
+				"apply_ms": 0.055,
+				"collect_ms": 0.098,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queue_and_flush_ms": 0.186,
+				"queue_ms": 0.031,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.155,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			}
+		],
+		"candidate_flush_total": {
+			"max_ms": 0.194,
+			"mean_ms": 0.149666666666667,
+			"median_ms": 0.159,
+			"min_ms": 0.116,
+			"samples": 12
+		},
+		"candidate_queue_and_flush_total": {
+			"max_ms": 0.232,
+			"mean_ms": 0.1825,
+			"median_ms": 0.196,
+			"min_ms": 0.143,
+			"samples": 12
+		},
+		"existing_nodes": 5000,
+		"helper_stats": {
+			"already_correct": 32,
+			"cached_shaders": 4,
+			"discarded_nodes": 0,
+			"duplicate_materials": 10864,
+			"duplicate_queue_requests": 0,
+			"full_refreshes": 1,
+			"geometry_visited": 5480,
+			"last": {
+				"already_correct": 0,
+				"apply_ms": 0.055,
+				"collect_ms": 0.098,
+				"discarded_nodes": 0,
+				"duplicate_materials": 72,
+				"enabled": true,
+				"geometry_visited": 40,
+				"kind": "pending",
+				"material_occurrences": 80,
+				"queued_nodes": 40,
+				"shader_changes": 8,
+				"shader_load_failures": 0,
+				"shader_loads": 0,
+				"total_ms": 0.155,
+				"unique_materials": 8,
+				"unmatched_materials": 0
+			},
+			"last_total_ms": 0.155,
+			"material_occurrences": 10992,
+			"max_total_ms": 13.37,
+			"pending_cleared": 0,
+			"pending_nodes": 0,
+			"pending_refreshes": 12,
+			"queue_requests": 480,
+			"shader_changes": 96,
+			"shader_load_failures": 0,
+			"shader_loads": 4,
+			"total_ms": 15.166,
+			"unique_materials": 128,
+			"unmatched_materials": 0
+		},
+		"new_nodes_per_batch": 40,
+		"new_unique_materials": 8,
+		"ordering": "Alternating baseline/candidate, same eight new shaders reset before each timed call",
+		"queue_total": {
+			"max_ms": 0.041,
+			"mean_ms": 0.0328333333333333,
+			"median_ms": 0.037,
+			"min_ms": 0.025,
+			"samples": 12
+		}
+	},
+	"checks": 250,
+	"device": "",
+	"display_server": "headless",
+	"engine": {
+		"build": "official",
+		"hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+		"hex": 263683,
+		"major": 4,
+		"minor": 6,
+		"patch": 3,
+		"status": "stable",
+		"string": "4.6.3-stable (official)",
+		"timestamp": 0
+	},
+	"failures": [],
+	"functional": {
+		"already_correct": 6,
+		"cached_shaders": 8,
+		"discarded_nodes": 8,
+		"duplicate_materials": 65,
+		"duplicate_queue_requests": 1,
+		"full_refreshes": 6,
+		"geometry_visited": 53,
+		"last": {
+			"already_correct": 0,
+			"apply_ms": 0.001,
+			"collect_ms": 0.002,
+			"discarded_nodes": 0,
+			"duplicate_materials": 0,
+			"enabled": true,
+			"geometry_visited": 0,
+			"kind": "full",
+			"material_occurrences": 0,
+			"queued_nodes": 0,
+			"shader_changes": 0,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 0.003,
+			"unique_materials": 0,
+			"unmatched_materials": 0
+		},
+		"last_total_ms": 0.003,
+		"material_occurrences": 135,
+		"max_total_ms": 5.999,
+		"pending_cleared": 2,
+		"pending_nodes": 0,
+		"pending_refreshes": 8,
+		"queue_requests": 17,
+		"shader_changes": 56,
+		"shader_load_failures": 0,
+		"shader_loads": 8,
+		"total_ms": 6.434,
+		"unique_materials": 70,
+		"unmatched_materials": 8
+	},
+	"pass": true,
+	"renderer": "forward_plus",
+	"scope": "Controlled Godot CPU-headless scene traversal/material dispatch only. No game frame-time, rendering, hardware RT, DLSS/FG, Windows GPU, collision or source-water execution acceptance.",
+	"source_sha256": {
+		"fixture": "10ef1065640ea161561733b76c0089569d701365126c9220bf2ac39dd7fcaa5d",
+		"helper": "aa21fea9ca24221072afcc171af3bf08961becac06374a9525debf02de244284"
+	}
+}
