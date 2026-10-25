@@ -99,6 +99,9 @@ func spawn_for_room(room: Node3D, coord: Vector2i, layout: Dictionary, world_see
 	if room.has_meta("native_props_spawned"):
 		return
 	room.set_meta("native_props_spawned", true)
+	if str(layout.get("reference_id", "")) == "ball_lounge":
+		var lounge := preload("res://scripts/reference_wing/lounge_interactions.gd").new()
+		lounge.configure(room, layout, _player, _water)
 	if layout.has("prop_spawns"):
 		for entry: Dictionary in layout["prop_spawns"]:
 			spawn_prop(room, str(entry.get("kind", "duck")), entry.get("position", Vector3.ZERO), float(entry.get("yaw", 0.0)))

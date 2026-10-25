@@ -1,0 +1,2062 @@
+{
+  "status": "PASS_FINAL_PRODUCTION_TARGETED_COPLANAR_AUDIT",
+  "generated_utc": "2026-10-24T21:33:21.119269+00:00",
+  "failures": [],
+  "scanned_actual_production_files": true,
+  "original_camera_route_visible_pairs": 48,
+  "original_target_pairs_removed": 48,
+  "remaining_camera_route_visible_same_facing_pairs": 0,
+  "remaining_sampled_shading_conflict_pairs": 0,
+  "retained_same_facing_pairs": 63,
+  "all_inputs_stable": true,
+  "all_source_glb_position_signatures_match": true,
+  "script_sha256": "3786237293c4c1af2ece7734a8cc90e1a5b78a13a0009ed54ac40406ba4ec68d",
+  "reports": [
+    {
+      "scene": "colonnade",
+      "report_path": "output/reference_wing/seam_audit/colonnade_coplanar.json",
+      "report_sha256": "d8932593d32e34c46f06fb6bb01d20a6de70bd4dd1f5f491eedc3a566cff2ba1",
+      "files": {
+        "source": {
+          "path": "tools/blender/reference_wing/water_sources/colonnade.blend",
+          "sha256": "89aabc975e25c20a9fe61f5649139d962d2dbfe196cd2cd80c7e30c24335d571"
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/colonnade.glb",
+          "sha256": "b932ef1f37c33e4c57e19ad1a7b649e851c850cd8e386f7c5192ba86799987e7"
+        },
+        "contract": {
+          "path": "assets/models/reference_wing/colonnade.geometry.json",
+          "sha256": "024580424a57c4368ce9c6726e525000b2d717139b12e9409797828d20cf953d"
+        }
+      },
+      "current_files_still_match_audit": true,
+      "matches_owner_frozen_hashes": true,
+      "inputs_stable_during_scan": true,
+      "geometry_consistency": {
+        "source": {
+          "triangles": 6552,
+          "unique_positions": 3374,
+          "unique_positions_sha256_1e_5m": "c9df030bfdd13f64bdf0a07010789382cfc9fa8306145979382b65ba8db37d4b",
+          "surface_area_m2": 2692.2056231949255,
+          "bounds": [
+            [
+              -5.44,
+              -0.6,
+              -16.0
+            ],
+            [
+              16.0,
+              3.83,
+              16.0
+            ]
+          ]
+        },
+        "glb": {
+          "triangles": 6552,
+          "unique_positions": 3374,
+          "unique_positions_sha256_1e_5m": "c9df030bfdd13f64bdf0a07010789382cfc9fa8306145979382b65ba8db37d4b",
+          "surface_area_m2": 2692.2056231949255,
+          "bounds": [
+            [
+              -5.44,
+              -0.6,
+              -16.0
+            ],
+            [
+              16.0,
+              3.83,
+              16.0
+            ]
+          ]
+        },
+        "same_unique_positions": true,
+        "surface_area_delta_m2": 0.0,
+        "note": "Triangle diagonals may differ; stair GLB is batched by material, so source retains named-object attribution. Matching unique positions and total surface area support transfer of source findings, but are not a topology equality proof."
+      },
+      "counts": {
+        "visible_objects": 74,
+        "triangles": 6552,
+        "observers": 105,
+        "candidate_triangle_pairs": 652,
+        "same_facing_object_pairs": 9,
+        "exposed_same_facing_object_pairs": 0,
+        "trusted_view_exposed_pairs": 0,
+        "trusted_shading_conflict_pairs": 0,
+        "opposite_facing_contact_pairs": 142
+      },
+      "original_trusted_targets": 9,
+      "targets_absent_from_all_same_facing_pairs": 9,
+      "original_target_pairs_still_present": []
+    },
+    {
+      "scene": "cyan_corridor",
+      "report_path": "output/reference_wing/seam_audit/cyan_corridor_coplanar.json",
+      "report_sha256": "a1d1f010060ceb98c5418b201b0102a5bf51231e287d3ce82c902585b6c8559a",
+      "files": {
+        "source": {
+          "path": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+          "sha256": "67df09e26ab4d56c166babdd0ac72549965099e0447bca587a5983a1fa568ccd"
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/cyan_corridor.glb",
+          "sha256": "b0f78182f23c223c95116f02f5d529fa830eaad99c2e12d12eed1e434d855765"
+        },
+        "contract": {
+          "path": "assets/models/reference_wing/cyan_corridor.geometry.json",
+          "sha256": "9411edd50599f6fd964a700415beae81757b1f14eaefc1e9ba04058c5a007f37"
+        }
+      },
+      "current_files_still_match_audit": true,
+      "matches_owner_frozen_hashes": true,
+      "inputs_stable_during_scan": true,
+      "geometry_consistency": {
+        "source": {
+          "triangles": 10408,
+          "unique_positions": 5258,
+          "unique_positions_sha256_1e_5m": "740ea2e089cab7e5b4b5b068e8b377d09436161c78acefe76139774a3b4ed303",
+          "surface_area_m2": 1990.728895942503,
+          "bounds": [
+            [
+              -2.64,
+              -0.6,
+              -12.24
+            ],
+            [
+              16.0,
+              3.66,
+              16.0
+            ]
+          ]
+        },
+        "glb": {
+          "triangles": 10408,
+          "unique_positions": 5258,
+          "unique_positions_sha256_1e_5m": "740ea2e089cab7e5b4b5b068e8b377d09436161c78acefe76139774a3b4ed303",
+          "surface_area_m2": 1990.728895942503,
+          "bounds": [
+            [
+              -2.64,
+              -0.6,
+              -12.24
+            ],
+            [
+              16.0,
+              3.66,
+              16.0
+            ]
+          ]
+        },
+        "same_unique_positions": true,
+        "surface_area_delta_m2": 0.0,
+        "note": "Triangle diagonals may differ; stair GLB is batched by material, so source retains named-object attribution. Matching unique positions and total surface area support transfer of source findings, but are not a topology equality proof."
+      },
+      "counts": {
+        "visible_objects": 122,
+        "triangles": 10408,
+        "observers": 143,
+        "candidate_triangle_pairs": 1438,
+        "same_facing_object_pairs": 18,
+        "exposed_same_facing_object_pairs": 0,
+        "trusted_view_exposed_pairs": 0,
+        "trusted_shading_conflict_pairs": 0,
+        "opposite_facing_contact_pairs": 266
+      },
+      "original_trusted_targets": 18,
+      "targets_absent_from_all_same_facing_pairs": 18,
+      "original_target_pairs_still_present": []
+    },
+    {
+      "scene": "octagonal_bath",
+      "report_path": "output/reference_wing/seam_audit/octagonal_bath_coplanar.json",
+      "report_sha256": "ed86acb2c65553ca50385cbb31b2fafbdacee86e943a0e6e7d8fad86cc54aae6",
+      "files": {
+        "source": {
+          "path": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+          "sha256": "969c4a67fc03a801ffcec28a4ebb455938d5940971c6163fd849a779aa3e718f"
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/octagonal_bath.glb",
+          "sha256": "c2cff5a4851fa1cda186b023a32afe7c36489f1f84cf7da4363c73482f1ae20e"
+        },
+        "contract": {
+          "path": "assets/models/reference_wing/octagonal_bath.geometry.json",
+          "sha256": "4eadf0bc13a94eb72a13e068d210af884581be5098fc2e62daed2d3ddfcf9af7"
+        }
+      },
+      "current_files_still_match_audit": true,
+      "matches_owner_frozen_hashes": true,
+      "inputs_stable_during_scan": true,
+      "geometry_consistency": {
+        "source": {
+          "triangles": 19696,
+          "unique_positions": 9232,
+          "unique_positions_sha256_1e_5m": "4decc03636f96f0c347a4d58a10e63106b3bf8e34b63a01f6ea2b6a98a050640",
+          "surface_area_m2": 4869.242415621984,
+          "bounds": [
+            [
+              -16.0,
+              -0.6,
+              -10.74
+            ],
+            [
+              12.24,
+              5.55,
+              16.0
+            ]
+          ]
+        },
+        "glb": {
+          "triangles": 19696,
+          "unique_positions": 9232,
+          "unique_positions_sha256_1e_5m": "4decc03636f96f0c347a4d58a10e63106b3bf8e34b63a01f6ea2b6a98a050640",
+          "surface_area_m2": 4869.242415621984,
+          "bounds": [
+            [
+              -16.0,
+              -0.6,
+              -10.74
+            ],
+            [
+              12.24,
+              5.55,
+              16.0
+            ]
+          ]
+        },
+        "same_unique_positions": true,
+        "surface_area_delta_m2": 0.0,
+        "note": "Triangle diagonals may differ; stair GLB is batched by material, so source retains named-object attribution. Matching unique positions and total surface area support transfer of source findings, but are not a topology equality proof."
+      },
+      "counts": {
+        "visible_objects": 284,
+        "triangles": 19696,
+        "observers": 449,
+        "candidate_triangle_pairs": 4440,
+        "same_facing_object_pairs": 17,
+        "exposed_same_facing_object_pairs": 0,
+        "trusted_view_exposed_pairs": 0,
+        "trusted_shading_conflict_pairs": 0,
+        "opposite_facing_contact_pairs": 710
+      },
+      "original_trusted_targets": 10,
+      "targets_absent_from_all_same_facing_pairs": 10,
+      "original_target_pairs_still_present": []
+    },
+    {
+      "scene": "ball_lounge",
+      "report_path": "output/reference_wing/seam_audit/ball_lounge_coplanar.json",
+      "report_sha256": "31fbedaf723c674621f5f60a8f19a619f1bac40b6d43b7dc0dbaa7f4ac4d2e53",
+      "files": {
+        "source": {
+          "path": "tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+          "sha256": "45449a83591838fb70b1c06f30d4dd0dd114ce9025de1fca7a3c5fd4408b64bf"
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/ball_lounge.glb",
+          "sha256": "039f9d43f92cdb0c2f75fbe540e4d82f57476b18f331bd4f958ce0fd4ab6f24f"
+        },
+        "contract": {
+          "path": "assets/models/reference_wing/ball_lounge.geometry.json",
+          "sha256": "be3166caf7bff05494128ea7881e00912e73c8ec720c16542409cf423e641003"
+        }
+      },
+      "current_files_still_match_audit": true,
+      "matches_owner_frozen_hashes": true,
+      "inputs_stable_during_scan": true,
+      "geometry_consistency": {
+        "source": {
+          "triangles": 608698,
+          "unique_positions": 310868,
+          "unique_positions_sha256_1e_5m": "df7f0d45fe753c6565cb420eb7b2e4594385dc52bb8974201233424d8d649956",
+          "surface_area_m2": 5717.395958217842,
+          "bounds": [
+            [
+              -16.0,
+              -0.38,
+              -16.0
+            ],
+            [
+              16.0,
+              3.84,
+              16.0
+            ]
+          ]
+        },
+        "glb": {
+          "triangles": 608698,
+          "unique_positions": 310868,
+          "unique_positions_sha256_1e_5m": "df7f0d45fe753c6565cb420eb7b2e4594385dc52bb8974201233424d8d649956",
+          "surface_area_m2": 5717.395958217842,
+          "bounds": [
+            [
+              -16.0,
+              -0.38,
+              -16.0
+            ],
+            [
+              16.0,
+              3.84,
+              16.0
+            ]
+          ]
+        },
+        "same_unique_positions": true,
+        "surface_area_delta_m2": 0.0,
+        "note": "Triangle diagonals may differ; stair GLB is batched by material, so source retains named-object attribution. Matching unique positions and total surface area support transfer of source findings, but are not a topology equality proof."
+      },
+      "counts": {
+        "visible_objects": 94,
+        "triangles": 608698,
+        "observers": 208,
+        "candidate_triangle_pairs": 8403,
+        "same_facing_object_pairs": 17,
+        "exposed_same_facing_object_pairs": 9,
+        "trusted_view_exposed_pairs": 0,
+        "trusted_shading_conflict_pairs": 0,
+        "opposite_facing_contact_pairs": 107
+      },
+      "original_trusted_targets": 11,
+      "targets_absent_from_all_same_facing_pairs": 11,
+      "original_target_pairs_still_present": []
+    },
+    {
+      "scene": "stair_gallery",
+      "report_path": "output/reference_wing/seam_audit/stair_gallery_coplanar.json",
+      "report_sha256": "34507f53e5b1dbafd35f1269df3611fda9827e33353d7ebaa12dc4f026e0db16",
+      "files": {
+        "source": {
+          "path": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+          "sha256": "a8f6bc5bbd7d162c374889d6545d2f5c7dbb8a80e23dc7652d2105e170930058"
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/stair_gallery.glb",
+          "sha256": "6ef6e82d7a9d39dc3139afd2b01bde572e2af3d2ec2ef15538830d204ba862db"
+        },
+        "contract": {
+          "path": "assets/models/reference_wing/stair_gallery.geometry.json",
+          "sha256": "f3523a105b746e58b913c1011ba3075830b5a3acf1973d83b856939176f6c671"
+        }
+      },
+      "current_files_still_match_audit": true,
+      "matches_owner_frozen_hashes": true,
+      "inputs_stable_during_scan": true,
+      "geometry_consistency": {
+        "source": {
+          "triangles": 23908,
+          "unique_positions": 16612,
+          "unique_positions_sha256_1e_5m": "e5c3e8b2282fe07ca6e2d47264482894523a45184474c11ef65431206931d97b",
+          "surface_area_m2": 3379.0170635782747,
+          "bounds": [
+            [
+              -4.5,
+              -0.18,
+              -16.0
+            ],
+            [
+              3.2,
+              11.62,
+              14.8
+            ]
+          ]
+        },
+        "glb": {
+          "triangles": 23908,
+          "unique_positions": 16612,
+          "unique_positions_sha256_1e_5m": "e5c3e8b2282fe07ca6e2d47264482894523a45184474c11ef65431206931d97b",
+          "surface_area_m2": 3379.017053146198,
+          "bounds": [
+            [
+              -4.5,
+              -0.18,
+              -16.0
+            ],
+            [
+              3.2,
+              11.62,
+              14.8
+            ]
+          ]
+        },
+        "same_unique_positions": true,
+        "surface_area_delta_m2": -1.0432076578581473e-05,
+        "note": "Triangle diagonals may differ; stair GLB is batched by material, so source retains named-object attribution. Matching unique positions and total surface area support transfer of source findings, but are not a topology equality proof."
+      },
+      "counts": {
+        "visible_objects": 2410,
+        "triangles": 23908,
+        "observers": 172,
+        "candidate_triangle_pairs": 1118,
+        "same_facing_object_pairs": 2,
+        "exposed_same_facing_object_pairs": 1,
+        "trusted_view_exposed_pairs": 0,
+        "trusted_shading_conflict_pairs": 0,
+        "opposite_facing_contact_pairs": 191
+      },
+      "original_trusted_targets": 0,
+      "targets_absent_from_all_same_facing_pairs": 0,
+      "original_target_pairs_still_present": []
+    }
+  ],
+  "retained_contacts": [
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "East_Connector_Floor_000"
+      ],
+      "summed_pair_surface_overlap_m2": 0.7200007438659668,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal_dry",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "South_Connector_Floor_000"
+      ],
+      "summed_pair_surface_overlap_m2": 0.7199993133544922,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal_dry",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "North_Connector_Floor_000"
+      ],
+      "summed_pair_surface_overlap_m2": 0.7199993133544922,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal_dry",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "East_Connector_WallFooting_001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.11520012359619614,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "East_Connector_WallFooting_002"
+      ],
+      "summed_pair_surface_overlap_m2": 0.11520012359619614,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "South_Connector_WallFooting_001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "North_Connector_WallFooting_001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "South_Connector_WallFooting_002"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "colonnade",
+      "objects": [
+        "Colonnade_BasinSlab",
+        "North_Connector_WallFooting_002"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_dark_teal",
+          "ref_tile_dark_teal"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_SouthConnector_Floor_000"
+      ],
+      "summed_pair_surface_overlap_m2": 0.7199993133544922,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin_dry",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_EastDogleg_Floor_000"
+      ],
+      "summed_pair_surface_overlap_m2": 0.36000001430511475,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin_dry",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_EastDogleg_Floor_001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.36000001430511475,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin_dry",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_EastDogleg_WallFooting_002",
+        "Cyan_EastDogleg_WallFooting_004"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975998233795068,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_EastDogleg_WallFooting_006",
+        "Cyan_EastDogleg_WallFooting_008"
+      ],
+      "summed_pair_surface_overlap_m2": 0.29759982337950674,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_EastDogleg_WallFooting_003",
+        "Cyan_EastDogleg_WallFooting_007"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396319,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_4_BlackRecessBack",
+        "Window_4_SideReturn_1"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1834838121840255,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_1_BlackRecessBack",
+        "Window_1_SideReturn_0"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1834836957807763,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_2_BlackRecessBack",
+        "Window_2_SideReturn_0"
+      ],
+      "summed_pair_surface_overlap_m2": 0.18348358049756822,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_2_BlackRecessBack",
+        "Window_2_SideReturn_1"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1834835400739618,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_3_BlackRecessBack",
+        "Window_3_SideReturn_1"
+      ],
+      "summed_pair_surface_overlap_m2": 0.18348352782171726,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_1_BlackRecessBack",
+        "Window_1_SideReturn_1"
+      ],
+      "summed_pair_surface_overlap_m2": 0.18348352375658525,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_4_BlackRecessBack",
+        "Window_4_SideReturn_0"
+      ],
+      "summed_pair_surface_overlap_m2": 0.18348352302664903,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Window_3_BlackRecessBack",
+        "Window_3_SideReturn_0"
+      ],
+      "summed_pair_surface_overlap_m2": 0.18331035402486182,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_recess_black"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_SouthConnector_WallFooting_001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_SouthConnector_WallFooting_002"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_EastDogleg_WallFooting_002"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "cyan_corridor",
+      "objects": [
+        "Cyan_BasinSlab",
+        "Cyan_EastDogleg_WallFooting_001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_cyan_satin",
+          "ref_tile_cyan_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_WestRoute_Floor_014"
+      ],
+      "summed_pair_surface_overlap_m2": 0.31199967670443085,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin_dry",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_SouthRoute_WallFooting_005",
+        "Bath_SouthRoute_WallFooting_007"
+      ],
+      "summed_pair_surface_overlap_m2": 0.29759982337950697,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_WestRoute_WallFooting_008",
+        "Bath_WestRoute_WallFooting_010"
+      ],
+      "summed_pair_surface_overlap_m2": 0.29759982337950674,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_SouthRoute_WallFooting_006",
+        "Bath_SouthRoute_WallFooting_008"
+      ],
+      "summed_pair_surface_overlap_m2": 0.29759982337950674,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_WestRoute_WallFooting_001",
+        "Bath_WestRoute_WallFooting_003"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975998233795065,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_WestRoute_WallFooting_004",
+        "Bath_WestRoute_WallFooting_005"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396319,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_SouthRoute_WallFooting_009",
+        "Bath_SouthRoute_WallFooting_013"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396319,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_SouthRoute_WallFooting_008",
+        "Bath_SouthRoute_WallFooting_011"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396319,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_SouthRoute_WallFooting_002",
+        "Bath_SouthRoute_WallFooting_011"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396319,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_SouthRoute_WallFooting_010",
+        "Bath_SouthRoute_WallFooting_014"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396319,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Bath_WestRoute_WallFooting_007",
+        "Bath_WestRoute_WallFooting_008"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2975996183396318,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_SouthRoute_Floor_005"
+      ],
+      "summed_pair_surface_overlap_m2": 0.16799983692169462,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin_dry",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_SouthRoute_Floor_011"
+      ],
+      "summed_pair_surface_overlap_m2": 0.14399983978273667,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin_dry",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_WestRoute_WallFooting_010"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_WestRoute_WallFooting_009"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_SouthRoute_WallFooting_003"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "octagonal_bath",
+      "objects": [
+        "Octagonal_BasinFoundation",
+        "Bath_SouthRoute_WallFooting_006"
+      ],
+      "summed_pair_surface_overlap_m2": 0.1151998947143511,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Sealed_module_z_plus",
+        "Sealed_module_x_minus.001"
+      ],
+      "summed_pair_surface_overlap_m2": 1.559998398423306,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            12228,
+            12204
+          ],
+          "source_faces": [
+            4,
+            4
+          ],
+          "source_objects": [
+            "Sealed_module_x_minus.001",
+            "Sealed_module_z_plus"
+          ],
+          "normal_godot": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "uv_pair": [
+            [
+              -15.999080461523997,
+              -15.866666793823242
+            ],
+            [
+              -15.999080461523995,
+              -15.866666793823242
+            ]
+          ],
+          "uv_delta": 1.7763568394002505e-15,
+          "interpolated_corner_normal_delta": 0.0,
+          "different_materials": false,
+          "trusted_view": false,
+          "shading_conflict": false,
+          "observer": {
+            "name": "Closed_connector_floor_and_roof_sample_12006",
+            "position": [
+              -13.333333333333332,
+              5.229999971389771,
+              0.5
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            -15.999080461523997,
+            3.5999999046325684,
+            15.866666793823242
+          ],
+          "distance_m": 15.681121016096878,
+          "first_hit_object": "Sealed_module_z_plus",
+          "first_hit_source_face": 4,
+          "first_hit_distance_error_m": 1.435993191023499e-07
+        }
+      ],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Sealed_module_x_plus",
+        "Sealed_module_z_minus.001"
+      ],
+      "summed_pair_surface_overlap_m2": 1.5599983984233035,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            12193,
+            12253
+          ],
+          "source_faces": [
+            4,
+            4
+          ],
+          "source_objects": [
+            "Sealed_module_x_plus",
+            "Sealed_module_z_minus.001"
+          ],
+          "normal_godot": [
+            0.0,
+            1.0,
+            -0.0
+          ],
+          "uv_pair": [
+            [
+              15.999583334128062,
+              15.866666793823242
+            ],
+            [
+              15.999583334128062,
+              15.866666793823242
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 0.0,
+          "different_materials": false,
+          "trusted_view": false,
+          "shading_conflict": false,
+          "observer": {
+            "name": "Closed_connector_floor_and_roof_sample_12006",
+            "position": [
+              -13.333333333333332,
+              5.229999971389771,
+              0.5
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            15.999583334128062,
+            3.5999999046325684,
+            -15.866666793823242
+          ],
+          "distance_m": 33.62952099536803,
+          "first_hit_object": "Sealed_module_x_plus",
+          "first_hit_source_face": 4,
+          "first_hit_distance_error_m": 5.791082671180448e-07
+        }
+      ],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Sealed_module_x_plus",
+        "Sealed_module_z_plus"
+      ],
+      "summed_pair_surface_overlap_m2": 1.5599983984233035,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            12193,
+            12205
+          ],
+          "source_faces": [
+            4,
+            4
+          ],
+          "source_objects": [
+            "Sealed_module_x_plus",
+            "Sealed_module_z_plus"
+          ],
+          "normal_godot": [
+            0.0,
+            1.0,
+            -0.0
+          ],
+          "uv_pair": [
+            [
+              15.900310653783146,
+              -15.900310653783137
+            ],
+            [
+              15.900310653783139,
+              -15.900310653783137
+            ]
+          ],
+          "uv_delta": 7.105427357601002e-15,
+          "interpolated_corner_normal_delta": 0.0,
+          "different_materials": false,
+          "trusted_view": false,
+          "shading_conflict": false,
+          "observer": {
+            "name": "Closed_connector_floor_and_roof_sample_12006",
+            "position": [
+              -13.333333333333332,
+              5.229999971389771,
+              0.5
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            15.900310653783139,
+            3.5999999046325684,
+            15.900310653783137
+          ],
+          "distance_m": 33.08220683715229,
+          "first_hit_object": "Sealed_module_z_plus",
+          "first_hit_source_face": 4,
+          "first_hit_distance_error_m": 3.7036191926631545e-06
+        }
+      ],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Sealed_module_x_minus",
+        "Sealed_module_z_minus"
+      ],
+      "summed_pair_surface_overlap_m2": 1.5599983984233023,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            12241,
+            12217
+          ],
+          "source_faces": [
+            4,
+            4
+          ],
+          "source_objects": [
+            "Sealed_module_z_minus",
+            "Sealed_module_x_minus"
+          ],
+          "normal_godot": [
+            0.0,
+            1.0,
+            -0.0
+          ],
+          "uv_pair": [
+            [
+              -15.801370115412018,
+              15.80137011541202
+            ],
+            [
+              -15.80137011541202,
+              15.801370115412018
+            ]
+          ],
+          "uv_delta": 1.7763568394002505e-15,
+          "interpolated_corner_normal_delta": 0.0,
+          "different_materials": false,
+          "trusted_view": false,
+          "shading_conflict": false,
+          "observer": {
+            "name": "Closed_connector_floor_and_roof_sample_12006",
+            "position": [
+              -13.333333333333332,
+              5.229999971389771,
+              0.5
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            -15.80137011541202,
+            3.5999999046325684,
+            -15.80137011541202
+          ],
+          "distance_m": 16.567521643715146,
+          "first_hit_object": "Sealed_module_x_minus",
+          "first_hit_source_face": 4,
+          "first_hit_distance_error_m": 4.052350490724166e-07
+        }
+      ],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Right_porthole_02_deep_reveal",
+        "Right_porthole_02_opaque_sky_backing"
+      ],
+      "summed_pair_surface_overlap_m2": 0.22233926470859658,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            4914,
+            4522
+          ],
+          "source_faces": [
+            62,
+            241
+          ],
+          "source_objects": [
+            "Right_porthole_02_opaque_sky_backing",
+            "Right_porthole_02_deep_reveal"
+          ],
+          "normal_godot": [
+            0.0,
+            -0.6715593900809379,
+            0.7409507308816954
+          ],
+          "uv_pair": [
+            [
+              4.203999805450439,
+              1.4202823776019602
+            ],
+            [
+              4.203999805450439,
+              1.4202823776019602
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 1.1228084177563966,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Module_foundation_sample_9",
+            "position": [
+              5.333333333333333,
+              1.3700000017881393,
+              5.333333333333333
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            4.203999805450439,
+            1.4202823776019602,
+            -2.4324533146286296
+          ],
+          "distance_m": 7.84763434393972,
+          "first_hit_object": "Right_porthole_02_opaque_sky_backing",
+          "first_hit_source_face": 62,
+          "first_hit_distance_error_m": 1.4589604715453675e-06
+        }
+      ],
+      "materials": [
+        [
+          "ref_glazing_cyan",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Right_porthole_03_deep_reveal",
+        "Right_porthole_03_opaque_sky_backing"
+      ],
+      "summed_pair_surface_overlap_m2": 0.22233926264074513,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            6503,
+            5866
+          ],
+          "source_faces": [
+            27,
+            101
+          ],
+          "source_objects": [
+            "Right_porthole_03_opaque_sky_backing",
+            "Right_porthole_03_deep_reveal"
+          ],
+          "normal_godot": [
+            0.0,
+            0.687090076735546,
+            -0.7265722444819521
+          ],
+          "uv_pair": [
+            [
+              4.203999805450439,
+              2.6000849533991195
+            ],
+            [
+              4.203999805450439,
+              2.6000849533991195
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 1.1313303816159164,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Module_foundation_sample_9",
+            "position": [
+              9.6,
+              1.3700000017881393,
+              -3.1999999999999993
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            4.203999805450439,
+            2.6000849533991195,
+            -0.3500971736720344
+          ],
+          "distance_m": 6.22510025680477,
+          "first_hit_object": "Right_porthole_03_opaque_sky_backing",
+          "first_hit_source_face": 27,
+          "first_hit_distance_error_m": 2.60468179469342e-07
+        }
+      ],
+      "materials": [
+        [
+          "ref_glazing_cyan",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Right_porthole_04_deep_reveal",
+        "Right_porthole_04_opaque_sky_backing"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2223391261579174,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            8127,
+            7490
+          ],
+          "source_faces": [
+            27,
+            101
+          ],
+          "source_objects": [
+            "Right_porthole_04_opaque_sky_backing",
+            "Right_porthole_04_deep_reveal"
+          ],
+          "normal_godot": [
+            0.0,
+            0.687090076735546,
+            -0.7265722444819521
+          ],
+          "uv_pair": [
+            [
+              4.203999805450439,
+              2.6000849533991195
+            ],
+            [
+              4.203999805450439,
+              2.6000849533991195
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 1.1313296401856545,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Module_foundation_sample_9",
+            "position": [
+              9.6,
+              1.3700000017881393,
+              -3.1999999999999993
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            4.203999805450439,
+            2.6000849533991195,
+            3.0499027428814625
+          ],
+          "distance_m": 8.348126219891258,
+          "first_hit_object": "Right_porthole_04_opaque_sky_backing",
+          "first_hit_source_face": 27,
+          "first_hit_distance_error_m": 7.621275859293064e-07
+        }
+      ],
+      "materials": [
+        [
+          "ref_glazing_cyan",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Right_porthole_01_deep_reveal",
+        "Right_porthole_01_opaque_sky_backing"
+      ],
+      "summed_pair_surface_overlap_m2": 0.22233828983457857,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            3256,
+            2626
+          ],
+          "source_faces": [
+            28,
+            105
+          ],
+          "source_objects": [
+            "Right_porthole_01_opaque_sky_backing",
+            "Right_porthole_01_deep_reveal"
+          ],
+          "normal_godot": [
+            0.0,
+            0.6715600730722533,
+            -0.7409501118531461
+          ],
+          "uv_pair": [
+            [
+              4.203999805450439,
+              2.579717588535692
+            ],
+            [
+              4.203999805450439,
+              2.579717588535692
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 1.1244794023445144,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Module_foundation_sample_8",
+            "position": [
+              3.1999999999999993,
+              1.3700000017881393,
+              -9.600000000000001
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            4.203999805450439,
+            2.579717588535692,
+            -7.167546828422518
+          ],
+          "distance_m": 2.89624941621888,
+          "first_hit_object": "Right_porthole_01_opaque_sky_backing",
+          "first_hit_source_face": 28,
+          "first_hit_distance_error_m": 8.317364423859885e-07
+        },
+        {
+          "source_triangles": [
+            3290,
+            2898
+          ],
+          "source_faces": [
+            62,
+            241
+          ],
+          "source_objects": [
+            "Right_porthole_01_opaque_sky_backing",
+            "Right_porthole_01_deep_reveal"
+          ],
+          "normal_godot": [
+            0.0,
+            -0.6715593900809379,
+            0.7409507308816954
+          ],
+          "uv_pair": [
+            [
+              4.203999805450439,
+              1.4202823776019602
+            ],
+            [
+              4.203999805450439,
+              1.4202823776019602
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 1.1228077360380224,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Module_foundation_sample_9",
+            "position": [
+              5.333333333333333,
+              1.3700000017881393,
+              5.333333333333333
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            4.203999805450439,
+            1.4202823776019602,
+            -5.832453171577482
+          ],
+          "distance_m": 11.222865534602398,
+          "first_hit_object": "Right_porthole_01_opaque_sky_backing",
+          "first_hit_source_face": 62,
+          "first_hit_distance_error_m": 5.237472109342889e-07
+        },
+        {
+          "source_triangles": [
+            3251,
+            2586
+          ],
+          "source_faces": [
+            23,
+            85
+          ],
+          "source_objects": [
+            "Right_porthole_01_opaque_sky_backing",
+            "Right_porthole_01_deep_reveal"
+          ],
+          "normal_godot": [
+            0.0,
+            0.9039896121755576,
+            -0.42755441885061213
+          ],
+          "uv_pair": [
+            [
+              4.203999805450439,
+              6.894884517935088
+            ],
+            [
+              4.203999805450439,
+              6.894884517935088
+            ]
+          ],
+          "uv_delta": 0.0,
+          "interpolated_corner_normal_delta": 1.1216740408266743,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Closed_connector_floor_and_roof_sample_12079",
+            "position": [
+              0.8999999999999999,
+              5.229999971389771,
+              -15.2
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            4.203999805450439,
+            2.791048330165792,
+            -6.894884517935088
+          ],
+          "distance_m": 9.264979384385049,
+          "first_hit_object": "Right_porthole_01_deep_reveal",
+          "first_hit_source_face": 85,
+          "first_hit_distance_error_m": 2.1897255564340412e-08
+        }
+      ],
+      "materials": [
+        [
+          "ref_glazing_cyan",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Rear_porthole_05_deep_reveal",
+        "Rear_porthole_05_opaque_sky_backing"
+      ],
+      "summed_pair_surface_overlap_m2": 0.22233721198627543,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            9769,
+            9258
+          ],
+          "source_faces": [
+            45,
+            173
+          ],
+          "source_objects": [
+            "Rear_porthole_05_opaque_sky_backing",
+            "Rear_porthole_05_deep_reveal"
+          ],
+          "normal_godot": [
+            -0.6715586365164457,
+            -0.7409514138728479,
+            0.0
+          ],
+          "uv_pair": [
+            [
+              -1.729717666164885,
+              8.803999710083009
+            ],
+            [
+              -1.7297176661648848,
+              8.803999710083009
+            ]
+          ],
+          "uv_delta": 2.220446049250313e-16,
+          "interpolated_corner_normal_delta": 1.1222541302933315,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "Closed_connector_floor_and_roof_sample_12023",
+            "position": [
+              -6.8,
+              5.229999971389771,
+              -7.499999999999999
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            -1.7297176661648848,
+            1.332453437410617,
+            -8.803999710083009
+          ],
+          "distance_m": 6.526794555770079,
+          "first_hit_object": "Rear_porthole_05_deep_reveal",
+          "first_hit_source_face": 173,
+          "first_hit_distance_error_m": 1.3083351459997061e-06
+        }
+      ],
+      "materials": [
+        [
+          "ref_glazing_cyan",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Dry_entry_apron",
+        "Continuous_curved_supported_bench"
+      ],
+      "summed_pair_surface_overlap_m2": 6.525984439809152,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_fabric",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Room_continuous_low_roof",
+        "Closed_connector_floor_and_roof"
+      ],
+      "summed_pair_surface_overlap_m2": 1.0049993991851807,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Module_foundation",
+        "Sealed_module_z_plus"
+      ],
+      "summed_pair_surface_overlap_m2": 0.6480000985860815,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Module_foundation",
+        "Sealed_module_x_plus"
+      ],
+      "summed_pair_surface_overlap_m2": 0.6480000985860812,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Module_foundation",
+        "Sealed_module_x_minus"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2940000443756574,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Module_foundation",
+        "Sealed_module_z_minus"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2940000443756574,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Module_foundation",
+        "Sealed_module_z_minus.001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2940000443756574,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "ball_lounge",
+      "objects": [
+        "Module_foundation",
+        "Sealed_module_x_minus.001"
+      ],
+      "summed_pair_surface_overlap_m2": 0.2940000443756574,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_lounge_plaster",
+          "ref_lounge_plaster"
+        ]
+      ]
+    },
+    {
+      "scene": "stair_gallery",
+      "objects": [
+        "NorthFarWallLeft",
+        "ArchThreshold"
+      ],
+      "summed_pair_surface_overlap_m2": 5.980000077635035,
+      "classification": "exposure only from supplemental surface sample; reachable-view evidence absent",
+      "exposure_witnesses": [
+        {
+          "source_triangles": [
+            1891,
+            1831
+          ],
+          "source_faces": [
+            1,
+            1
+          ],
+          "source_objects": [
+            "ArchThreshold",
+            "NorthFarWallLeft"
+          ],
+          "normal_godot": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "uv_pair": [
+            [
+              -4.1566962403573715,
+              0.31999998912215233
+            ],
+            [
+              -4.156696240357372,
+              0.31999998912215233
+            ]
+          ],
+          "uv_delta": 8.881784197001252e-16,
+          "interpolated_corner_normal_delta": 0.0,
+          "different_materials": true,
+          "trusted_view": false,
+          "shading_conflict": true,
+          "observer": {
+            "name": "MainFoundation_sample_1752",
+            "position": [
+              -2.9599999904632566,
+              1.569999997317791,
+              -0.23999996185302752
+            ],
+            "kind": "surface_sample_eye_unproven_reachability"
+          },
+          "point_godot": [
+            -4.156696240357372,
+            0.31999998912215233,
+            -3.5999999046325684
+          ],
+          "distance_m": 3.779441962840315,
+          "first_hit_object": "NorthFarWallLeft",
+          "first_hit_source_face": 1,
+          "first_hit_distance_error_m": 3.6776280021300067e-07
+        }
+      ],
+      "materials": [
+        [
+          "ref_tile_dry",
+          "ref_tile_pearl_ref5_crown"
+        ],
+        [
+          "ref_tile_pearl",
+          "ref_tile_dry"
+        ]
+      ]
+    },
+    {
+      "scene": "stair_gallery",
+      "objects": [
+        "NorthFarWallRight",
+        "ArchThreshold"
+      ],
+      "summed_pair_surface_overlap_m2": 1.060000078529117,
+      "classification": "same-facing overlap not exposed from sampled viewpoints; buried/outside/occluded or untested view",
+      "exposure_witnesses": [],
+      "materials": [
+        [
+          "ref_tile_pearl",
+          "ref_tile_dry"
+        ],
+        [
+          "ref_tile_pearl_ref5_crown",
+          "ref_tile_dry"
+        ]
+      ]
+    }
+  ],
+  "limitations": [
+    "This is evaluated-source cross-object exact-coplanar geometry and controlled BVH ray exposure, with actual GLB buffer position/area consistency checks, not GPU/render/runtime appearance acceptance.",
+    "Source/GLB unique positions and areas match; their signatures are supporting surface consistency evidence, not a general formal topology equality proof.",
+    "Retained outside/buried/occluded or unproven-view contacts remain; no blanket zero-overlap or no-seams claim.",
+    "Plane tolerance1e-5m, minimum positive area1e-7m\u00b2. Two-offset normal/plane broadphase plus exact clipping, not a near-coincident/noncoplanar intersection search.",
+    "Authored camera and contract-route eyes are meaningful samples, not every possible player view.",
+    "Does not independently certify all structural supports, material roughness, refraction, caustics, water clarity, or controller traversal.",
+    "No Godot import, rendering, production mutation, or GPU operation was performed."
+  ]
+}

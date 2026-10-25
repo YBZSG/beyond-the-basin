@@ -1,0 +1,146 @@
+{
+  "units": "metres",
+  "front_axis_glTF": "+Y",
+  "license": "CC0-1.0",
+  "assets": {
+    "key": {
+      "mesh_objects": 7,
+      "triangles": 2988,
+      "bbox_blender_m": {
+        "min": [
+          -0.08449999988079071,
+          -0.031269997358322144,
+          -0.0031499997712671757
+        ],
+        "max": [
+          0.07249999791383743,
+          0.031269997358322144,
+          0.003275000024586916
+        ]
+      },
+      "dimensions_m": [
+        0.15699999779462814,
+        0.06253999471664429,
+        0.006424999795854092
+      ],
+      "materials": [
+        "Aged satin brass",
+        "Brushed brass edges",
+        "Indigo maintenance ink"
+      ]
+    },
+    "fuse": {
+      "mesh_objects": 12,
+      "triangles": 14476,
+      "bbox_blender_m": {
+        "min": [
+          -0.0650000050663948,
+          -0.015300000086426735,
+          -0.015300000086426735
+        ],
+        "max": [
+          0.0650000050663948,
+          0.015300000086426735,
+          0.015300000086426735
+        ]
+      },
+      "dimensions_m": [
+        0.1300000101327896,
+        0.03060000017285347,
+        0.03060000017285347
+      ],
+      "materials": [
+        "Brushed brass edges",
+        "Indigo maintenance ink",
+        "Ivory synthetic paper",
+        "Oxidized contact steel",
+        "Vermilion service marking",
+        "Warm glazed ceramic"
+      ]
+    },
+    "valve": {
+      "mesh_objects": 13,
+      "triangles": 3548,
+      "bbox_blender_m": {
+        "min": [
+          -0.06800000369548798,
+          -0.06800000369548798,
+          -0.007000000216066837
+        ],
+        "max": [
+          0.06800000369548798,
+          0.06800000369548798,
+          0.01510000042617321
+        ]
+      },
+      "dimensions_m": [
+        0.13600000739097595,
+        0.13600000739097595,
+        0.022100000642240047
+      ],
+      "materials": [
+        "Aged satin brass",
+        "Brushed brass edges",
+        "EPDM gasket",
+        "Indigo maintenance ink",
+        "Oxidized contact steel"
+      ]
+    },
+    "card": {
+      "mesh_objects": 36,
+      "triangles": 11004,
+      "bbox_blender_m": {
+        "min": [
+          -0.050999999046325684,
+          -0.032499998807907104,
+          -0.0012500000884756446
+        ],
+        "max": [
+          0.050999999046325684,
+          0.032499998807907104,
+          0.0017500000540167093
+        ]
+      },
+      "dimensions_m": [
+        0.10199999809265137,
+        0.06499999761581421,
+        0.003000000142492354
+      ],
+      "materials": [
+        "Brushed brass edges",
+        "Indigo maintenance ink",
+        "Ivory synthetic paper",
+        "PoolCore blue polymer"
+      ]
+    },
+    "diagram": {
+      "mesh_objects": 27,
+      "triangles": 19512,
+      "bbox_blender_m": {
+        "min": [
+          -0.11050000041723251,
+          -0.08100000023841858,
+          -0.0015249999705702066
+        ],
+        "max": [
+          0.11050000041723251,
+          0.08100000023841858,
+          0.0025250001344829798
+        ]
+      },
+      "dimensions_m": [
+        0.22100000083446503,
+        0.16200000047683716,
+        0.004050000105053186
+      ],
+      "materials": [
+        "Frosted heat-weld seam",
+        "Indigo maintenance ink",
+        "Ivory synthetic paper",
+        "PoolCore blue polymer",
+        "Translucent protective film",
+        "Vermilion service marking"
+      ]
+    }
+  }
+}

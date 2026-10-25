@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "production_default_shader_math_manifest_unchanged": {
+    "scripts/reference_wing/reference_materials.gd": {
+      "before": "b47d10d4b1d863f3b8d7f8a611c5876f56bf92feb0d301c79e7646cf06bb2b3f",
+      "after": "b47d10d4b1d863f3b8d7f8a611c5876f56bf92feb0d301c79e7646cf06bb2b3f"
+    },
+    "shaders/reference_wing/reference_glaze.gdshader": {
+      "before": "bbcef2a5c9c64cac14263aaa1aef8bc36b5ebba3a04b00653a23b023c11f0044",
+      "after": "bbcef2a5c9c64cac14263aaa1aef8bc36b5ebba3a04b00653a23b023c11f0044"
+    },
+    "shaders/reference_wing/reference_glaze_math.gdshaderinc": {
+      "before": "37ffdbc51e028a2069fe97fd0636faf22ac2e878bb8690049aba55fe6d1d839b",
+      "after": "37ffdbc51e028a2069fe97fd0636faf22ac2e878bb8690049aba55fe6d1d839b"
+    },
+    "shaders/reference_wing/reference_glaze_rt.gdshader": {
+      "before": "69b81d7c3fa574214bf5f4621c5aee390357de6183eb57a7b1eacb0453371f8b",
+      "after": "69b81d7c3fa574214bf5f4621c5aee390357de6183eb57a7b1eacb0453371f8b"
+    },
+    "shaders/reference_wing/reference_glaze_surface.gdshaderinc": {
+      "before": "ca0f675d0d5d65d6c957fba770e162d0bfa228565591d90bbb0d7abc5dacfe7a",
+      "after": "ca0f675d0d5d65d6c957fba770e162d0bfa228565591d90bbb0d7abc5dacfe7a"
+    },
+    "tools/materials/reference_wing/surface_math.py": {
+      "before": "e9e2a46cf260cf5f191343aa39ccaf08fdc7a27db300b2c901b540767fe90248",
+      "after": "e9e2a46cf260cf5f191343aa39ccaf08fdc7a27db300b2c901b540767fe90248"
+    },
+    "assets/materials/reference_wing/material_manifest.json": {
+      "before": "3cc8e61743539b06a4dee19ea9a9c65a2e33af9c438a88be994d1bfd13248d2b",
+      "after": "3cc8e61743539b06a4dee19ea9a9c65a2e33af9c438a88be994d1bfd13248d2b"
+    }
+  },
+  "qa_helper_and_tests_only": true
+}

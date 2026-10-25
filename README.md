@@ -2,7 +2,9 @@
 
 这是独立的 Godot 工程分支。仓库根目录的 `project.godot` 是入口；原 Web 游戏保留在 `main` 分支，不需要 npm、浏览器壳或 Web 构建流程。
 
-当前代码对应 **WaterFeel 0.6.2（2026-10-23）+ SeedGuard1**。这是开发候选版本，不是已通过目标 Windows 显卡验收的稳定版，也没有达到照片级写实目标。
+当前 Windows 版本为 **0.6.13（2026-10-26）**：六章探索主线、参考翼、球池与软垫互动、青绿柔光镜头、水波、手电筒和人物切换。原池保持浅水，本版没有新增深水区或游泳动作。
+
+**[下载 Windows 安装包](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.13-pc-20261026)** · [本版说明与验证范围](docs/releases/0.6.13.md)
 
 当前本地分支新增 **天玑 8400 / 12GB Android 适配**：移除手机版立体水花管线，保留动态水面、折射、焦散与倒影；减少常驻房间、限制高分屏像素预算，默认 High / 30 FPS 上限。已用 Godot 4.7 实际导出并校验 ARM64 APK，说明与验证边界见 [Android 8400 移植](docs/ANDROID-8400-20261023.md)。APK 与图形日志位于 `output/`；此目录不提交 Git。
 
@@ -10,17 +12,50 @@
 
 **[下载安卓 APK（0.6.4，人物恢复版）](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.4-android/PoolCore-Mobile-8400-AvatarFix.apk)** · [GitHub 发布页与安装说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.4-android)
 
-## 打开和运行
+## 安装并玩游戏
 
-1. 下载或克隆本分支，使用 Godot **4.6 Standard** 打开根目录 `project.godot`。实际验证基准为 **4.6.3**，不要把允许尝试其他版本理解成已验证兼容。
-2. 等待首次资源导入，再运行主场景。PC 使用 Forward+，需要支持对应图形后端的设备。
-3. 保留 `native/source_water/` 下的描述文件与平台辅助库。它们加速原有 CPU 工作，不替换水体方程。缺失或不支持时有 GDScript 回退，但编辑器可能报告扩展载入错误。
+下载发布页中的 **PoolCore-PC-0.6.13-Setup.exe**，运行安装后从桌面或开始菜单打开 **PoolCore**。GitHub 自动生成的 Source code ZIP 只有源码，不是游戏安装包。安装包含游戏、资源、定制引擎与 DLL，无需另装 Godot、Blender、Python 或 Node.js。
 
-本源码不附带 Godot 编辑器、Windows 游戏 EXE/PCK 或 APK。Windows 导出配置已保留；需安装匹配的官方导出模板。运行游戏读取 GLB，不要求安装 Blender；编辑模型与重建几何的基准为 Blender 4.3.2。
+要求 Windows 10/11 x64 和支持 Vulkan 的显卡。实际图形检查使用 RTX 5070 Laptop，其他硬件未逐一验证。首次使用 High 画质，实验光追、NR 和帧生成默认关闭，支持的 NVIDIA GPU 可在画质菜单启用。帧生成仍可能有果冻感；NR 与帧生成互斥。首次启动请等待着色器编译和场景准备。
+
+默认安装到 `%LOCALAPPDATA%\Programs\PoolCore`，无需管理员权限。存档在安装目录的 `profile\Godot\app_userdata\BEYOND THE BASIN - PoolCore Native`；升级不覆盖、卸载不主动删除这个目录。旧免安装版用户可在退出两边游戏后复制旧包的 `profile` 到新目录，覆盖前先备份。安装包不包含开发者存档。
+
+## 另一台电脑下载源码后怎么运行
+
+1. 安装同一发布页的 **PoolCore-PC-0.6.13-Setup.exe**。安装目录中提供 **PoolCoreEditor.exe**，它是本工程使用的定制 Godot 4.8-dev 编辑器，所需 DLL 已随包提供。
+2. 下载 **godot/waterfeel-20261023** 分支源码 ZIP，完整解压到可写目录，例如 `D:\PoolCoreSource`。默认 `main` 是 Web 工程。也可执行：
+
+   ```powershell
+   git clone --branch godot/waterfeel-20261023 --single-branch https://github.com/YBZSG/beyond-the-basin.git PoolCoreSource
+   cd PoolCoreSource
+   git checkout v0.6.13-pc-20261026
+   ```
+
+   `git checkout` 固定到与安装包对应的源码；需要后续开发更新则继续使用分支。
+3. 双击源码根目录 **Open-Editor.cmd**。如果游戏装在自定义目录，将该目录的 **PoolCoreEditor.exe** 拖到 CMD 上；保留编辑器旁的 DLL，不要只复制 EXE。
+4. 等待首次资源导入结束，然后按 **F5** 运行工程，主场景是 `scenes/main.tscn`。完成首次导入后，也可以双击 **Run-Source.cmd** 运行源码。
+
+PowerShell 手动打开示例：
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\PoolCore\PoolCoreEditor.exe" --editor --path "D:\PoolCoreSource"
+```
+
+辅助 CMD 将源码存档放到 `%LOCALAPPDATA%\PoolCore\SourceProfile`，与安装版分开。不要用 `PoolCore.exe` 打开源码：旁边的 `PoolCore.pck` 会接管资源，使源码修改不生效。不要复制别的电脑的 `.godot` 缓存，使用本版编辑器重新导入。
+
+旧文档中官方 Godot 4.6/4.7 的说明不再是本版推荐基线；官方版没有本项目的原生光追、DLSS/NR 接口。运行不需要 Blender，编辑 `.blend` 或重建几何才需要。保留 `native/source_water/bin` 下的平台辅助库。
+
+### 可选人物与排错
+
+- Git 包含完整原探索者与场景。ithappy 第三方原模型、贴图不作为独立素材公开到 Git；源码默认使用原探索者。有权使用素材的协作者可把已有 `ithappy_explorer.glb` 与相邻贴图放入 `assets/models/avatar/`，重新导入后切换。缺少可选模型会保留原人物，仍可玩。见 [来源记录](source_provenance/ithappy/README.md)。
+- 安装版人物切换：**Esc → 右侧「探索设置」顶部「角色选择」**。F 切换镜头滤镜，不是第三人称。
+- 找不到引擎：先安装本版，再双击 CMD；自定义安装路径使用拖入编辑器 EXE 的方式指定。
+- 首次载入慢：等待导入、着色器编译和场景准备，不在同一工程同时运行两个编辑器。
+- 光追或 DLSS 不可选：检查 NVIDIA 显卡、驱动、定制引擎和 DLL；可先用普通画质。日志在安装目录 `profile/PoolCore.log`。
 
 ## 自行编译带 NR 的引擎
 
-NR（原生神经渲染）不是官方 Godot 的功能，需要打了补丁的 NVIDIA 引擎分支。仓库只保存补丁和构建脚本：`nvngx_dlssnr.dll` 单个文件约 266 MB，超过 GitHub 单文件限制；NVIDIA RTX SDKs 许可允许把 SDK 集成进应用，但商业发布前需要通知 NVIDIA。因此 SDK 头文件、静态库、运行时 DLL 和编译出的 EXE/PCK 都不提交到本仓库，源码发布里也不附带。想运行 NR 版本，按下面步骤自行下载 SDK 并编译。
+NR 需要打补丁的 NVIDIA 引擎分支。Windows 安装包已提供预编译编辑器和运行库；只有修改引擎本身才需要下面的编译流程。SDK 头文件、静态库、DLL 和 EXE/PCK 不提交 Git。NVIDIA RTX SDKs 许可允许集成应用，商业发布前需要通知 NVIDIA，完整条款见随包许可。
 
 ### 需要自己准备的外部文件
 
@@ -96,14 +131,14 @@ python -m SCons platform=windows target=template_release arch=x86_64 d3d12=no ac
 - `native/source_water/`：CPU 辅助库、C 源码、构建方法与许可。
 - `docs/`：功能、资产和验证边界。历史候选报告不代表本次整套游戏验收。
 
-人物仍是项目自制的程序化模型，带骨架、蒙皮与动画，不是扫描人物。布料 GLB 的最终材质由 Godot 脚本/shader 绑定，独立模型查看器不会自动复现全部效果。修改池底、碰撞或水深后，需要重新生成匹配地形缓存并检查实际行走。
+原探索者是项目自制的程序化模型，新人物为用户提供的 ithappy 素材；两者都不是扫描人物。布料 GLB 的最终材质由 Godot 脚本/shader 绑定，独立模型查看器不会自动复现全部效果。修改池底、碰撞或水深后，需要重新生成匹配地形缓存并检查实际行走。
 
 ## 当前已知问题
 
 - 从主页实时切换世界时出现黑色/荧光绿画面的根因尚未确认，不能称为已修复。分阶段退场与保护已集成，但不等于目标设备问题已通过。
 - “重启到所选世界”是可选的完整退出/重开方式，只在有完整启动参数契约的交付启动器下支持。直接从编辑器运行时会拒绝并提示，不会猜测启动参数或自动重启。
-- 最终完整封包的两次云端图形启动在就绪前被外部终止。精确封包 CPU、受控人物和局部源工程水体检查通过，不能代替完整 Windows 图形验证。
-- 云端 llvmpipe 的耗时不是 Windows 显卡或手机帧率。浅水边缘、动作、光照和材质仍有继续改进空间。
+- 本版已在 Windows / RTX 5070 Laptop 进行对应修改的定向运行与显示检查；未做全地图、全部显卡或完整主线通关验收。
+- 仍有既存 OpTypeForwardPointer 和退出 Texture RID 清理诊断；帧生成果冻感未宣称解决。NR 是实验功能，不保证所有场景及硬件兼容。
 - Android 本地适配已恢复并构建新 APK，Mobile 渲染路径和程序驱动的交互检查通过；当前未连接 Android 真机，不能据此保证手机帧率或驱动兼容性。
 
 ## 来源与许可

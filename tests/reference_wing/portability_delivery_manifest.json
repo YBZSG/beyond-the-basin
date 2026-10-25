@@ -1,0 +1,775 @@
+{
+  "status": "Suggested source-project patch manifest; not target-machine acceptance",
+  "base_commit": "351fcd6f8f2bb5fe21851482e2526dfa262ef406",
+  "apply_to": "Complete unchanged original Godot project at base_commit; this is not a standalone replacement project",
+  "integration_edits": [
+    {
+      "path": "scripts/main.gd",
+      "bytes": 99113,
+      "sha256": "ee3bce0f02b5d9280b69bc93e0a80cae657c26c8f90d7ab6d9c700361ae76b42"
+    },
+    {
+      "path": "scripts/app/world_restart.gd",
+      "bytes": 8479,
+      "sha256": "e72a946eff85ffd1b74b1d605d2be5e345470f8936a0e9046022a9eb57349512"
+    },
+    {
+      "path": "scripts/rendering/rt_material_refresh.gd",
+      "bytes": 6883,
+      "sha256": "2e6a6179bc44b65f86405a8df761b09ba6315c0fe99c0007358cd70b6e77e5a7"
+    }
+  ],
+  "runtime_additions": [
+    {
+      "path": "assets/materials/reference_wing/bevel_normal_gl_16.png",
+      "bytes": 31724,
+      "sha256": "81b91beffbd3d5b0a6f36963d09fdfcffd7813270c12fa3a7fad8bba3a176a7d"
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_normal_gl_16.png.import",
+      "bytes": 990,
+      "sha256": "92e0a226d9109a1b32f45974944c0d72d28eba899c45efa405adecba0acfcce5"
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_slope_rg_2k.png",
+      "bytes": 18077,
+      "sha256": "a10adda208b4fcff60d1c41da1ff039c7ee34f90bcc1c2c9d2c0b23a691618b8"
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_slope_rg_2k.png.import",
+      "bytes": 986,
+      "sha256": "5bd769a169c11ab1cf0e8a5f49ec5d2e4d42929ac59a83f59c5b70b5c39e64d7"
+    },
+    {
+      "path": "assets/materials/reference_wing/full_normal_gl_16.png",
+      "bytes": 1923098,
+      "sha256": "b59584373f011607324b4dc2c4dd695b51e4eead4a825c74ee53f5fb2fc75c29"
+    },
+    {
+      "path": "assets/materials/reference_wing/full_normal_gl_16.png.import",
+      "bytes": 987,
+      "sha256": "6b47ffe041522ea1230d8884fa4e8134fced3b9a5d44daf9f69829eca60ee3d7"
+    },
+    {
+      "path": "assets/materials/reference_wing/glaze_orm_2k.png",
+      "bytes": 22181,
+      "sha256": "dc00b4c0d621b2f73313d8e3529c83e2852b4acb86e0885583a76b6b3add0d09"
+    },
+    {
+      "path": "assets/materials/reference_wing/glaze_orm_2k.png.import",
+      "bytes": 971,
+      "sha256": "40c023032ffed622c8aedd17bd574e306eaa59b40d535b58e7e827d681b18a91"
+    },
+    {
+      "path": "assets/materials/reference_wing/height_16.png",
+      "bytes": 3756411,
+      "sha256": "db88cf4d0643305359ac1a0e33179990a4cce72ff06d05bf70f6dee59ba49cbb"
+    },
+    {
+      "path": "assets/materials/reference_wing/height_16.png.import",
+      "bytes": 962,
+      "sha256": "6f68d252385c237d38cb992bd8855997ee079b61e0d6913c24da58ed9945d177"
+    },
+    {
+      "path": "assets/materials/reference_wing/material_manifest.json",
+      "bytes": 12223,
+      "sha256": "e1b55bac72ab364f8fbdbc18894bfdc455b9f7007be9c27c552c9e6e6a466075"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+      "bytes": 2600417,
+      "sha256": "fd5466b1ae5fc0effda69ca6554abd23ba5aa9c05c972fad7ee8854f734b6fa4"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png.import",
+      "bytes": 1005,
+      "sha256": "80d26218fc4bcfd7ecda8fbbd17ede43cd2a2839942c34b4163e4b6f1f1ba0c4"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+      "bytes": 18148,
+      "sha256": "1bfada6d9770d0621dbfb688bf1a8ee47b850b806fb45b09d147a9c386682b06"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png.import",
+      "bytes": 1292,
+      "sha256": "3397d620dd246307d648f9bd31c2b24f97ef36ae60205b5301d78fda9f2ef6be"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+      "bytes": 18313,
+      "sha256": "6b916ce8942a75e125f57357acd31d77c88712a316b46d88690650a0e018769e"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png.import",
+      "bytes": 1272,
+      "sha256": "fb697519943c5e45d3a617e8b20c6ee7cc804b0f83722cae1ea476c0abec631d"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+      "bytes": 18394,
+      "sha256": "d8a44ecf9100458133479a322a340a5814eec78ca1a5e28e682308d95f1262ae"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png.import",
+      "bytes": 1267,
+      "sha256": "fd40f5f30745c8bd576eca5fae45939a3225e5129ed9d6b862c5874cad6294d3"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+      "bytes": 18218,
+      "sha256": "85f0acafe911cb7ab19d690907f9baa72d8124e8f9ad304607dd1ecc00741c23"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png.import",
+      "bytes": 1266,
+      "sha256": "94cbc806a97e8c4a3e48d0f4f57f71acd04236bf74f30303d8041054b11340d9"
+    },
+    {
+      "path": "assets/models/reference_wing/ball_lounge.geometry.json",
+      "bytes": 2461690,
+      "sha256": "be3166caf7bff05494128ea7881e00912e73c8ec720c16542409cf423e641003"
+    },
+    {
+      "path": "assets/models/reference_wing/ball_lounge.glb",
+      "bytes": 24647788,
+      "sha256": "039f9d43f92cdb0c2f75fbe540e4d82f57476b18f331bd4f958ce0fd4ab6f24f"
+    },
+    {
+      "path": "assets/models/reference_wing/ball_lounge.glb.import",
+      "bytes": 1068,
+      "sha256": "00cdb6b78c1269803838022305873e03ea04fad2dc6e14f9338f60fd36b129db"
+    },
+    {
+      "path": "assets/models/reference_wing/colonnade.geometry.json",
+      "bytes": 105904,
+      "sha256": "024580424a57c4368ce9c6726e525000b2d717139b12e9409797828d20cf953d"
+    },
+    {
+      "path": "assets/models/reference_wing/colonnade.glb",
+      "bytes": 841924,
+      "sha256": "b932ef1f37c33e4c57e19ad1a7b649e851c850cd8e386f7c5192ba86799987e7"
+    },
+    {
+      "path": "assets/models/reference_wing/colonnade.glb.import",
+      "bytes": 1061,
+      "sha256": "53f5989f62ef62d6c68a62e177e63d1c33282a3ed33ce06ab31fa193ebd6d7a0"
+    },
+    {
+      "path": "assets/models/reference_wing/cyan_corridor.geometry.json",
+      "bytes": 160784,
+      "sha256": "9411edd50599f6fd964a700415beae81757b1f14eaefc1e9ba04058c5a007f37"
+    },
+    {
+      "path": "assets/models/reference_wing/cyan_corridor.glb",
+      "bytes": 1387688,
+      "sha256": "b0f78182f23c223c95116f02f5d529fa830eaad99c2e12d12eed1e434d855765"
+    },
+    {
+      "path": "assets/models/reference_wing/cyan_corridor.glb.import",
+      "bytes": 1074,
+      "sha256": "2e0f51115a7e5de87896c09e972690b07367b644be2c80076f44a9388e80d1f7"
+    },
+    {
+      "path": "assets/models/reference_wing/octagonal_bath.geometry.json",
+      "bytes": 388718,
+      "sha256": "4eadf0bc13a94eb72a13e068d210af884581be5098fc2e62daed2d3ddfcf9af7"
+    },
+    {
+      "path": "assets/models/reference_wing/octagonal_bath.glb",
+      "bytes": 2694744,
+      "sha256": "c2cff5a4851fa1cda186b023a32afe7c36489f1f84cf7da4363c73482f1ae20e"
+    },
+    {
+      "path": "assets/models/reference_wing/octagonal_bath.glb.import",
+      "bytes": 1077,
+      "sha256": "46a6f7359508dca689c5bae9d5637a238b619b1455534fbd675d8a1b214641dc"
+    },
+    {
+      "path": "assets/models/reference_wing/stair_gallery.geometry.json",
+      "bytes": 555647,
+      "sha256": "f3523a105b746e58b913c1011ba3075830b5a3acf1973d83b856939176f6c671"
+    },
+    {
+      "path": "assets/models/reference_wing/stair_gallery.glb",
+      "bytes": 3785336,
+      "sha256": "6ef6e82d7a9d39dc3139afd2b01bde572e2af3d2ec2ef15538830d204ba862db"
+    },
+    {
+      "path": "assets/models/reference_wing/stair_gallery.glb.import",
+      "bytes": 1073,
+      "sha256": "0be326dcf37b665da0f8e978d2c5fd2435c6c07f77881e0b303a5ed51d40660d"
+    },
+    {
+      "path": "scripts/reference_wing/reference_catalog.gd",
+      "bytes": 5357,
+      "sha256": "d0cb5ba09a9638d5f6d485334f6af8f009f1765e7addce473b4c9c5d8fce0d7c"
+    },
+    {
+      "path": "scripts/reference_wing/reference_catalog.gd.uid",
+      "bytes": 20,
+      "sha256": "a1466e643ecb8e465a4c8e32f6ce6477c5189f47e33f9baaba6ba2e771776093"
+    },
+    {
+      "path": "scripts/reference_wing/reference_controls.gd",
+      "bytes": 2270,
+      "sha256": "b357b1553aa6400d33df265ce207b408b7e9c2a7083afbbeb12cb9af70e33c86"
+    },
+    {
+      "path": "scripts/reference_wing/reference_controls.gd.uid",
+      "bytes": 20,
+      "sha256": "81fb733b7386027fc7ae75b437176b887ee54ae8209d7fd296c5207caf7b3b45"
+    },
+    {
+      "path": "scripts/reference_wing/reference_depth_field.gd",
+      "bytes": 3104,
+      "sha256": "b2cb4d6bc69016a9ba5b56452b7008ff622a1a4d51a37f04dd17e8db58b2c1f5"
+    },
+    {
+      "path": "scripts/reference_wing/reference_depth_field.gd.uid",
+      "bytes": 20,
+      "sha256": "953e7ffb6c4905b300ca7f6250bf7b2a6b35f29cfcebb724b5c483ef984e9c9b"
+    },
+    {
+      "path": "scripts/reference_wing/reference_exploration_notes.gd",
+      "bytes": 749,
+      "sha256": "f2cb2e3b18ebf887bd356c995ee071ab5e9047f3b203756b48c1bd42114dbddb"
+    },
+    {
+      "path": "scripts/reference_wing/reference_exploration_notes.gd.uid",
+      "bytes": 20,
+      "sha256": "98f09cf463fdb1dd7a9de2da649721e6324f884c07ca28c755a4f1fc2f197ee9"
+    },
+    {
+      "path": "scripts/reference_wing/reference_lighting.gd",
+      "bytes": 9337,
+      "sha256": "91faef2d88eea33d56aa9d858fd301d81b179b9a0b62adde1b373908d56519c4"
+    },
+    {
+      "path": "scripts/reference_wing/reference_lighting.gd.uid",
+      "bytes": 20,
+      "sha256": "f9a60631e81f5e89fe95ee3135b69e165171ebbd0ed2d3cf7f682ba6165c3e13"
+    },
+    {
+      "path": "scripts/reference_wing/reference_look_settings.gd",
+      "bytes": 2291,
+      "sha256": "eb81f1c4789a4c6c0a8d7a78bebcffb33a62cb4d3658b135b77e58b5edd91433"
+    },
+    {
+      "path": "scripts/reference_wing/reference_look_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "578ba08fdc6b8a4cff5b455fc07221bb6380db1ffef85e47e98a78926c96a39d"
+    },
+    {
+      "path": "scripts/reference_wing/reference_materials.gd",
+      "bytes": 7940,
+      "sha256": "556abad8925b56bdea90578f438d6222818ad7510a0cd697eb82036988159bc0"
+    },
+    {
+      "path": "scripts/reference_wing/reference_materials.gd.uid",
+      "bytes": 20,
+      "sha256": "86da4f878724ff26038147e358b448671aa7e5d26db91fdb5836eb2553db03dc"
+    },
+    {
+      "path": "scripts/reference_wing/reference_player.gd",
+      "bytes": 1795,
+      "sha256": "529b770a7b3b1953f43238d7fb70742c521a645419e7891bbd51d1ca81bc7598"
+    },
+    {
+      "path": "scripts/reference_wing/reference_player.gd.uid",
+      "bytes": 20,
+      "sha256": "ea14aaa3e6948bfaddb555491e7ce6b9c2783a8c94b147ff69d38122bb585a5f"
+    },
+    {
+      "path": "scripts/reference_wing/reference_room_builder.gd",
+      "bytes": 3035,
+      "sha256": "8fe6c810d7c39370fd2d198b217ec9a8488a404cdffbfc3d705aa72d9764cf45"
+    },
+    {
+      "path": "scripts/reference_wing/reference_room_builder.gd.uid",
+      "bytes": 20,
+      "sha256": "837c64b2770497d20c81e690d3dd13805eb2c09bc6cf066dafd6e42cfc43f36c"
+    },
+    {
+      "path": "scripts/reference_wing/reference_scene_water_runtime.gd",
+      "bytes": 8069,
+      "sha256": "509a6dcbdd6eacdb23013cef809291d72ef3077e3d167bb2920497fc2e7acdbe"
+    },
+    {
+      "path": "scripts/reference_wing/reference_scene_water_runtime.gd.uid",
+      "bytes": 20,
+      "sha256": "aabf8bf7a18a25216c6440f45605de81a1f0a982118bc3d100b1cfce84c9df09"
+    },
+    {
+      "path": "scripts/reference_wing/reference_surface_mesh.gd",
+      "bytes": 1397,
+      "sha256": "f814058e67fed5c5a6dda1ff45a06d3725611251bb4f754f5a000dc8300263bc"
+    },
+    {
+      "path": "scripts/reference_wing/reference_surface_mesh.gd.uid",
+      "bytes": 19,
+      "sha256": "0aecd12688b03313132eedc8b27d930431c0c483b85abc1e56d791243e392fe1"
+    },
+    {
+      "path": "scripts/reference_wing/reference_water_runtime.gd",
+      "bytes": 4028,
+      "sha256": "a33db8b81b8b8070ced995e4e5c1d8000a883ff93331d9a05607f49561935eca"
+    },
+    {
+      "path": "scripts/reference_wing/reference_water_runtime.gd.uid",
+      "bytes": 20,
+      "sha256": "beaa522f7776b1fc0a3f335f499d4c21d141484a2709472a0ff277a15fac92ab"
+    },
+    {
+      "path": "scripts/reference_wing/reference_wave_controller.gd",
+      "bytes": 4786,
+      "sha256": "a9cad35109486824c35cf22f44f341e3483e53763582ee2bd1b1008b4763e8bf"
+    },
+    {
+      "path": "scripts/reference_wing/reference_wave_controller.gd.uid",
+      "bytes": 20,
+      "sha256": "a05a35d9503abb57d9106ec0771ca93d35844ae414916f1cfc070fea7d242105"
+    },
+    {
+      "path": "scripts/reference_wing/reference_world.gd",
+      "bytes": 1852,
+      "sha256": "0c849b72042834f7a9597a0fb41b8976be28faf48249cbc3d60a8517b58d1150"
+    },
+    {
+      "path": "scripts/reference_wing/reference_world.gd.uid",
+      "bytes": 19,
+      "sha256": "e6e0de92c46089aaa7446bd7d1fa8e7d0e8da1eff81c659dab23b058f13cca23"
+    },
+    {
+      "path": "shaders/reference_wing/reference_camera_look.gdshader",
+      "bytes": 3149,
+      "sha256": "271d269f3659109be4f8aef724db0a74c428a529826c41772621e9bcde949a51"
+    },
+    {
+      "path": "shaders/reference_wing/reference_camera_look.gdshader.uid",
+      "bytes": 20,
+      "sha256": "59bcdafd2dcfd1e7986a09b98ddb94f9f4d4485ae211e98ded57279d4cd71b67"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze.gdshader",
+      "bytes": 158,
+      "sha256": "bbcef2a5c9c64cac14263aaa1aef8bc36b5ebba3a04b00653a23b023c11f0044"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze.gdshader.uid",
+      "bytes": 20,
+      "sha256": "1c7f97d7b7fea36607e7f88daa6ecc622da09d6ef7fe289180ee3c18aaeb8d0a"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_math.gdshaderinc",
+      "bytes": 2866,
+      "sha256": "736e136c606600842b4d6a0c1d220cd9ab43f9899f25ae266e0d3ff78b807654"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_math.gdshaderinc.uid",
+      "bytes": 20,
+      "sha256": "656712d20070c1893d6537339e6643bd481ee0196488fd45eeecc37d8ef5ef29"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_rt.gdshader",
+      "bytes": 178,
+      "sha256": "69b81d7c3fa574214bf5f4621c5aee390357de6183eb57a7b1eacb0453371f8b"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_rt.gdshader.uid",
+      "bytes": 20,
+      "sha256": "d0bb553f994ea33c82962e6d5fb7464ade36a674819c9a25502000365647d1da"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_surface.gdshaderinc",
+      "bytes": 4203,
+      "sha256": "2351d03cb31c9074faa0967ff7c41f7325952d5ed6de7d4ce0ecfb64eab09f1c"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_surface.gdshaderinc.uid",
+      "bytes": 20,
+      "sha256": "751a1a3c1c7e0a774a7f81ef9a9d4d8a8df97bd98fe6323253eba71476076790"
+    },
+    {
+      "path": "shaders/reference_wing/reference_ripples.gdshaderinc",
+      "bytes": 770,
+      "sha256": "d28fc813099c712ab41e612c34ca301f16c6058a6dfb711e4088b5eaee639703"
+    },
+    {
+      "path": "shaders/reference_wing/reference_ripples.gdshaderinc.uid",
+      "bytes": 20,
+      "sha256": "b5302e024d28a0ff83b04f1043b995839cc1aca0a6c190338ae9bbacc625e01f"
+    },
+    {
+      "path": "shaders/reference_wing/reference_water_surface.gdshader",
+      "bytes": 10767,
+      "sha256": "cf95ccea9dc792be06565712c645773117b00cb09cc3135add308684c220d368"
+    },
+    {
+      "path": "shaders/reference_wing/reference_water_surface.gdshader.uid",
+      "bytes": 20,
+      "sha256": "e134f94c10d824801b780bacf70df83b536727a6a656cbced8de8e8a53343ed9"
+    }
+  ],
+  "editable_authoring_additions": [
+    {
+      "path": "tools/blender/reference_wing/lounge_README.md",
+      "bytes": 6239,
+      "sha256": "9aa3e3fa8ee27d2eb3ee6057a6a5e396921c91383fba968327193253783d92ee"
+    },
+    {
+      "path": "tools/blender/reference_wing/lounge_build.py",
+      "bytes": 37351,
+      "sha256": "659238eff50d41833266c49247f6ff0e3b7915b5030f814176624fdc46b3403f"
+    },
+    {
+      "path": "tools/blender/reference_wing/lounge_render.py",
+      "bytes": 1249,
+      "sha256": "bcc6019841688b6b9138b5c35eff92b0228a57dfaf40aae0ea307f0ed2b0df90"
+    },
+    {
+      "path": "tools/blender/reference_wing/lounge_sources/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+      "bytes": 34335428,
+      "sha256": "45449a83591838fb70b1c06f30d4dd0dd114ce9025de1fca7a3c5fd4408b64bf"
+    },
+    {
+      "path": "tools/blender/reference_wing/lounge_verify.py",
+      "bytes": 17265,
+      "sha256": "8bf36ab686881af6ea305b0dc10a877a085415cd52cd03e53e4605ae794ab118"
+    },
+    {
+      "path": "tools/blender/reference_wing/native_light_proxy.py",
+      "bytes": 11151,
+      "sha256": "26ef5f43ec5d8d723c53c291cc7abe3ccdeb2b31d5d8bf6ac91277994e0a61ae"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/README.md",
+      "bytes": 13166,
+      "sha256": "f9535503f72f37f286dbec090c80f39cc7d39dcd5f6335ac1fbfc1e8f8f8dbd4"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/add_stair_diagnostic_camera.py",
+      "bytes": 2932,
+      "sha256": "e934ce90cd25d610f356be9b665f15d3129fcdd85cd4fccdacdcad67ddd5aa9a"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/audit_stair_structural_fingerprint.py",
+      "bytes": 6741,
+      "sha256": "a9fce547aadaba904a56309e7060f3a4c06616f37a329e93500ad636cf083d98"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/build_stair_gallery.py",
+      "bytes": 34421,
+      "sha256": "bc37779de93d70c72f8c0f32929ba341e1c1eac9cf7ea529bdc28b2245a5e8af"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/draw_stair_plan.py",
+      "bytes": 4346,
+      "sha256": "c8e8af8501766bc9e1c1848dc9aedbb7092c9dc1af6fb37eaee6086b30cde1e3"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/draw_stair_sections.py",
+      "bytes": 3464,
+      "sha256": "bbb0e7a5ec02c04d8bb902c664138cef0ff4fe3abb6dc0446d6d5a6ec24a8e50"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/inspect_stair_export.py",
+      "bytes": 4648,
+      "sha256": "839322f57da088189f422815b52beae768272f3f4e37849b08f955afe9211a2f"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/measure_stair_contacts.py",
+      "bytes": 2255,
+      "sha256": "131761e116a611f707b6b2fd01e95ccfc0b12a287d921176239a9be27b1c1afd"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/measure_stair_square_camera.py",
+      "bytes": 3709,
+      "sha256": "0f221d3a26f7bdd804ea73ae6ac837cc9be75a5a19bb311c617e8ca706533d58"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/measure_stair_strip_projection.py",
+      "bytes": 4142,
+      "sha256": "39871a97ea5be28a6746f126a540d79cf97bb69a948d2dff5f6fd27accbefdda"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/rasterize_stair_sections.py",
+      "bytes": 1009,
+      "sha256": "951dffc1cd493e4e6eb9f6cdbac79e30b98370ef4de8ac68b4d1e69d874e7486"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/rebuild_stair_gallery.sh",
+      "bytes": 740,
+      "sha256": "c3fa9c9391fc6c03cf72cfc04172c2d34662c2bf5a8338bca380603d287d4208"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_crown_trial.py",
+      "bytes": 3999,
+      "sha256": "de4647a050335f89cc6f4111aa3e8c1a58c22599ed37a2997d01bcb2c9ab13a8"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_crown_wide.py",
+      "bytes": 3314,
+      "sha256": "89aa94d59f2fd48f183dec7342b248177add9df7f5ec8863a9f9753a59b89667"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_diagnostic.py",
+      "bytes": 1560,
+      "sha256": "e4b0d40bc8cf755675864f2de3caff1039b51a3d5c06044d98af9f3fcee8ccb1"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_facet_trial.py",
+      "bytes": 3450,
+      "sha256": "d4d347c6c2af14197dff161e4bc805a9e658169651aa510f2102f63cbd9f8696"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_planar_trial.py",
+      "bytes": 3988,
+      "sha256": "09f7ac792052a0dfbd0ee214a400093346be672e0862fdd5dd04a4c7257c289e"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_preview.py",
+      "bytes": 1886,
+      "sha256": "b6a03bb31decbadab4b32a595fe3f785d5e4ca81994c5bd99c3f648412697577"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/render_stair_wall_crops.py",
+      "bytes": 2924,
+      "sha256": "70b6b063e91353c85fdd99c0bf74bc3a351cc3bf17aee0edc01d03ac3efcf3dc"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/source/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+      "bytes": 15425292,
+      "sha256": "a8f6bc5bbd7d162c374889d6545d2f5c7dbb8a80e23dc7652d2105e170930058"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/stair_crown_bindings.py",
+      "bytes": 2963,
+      "sha256": "7a9cfa12fe962c92f49f54e237a47675c9830c04e5c3b371791fc4237feaf642"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/stair_diagnostic_camera.py",
+      "bytes": 3039,
+      "sha256": "c85075006c2e613fdaffba581b7061db55fa600a5c22832e9c557b4c84ddee9a"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/update_stair_light_metadata.py",
+      "bytes": 6630,
+      "sha256": "ea03d56d1b2ebd5744393237989081092cac9b29cac33bb8cb2d7ece48f26ade"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/update_stair_square_framing.py",
+      "bytes": 3795,
+      "sha256": "ff625a3b8dce3100b7db16df3d68d66b21edffc16cc475ed08872cb532f34703"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/verify_stair_portability.py",
+      "bytes": 3002,
+      "sha256": "3407dbec9f022c0c410749ca5d1173c40f8c187993b29e6fe8c48ad521b81fe2"
+    },
+    {
+      "path": "tools/blender/reference_wing/stair_gallery/verify_stair_proxy_clearance.py",
+      "bytes": 2041,
+      "sha256": "8e5a6e91593cf221152c9fd0047cc69479b0abad433c00e1f18c53c7e067cf12"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_README.md",
+      "bytes": 11503,
+      "sha256": "91c000eb877be9902d9b4c229876c06eed51e98372d01adfb08d6216774357d1"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_bath_structure_audit.py",
+      "bytes": 5968,
+      "sha256": "b0568e5bf351fbfb06bbd1532557ada210384face82110f3b5c5cad167556f87"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_bright_band_audit.py",
+      "bytes": 3516,
+      "sha256": "ec6cf5fab94a08042cbb744d364b1ef268a94bf65e0c71700580a70c72c0591c"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_build.py",
+      "bytes": 41271,
+      "sha256": "9370911e664503d3c39813876015eb4796d873bc82e565635f5db64a9a02d3d7"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_cove_ray_audit.py",
+      "bytes": 2084,
+      "sha256": "8d3039dbebf7931c5ec94f4bfcee9e54ff7c73465169e5f23dbcde4a5975002e"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_cove_solid_audit.py",
+      "bytes": 2723,
+      "sha256": "c5b437b9a21026c4e74bc6bfd4b5498852f565486d8c230bdca4492180e099ff"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_depth_contract.py",
+      "bytes": 4532,
+      "sha256": "f8a1fc8c3fa6b3d2ea8422b8055c703df0a0f99f93bd12f5eea2ac4617bef895"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_finalize_build.py",
+      "bytes": 3326,
+      "sha256": "7a7244be05dbb0318c853ac68103808559c08a1e265506890585dc9ad6b52291"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_finalize_promote.py",
+      "bytes": 3983,
+      "sha256": "81bd59381b13f545440e676204e7fe5ebf10841c9995f938203852744a786e8d"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_joint_helpers.py",
+      "bytes": 2627,
+      "sha256": "c67a49252375dc63578028b673e0ecda71c65a004eef04eee320746622c4a2d6"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_joint_manifest.json",
+      "bytes": 16240,
+      "sha256": "0be85106fe941987f0f36c5e538d95b4616fae51243f842ca8c328eb30fe70e1"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_joint_plan.py",
+      "bytes": 4762,
+      "sha256": "013c11973a353673eadf4596544b6bc5e6c91d09f65412192045e91fe98a5c9d"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_joint_repair.py",
+      "bytes": 8138,
+      "sha256": "7d592f7d6b029d17ddbea63a278df5e41a1eadd4b593eec9180676cc18f3f891"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_lighting_helpers.py",
+      "bytes": 5589,
+      "sha256": "8d0b838cae715afa3abbc38ab39db5b7bb6c19057135d09424105a7762d8510b"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_photo_frame_audit.py",
+      "bytes": 1823,
+      "sha256": "6893e1c098971b74adb98d3deefe6f52cce8340c60923f79ad786d6d38ea6613"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_pier_promotion_verify.py",
+      "bytes": 3547,
+      "sha256": "dd6910b1a35bac559f45d69174c755083751b85468b5d040dc58cd98e9d8023c"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_portal_pixel_audit.py",
+      "bytes": 3683,
+      "sha256": "904fe3394b4e367556c24680690edc1f6720192ba2e0bebcd63da3428c054418"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_relocate_sources.py",
+      "bytes": 3321,
+      "sha256": "0faf9df875651e0493ca81220ec0f7a1001d836966d96768b85d96d9434bfbb5"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_render.py",
+      "bytes": 1210,
+      "sha256": "f50ba7958f72eafe4d08c48116a1f6072d4acd63852c5c68a249c5b627c9226b"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_satin_verify.py",
+      "bytes": 5224,
+      "sha256": "ce2054e4e88c85347e3a4f254d1aa14df9ed334b467659a5a373dabd150d3d54"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_source_audit.py",
+      "bytes": 1755,
+      "sha256": "09fec370aa038ce8be76b910f8ec1158a60bf6c1cb6c92f930c6d0b57b09b41c"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_rooms_verify.py",
+      "bytes": 6427,
+      "sha256": "8e057758d5f01fba237428256be7645d06e1b277f7d962fb16806131d98fa662"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_sources/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_sources/colonnade.blend",
+      "bytes": 1703315,
+      "sha256": "89aabc975e25c20a9fe61f5649139d962d2dbfe196cd2cd80c7e30c24335d571"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+      "bytes": 2396478,
+      "sha256": "67df09e26ab4d56c166babdd0ac72549965099e0447bca587a5983a1fa568ccd"
+    },
+    {
+      "path": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+      "bytes": 4436846,
+      "sha256": "969c4a67fc03a801ffcec28a4ebb455938d5940971c6163fd849a779aa3e718f"
+    },
+    {
+      "path": "tools/materials/reference_wing/README.md",
+      "bytes": 10140,
+      "sha256": "d58bee4393091bd0b9c710a3478558aea0be548a97074ff77bb095fd729172d1"
+    },
+    {
+      "path": "tools/materials/reference_wing/audit_imported_data_maps.py",
+      "bytes": 5630,
+      "sha256": "6b7735b3edec55f71c9374ab3bf6227b291bc3a10be5c91d89569ba862b280df"
+    },
+    {
+      "path": "tools/materials/reference_wing/audit_legacy_faces.py",
+      "bytes": 2030,
+      "sha256": "69e49c08c7bc2e6dba40fda389f62d7a9cf2c21ae648a57b9f54b551056ab1c1"
+    },
+    {
+      "path": "tools/materials/reference_wing/audit_satin_reference_spacing.py",
+      "bytes": 3632,
+      "sha256": "b286be978ab8824847dca7f0223ff90187fc40ec85098effbcfe86451d4c5c8e"
+    },
+    {
+      "path": "tools/materials/reference_wing/blender_materials.py",
+      "bytes": 14957,
+      "sha256": "18ee328b3bfcadec59807a414f3eb23b7dae72a4c016c014742269f6edd3915e"
+    },
+    {
+      "path": "tools/materials/reference_wing/crown_trial_math.py",
+      "bytes": 4168,
+      "sha256": "1f9d9a3a6aa2088848d3912cb779869da581b3b2174176e73d54b50898f02a8d"
+    },
+    {
+      "path": "tools/materials/reference_wing/generate.py",
+      "bytes": 10559,
+      "sha256": "41b57f0e2764593abbd4108ca3d34ba4cc7e9e06a01943dcb60b80ce3dbaa1dd"
+    },
+    {
+      "path": "tools/materials/reference_wing/measure_reflection_cone.py",
+      "bytes": 7798,
+      "sha256": "6c52f01420f254be0f279710b4f96ac7e03b61521bf2af586bc414d4b87fc0a5"
+    },
+    {
+      "path": "tools/materials/reference_wing/planar_trial_math.py",
+      "bytes": 3006,
+      "sha256": "7e2060eb3c451938391a80e61a4b4e8f8f63eb3768816205d57bf937dde55318"
+    },
+    {
+      "path": "tools/materials/reference_wing/surface_math.py",
+      "bytes": 11914,
+      "sha256": "b0ab1d0b2cbd6fb2f074faa5a3e1c7f25f4231ac291a41b13c70ac107e569683"
+    }
+  ],
+  "retain_new_import_metadata": true,
+  "exclude": [
+    ".godot/",
+    "__pycache__/",
+    "*.blend1",
+    "unapproved *candidate* sources/scripts",
+    "incidental original-asset .import changes and extracted textures from central Godot import"
+  ],
+  "note": "Preserve project-relative hierarchy. Include finalized docs/reference_wing and relevant tests separately as QA evidence."
+}

@@ -1,0 +1,584 @@
+{
+  "scope": "Exact owned new-material source/assets/tests/docs at final material freeze; dependencies listed separately, not claimed as material-worker edits. Native GPU acceptance pending.",
+  "baseline": "351fcd6f8f2bb5fe21851482e2526dfa262ef406",
+  "files": [
+    {
+      "path": "assets/materials/reference_wing/bevel_normal_gl_16.png",
+      "bytes": 31724,
+      "sha256": "81b91beffbd3d5b0a6f36963d09fdfcffd7813270c12fa3a7fad8bba3a176a7d"
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_normal_gl_16.png.import",
+      "bytes": 990,
+      "sha256": "92e0a226d9109a1b32f45974944c0d72d28eba899c45efa405adecba0acfcce5"
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_slope_rg_2k.png",
+      "bytes": 18077,
+      "sha256": "a10adda208b4fcff60d1c41da1ff039c7ee34f90bcc1c2c9d2c0b23a691618b8"
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_slope_rg_2k.png.import",
+      "bytes": 986,
+      "sha256": "5bd769a169c11ab1cf0e8a5f49ec5d2e4d42929ac59a83f59c5b70b5c39e64d7"
+    },
+    {
+      "path": "assets/materials/reference_wing/full_normal_gl_16.png",
+      "bytes": 1923098,
+      "sha256": "b59584373f011607324b4dc2c4dd695b51e4eead4a825c74ee53f5fb2fc75c29"
+    },
+    {
+      "path": "assets/materials/reference_wing/full_normal_gl_16.png.import",
+      "bytes": 987,
+      "sha256": "6b47ffe041522ea1230d8884fa4e8134fced3b9a5d44daf9f69829eca60ee3d7"
+    },
+    {
+      "path": "assets/materials/reference_wing/glaze_orm_2k.png",
+      "bytes": 22181,
+      "sha256": "dc00b4c0d621b2f73313d8e3529c83e2852b4acb86e0885583a76b6b3add0d09"
+    },
+    {
+      "path": "assets/materials/reference_wing/glaze_orm_2k.png.import",
+      "bytes": 971,
+      "sha256": "40c023032ffed622c8aedd17bd574e306eaa59b40d535b58e7e827d681b18a91"
+    },
+    {
+      "path": "assets/materials/reference_wing/height_16.png",
+      "bytes": 3756411,
+      "sha256": "db88cf4d0643305359ac1a0e33179990a4cce72ff06d05bf70f6dee59ba49cbb"
+    },
+    {
+      "path": "assets/materials/reference_wing/height_16.png.import",
+      "bytes": 962,
+      "sha256": "6f68d252385c237d38cb992bd8855997ee079b61e0d6913c24da58ed9945d177"
+    },
+    {
+      "path": "assets/materials/reference_wing/material_manifest.json",
+      "bytes": 12223,
+      "sha256": "e1b55bac72ab364f8fbdbc18894bfdc455b9f7007be9c27c552c9e6e6a466075"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+      "bytes": 2600417,
+      "sha256": "fd5466b1ae5fc0effda69ca6554abd23ba5aa9c05c972fad7ee8854f734b6fa4"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png.import",
+      "bytes": 1005,
+      "sha256": "80d26218fc4bcfd7ecda8fbbd17ede43cd2a2839942c34b4163e4b6f1f1ba0c4"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+      "bytes": 18148,
+      "sha256": "1bfada6d9770d0621dbfb688bf1a8ee47b850b806fb45b09d147a9c386682b06"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png.import",
+      "bytes": 1292,
+      "sha256": "3397d620dd246307d648f9bd31c2b24f97ef36ae60205b5301d78fda9f2ef6be"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+      "bytes": 18313,
+      "sha256": "6b916ce8942a75e125f57357acd31d77c88712a316b46d88690650a0e018769e"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png.import",
+      "bytes": 1272,
+      "sha256": "fb697519943c5e45d3a617e8b20c6ee7cc804b0f83722cae1ea476c0abec631d"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+      "bytes": 18394,
+      "sha256": "d8a44ecf9100458133479a322a340a5814eec78ca1a5e28e682308d95f1262ae"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png.import",
+      "bytes": 1267,
+      "sha256": "fd40f5f30745c8bd576eca5fae45939a3225e5129ed9d6b862c5874cad6294d3"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+      "bytes": 18218,
+      "sha256": "85f0acafe911cb7ab19d690907f9baa72d8124e8f9ad304607dd1ecc00741c23"
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png.import",
+      "bytes": 1266,
+      "sha256": "94cbc806a97e8c4a3e48d0f4f57f71acd04236bf74f30303d8041054b11340d9"
+    },
+    {
+      "path": "docs/reference_wing/CERAMIC_REFLECTION_AUDIT.md",
+      "bytes": 9971,
+      "sha256": "7af37c9f2c01db472ca62384c22892b23ed58ad31a3b9071b53172d0669b99c5"
+    },
+    {
+      "path": "docs/reference_wing/CROWN_REFLECTION_DIAGNOSIS.md",
+      "bytes": 10044,
+      "sha256": "5dcca65082e0fe0238c906f2bfa570bcb392d78463ae326f10adf68c32d8a741"
+    },
+    {
+      "path": "docs/reference_wing/DATA_MAP_IMPORT_AUDIT.md",
+      "bytes": 4475,
+      "sha256": "edc8e4a2b70131c14736a108b0752879796f1bdd7066b4a833dee4f30fecf5af"
+    },
+    {
+      "path": "docs/reference_wing/MATERIAL_DELIVERY.md",
+      "bytes": 3904,
+      "sha256": "652855e8be6e8bfae0fd7bf2c8c41ff50759973fa2e9f312358f4b687ef4b76f"
+    },
+    {
+      "path": "docs/reference_wing/PLANAR_FACE_TRIAL.md",
+      "bytes": 3802,
+      "sha256": "cef498b296c37c586e394f2ab8ea9445c914c7375b98e3cabd2cab4997ffa7f6"
+    },
+    {
+      "path": "docs/reference_wing/SATIN_ROOM_MATERIALS.md",
+      "bytes": 5699,
+      "sha256": "1aee141c5b80ab247a111656cd4d17dc9abb98c3217b66a8c74436ea36460505"
+    },
+    {
+      "path": "docs/reference_wing/STRONG_FACE_TRIAL.md",
+      "bytes": 2657,
+      "sha256": "398cef35e5230236da3d2c0d7ce89a32e2f9877021dfb11a83347f4eb34d91f3"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/CPU_CROP_REVIEW.md",
+      "bytes": 2657,
+      "sha256": "8aeaea186487e7747525021e9b3499a5af5d383cf55d76360aa4644a3e6e3f1f"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/blender-crown-node-contract.txt",
+      "bytes": 3075,
+      "sha256": "0040314ce0995ee3dc2ad5a74b9a281350a6e87cf03a62c6c04daeb1c07cc6ec"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/blender-node-contract.txt",
+      "bytes": 5869,
+      "sha256": "1354597934c306aa40c7f2354123eade07ef0e2ac81e3d013fa721ec059d1587"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/blender-planar-node-contract.txt",
+      "bytes": 3021,
+      "sha256": "abdfeb765369098046fe19b9c0b28d7e379525ec823a501f468fb5fbd0c67409"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu-tests-after-crown.txt",
+      "bytes": 1415,
+      "sha256": "79e8bac0a3886607a8142c31f6a9dea4e79b76baf1307f64cc2dc8892e4b10d6"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu-tests.txt",
+      "bytes": 1563,
+      "sha256": "6d38b2f2a666bd30d720a521ba1ca2f5b9844fe0863a0c322711b294e1e07231"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu_crops/experiment.json",
+      "bytes": 3188,
+      "sha256": "32a15050b0416816aeda864d111f90aa8a60771da9eb0ba5a8a1ca930c40039f"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu_crops/stair_wall_A256.png",
+      "bytes": 160648,
+      "sha256": "e14bfbbd8023084e1771d9637ffaa4bfc8d02126f17b9d72b1c7e42609d9f444"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu_crops/stair_wall_A64.png",
+      "bytes": 181737,
+      "sha256": "b07ebfd1e69df42a78dd493a3b663107bf694aae6ea877ebd23def25de23165c"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu_crops/stair_wall_B256_control.png",
+      "bytes": 161146,
+      "sha256": "991a74b0bf55e962e7a7821ba254741b01b275c254983046f8e91ef87b0c3e88"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/cpu_crops/stair_wall_C256_shape_only.png",
+      "bytes": 161740,
+      "sha256": "c6a52b1c61d13314399d9d50d2c8dd784e5d90afe695be991d97807972c44871"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/crown-cpu-tests.txt",
+      "bytes": 607,
+      "sha256": "c051b63ccc9079ee6036cd40f25df1f5c650fd0943819823b6f29021a4376c6b"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/crown-normal-check.json",
+      "bytes": 2156,
+      "sha256": "f7dad1f3c1bbc1abce0d82ac981cc0e252b77b29d5aa222d876479f9302d05aa"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/crown-production-isolation.json",
+      "bytes": 1754,
+      "sha256": "763b73a08e476357353ee9e444088c6aca7ed81fa6642481eb3e51bc113a9aed"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/data-map-codec-audit.json",
+      "bytes": 52170,
+      "sha256": "f1d7681cc2393b065037f799d2970f9f390731397e4e13f59c7d37223769861a"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/data-map-lossless-readback.json",
+      "bytes": 25618,
+      "sha256": "40a6a7be7b3546b71c682618340230b5f583639c50309f3b55cc486cd7eb5bb1"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/data_map_codec_before/bevel_slope_rg_2k.png.import.before.txt",
+      "bytes": 1237,
+      "sha256": "a32f880f2da98236b553060c3262443d96a47ea9607555499d767973796054a1"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/data_map_codec_before/glaze_orm_2k.png.import.before.txt",
+      "bytes": 1212,
+      "sha256": "f795254a9fb32baa1dc198a13bcc80200692ccbb1311df9ee021c1e970da757e"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/headless-import.txt",
+      "bytes": 2763,
+      "sha256": "0bb26ecccd844cc6f8126dd5602b32bbead3507c0bd779429a1521528f6f0a4c"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/headless-lab-parse.txt",
+      "bytes": 73,
+      "sha256": "a9912b85473f126d3f4f63ec824170c828df3473a292f866dde86cafda5b66da"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/headless-profile-contract.txt",
+      "bytes": 7507,
+      "sha256": "aa6a21fc22c9807ca4b2a8d2b168c21f909f7ee1efd50f02a9f2e73c253a86b7"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/lab-parse-check.txt",
+      "bytes": 73,
+      "sha256": "a9912b85473f126d3f4f63ec824170c828df3473a292f866dde86cafda5b66da"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/legacy-face-measurements.json",
+      "bytes": 1980,
+      "sha256": "14a0361527315c01ac322fd630cfce1189ad6f76255427d1db9b9d0d130e9c08"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/localized-crown-candidate.json",
+      "bytes": 2291,
+      "sha256": "9cf5719ec6c9fbc6eb00083c95f52a4bd7724a6cdf2798d65461d3b3eda9f500"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/localized_crown_trial/stair_crown_square_candidate.png",
+      "bytes": 984752,
+      "sha256": "5375a8e1d860cf2ef1b18e286a93a6641a653b9ec637a10324bcb251819cb44c"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/localized_crown_trial/stair_crown_square_candidate_metadata.json",
+      "bytes": 5691,
+      "sha256": "b1d15ed30fd4ccd903ab097a7cd56bf5aae0555e9f329bd4db24c70b8674e442"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/localized_crown_trial/stair_facet_baseline_1_crop.png",
+      "bytes": 179683,
+      "sha256": "478c7ef0d66509312e69c6cd75f6c3d256c63fbf3e458f96d50af0c6c0d07389"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/localized_crown_trial/stair_localized_crown_trial_checks.json",
+      "bytes": 10792,
+      "sha256": "6996bbadf406e0c893793d6f3b88b48dedfc631e9ccecb9b9be8fb35ae55ca78"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/localized_crown_trial/stair_localized_crown_trial_crop.png",
+      "bytes": 180030,
+      "sha256": "eea7dca365634d1234c025ba9129e55bfe592ecf30ca1fa9615fdace5aa08901"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/material-contract.txt",
+      "bytes": 4697,
+      "sha256": "16f20378156bdebdde9c8033f3a71c49a806a20c63f8807f062e7518764cf4a3"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/planar-face-candidate.json",
+      "bytes": 1854,
+      "sha256": "c63ef648cc707308f4be488e8eaca80da74f9214d840752dfeebbb80148ffb51"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/planar-normal-check.json",
+      "bytes": 271,
+      "sha256": "1f2e8f89a22cb2da1a2c27e3af7b47a35394004fa780f1b5eede049d9f10b529"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/planar-production-isolation.json",
+      "bytes": 462,
+      "sha256": "f7c6f370c64789f7b01fd92302f5cdd76059fc71ac70091e653fe92c0e872dad"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/planar_trial/stair_facet_baseline_1_crop.png",
+      "bytes": 179683,
+      "sha256": "478c7ef0d66509312e69c6cd75f6c3d256c63fbf3e458f96d50af0c6c0d07389"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/planar_trial/stair_planar_interior_trial_checks.json",
+      "bytes": 10501,
+      "sha256": "d88dd73a11fe600220b2d65dc7888910885ed949f9b79714178922fce44fd9b9"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/planar_trial/stair_planar_interior_trial_crop.png",
+      "bytes": 183969,
+      "sha256": "fca944e6ff85f7aded6131dd4625a5f76c6a853b929d180e26dde122c0528eec"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/png16-lossless-encoding.json",
+      "bytes": 2414,
+      "sha256": "984a7fc5ac339b14c7cbf3be6a10bbd51e24e4f0780c583199567f181fd403be"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/reflection-cone-diagnosis.json",
+      "bytes": 7128,
+      "sha256": "8f613ded2b0dc88b1dbd7e3f7f6c76512b5018c7cc42ee95ac168ac64f119853"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/report.json",
+      "bytes": 31844,
+      "sha256": "b7940bd1ceda3b416c1511ac57389a41db6b701d20164e5f1442cde499c38690"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/satin/pixel-spacing.json",
+      "bytes": 4324,
+      "sha256": "cd9f456444cfae5db5822996c229ad69fcf95ca50d4185d681ef893b48307a97"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/scoped-profiles-source-contract.json",
+      "bytes": 21064,
+      "sha256": "8676484236a0cd94bd4c902682edeab6785b43de67a2bd73db2a0b0e4f0273be"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/strong-face-candidate.json",
+      "bytes": 1026,
+      "sha256": "df563a5fce0a27b64b29e72f0673a89d280be5c131d066c613b85aaccda522ee"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/strong-face-normal-check.json",
+      "bytes": 270,
+      "sha256": "12c8e32fb046bd44880c7c588a27802c8479a3bdf5f8e54c15da6cc1411af5fd"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/strong_face_trial/stair_facet_baseline_1_crop.png",
+      "bytes": 179683,
+      "sha256": "478c7ef0d66509312e69c6cd75f6c3d256c63fbf3e458f96d50af0c6c0d07389"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/strong_face_trial/stair_facet_trial_18_crop.png",
+      "bytes": 179671,
+      "sha256": "1c1605fcbe1ecaa908b6554fe3ea4a374fcd192a631d2a5b6d8f42e29e7a9cfe"
+    },
+    {
+      "path": "docs/reference_wing/material_evidence/strong_face_trial/stair_facet_trial_checks.json",
+      "bytes": 10727,
+      "sha256": "27fe8a1fe0a870a52539497aa35f59e0301a9c67a0751b640a867eced420677a"
+    },
+    {
+      "path": "scripts/reference_wing/reference_materials.gd",
+      "bytes": 7940,
+      "sha256": "556abad8925b56bdea90578f438d6222818ad7510a0cd697eb82036988159bc0"
+    },
+    {
+      "path": "scripts/reference_wing/reference_materials.gd.uid",
+      "bytes": 20,
+      "sha256": "86da4f878724ff26038147e358b448671aa7e5d26db91fdb5836eb2553db03dc"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze.gdshader",
+      "bytes": 158,
+      "sha256": "bbcef2a5c9c64cac14263aaa1aef8bc36b5ebba3a04b00653a23b023c11f0044"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze.gdshader.uid",
+      "bytes": 20,
+      "sha256": "1c7f97d7b7fea36607e7f88daa6ecc622da09d6ef7fe289180ee3c18aaeb8d0a"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_math.gdshaderinc",
+      "bytes": 2866,
+      "sha256": "736e136c606600842b4d6a0c1d220cd9ab43f9899f25ae266e0d3ff78b807654"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_math.gdshaderinc.uid",
+      "bytes": 20,
+      "sha256": "656712d20070c1893d6537339e6643bd481ee0196488fd45eeecc37d8ef5ef29"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_rt.gdshader",
+      "bytes": 178,
+      "sha256": "69b81d7c3fa574214bf5f4621c5aee390357de6183eb57a7b1eacb0453371f8b"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_rt.gdshader.uid",
+      "bytes": 20,
+      "sha256": "d0bb553f994ea33c82962e6d5fb7464ade36a674819c9a25502000365647d1da"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_surface.gdshaderinc",
+      "bytes": 4203,
+      "sha256": "2351d03cb31c9074faa0967ff7c41f7325952d5ed6de7d4ce0ecfb64eab09f1c"
+    },
+    {
+      "path": "shaders/reference_wing/reference_glaze_surface.gdshaderinc.uid",
+      "bytes": 20,
+      "sha256": "751a1a3c1c7e0a774a7f81ef9a9d4d8a8df97bd98fe6323253eba71476076790"
+    },
+    {
+      "path": "tests/reference_wing/README-materials.md",
+      "bytes": 4802,
+      "sha256": "52c9ad50735a0765a959ceedde9882e47cc1a28e8725a1f9fa46ee5422143b57"
+    },
+    {
+      "path": "tests/reference_wing/blender_material_contract.py",
+      "bytes": 11336,
+      "sha256": "4d21f00537572bddc90b5d39e2390a51cdfe2d3b4332b2318033794c85bdcbbe"
+    },
+    {
+      "path": "tests/reference_wing/dump_imported_data_maps.gd",
+      "bytes": 3513,
+      "sha256": "67b7b6f92be73bb1358cf8967e22c0c0c0eb521513d38d5e70dbde414fee833e"
+    },
+    {
+      "path": "tests/reference_wing/dump_imported_data_maps.gd.uid",
+      "bytes": 20,
+      "sha256": "75db4992d8ca0986c83044f428847d0ca0302f3e88904713aa96a9c6dcf14d70"
+    },
+    {
+      "path": "tests/reference_wing/material_contract.gd",
+      "bytes": 8440,
+      "sha256": "589d6cd3e178d701ac2472862a8a3471820a77dfb2f22b2e83ce888627df3c70"
+    },
+    {
+      "path": "tests/reference_wing/material_contract.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d94dea2b6978b53f59eeb92e086d6432741a3b2c1c292fb3a4c894ca62183c"
+    },
+    {
+      "path": "tests/reference_wing/material_lab.gd",
+      "bytes": 7176,
+      "sha256": "c37189e223860f7cad8eba9cb43299406b82d6c44201316c4cc4814b9598ef8e"
+    },
+    {
+      "path": "tests/reference_wing/material_lab.gd.uid",
+      "bytes": 20,
+      "sha256": "aec31d834063d3b173b346f58c59f590708aeea60a143604cfe9f6b87b58660b"
+    },
+    {
+      "path": "tests/reference_wing/test_crown_candidate.py",
+      "bytes": 3367,
+      "sha256": "d318749de5094f6b4342b38a04cb8e7b37d1df209b70f91dde2b6ad1be3d692f"
+    },
+    {
+      "path": "tests/reference_wing/test_materials.py",
+      "bytes": 12236,
+      "sha256": "ebc4c56df3ea3cda1edda8a4a591ba56b64de86727ee576abcdd3ec6a01a3e47"
+    },
+    {
+      "path": "tests/reference_wing/test_planar_candidate.py",
+      "bytes": 2491,
+      "sha256": "9188a1da61f5ebdf8c060069ecab2cfe2600960ac5ab9c49c0c68661da84f52b"
+    },
+    {
+      "path": "tests/reference_wing/test_png16_encoding.py",
+      "bytes": 1814,
+      "sha256": "ab198495711a9a8d80b7a52086e8a0b69c339309629d8220de4d212d404774fc"
+    },
+    {
+      "path": "tests/reference_wing/validate_materials.py",
+      "bytes": 5768,
+      "sha256": "183f9ed6257d2699af5036c7670cb8c61b17bdfc9c6187a6a5af37b9a9f28a7b"
+    },
+    {
+      "path": "tools/materials/reference_wing/README.md",
+      "bytes": 10140,
+      "sha256": "d58bee4393091bd0b9c710a3478558aea0be548a97074ff77bb095fd729172d1"
+    },
+    {
+      "path": "tools/materials/reference_wing/audit_imported_data_maps.py",
+      "bytes": 5630,
+      "sha256": "6b7735b3edec55f71c9374ab3bf6227b291bc3a10be5c91d89569ba862b280df"
+    },
+    {
+      "path": "tools/materials/reference_wing/audit_legacy_faces.py",
+      "bytes": 2030,
+      "sha256": "69e49c08c7bc2e6dba40fda389f62d7a9cf2c21ae648a57b9f54b551056ab1c1"
+    },
+    {
+      "path": "tools/materials/reference_wing/audit_satin_reference_spacing.py",
+      "bytes": 3632,
+      "sha256": "b286be978ab8824847dca7f0223ff90187fc40ec85098effbcfe86451d4c5c8e"
+    },
+    {
+      "path": "tools/materials/reference_wing/blender_materials.py",
+      "bytes": 14957,
+      "sha256": "18ee328b3bfcadec59807a414f3eb23b7dae72a4c016c014742269f6edd3915e"
+    },
+    {
+      "path": "tools/materials/reference_wing/crown_trial_math.py",
+      "bytes": 4168,
+      "sha256": "1f9d9a3a6aa2088848d3912cb779869da581b3b2174176e73d54b50898f02a8d"
+    },
+    {
+      "path": "tools/materials/reference_wing/generate.py",
+      "bytes": 10559,
+      "sha256": "41b57f0e2764593abbd4108ca3d34ba4cc7e9e06a01943dcb60b80ce3dbaa1dd"
+    },
+    {
+      "path": "tools/materials/reference_wing/generate_crown_candidate.py",
+      "bytes": 1934,
+      "sha256": "aec7b8b24abbbf25cbeaadca3149a0ba15495aa7f64eb666a4422a24676d99d6"
+    },
+    {
+      "path": "tools/materials/reference_wing/generate_planar_candidate.py",
+      "bytes": 2047,
+      "sha256": "073bf981741d4c321ca4d3b8d92b010468051b1c54a4c27ed1e013a09b81154b"
+    },
+    {
+      "path": "tools/materials/reference_wing/generate_shape_candidate.py",
+      "bytes": 1927,
+      "sha256": "35cbbac3637408d4d3cad61077ac92760c529d194d0b7288d9e21403ead84dbb"
+    },
+    {
+      "path": "tools/materials/reference_wing/measure_reflection_cone.py",
+      "bytes": 7798,
+      "sha256": "6c52f01420f254be0f279710b4f96ac7e03b61521bf2af586bc414d4b87fc0a5"
+    },
+    {
+      "path": "tools/materials/reference_wing/planar_trial_math.py",
+      "bytes": 3006,
+      "sha256": "7e2060eb3c451938391a80e61a4b4e8f8f63eb3768816205d57bf937dde55318"
+    },
+    {
+      "path": "tools/materials/reference_wing/surface_math.py",
+      "bytes": 11914,
+      "sha256": "b0ab1d0b2cbd6fb2f074faa5a3e1c7f25f4231ac291a41b13c70ac107e569683"
+    }
+  ],
+  "external_dependencies": [
+    {
+      "path": "scripts/reference_wing/reference_room_builder.gd",
+      "bytes": 3035,
+      "sha256": "8fe6c810d7c39370fd2d198b217ec9a8488a404cdffbfc3d705aa72d9764cf45"
+    },
+    {
+      "path": "scripts/rendering/rt_material_refresh.gd",
+      "bytes": 6883,
+      "sha256": "2e6a6179bc44b65f86405a8df761b09ba6315c0fe99c0007358cd70b6e77e5a7"
+    },
+    {
+      "path": "scripts/rendering/pool_materials.gd",
+      "bytes": 12019,
+      "sha256": "e8b89f21c37d21c355dc19761223ee0853aa44e8ed2c6231c377add2e6a80955"
+    },
+    {
+      "path": "shaders/source_water/caustic_receiver.gdshaderinc",
+      "bytes": 2735,
+      "sha256": "adb6a4b927c2d9e86f71199709252501f000bc2933633ff3bbb822c1a2c2f825"
+    }
+  ],
+  "excluded": [
+    ".godot derived imports",
+    "__pycache__",
+    "ignored output/ QA normals and raw decoder dumps"
+  ],
+  "visual_acceptance": false
+}

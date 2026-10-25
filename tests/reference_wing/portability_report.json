@@ -1,0 +1,2427 @@
+{
+  "audit_utc": "2026-10-24T21:37:20.612304+00:00",
+  "scope": "Production Reference Wing only; read-only CPU audit",
+  "rooms": [
+    {
+      "room": "stair_gallery",
+      "glb": {
+        "path": "assets/models/reference_wing/stair_gallery.glb",
+        "bytes": 3785336,
+        "sha256": "6ef6e82d7a9d39dc3139afd2b01bde572e2af3d2ec2ef15538830d204ba862db"
+      },
+      "geometry": {
+        "path": "assets/models/reference_wing/stair_gallery.geometry.json",
+        "bytes": 555647,
+        "sha256": "f3523a105b746e58b913c1011ba3075830b5a3acf1973d83b856939176f6c671"
+      },
+      "editable_source": {
+        "path": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+        "bytes": 15425292,
+        "sha256": "a8f6bc5bbd7d162c374889d6545d2f5c7dbb8a80e23dc7652d2105e170930058"
+      },
+      "meshes": 105,
+      "primitives": 106,
+      "images": 0,
+      "embedded_binary_bytes": 3582816,
+      "external_uris": [],
+      "metadata_paths": {
+        "editable_source": {
+          "path": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+          "exists": true
+        },
+        "generator": {
+          "path": "tools/blender/reference_wing/stair_gallery/build_stair_gallery.py",
+          "exists": true
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/stair_gallery.glb",
+          "exists": true
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "room": "colonnade",
+      "glb": {
+        "path": "assets/models/reference_wing/colonnade.glb",
+        "bytes": 841924,
+        "sha256": "b932ef1f37c33e4c57e19ad1a7b649e851c850cd8e386f7c5192ba86799987e7"
+      },
+      "geometry": {
+        "path": "assets/models/reference_wing/colonnade.geometry.json",
+        "bytes": 105904,
+        "sha256": "024580424a57c4368ce9c6726e525000b2d717139b12e9409797828d20cf953d"
+      },
+      "editable_source": {
+        "path": "tools/blender/reference_wing/water_sources/colonnade.blend",
+        "bytes": 1703315,
+        "sha256": "89aabc975e25c20a9fe61f5649139d962d2dbfe196cd2cd80c7e30c24335d571"
+      },
+      "meshes": 130,
+      "primitives": 130,
+      "images": 0,
+      "embedded_binary_bytes": 718608,
+      "external_uris": [],
+      "metadata_paths": {
+        "source": {
+          "path": "tools/blender/reference_wing/water_sources/colonnade.blend",
+          "exists": true
+        },
+        "generator": {
+          "path": "tools/blender/reference_wing/water_rooms_build.py",
+          "exists": true
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "room": "cyan_corridor",
+      "glb": {
+        "path": "assets/models/reference_wing/cyan_corridor.glb",
+        "bytes": 1387688,
+        "sha256": "b0f78182f23c223c95116f02f5d529fa830eaad99c2e12d12eed1e434d855765"
+      },
+      "geometry": {
+        "path": "assets/models/reference_wing/cyan_corridor.geometry.json",
+        "bytes": 160784,
+        "sha256": "9411edd50599f6fd964a700415beae81757b1f14eaefc1e9ba04058c5a007f37"
+      },
+      "editable_source": {
+        "path": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+        "bytes": 2396478,
+        "sha256": "67df09e26ab4d56c166babdd0ac72549965099e0447bca587a5983a1fa568ccd"
+      },
+      "meshes": 217,
+      "primitives": 217,
+      "images": 0,
+      "embedded_binary_bytes": 1179000,
+      "external_uris": [],
+      "metadata_paths": {
+        "source": {
+          "path": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+          "exists": true
+        },
+        "generator": {
+          "path": "tools/blender/reference_wing/water_rooms_build.py",
+          "exists": true
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "room": "octagonal_bath",
+      "glb": {
+        "path": "assets/models/reference_wing/octagonal_bath.glb",
+        "bytes": 2694744,
+        "sha256": "c2cff5a4851fa1cda186b023a32afe7c36489f1f84cf7da4363c73482f1ae20e"
+      },
+      "geometry": {
+        "path": "assets/models/reference_wing/octagonal_bath.geometry.json",
+        "bytes": 388718,
+        "sha256": "4eadf0bc13a94eb72a13e068d210af884581be5098fc2e62daed2d3ddfcf9af7"
+      },
+      "editable_source": {
+        "path": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+        "bytes": 4436846,
+        "sha256": "969c4a67fc03a801ffcec28a4ebb455938d5940971c6163fd849a779aa3e718f"
+      },
+      "meshes": 528,
+      "primitives": 528,
+      "images": 0,
+      "embedded_binary_bytes": 2204856,
+      "external_uris": [],
+      "metadata_paths": {
+        "source": {
+          "path": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+          "exists": true
+        },
+        "generator": {
+          "path": "tools/blender/reference_wing/water_rooms_build.py",
+          "exists": true
+        }
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "room": "ball_lounge",
+      "glb": {
+        "path": "assets/models/reference_wing/ball_lounge.glb",
+        "bytes": 24647788,
+        "sha256": "039f9d43f92cdb0c2f75fbe540e4d82f57476b18f331bd4f958ce0fd4ab6f24f"
+      },
+      "geometry": {
+        "path": "assets/models/reference_wing/ball_lounge.geometry.json",
+        "bytes": 2461690,
+        "sha256": "be3166caf7bff05494128ea7881e00912e73c8ec720c16542409cf423e641003"
+      },
+      "editable_source": {
+        "path": "tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+        "bytes": 34335428,
+        "sha256": "45449a83591838fb70b1c06f30d4dd0dd114ce9025de1fca7a3c5fd4408b64bf"
+      },
+      "meshes": 94,
+      "primitives": 94,
+      "images": 0,
+      "embedded_binary_bytes": 24548508,
+      "external_uris": [],
+      "metadata_paths": {
+        "source_blend": {
+          "path": "res://tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+          "exists": true
+        },
+        "rebuild_script": {
+          "path": "res://tools/blender/reference_wing/lounge_build.py",
+          "exists": true
+        }
+      },
+      "errors": [],
+      "pass": true
+    }
+  ],
+  "material_maps": [
+    {
+      "path": "assets/materials/reference_wing/bevel_normal_gl_16.png",
+      "bytes": 31724,
+      "sha256": "81b91beffbd3d5b0a6f36963d09fdfcffd7813270c12fa3a7fad8bba3a176a7d",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/bevel_slope_rg_2k.png",
+      "bytes": 18077,
+      "sha256": "a10adda208b4fcff60d1c41da1ff039c7ee34f90bcc1c2c9d2c0b23a691618b8",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/full_normal_gl_16.png",
+      "bytes": 1923098,
+      "sha256": "b59584373f011607324b4dc2c4dd695b51e4eead4a825c74ee53f5fb2fc75c29",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/glaze_orm_2k.png",
+      "bytes": 22181,
+      "sha256": "dc00b4c0d621b2f73313d8e3529c83e2852b4acb86e0885583a76b6b3add0d09",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/height_16.png",
+      "bytes": 3756411,
+      "sha256": "db88cf4d0643305359ac1a0e33179990a4cce72ff06d05bf70f6dee59ba49cbb",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+      "bytes": 18148,
+      "sha256": "1bfada6d9770d0621dbfb688bf1a8ee47b850b806fb45b09d147a9c386682b06",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+      "bytes": 18313,
+      "sha256": "6b916ce8942a75e125f57357acd31d77c88712a316b46d88690650a0e018769e",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+      "bytes": 18394,
+      "sha256": "d8a44ecf9100458133479a322a340a5814eec78ca1a5e28e682308d95f1262ae",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+      "bytes": 18218,
+      "sha256": "85f0acafe911cb7ab19d690907f9baa72d8124e8f9ad304607dd1ecc00741c23",
+      "pass": true
+    },
+    {
+      "path": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+      "bytes": 2600417,
+      "sha256": "fd5466b1ae5fc0effda69ca6554abd23ba5aa9c05c972fad7ee8854f734b6fa4",
+      "pass": true
+    }
+  ],
+  "runtime_closure": {
+    "text_files_scanned": 123,
+    "literal_references": [
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/reference_wing/reference_glaze.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/reference_wing/reference_glaze_rt.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/art_pass_pbr.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/art_pass_pbr_rt.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/ceramic_world.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/ceramic_world_rt.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/pc_source_ceramic.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/pc_source_ceramic_rt.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/source_architecture.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/rt_material_refresh.gd",
+        "path": "res://shaders/source_architecture_rt.gdshader",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_architecture_rt.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_architecture.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/pc_source_ceramic_rt.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/pc_source_ceramic.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/ceramic_world_rt.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/ceramic_world.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/art_pass_pbr_rt.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/art_pass_pbr.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_glaze_rt.gdshader",
+        "path": "res://shaders/reference_wing/reference_glaze_surface.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_glaze_surface.gdshaderinc",
+        "path": "res://shaders/reference_wing/reference_glaze_math.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_glaze_surface.gdshaderinc",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_glaze.gdshader",
+        "path": "res://shaders/reference_wing/reference_glaze_surface.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/pool_world.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_world.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_scene_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_look_settings.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_controls.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_player.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_lighting.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/player/pool_player.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/player/pool_avatar.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/art_pass/character/art_character_selection.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/player/avatar_finish_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/facility_devices_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/player/pool_props.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/water/source_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/water/source_port/source_water_settings.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/rendering/pool_materials.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/rendering/pool_lighting.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/audio/pool_audio.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/rendering/pc_mainhall_lightmap_preview.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/rendering/source_volumetric_fog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/rendering/source_distance_fog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/app/world_restart.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/diagnostics/geometry_refresh_tracker.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/diagnostics/frame_metrics.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/reference_wing/reference_exploration_notes.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/mobile/pool_mobile_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/rendering/desktop_quality_panel.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/ui/pool_interface_presentation.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://assets/water_motion/explorer_water_motion.scn",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/diagnostics/preparation_status.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://shaders/reference_wing/reference_camera_look.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/art_pass/art_pass_selection.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://scripts/world/room_builder.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://scripts/world/source_random.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://scripts/world/source_wfc.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://scripts/world/room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://scripts/world/expanded_room_builder.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://scripts/world/source_architecture_batch.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://assets/models/quiet-wing-oculus-court.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://assets/models/quiet-wing-vaulted-lap-hall.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://assets/models/quiet-wing-changing-gallery.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_builder.gd",
+        "path": "res://scripts/poolrooms_wing/poolrooms_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/poolrooms_wing/poolrooms_catalog.gd",
+        "path": "res://scripts/poolrooms_wing/geometry_contract.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/poolrooms_wing/poolrooms_catalog.gd",
+        "path": "res://scripts/world/expanded_room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/poolrooms_wing/poolrooms_catalog.gd",
+        "path": "res://assets/models/poolrooms_wing/",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/expanded_room_catalog.gd",
+        "path": "res://scripts/world/source_random.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/expanded_room_catalog.gd",
+        "path": "res://scripts/art_pass/art_pass_selection.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/expanded_room_catalog.gd",
+        "path": "res://assets/models/expansion/",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_selection.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_selection.gd",
+        "path": "res://assets/models/art_pass/low_arched_bath_crossing_runtime.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_selection.gd",
+        "path": "res://assets/models/art_pass/shower_changing_runtime.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_selection.gd",
+        "path": "res://assets/models/art_pass/skylight_gallery_runtime.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_selection.gd",
+        "path": "res://assets/models/art_pass/service_transition_runtime.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/expanded_room_builder.gd",
+        "path": "res://scripts/world/expanded_room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/expanded_room_builder.gd",
+        "path": "res://scripts/art_pass/art_pass_materials.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_materials.gd",
+        "path": "res://shaders/art_pass_pbr.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/art_pass_materials.gd",
+        "path": "res://assets/materials/art_pass/textures/",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_catalog.gd",
+        "path": "res://scripts/world/source_random.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/room_catalog.gd",
+        "path": "res://scripts/world/expanded_room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/formal_rooms.gd",
+        "path": "res://assets/models/formal/formal_mainhall.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/formal_rooms.gd",
+        "path": "res://assets/models/formal/formal_arcade.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/formal_rooms.gd",
+        "path": "res://assets/models/formal/formal_sidepool.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/formal_rooms.gd",
+        "path": "res://assets/models/formal/formal_terrace.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/formal_rooms.gd",
+        "path": "res://assets/models/formal/formal_bath.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/ui/pool_interface_presentation.gd",
+        "path": "res://scripts/ui/pool_interface_presentation.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/desktop_quality_panel.gd",
+        "path": "res://scripts/rendering/nr_control_settings.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/desktop_quality_panel.gd",
+        "path": "res://scripts/rendering/rt_material_refresh.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/desktop_quality_panel.gd",
+        "path": "res://scripts/rendering/pc_indoor_shadow_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/desktop_quality_panel.gd",
+        "path": "res://scripts/rendering/desktop_quality_panel.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/mobile/pool_mobile_runtime.gd",
+        "path": "res://scripts/mobile/pool_touch_controls.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/mobile/pool_mobile_runtime.gd",
+        "path": "res://scripts/mobile/pool_mobile_capabilities.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/mobile/pool_mobile_runtime.gd",
+        "path": "res://scripts/mobile/pool_mobile_quality.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/mobile/pool_mobile_runtime.gd",
+        "path": "res://scripts/mobile/pool_mobile_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/mobile/pool_mobile_quality.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_exploration_notes.gd",
+        "path": "res://scripts/gameplay/exploration_notes.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/source_distance_fog.gd",
+        "path": "res://scripts/rendering/source_volumetric_fog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/source_distance_fog.gd",
+        "path": "res://shaders/source_fog/fullscreen.vert",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/source_distance_fog.gd",
+        "path": "res://shaders/source_fog/distance.frag",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/source_volumetric_fog.gd",
+        "path": "res://shaders/source_fog/",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pc_mainhall_lightmap_preview.gd",
+        "path": "res://scenes/lighting_lab/runtime_mainhall_candidate.tscn",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pc_mainhall_lightmap_preview.gd",
+        "path": "res://assets/lighting/runtime_mainhall_candidate/native_indirect.lmbake",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pc_mainhall_lightmap_preview.gd",
+        "path": "res://assets/models/formal/formal_mainhall.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pc_mainhall_lightmap_preview.gd",
+        "path": "res://assets/lighting/runtime_mainhall_candidate/indirect_00.exr",
+        "exists": true
+      },
+      {
+        "from": "scenes/lighting_lab/runtime_mainhall_candidate.tscn",
+        "path": "res://shaders/ceramic_world.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scenes/lighting_lab/runtime_mainhall_candidate.tscn",
+        "path": "res://assets/textures/formal_ceramic/pool_ceramic_albedo_4k.png",
+        "exists": true
+      },
+      {
+        "from": "scenes/lighting_lab/runtime_mainhall_candidate.tscn",
+        "path": "res://assets/textures/formal_ceramic/pool_ceramic_normal_gl_4k.png",
+        "exists": true
+      },
+      {
+        "from": "scenes/lighting_lab/runtime_mainhall_candidate.tscn",
+        "path": "res://assets/textures/formal_ceramic/pool_ceramic_surface_4k.png",
+        "exists": true
+      },
+      {
+        "from": "scenes/lighting_lab/runtime_mainhall_candidate.tscn",
+        "path": "res://assets/lighting/runtime_mainhall_candidate/native_indirect.lmbake",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_lighting.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://shaders/ceramic_world.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://assets/textures/formal_ceramic/pool_ceramic_albedo_4k.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://assets/textures/formal_ceramic/pool_ceramic_normal_gl_4k.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://assets/textures/formal_ceramic/pool_ceramic_surface_4k.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://shaders/source_ceramic.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://shaders/pc_source_ceramic.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://assets/textures/source_glaze/glaze_detail.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/rendering/pool_materials.gd",
+        "path": "res://shaders/source_architecture.gdshader",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_ceramic.gdshader",
+        "path": "res://shaders/source_water/caustic_receiver.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/wind_wave_controller.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_water_settings.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_wave_events.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_wave_solver.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_caustics.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_planar.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_liquid_mpm.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_whitewater_particles.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_liquid_surface.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_room_probe.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_formal_snapshot_cache.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_terrain_disk_cache.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_terrain_identity.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_room_snapshot.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/source_port/source_terrain_prepare.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://shaders/source_water_surface.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/water/pc_nearfield_water_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_water_runtime.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/pc_nearfield_water_profile.gd",
+        "path": "res://scripts/water/source_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_water_surface.gdshader",
+        "path": "res://shaders/source_water/shared_waves.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_water_surface.gdshader",
+        "path": "res://shaders/source_water/wind_ripples.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_water_surface.gdshader",
+        "path": "res://shaders/pc_nearfield_lab/reflection_projection.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/source_water/shared_waves.gdshaderinc",
+        "path": "res://shaders/pc_nearfield_lab/height_modes.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_terrain_prepare.gd",
+        "path": "res://scripts/water/source_port/source_wave_solver.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_terrain_prepare.gd",
+        "path": "res://scripts/water/source_port/source_caustics.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_caustics.gd",
+        "path": "res://scripts/water/source_port/source_triangle_bvh.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_caustics.gd",
+        "path": "res://shaders/source_water/",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_caustics.gd",
+        "path": "res://shaders/source_water/",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_caustics.gd",
+        "path": "res://scripts/water/source_port/source_gpu_timestamps.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_caustics.gd",
+        "path": "res://shaders/pc_nearfield_lab/height_modes.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_wave_solver.gd",
+        "path": "res://shaders/source_water/",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_room_snapshot.gd",
+        "path": "res://scripts/water/source_terrain_identity.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_port/source_terrain_prepare.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_terrain_identity.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_port/source_wave_solver.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_port/source_caustics.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_port/source_triangle_bvh.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_room_snapshot.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/world/pool_world.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/world/source_architecture_batch.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_formal_snapshot_cache.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://scripts/water/source_terrain_disk_cache.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_terrain_disk_cache.gd",
+        "path": "res://assets/cache/source_terrain/",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_formal_snapshot_cache.gd",
+        "path": "res://scripts/water/source_terrain_disk_cache.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_formal_snapshot_cache.gd",
+        "path": "res://scripts/water/source_terrain_identity.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_formal_snapshot_cache.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_formal_snapshot_cache.gd",
+        "path": "res://scripts/world/formal_room_builder.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_formal_snapshot_cache.gd",
+        "path": "res://scripts/rendering/pool_materials.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_formal_snapshot_cache.gd",
+        "path": "res://scripts/rendering/pool_lighting.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/formal_room_builder.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/world/formal_rooms.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/world/formal_room_builder.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/poolrooms_wing/poolrooms_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/world/room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/world/room_builder.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/pool_world.gd",
+        "path": "res://scripts/world/expanded_room_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_room_probe.gd",
+        "path": "res://scripts/water/source_port/source_gpu_room_cube_device.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_room_probe.gd",
+        "path": "res://scripts/water/source_port/source_gpu_room_cube_ticket.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_gpu_room_cube_device.gd",
+        "path": "res://scripts/water/source_port/source_gpu_room_cube_lease.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_gpu_room_cube_device.gd",
+        "path": "res://scripts/water/source_port/source_gpu_room_cube.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_liquid_surface.gd",
+        "path": "res://scripts/water/source_port/source_liquid_mpm.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_liquid_surface.gd",
+        "path": "res://shaders/source_water/",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_liquid_surface.gd",
+        "path": "res://scripts/water/source_port/source_gpu_timestamps.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_liquid_mpm.gd",
+        "path": "res://scripts/water/source_port/source_gpu_timestamps.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_liquid_mpm.gd",
+        "path": "res://shaders/source_water/liquid_mpm.glslinc",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_liquid_mpm.gd",
+        "path": "res://scripts/water/source_port/source_mpm_prewarm.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_whitewater_particles.gd",
+        "path": "res://scripts/water/source_port/source_liquid_mpm.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/water/source_port/source_planar.gd",
+        "path": "res://scripts/water/source_port/source_capture_environment.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_props.gd",
+        "path": "res://scripts/player/source_prop_activity.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_props.gd",
+        "path": "res://scripts/player/pool_prop_body.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/facility_devices_candidate.gd",
+        "path": "res://scripts/water/source_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/facility_devices_candidate.gd",
+        "path": "res://assets/models/facility_devices/pool_return_valve.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/facility_devices_candidate.gd",
+        "path": "res://assets/models/facility_devices/pool_return_fitting.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/facility_devices_candidate.gd",
+        "path": "res://assets/models/formal/formal_sidepool.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/world/facility_devices_candidate.gd",
+        "path": "res://assets/models/formal/formal_bath.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://shaders/avatar_finish_candidate.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://assets/textures/avatar_finish/shirt_plain_normal.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://assets/textures/avatar_finish/shirt_plain_roughness.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://assets/textures/avatar_finish/trousers_twill_normal.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://assets/textures/avatar_finish/trousers_twill_roughness.png",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://assets/textures/avatar_finish/avatar_finish_candidate.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://shaders/avatar_body.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finish_candidate.gd",
+        "path": "res://shaders/avatar_finish_candidate.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/art_character_selection.gd",
+        "path": "res://scripts/mobile/pool_mobile_profile.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/art_character_selection.gd",
+        "path": "res://scripts/art_pass/character/natural_pool_avatar.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/art_character_selection.gd",
+        "path": "res://assets/character_refinement/natural_hand_finish/explorer_natural_hand.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/art_character_selection.gd",
+        "path": "res://assets/character_refinement/natural_hand_finish/model_contract.json",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_pool_avatar.gd",
+        "path": "res://scripts/art_pass/character/handoff_pool_avatar.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_pool_avatar.gd",
+        "path": "res://scripts/art_pass/character/natural_hand_contract.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_pool_avatar.gd",
+        "path": "res://scripts/art_pass/character/natural_finger_poses.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_pool_avatar.gd",
+        "path": "res://scripts/art_pass/character/natural_hand_ik.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_pool_avatar.gd",
+        "path": "res://assets/water_motion/explorer_water_motion.scn",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_hand_ik.gd",
+        "path": "res://scripts/player/avatar_hand_ik.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/natural_finger_poses.gd",
+        "path": "res://scripts/player/avatar_finger_poses.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/avatar_finger_poses.gd",
+        "path": "res://assets/water_hands/hand_pose_contract.json",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/handoff_pool_avatar.gd",
+        "path": "res://scripts/player/pool_avatar.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/art_pass/character/handoff_pool_avatar.gd",
+        "path": "res://scripts/art_pass/character/arm_air_swim_continuation.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://assets/models/avatar/pool_explorer.glb",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://scripts/player/avatar_hand_ik.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://scripts/player/explorer_motion_refinement.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://scripts/player/avatar_foot_clearance.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://scripts/player/avatar_finger_poses.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://scripts/player/avatar_water_actions.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://scripts/player/avatar_carry_contact_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_avatar.gd",
+        "path": "res://shaders/avatar_body.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_player.gd",
+        "path": "res://scripts/player/wading_depth_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_player.gd",
+        "path": "res://scripts/player/wading_stride_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_player.gd",
+        "path": "res://scripts/player/water_motion_state.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/player/pool_player.gd",
+        "path": "res://scripts/player/avatar_carry_contact_candidate.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_lighting.gd",
+        "path": "res://scripts/rendering/pool_lighting.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_player.gd",
+        "path": "res://scripts/player/pool_player.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_controls.gd",
+        "path": "res://scripts/reference_wing/reference_look_settings.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_scene_water_runtime.gd",
+        "path": "res://scripts/reference_wing/reference_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_scene_water_runtime.gd",
+        "path": "res://scripts/reference_wing/reference_depth_field.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_scene_water_runtime.gd",
+        "path": "res://scripts/reference_wing/reference_surface_mesh.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_depth_field.gd",
+        "path": "res://scripts/reference_wing/reference_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_catalog.gd",
+        "path": "res://assets/models/reference_wing/",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_water_runtime.gd",
+        "path": "res://scripts/water/source_water_runtime.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_water_runtime.gd",
+        "path": "res://scripts/reference_wing/reference_wave_controller.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_water_runtime.gd",
+        "path": "res://shaders/reference_wing/reference_water_surface.gdshader",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_water_surface.gdshader",
+        "path": "res://shaders/source_water/shared_waves.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_water_surface.gdshader",
+        "path": "res://shaders/source_water/wind_ripples.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_water_surface.gdshader",
+        "path": "res://shaders/reference_wing/reference_ripples.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "shaders/reference_wing/reference_water_surface.gdshader",
+        "path": "res://shaders/pc_nearfield_lab/reflection_projection.gdshaderinc",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_wave_controller.gd",
+        "path": "res://scripts/reference_wing/reference_look_settings.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_world.gd",
+        "path": "res://scripts/world/pool_world.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_world.gd",
+        "path": "res://scripts/reference_wing/reference_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_world.gd",
+        "path": "res://scripts/reference_wing/reference_room_builder.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_room_builder.gd",
+        "path": "res://scripts/reference_wing/reference_materials.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_room_builder.gd",
+        "path": "res://scripts/reference_wing/reference_catalog.gd",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_materials.gd",
+        "path": "res://shaders/reference_wing/reference_glaze.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_materials.gd",
+        "path": "res://shaders/reference_wing/reference_glaze_rt.gdshader",
+        "exists": true
+      },
+      {
+        "from": "scripts/reference_wing/reference_materials.gd",
+        "path": "res://assets/materials/reference_wing/",
+        "exists": true
+      }
+    ],
+    "expanded_dynamic_references": [
+      {
+        "path": "assets/models/reference_wing/stair_gallery.glb",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/stair_gallery.geometry.json",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/colonnade.glb",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/colonnade.geometry.json",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/cyan_corridor.glb",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/cyan_corridor.geometry.json",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/octagonal_bath.glb",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/octagonal_bath.geometry.json",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/ball_lounge.glb",
+        "exists": true
+      },
+      {
+        "path": "assets/models/reference_wing/ball_lounge.geometry.json",
+        "exists": true
+      },
+      {
+        "path": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+        "exists": true
+      },
+      {
+        "path": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+        "exists": true
+      },
+      {
+        "path": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+        "exists": true
+      },
+      {
+        "path": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+        "exists": true
+      },
+      {
+        "path": "assets/materials/reference_wing/bevel_slope_rg_2k.png",
+        "exists": true
+      },
+      {
+        "path": "assets/materials/reference_wing/glaze_orm_2k.png",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/ambience.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/drop_1.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/drop_2.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/drop_3.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/drop_light.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/drop_heavy.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/step_swish.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/step_stir.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/step_dry_1.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/step_dry_2.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/step_run.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/duck_pickup.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/duck_hit.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/egg_hit.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/tap.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/stir.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/wade.ogg",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/native_gait/tile_walk_1.wav",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/native_gait/tile_walk_2.wav",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/native_gait/tile_run.wav",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/native_gait/step_swish_loop.wav",
+        "exists": true
+      },
+      {
+        "path": "assets/sfx/native_gait/step_stir_loop.wav",
+        "exists": true
+      }
+    ],
+    "documented_exceptions": [
+      {
+        "from": "scripts/main.gd",
+        "path": "res://output/native-oculus.png",
+        "reason": "Output capture destination, not input dependency"
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://output/fixed-",
+        "reason": "Output capture destination, not input dependency"
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://output/source-",
+        "reason": "Output capture destination, not input dependency"
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://output/eight-hour/walk-frames",
+        "reason": "Output capture destination, not input dependency"
+      },
+      {
+        "from": "scripts/main.gd",
+        "path": "res://output/eight-hour/source-walkthrough.json",
+        "reason": "Output capture destination, not input dependency"
+      },
+      {
+        "from": "scripts/audio/pool_audio.gd",
+        "path": "res://assets/sfx/%s.ogg",
+        "reason": "Audio template expanded separately below"
+      },
+      {
+        "from": "scripts/audio/pool_audio.gd",
+        "path": "res://assets/sfx/native_gait/%s.wav",
+        "reason": "Audio template expanded separately below"
+      },
+      {
+        "from": "scripts/art_pass/character/natural_pool_avatar.gd",
+        "path": "res://assets/character_refinement/model_contract.json",
+        "reason": "Unmodified legacy optional hand contract; fallback model exists"
+      }
+    ],
+    "missing_required_inputs": [],
+    "pass": true
+  },
+  "tracked_scope": {
+    "baseline_commit": "351fcd6f8f2bb5fe21851482e2526dfa262ef406",
+    "allowed_changes": [
+      "scripts/main.gd",
+      "scripts/app/world_restart.gd",
+      "scripts/rendering/rt_material_refresh.gd"
+    ],
+    "tracked_non_import_changes": [
+      "scripts/app/world_restart.gd",
+      "scripts/main.gd",
+      "scripts/rendering/rt_material_refresh.gd"
+    ],
+    "unexpected_changes": [],
+    "ignored_modified_imports": [
+      "assets/character_refinement/natural_hand_finish/explorer_natural_hand.glb.import",
+      "assets/materials/art_pass/textures/coping_ivory_albedo_1k.png.import",
+      "assets/materials/art_pass/textures/coping_normal_gl_1k.png.import",
+      "assets/materials/art_pass/textures/coping_orm_1k.png.import",
+      "assets/materials/art_pass/textures/coping_wet_orm_1k.png.import",
+      "assets/materials/art_pass/textures/plaster_normal_gl_2k.png.import",
+      "assets/materials/art_pass/textures/plaster_orm_2k.png.import",
+      "assets/materials/art_pass/textures/plaster_oyster_albedo_2k.png.import",
+      "assets/materials/art_pass/textures/steel_brushed_albedo_512.png.import",
+      "assets/materials/art_pass/textures/steel_normal_gl_512.png.import",
+      "assets/materials/art_pass/textures/steel_orm_512.png.import",
+      "assets/materials/art_pass/textures/storage_green_albedo_512.png.import",
+      "assets/materials/art_pass/textures/storage_normal_gl_512.png.import",
+      "assets/materials/art_pass/textures/storage_orm_512.png.import",
+      "assets/materials/art_pass/textures/tile_blue_albedo_2k.png.import",
+      "assets/materials/art_pass/textures/tile_blue_orm_2k.png.import",
+      "assets/materials/art_pass/textures/tile_blue_wet_orm_2k.png.import",
+      "assets/materials/art_pass/textures/tile_normal_gl_2k.png.import",
+      "assets/materials/art_pass/textures/tile_pearl_albedo_2k.png.import",
+      "assets/materials/art_pass/textures/tile_pearl_orm_2k.png.import",
+      "assets/materials/art_pass/textures/tile_pearl_wet_orm_2k.png.import",
+      "assets/models/art_pass/low_arched_bath_crossing_runtime.glb.import",
+      "assets/models/art_pass/service_transition_runtime.glb.import",
+      "assets/models/art_pass/shower_changing_runtime.glb.import",
+      "assets/models/art_pass/skylight_gallery_runtime.glb.import",
+      "assets/models/poolrooms_wing/circular_bath.glb.import",
+      "assets/models/poolrooms_wing/crescent_court.glb.import",
+      "assets/models/poolrooms_wing/vaulted_lanes.glb.import"
+    ],
+    "reported_generated_untracked_files": [
+      "assets/materials/reference_wing/bevel_normal_gl_16.png.import",
+      "assets/materials/reference_wing/bevel_slope_rg_2k.png.import",
+      "assets/materials/reference_wing/full_normal_gl_16.png.import",
+      "assets/materials/reference_wing/glaze_orm_2k.png.import",
+      "assets/materials/reference_wing/height_16.png.import",
+      "assets/materials/reference_wing/ref5_crown_normal_gl_16.png.import",
+      "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png.import",
+      "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png.import",
+      "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png.import",
+      "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png.import",
+      "assets/models/reference_wing/ball_lounge.glb.import",
+      "assets/models/reference_wing/colonnade.glb.import",
+      "assets/models/reference_wing/cyan_corridor.glb.import",
+      "assets/models/reference_wing/octagonal_bath.glb.import",
+      "assets/models/reference_wing/stair_gallery.glb.import",
+      "assets/water_hands/pool_explorer_water_hands.glb.import",
+      "assets/water_hands/pool_explorer_water_hands_explorer_pants_weave.png",
+      "assets/water_hands/pool_explorer_water_hands_explorer_pants_weave.png.import",
+      "assets/water_hands/pool_explorer_water_hands_explorer_shirt_weave.png",
+      "assets/water_hands/pool_explorer_water_hands_explorer_shirt_weave.png.import",
+      "assets/water_motion/explorer_water_motion.glb.import",
+      "assets/water_motion/explorer_water_motion_explorer_pants_weave.png",
+      "assets/water_motion/explorer_water_motion_explorer_pants_weave.png.import",
+      "assets/water_motion/explorer_water_motion_explorer_shirt_weave.png",
+      "assets/water_motion/explorer_water_motion_explorer_shirt_weave.png.import",
+      "assets/water_motion/pose_sheet.png.import",
+      "scripts/player/avatar_finger_poses.gd.uid",
+      "scripts/player/avatar_foot_clearance.gd.uid",
+      "scripts/player/avatar_water_actions.gd.uid",
+      "scripts/player/explorer_motion_refinement.gd.uid",
+      "scripts/player/water_motion_state.gd.uid",
+      "scripts/reference_wing/reference_catalog.gd.uid",
+      "scripts/reference_wing/reference_controls.gd.uid",
+      "scripts/reference_wing/reference_depth_field.gd.uid",
+      "scripts/reference_wing/reference_exploration_notes.gd.uid",
+      "scripts/reference_wing/reference_lighting.gd.uid",
+      "scripts/reference_wing/reference_look_settings.gd.uid",
+      "scripts/reference_wing/reference_materials.gd.uid",
+      "scripts/reference_wing/reference_player.gd.uid",
+      "scripts/reference_wing/reference_room_builder.gd.uid",
+      "scripts/reference_wing/reference_scene_water_runtime.gd.uid",
+      "scripts/reference_wing/reference_surface_mesh.gd.uid",
+      "scripts/reference_wing/reference_water_runtime.gd.uid",
+      "scripts/reference_wing/reference_wave_controller.gd.uid",
+      "scripts/reference_wing/reference_world.gd.uid",
+      "scripts/rendering/nr_control_settings.gd.uid",
+      "scripts/rendering/pc_indoor_shadow_candidate.gd.uid",
+      "scripts/rendering/rt_material_refresh.gd.uid",
+      "scripts/ui/pool_interface_presentation.gd.uid",
+      "scripts/water/wind_wave_controller.gd.uid",
+      "shaders/reference_wing/reference_camera_look.gdshader.uid",
+      "shaders/reference_wing/reference_glaze.gdshader.uid",
+      "shaders/reference_wing/reference_glaze_math.gdshaderinc.uid",
+      "shaders/reference_wing/reference_glaze_rt.gdshader.uid",
+      "shaders/reference_wing/reference_glaze_surface.gdshaderinc.uid",
+      "shaders/reference_wing/reference_ripples.gdshaderinc.uid",
+      "shaders/reference_wing/reference_water_surface.gdshader.uid",
+      "shaders/source_water/wind_ripples.gdshaderinc.uid",
+      "tests/nr_controls/control_settings_contract.gd.uid",
+      "tests/nr_controls/panel_layout_contract.gd.uid",
+      "tests/reference_look/adapter_contract.gd.uid",
+      "tests/reference_look/fixtures/source_water_runtime_stub.gd.uid",
+      "tests/reference_look/module_contract.gd.uid",
+      "tests/reference_look/production_parse_contract.gd.uid",
+      "tests/reference_wing/diagnostic_player.gd.uid",
+      "tests/reference_wing/dump_imported_data_maps.gd.uid",
+      "tests/reference_wing/imported_world_material_contract.gd.uid",
+      "tests/reference_wing/lighting_contract.gd.uid",
+      "tests/reference_wing/material_contract.gd.uid",
+      "tests/reference_wing/material_lab.gd.uid",
+      "tests/reference_wing/notebook/contract.gd.uid",
+      "tests/reference_wing/stair_contact_matrix.gd.uid",
+      "tests/reference_wing/stair_contact_player.gd.uid",
+      "tests/reference_wing/stair_contact_probe.gd.uid",
+      "tests/reference_wing/stair_contact_recommended.gd.uid",
+      "tests/reference_wing/step_probe.gd.uid",
+      "tests/reference_wing/ui_contract.gd.uid",
+      "tests/reference_wing/walkthrough.gd.uid",
+      "tests/reference_wing/water_geometry_contract.gd.uid",
+      "tests/reference_wing/water_octagon_mask_probe.gd.uid",
+      "tests/reference_wing/water_production_contract.gd.uid",
+      "tests/reference_wing/water_scheduler_base.gd.uid",
+      "tests/reference_wing/water_scheduler_contract.gd.uid",
+      "tests/reference_wing/water_scheduler_identity.gd.uid",
+      "tests/reference_wing/world_contract.gd.uid",
+      "tests/room_transition/rt_material_refresh_contract.gd.uid",
+      "tests/room_transition/rt_production_stream_contract.gd.uid",
+      "tests/room_transition/rt_real_world_benchmark.gd.uid",
+      "tests/room_transition/shell_staging_contract.gd.uid",
+      "tests/tile_finish/imported_alpha_contract.gd.uid",
+      "tests/tile_finish/raster_lab.gd.uid",
+      "tests/ui_refine/mobile_bypass_contract.gd.uid",
+      "tests/ui_refine/presentation_contract.gd.uid",
+      "tests/ui_refine/ui_preview.gd.uid",
+      "tests/water_motion/camera_clearance_contract.gd.uid",
+      "tests/water_motion/controller_contract.gd.uid",
+      "tests/water_motion/foot_clearance_contract.gd.uid",
+      "tests/water_motion/native_motion_review.gd.uid",
+      "tests/water_motion/rig_motion_contract.gd.uid",
+      "tests/wind_water/controller_contract.gd.uid",
+      "tests/wind_water/native_controller_contract.gd.uid",
+      "tests/wind_water/settings_contract.gd.uid",
+      "tests/wind_water/uniform_snapshot_contract.gd.uid",
+      "tools/qa/check_camera.gd.uid",
+      "tools/qa/check_dlss.gd.uid",
+      "tools/qa/check_fg_rt.gd.uid",
+      "tools/qa/check_water_artifacts.gd.uid"
+    ],
+    "pass": true
+  },
+  "blender_original": {
+    "blender_version": "4.3.2",
+    "read_only": true,
+    "sources": [
+      {
+        "source": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref5_crown_normal_gl_16.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_dark_teal_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_pearl_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_pink_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_teal_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 2527,
+        "meshes": 2508,
+        "materials": 8,
+        "external_libraries": 0,
+        "camera": "REFERENCE_5_Composition",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/water_sources/colonnade.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_dark_teal_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_teal_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 141,
+        "meshes": 131,
+        "materials": 6,
+        "external_libraries": 0,
+        "camera": "REFERENCE_CAMERA",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_teal_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 226,
+        "meshes": 218,
+        "materials": 8,
+        "external_libraries": 0,
+        "camera": "REFERENCE_CAMERA",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_pink_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 542,
+        "meshes": 529,
+        "materials": 7,
+        "external_libraries": 0,
+        "camera": "REFERENCE_CAMERA",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+        "dependencies": [],
+        "objects": 108,
+        "meshes": 94,
+        "materials": 7,
+        "external_libraries": 0,
+        "camera": "Reference4_composition",
+        "pass": true
+      }
+    ],
+    "pass": true
+  },
+  "blender_copied": {
+    "blender_version": "4.3.2",
+    "read_only": true,
+    "sources": [
+      {
+        "source": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref5_crown_normal_gl_16.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_dark_teal_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_pearl_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_pink_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_teal_albedo_2k.png",
+            "path": "//../../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 2527,
+        "meshes": 2508,
+        "materials": 8,
+        "external_libraries": 0,
+        "camera": "REFERENCE_5_Composition",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/water_sources/colonnade.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_dark_teal_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_teal_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 141,
+        "meshes": 131,
+        "materials": 6,
+        "external_libraries": 0,
+        "camera": "REFERENCE_CAMERA",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_teal_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 226,
+        "meshes": 218,
+        "materials": 8,
+        "external_libraries": 0,
+        "camera": "REFERENCE_CAMERA",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+        "dependencies": [
+          {
+            "kind": "images",
+            "name": "full_normal_gl_16.png",
+            "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "glaze_orm_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+            "pass": true
+          },
+          {
+            "kind": "images",
+            "name": "ref_tile_pink_albedo_2k.png",
+            "path": "//../../../../assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "packed": false,
+            "relative": true,
+            "exists": true,
+            "resolved_within_copy": true,
+            "resolved_relative": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+            "pass": true
+          }
+        ],
+        "objects": 542,
+        "meshes": 529,
+        "materials": 7,
+        "external_libraries": 0,
+        "camera": "REFERENCE_CAMERA",
+        "pass": true
+      },
+      {
+        "source": "tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+        "dependencies": [],
+        "objects": 108,
+        "meshes": 94,
+        "materials": 7,
+        "external_libraries": 0,
+        "camera": "Reference4_composition",
+        "pass": true
+      }
+    ],
+    "pass": true
+  },
+  "original_hashes_unchanged": true,
+  "pass": true
+}

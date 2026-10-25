@@ -206,6 +206,10 @@ func _build_main_presentation() -> void:
 	column.add_child(_main_body)
 	var world_card := _card(_main_body, "01   选择世界 / STARTING WORLD")
 	var preference_card := _card(_main_body, "02   探索设置 / PREFERENCES")
+	var campaign := main.get("_campaign") as Node
+	if is_instance_valid(campaign):
+		_move(campaign.get("_menu_summary"), world_card)
+		_move(campaign.get("_continue"), world_card)
 	var spawn := main.get("_spawn_select") as OptionButton
 	var spawn_row := spawn.get_parent()
 	_move(spawn_row, world_card)
@@ -238,6 +242,13 @@ func _build_main_presentation() -> void:
 		preview.text = "实验主池厅烘焙 / PC PREVIEW"
 		_move(preview, world_card)
 		_move(main.get("_pc_preview_status"), world_card)
+	var character := main.get("_character_select") as OptionButton
+	if is_instance_valid(character):
+		preference_card.add_child(_label("角色选择 / CHARACTER", 13, ACCENT))
+		_move(character, preference_card)
+		character.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_move(main.get("_character_status"), preference_card)
+		preference_card.add_child(_label("即时切换并自动保存；低头查看身体，抓取物品查看手部。", 13))
 	var navigation := HBoxContainer.new()
 	navigation.add_theme_constant_override("separation", 10)
 	preference_card.add_child(navigation)
@@ -272,7 +283,7 @@ func _build_main_presentation() -> void:
 			preference_card.add_child(node)
 		elif node is Label and node.text.begins_with("WASD"):
 			node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			node.text = "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 扶梯 / 阀门\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\nH 隐藏界面 · G 诊断 · F11 全屏 · Esc 暂停 / 返回"
+			node.text = "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 交互 / 收集\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\nL 手电筒 · F 镜头 · H 隐藏界面\nG 诊断 · F11 全屏 · Esc 暂停 / 返回"
 			preference_card.add_child(node)
 		elif node is Button and (node.text.contains("DIAGNOSTICS") or node.text.contains("QUIT")):
 			node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -374,10 +385,11 @@ func _build_water_presentation() -> void:
 		var label := row.get_child(0) as Label
 		label.custom_minimum_size.x = 128
 		label.add_theme_font_size_override("font_size", 14)
-		var numeric := row.get_node("NumericValue") as Label
-		numeric.custom_minimum_size.x = 60
-		numeric.add_theme_font_size_override("font_size", 14)
-		numeric.add_theme_color_override("font_color", ACCENT)
+		var numeric := row.get_node_or_null("NumericValue") as Label
+		if numeric != null:
+			numeric.custom_minimum_size.x = 60
+			numeric.add_theme_font_size_override("font_size", 14)
+			numeric.add_theme_color_override("font_color", ACCENT)
 		slider.custom_minimum_size.x = 90
 	_water_back.pressed.connect(_restore_water_entry_focus)
 

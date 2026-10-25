@@ -1,0 +1,513 @@
+{
+  "action": "Scoped ref5 wall crown role integration; geometry/colliders/camera/light/UV and old material graphs unchanged.",
+  "source_before_sha256": "591cef20ae7a158989fb42b64f84b542e61b280ac41ea2195e11faa7712face9",
+  "source_after_sha256": "a8f6bc5bbd7d162c374889d6545d2f5c7dbb8a80e23dc7652d2105e170930058",
+  "glb_before_sha256": "2fbf47c66ef2445e7fe247d7cfbb98bbaa07fbcf213511a813878c35a66f3ff4",
+  "glb_after_sha256": "6ef6e82d7a9d39dc3139afd2b01bde572e2af3d2ec2ef15538830d204ba862db",
+  "structural_fingerprint_parity": {
+    "source_mesh_structure": true,
+    "source_cameras": true,
+    "source_lights": true,
+    "reference_render_resolution": true,
+    "active_camera": true,
+    "glb_visible_triangles": true,
+    "glb_visible_nodes": true,
+    "glb_position_triangle_fingerprint": true,
+    "glb_position_normal_uv_triangle_fingerprint": true,
+    "glb_collision_fingerprints": true
+  },
+  "old_used_material_graph_parity": {
+    "ref_tile_teal": true,
+    "ref_dark_foliage": true,
+    "ref_tile_pearl": true,
+    "ref_grout": true,
+    "ref_fixture_emission": true,
+    "ref_fixture_metal": true,
+    "ref_tile_dry": true
+  },
+  "sidecar_structural_field_parity": {
+    "collision_boxes": true,
+    "collision_convex": true,
+    "collision_proxies": true,
+    "support_contacts": true,
+    "raycast_contract": true,
+    "stairs": true,
+    "steps": true,
+    "door": true,
+    "connector_clear_path": true,
+    "portals": true,
+    "portal_contracts": true,
+    "boundaries": true,
+    "spawn_local": true,
+    "spawn_facing": true,
+    "recommended_views": true,
+    "diagnostic_views": true,
+    "fixtures": true,
+    "lights": true,
+    "water_regions": true,
+    "bounds_min": true,
+    "bounds_max": true
+  },
+  "changed_object_names": [
+    "ArchSpandrel_00",
+    "ArchSpandrel_01",
+    "ArchSpandrel_02",
+    "ArchSpandrel_03",
+    "ArchSpandrel_04",
+    "ArchSpandrel_05",
+    "ArchSpandrel_06",
+    "ArchSpandrel_07",
+    "ArchSpandrel_08",
+    "ArchSpandrel_09",
+    "ArchSpandrel_10",
+    "ArchSpandrel_11",
+    "ArchSpandrel_12",
+    "ArchSpandrel_13",
+    "ArchSpandrel_14",
+    "ArchSpandrel_15",
+    "ArchSpandrel_16",
+    "ArchSpandrel_17",
+    "ArchSpandrel_18",
+    "ArchSpandrel_19",
+    "ArchSpandrel_20",
+    "ArchSpandrel_21",
+    "ArchSpandrel_22",
+    "ArchSpandrel_23",
+    "ContinuousSlopingParapet",
+    "EastWall",
+    "LowerLandingWestWall",
+    "NorthFarWallCrown",
+    "NorthFarWallLeft",
+    "NorthFarWallRight",
+    "PlanterEndReturn",
+    "SouthClosedWall",
+    "WestRecessWall"
+  ],
+  "binding": {
+    "role": "ref_tile_pearl_ref5_crown",
+    "source_role": "ref_tile_pearl",
+    "scope": "Vertical pearl faces of main/far walls, continuous parapet and arch spandrels only.",
+    "excluded": [
+      "ceiling",
+      "horizontal parapet caps",
+      "sloping structural bevels",
+      "dry walking surfaces",
+      "teal arch",
+      "foundations",
+      "hidden connector"
+    ],
+    "normal_test": "abs(world_normal_BlenderZ)<=1e-5",
+    "objects": [
+      {
+        "object": "ArchSpandrel_00",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.5698390007019043
+      },
+      {
+        "object": "ArchSpandrel_01",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.5063164234161377
+      },
+      {
+        "object": "ArchSpandrel_02",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.43967944383621216
+      },
+      {
+        "object": "ArchSpandrel_03",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.37155580520629883
+      },
+      {
+        "object": "ArchSpandrel_04",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.3038037419319153
+      },
+      {
+        "object": "ArchSpandrel_05",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.23842930793762207
+      },
+      {
+        "object": "ArchSpandrel_06",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.177496075630188
+      },
+      {
+        "object": "ArchSpandrel_07",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.12302497029304504
+      },
+      {
+        "object": "ArchSpandrel_08",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.07689273357391357
+      },
+      {
+        "object": "ArchSpandrel_09",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.040736064314842224
+      },
+      {
+        "object": "ArchSpandrel_10",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.01586521603167057
+      },
+      {
+        "object": "ArchSpandrel_11",
+        "polygon_indices": [
+          0,
+          1,
+          4
+        ],
+        "polygon_count": 3,
+        "area_m2": 0.003194699587766081
+      },
+      {
+        "object": "ArchSpandrel_12",
+        "polygon_indices": [
+          0,
+          1,
+          3
+        ],
+        "polygon_count": 3,
+        "area_m2": 0.003194699587766081
+      },
+      {
+        "object": "ArchSpandrel_13",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.01586521416902542
+      },
+      {
+        "object": "ArchSpandrel_14",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.04073607921600342
+      },
+      {
+        "object": "ArchSpandrel_15",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.07689273357391357
+      },
+      {
+        "object": "ArchSpandrel_16",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.12302494049072266
+      },
+      {
+        "object": "ArchSpandrel_17",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.17749610543251038
+      },
+      {
+        "object": "ArchSpandrel_18",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.23842927813529968
+      },
+      {
+        "object": "ArchSpandrel_19",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.3038036823272705
+      },
+      {
+        "object": "ArchSpandrel_20",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.3715558648109436
+      },
+      {
+        "object": "ArchSpandrel_21",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.43967920541763306
+      },
+      {
+        "object": "ArchSpandrel_22",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.5063165426254272
+      },
+      {
+        "object": "ArchSpandrel_23",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 0.5698387026786804
+      },
+      {
+        "object": "ContinuousSlopingParapet",
+        "polygon_indices": [
+          1,
+          4,
+          5,
+          36,
+          37,
+          44,
+          45,
+          58
+        ],
+        "polygon_count": 8,
+        "area_m2": 120.1758105456829
+      },
+      {
+        "object": "EastWall",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 427.8399658203125
+      },
+      {
+        "object": "LowerLandingWestWall",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 95.8720006942749
+      },
+      {
+        "object": "NorthFarWallCrown",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 32.300004959106445
+      },
+      {
+        "object": "NorthFarWallLeft",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 117.59999370574951
+      },
+      {
+        "object": "NorthFarWallRight",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 25.760001182556152
+      },
+      {
+        "object": "PlanterEndReturn",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 98.55999660491943
+      },
+      {
+        "object": "SouthClosedWall",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 165.7599973678589
+      },
+      {
+        "object": "WestRecessWall",
+        "polygon_indices": [
+          0,
+          1,
+          3,
+          5
+        ],
+        "polygon_count": 4,
+        "area_m2": 427.8399658203125
+      }
+    ],
+    "object_count": 33,
+    "polygon_count": 134,
+    "geometry_modified": false,
+    "native_visual_acceptance": false
+  },
+  "runtime_export": {
+    "runtime_visible_mesh_nodes": 7,
+    "runtime_collision_nodes": 98,
+    "visible_triangles": 23908,
+    "bounds_match_sidecar": true,
+    "collision_names_exact": true,
+    "embedded_image_count": 0,
+    "embedded_texture_count": 0,
+    "texture_free_runtime_export": true,
+    "failure_count": 0
+  },
+  "geometry_checks": {
+    "visible_meshes": 2410,
+    "collision_proxies": 98,
+    "visible_triangles": 23908,
+    "closed_positive_volume_meshes": 2508,
+    "raycasts_passed": 359,
+    "raycasts_total": 359,
+    "door_rays_passed": 4,
+    "connector_clearance_passed": 225,
+    "connector_clearance_total": 225,
+    "failure_count": 0
+  },
+  "independent_supports": {
+    "measured_contacts": 56,
+    "passed": 56,
+    "maximum_gap_metres": 0.0001346419130336382,
+    "failure_count": 0
+  },
+  "portability": {
+    "original_file_images": 7,
+    "isolated_file_images": 7,
+    "all_project_relative_and_restored": true,
+    "source_modified": false,
+    "glb_modified": false,
+    "failure_count": 0
+  },
+  "known_retained_geometry_limitation": "Independent seam audit reported same-facing overlap of threshold/far-wall buried foundation faces, not observed from intended player/test views. Geometry deliberately unchanged during this material-only operation; no clean global no-overlap claim.",
+  "render_performed": false,
+  "native_visual_acceptance": false,
+  "pass": true
+}

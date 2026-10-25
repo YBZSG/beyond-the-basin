@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "checks": 400,
+  "errors": [],
+  "rooms": [
+    {
+      "id": "ball_lounge.geometry",
+      "fixtures": 10,
+      "shadow_properties": 4
+    },
+    {
+      "id": "colonnade.geometry",
+      "fixtures": 9,
+      "shadow_properties": 4
+    },
+    {
+      "id": "cyan_corridor.geometry",
+      "fixtures": 7,
+      "shadow_properties": 4
+    },
+    {
+      "id": "octagonal_bath.geometry",
+      "fixtures": 4,
+      "shadow_properties": 2
+    },
+    {
+      "id": "stair_gallery.geometry",
+      "fixtures": 17,
+      "shadow_properties": 4
+    }
+  ],
+  "blender": "4.3.2",
+  "rendered": false,
+  "gpu_run": false,
+  "scope": "Real Blender POINT/SPOT object construction and binding only, not image validation."
+}

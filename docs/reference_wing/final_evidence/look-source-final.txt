@@ -1,0 +1,14 @@
+test_adapter_has_one_clock_owner_and_unchanged_base_order (__main__.ReferenceLookSourceContract.test_adapter_has_one_clock_owner_and_unchanged_base_order) ... ok
+test_adapter_settings_cannot_dispatch_or_rebind_source (__main__.ReferenceLookSourceContract.test_adapter_settings_cannot_dispatch_or_rebind_source) ... ok
+test_all_camera_samples_are_clamped (__main__.ReferenceLookSourceContract.test_all_camera_samples_are_clamped) ... ok
+test_baseline_water_and_terrain_sources_are_byte_exact (__main__.ReferenceLookSourceContract.test_baseline_water_and_terrain_sources_are_byte_exact) ... ok
+test_camera_has_no_blur_exposure_or_denoiser (__main__.ReferenceLookSourceContract.test_camera_has_no_blur_exposure_or_denoiser) ... ok
+test_derived_surface_has_only_the_optical_additions (__main__.ReferenceLookSourceContract.test_derived_surface_has_only_the_optical_additions) ... ok
+test_filter_settings_do_not_own_storage_or_water (__main__.ReferenceLookSourceContract.test_filter_settings_do_not_own_storage_or_water) ... ok
+test_optical_include_is_default_off_and_normal_only (__main__.ReferenceLookSourceContract.test_optical_include_is_default_off_and_normal_only) ... ok
+test_wave_controller_has_no_solver_gpu_or_camera_dependency (__main__.ReferenceLookSourceContract.test_wave_controller_has_no_solver_gpu_or_camera_dependency) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.002s
+
+OK

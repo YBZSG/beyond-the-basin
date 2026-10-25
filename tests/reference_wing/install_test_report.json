@@ -1,0 +1,20 @@
+{
+  "kind": "synthetic-installer-tests-only",
+  "completed_utc": "2026-10-24T20:24:04.093682+00:00",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "command": "python -m unittest discover -s tests/reference_wing -p \"install_test*.py\" -v",
+  "exit_code": 0,
+  "tests_passed": 38,
+  "python_3_9_syntax_parsed": true,
+  "production_update_applied": false,
+  "final_manifest_generated": false,
+  "windows_cmd_executed": false,
+  "godot_visual_validation": false,
+  "source_sha256": {
+    "tools/reference_wing_delivery/prepare_source_update.py": "441f96f545134f8457ce97516a6f327047f6aeaed60d106a256ee1d7c83aba09",
+    "tools/reference_wing_delivery/update_source.py": "eee346a3052c9b025c86d709af6537647d02b9403947bcbd67b963dcf4c34aba",
+    "tests/reference_wing/install_test_source_update.py": "267f11dd512e68dc3dae28977308e487d6f78e752c0b1f1047ddd210af704a60",
+    "tests/reference_wing/install_test_preparation.py": "529717d3d2cf2221f05d83e36ad0f001cad2dc31aff9fca5f39e2b2249a44d30"
+  }
+}

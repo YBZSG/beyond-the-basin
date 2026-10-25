@@ -1,0 +1,100 @@
+{
+  "method": "Controlled cropped CPU Cycles experiment. A64\u2192A256 changes samples only. A256 combined versus B256 control uses the requested roughness+face-shape pairing. A256\u2192C256 changes only roughness; C256\u2192B256 changes only face tilt/crown, preserving bevel normals. Grout and dry-floor roles remain unchanged. No runtime or source material changes saved.",
+  "cases": [
+    {
+      "case": "A64",
+      "samples": 64,
+      "wall_face_roughness_nominal": 0.075,
+      "face_shape_strength": 1.0,
+      "grout_roughness_unchanged": true,
+      "bevel_normal_unchanged": true,
+      "face_normal_field": "tilt+crown",
+      "camera_unchanged": true,
+      "lighting_unchanged_between_cases": true,
+      "camera_exposure_unchanged": -1.0,
+      "seed": 5074,
+      "pixel_border_fraction": [
+        0.66,
+        0.99,
+        0.68,
+        0.98
+      ],
+      "preview_only_not_saved": true,
+      "file": "stair_wall_A64.png",
+      "sha256": "b07ebfd1e69df42a78dd493a3b663107bf694aae6ea877ebd23def25de23165c"
+    },
+    {
+      "case": "A256",
+      "samples": 256,
+      "wall_face_roughness_nominal": 0.075,
+      "face_shape_strength": 1.0,
+      "grout_roughness_unchanged": true,
+      "bevel_normal_unchanged": true,
+      "face_normal_field": "tilt+crown",
+      "camera_unchanged": true,
+      "lighting_unchanged_between_cases": true,
+      "camera_exposure_unchanged": -1.0,
+      "seed": 5074,
+      "pixel_border_fraction": [
+        0.66,
+        0.99,
+        0.68,
+        0.98
+      ],
+      "preview_only_not_saved": true,
+      "file": "stair_wall_A256.png",
+      "sha256": "e14bfbbd8023084e1771d9637ffaa4bfc8d02126f17b9d72b1c7e42609d9f444"
+    },
+    {
+      "case": "B256_control",
+      "samples": 256,
+      "wall_face_roughness_nominal": 0.115,
+      "face_shape_strength": 0.0,
+      "grout_roughness_unchanged": true,
+      "bevel_normal_unchanged": true,
+      "face_normal_field": "disabled only face shape",
+      "camera_unchanged": true,
+      "lighting_unchanged_between_cases": true,
+      "camera_exposure_unchanged": -1.0,
+      "seed": 5074,
+      "pixel_border_fraction": [
+        0.66,
+        0.99,
+        0.68,
+        0.98
+      ],
+      "preview_only_not_saved": true,
+      "file": "stair_wall_B256_control.png",
+      "sha256": "991a74b0bf55e962e7a7821ba254741b01b275c254983046f8e91ef87b0c3e88"
+    },
+    {
+      "case": "C256_shape_only",
+      "samples": 256,
+      "wall_face_roughness_nominal": 0.115,
+      "face_shape_strength": 1.0,
+      "grout_roughness_unchanged": true,
+      "bevel_normal_unchanged": true,
+      "face_normal_field": "tilt+crown",
+      "camera_unchanged": true,
+      "lighting_unchanged_between_cases": true,
+      "camera_exposure_unchanged": -1.0,
+      "seed": 5074,
+      "pixel_border_fraction": [
+        0.66,
+        0.99,
+        0.68,
+        0.98
+      ],
+      "preview_only_not_saved": true,
+      "file": "stair_wall_C256_shape_only.png",
+      "sha256": "c6a52b1c61d13314399d9d50d2c8dd784e5d90afe695be991d97807972c44871"
+    }
+  ],
+  "not_tested": [
+    "Godot",
+    "NVIDIA",
+    "Windows"
+  ],
+  "visual_acceptance": false,
+  "review_document": "../CPU_CROP_REVIEW.md"
+}

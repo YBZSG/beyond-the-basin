@@ -1,0 +1,810 @@
+{
+	"checks": [
+		{
+			"detail": null,
+			"name": "five_complete_resident_rooms",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_complete",
+			"ok": true
+		},
+		{
+			"detail": "(1.4, 4.76, 10.8)",
+			"name": "stair_gallery_spawn_supported",
+			"ok": true
+		},
+		{
+			"detail": {
+				"floor_y": 4.68000030517578,
+				"spawn_y": 4.76000022888184
+			},
+			"name": "stair_gallery_spawn_gap",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_north_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "stair_gallery_north_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_north_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_north_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_north_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_camera_finite",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "stair_gallery_position_selects_room",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_complete",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.6, -17.6)",
+			"name": "colonnade_spawn_supported",
+			"ok": true
+		},
+		{
+			"detail": {
+				"floor_y": 0.520000040531158,
+				"spawn_y": 0.600000023841858
+			},
+			"name": "colonnade_spawn_gap",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_south_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_south_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_south_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_south_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_south_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_north_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_north_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_north_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_north_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_north_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_east_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "colonnade_east_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_east_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_east_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_east_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_camera_finite",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "colonnade_position_selects_room",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_complete",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.6, -49.6)",
+			"name": "cyan_corridor_spawn_supported",
+			"ok": true
+		},
+		{
+			"detail": {
+				"floor_y": 0.520000040531158,
+				"spawn_y": 0.600000023841858
+			},
+			"name": "cyan_corridor_spawn_gap",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_south_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_south_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_south_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_south_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_south_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_east_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "cyan_corridor_east_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_east_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_east_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_east_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_camera_finite",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "cyan_corridor_position_selects_room",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_complete",
+			"ok": true
+		},
+		{
+			"detail": "(17.6, 0.6, -64.0)",
+			"name": "octagonal_bath_spawn_supported",
+			"ok": true
+		},
+		{
+			"detail": {
+				"floor_y": 0.520000040531158,
+				"spawn_y": 0.600000023841858
+			},
+			"name": "octagonal_bath_spawn_gap",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_south_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_south_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_south_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_south_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_south_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_west_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "octagonal_bath_west_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_west_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_west_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_west_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_camera_finite",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "octagonal_bath_position_selects_room",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_complete",
+			"ok": true
+		},
+		{
+			"detail": "(30.35, 0.52, -25.7)",
+			"name": "ball_lounge_spawn_supported",
+			"ok": true
+		},
+		{
+			"detail": {
+				"floor_y": 0.519999980926514,
+				"spawn_y": 0.519999980926514
+			},
+			"name": "ball_lounge_spawn_gap",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_north_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_north_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_north_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_north_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_north_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_west_has_neighbor",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_-1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_-1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_-1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_0.0_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_0.0_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_0.0_2.5",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_1.1_0.3",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_1.1_1.6",
+			"ok": true
+		},
+		{
+			"detail": "(0.0, 0.0, 0.0)",
+			"name": "ball_lounge_west_clear_1.1_2.5",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_west_floor_-0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_west_floor_0.0",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_west_floor_0.6",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_camera_finite",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "ball_lounge_position_selects_room",
+			"ok": true
+		},
+		{
+			"detail": null,
+			"name": "finite_world_no_unrelated_generation",
+			"ok": true
+		}
+	],
+	"engine": "4.6.3-stable (official)",
+	"exact_edge_ray_diagnostics": [],
+	"failures": 0,
+	"proxies": 1021,
+	"scope": "Godot headless physics/resources only, no target RT/NR visual acceptance",
+	"triangles": 669262
+}

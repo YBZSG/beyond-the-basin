@@ -1,0 +1,7 @@
+{
+  "baseline": "351fcd6f8f2bb5fe21851482e2526dfa262ef406",
+  "protected_files": 227,
+  "changed_protected_files": [],
+  "secret_pattern_candidates": [],
+  "scope": "Exact bytes of protected engine/source-water/player/world configuration versus351f; heuristic source secret scan not a comprehensive credential audit."
+}

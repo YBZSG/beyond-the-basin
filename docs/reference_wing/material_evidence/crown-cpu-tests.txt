@@ -1,0 +1,10 @@
+test_compact_c2_boundary_and_no_edge_lippage (__main__.CrownCandidate.test_compact_c2_boundary_and_no_edge_lippage) ... ok
+test_exact_gradient (__main__.CrownCandidate.test_exact_gradient) ... ok
+test_physical_bounds (__main__.CrownCandidate.test_physical_bounds) ... ok
+test_scoped_production_math_matches_reviewed_candidate (__main__.CrownCandidate.test_scoped_production_math_matches_reviewed_candidate) ... ok
+test_tilt_hash_and_periodicity (__main__.CrownCandidate.test_tilt_hash_and_periodicity) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.347s
+
+OK

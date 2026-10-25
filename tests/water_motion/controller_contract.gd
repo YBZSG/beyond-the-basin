@@ -24,13 +24,16 @@ class WaterSpy extends Node3D:
 	var feet: int = 0
 	var wave_power: float = 0.0
 	var wake_width: float = 0.0
+	var wake_impulse: float = 0.0
+	var dipoles: int = 0
 	var splashes: int = 0
 	func is_water_at(_p: Vector3) -> bool: return wet
 	func surface_height_at(_p: Vector3) -> float: return surface
 	func depth_at(p: Vector3) -> float: return (1.04 if p.z > 0.0 else 2.20) if split else depth
 	func foot_splash(_p: Vector3, _speed: float, _depth: float, _direction: Vector2) -> void: splashes += 1
 	func wave_impact(_p: Vector3, power: float) -> void: feet += 1; wave_power = maxf(wave_power, power)
-	func wake_dipole(_p: Vector3, _d: Vector2, _speed: float, sigma: float) -> void: wake_width = sigma
+	func wake_dipole(_p: Vector3, _d: Vector2, _speed: float, _sigma: float) -> void: dipoles += 1
+	func push_wake(_p: Vector3, impulse: Vector2, sigma: float) -> void: wake_width = sigma; wake_impulse += impulse.length()
 	func push(_p: Vector3, _i: Vector2, _sigma: float) -> void: pass
 	func player_impact(_p: Vector3, _power: float) -> void: pass
 	func current_velocity_at(_p: Vector3) -> Vector2: return Vector2.ZERO
@@ -116,7 +119,8 @@ func _test_supported_and_boundary() -> void:
 	_check("no_clearance_queries_when_supported_wading", state.swim_clearance_queries == 0)
 	_check("supported_1_04m_is_wade", state.mode == "wade" and state.grounded and not state.swimming)
 	_check("supported_footfalls_remain_real_grounded", water.feet >= 3)
-	_check("large_wading_waves_preserved", water.wave_power > 0.1 and is_equal_approx(water.wake_width, 0.62))
+	_check("broad_continuous_wading_wake_preserved", water.wake_impulse > 1.0 and is_equal_approx(water.wake_width, 0.62))
+	_check("small_foot_ripples_without_forward_slaps", water.wave_power > 0.05 and water.wave_power < 0.15 and water.dipoles == 0)
 	_check("no_foot_splash_particles", water.splashes == 0)
 	_check("camera_eye_and_capsule_unchanged", is_equal_approx(player.camera.position.y, 1.60) and is_equal_approx(player.get_node("PlayerCapsule").shape.height, 1.64) and player.camera.rotation.z == 0.0)
 	var base_y: float = player.position.y

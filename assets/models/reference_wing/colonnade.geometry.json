@@ -1,0 +1,6470 @@
+{
+  "schema_version": 2,
+  "name": "colonnade",
+  "coordinate_system": "Godot XYZ metres; Y up",
+  "module_bounds": {
+    "min": [
+      -16,
+      -0.6,
+      -16
+    ],
+    "max": [
+      16,
+      6.2,
+      16
+    ]
+  },
+  "datums": {
+    "deck_y": 0.52,
+    "water_y": 0.32,
+    "basin_bottom_y": -0.22
+  },
+  "source": "tools/blender/reference_wing/water_sources/colonnade.blend",
+  "generator": "tools/blender/reference_wing/water_rooms_build.py",
+  "uv0_units_per_metre": 1,
+  "tile_pitch_m": 0.1,
+  "collision_proxies": [
+    {
+      "name": "COLLISION_Colonnade_BasinSlab",
+      "source_object": "Colonnade_BasinSlab",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.41,
+        0.0
+      ],
+      "size": [
+        10.88,
+        0.38,
+        26.08
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -5.44,
+        -0.6,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_West_ClosedWall",
+      "source_object": "West_ClosedWall",
+      "type": "BOX",
+      "center": [
+        -5.32,
+        1.665,
+        0.0
+      ],
+      "size": [
+        0.24,
+        3.77,
+        26.08
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -5.44,
+        -0.22,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Wall_-13.04",
+      "source_object": "East_Wall_-13.04",
+      "type": "BOX",
+      "center": [
+        5.32,
+        1.665,
+        -7.27
+      ],
+      "size": [
+        0.24,
+        3.77,
+        11.54
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.2,
+        -0.22,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Wall_1.5",
+      "source_object": "East_Wall_1.5",
+      "type": "BOX",
+      "center": [
+        5.32,
+        1.665,
+        7.27
+      ],
+      "size": [
+        0.24,
+        3.77,
+        11.54
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.2,
+        -0.22,
+        1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_PortalLintel",
+      "source_object": "East_PortalLintel",
+      "type": "BOX",
+      "center": [
+        5.32,
+        3.435,
+        0.0
+      ],
+      "size": [
+        0.24,
+        0.23,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.2,
+        3.32,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Wall_-5.2",
+      "source_object": "North_Wall_-5.2",
+      "type": "BOX",
+      "center": [
+        -3.35,
+        1.665,
+        -12.92
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -5.2,
+        -0.22,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Wall_1.5",
+      "source_object": "North_Wall_1.5",
+      "type": "BOX",
+      "center": [
+        3.35,
+        1.665,
+        -12.92
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.5,
+        -0.22,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_PortalLintel",
+      "source_object": "North_PortalLintel",
+      "type": "BOX",
+      "center": [
+        0.0,
+        3.435,
+        -12.92
+      ],
+      "size": [
+        3.0,
+        0.23,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        3.32,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Wall_-5.2",
+      "source_object": "South_Wall_-5.2",
+      "type": "BOX",
+      "center": [
+        -3.35,
+        1.665,
+        12.92
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -5.2,
+        -0.22,
+        12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Wall_1.5",
+      "source_object": "South_Wall_1.5",
+      "type": "BOX",
+      "center": [
+        3.35,
+        1.665,
+        12.92
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.5,
+        -0.22,
+        12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_PortalLintel",
+      "source_object": "South_PortalLintel",
+      "type": "BOX",
+      "center": [
+        0.0,
+        3.435,
+        12.92
+      ],
+      "size": [
+        3.0,
+        0.23,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        3.32,
+        12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Colonnade_ThickRoof",
+      "source_object": "Colonnade_ThickRoof",
+      "type": "BOX",
+      "center": [
+        0.0,
+        3.69,
+        0.0
+      ],
+      "size": [
+        10.88,
+        0.28,
+        26.08
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -5.44,
+        3.55,
+        -13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_01",
+      "source_object": "Left_SquarePier_01",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        -9.3
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        -9.875
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_01",
+      "source_object": "Right_SquarePier_01",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        -9.3
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        -9.875
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_02",
+      "source_object": "Left_SquarePier_02",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        -6.2
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        -6.775
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_02",
+      "source_object": "Right_SquarePier_02",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        -6.2
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        -6.775
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_03",
+      "source_object": "Left_SquarePier_03",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        -3.1
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        -3.675
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_03",
+      "source_object": "Right_SquarePier_03",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        -3.1
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        -3.675
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_04",
+      "source_object": "Left_SquarePier_04",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        0.0
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        -0.575
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_04",
+      "source_object": "Right_SquarePier_04",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        0.0
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        -0.575
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_05",
+      "source_object": "Left_SquarePier_05",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        3.1
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        2.525
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_05",
+      "source_object": "Right_SquarePier_05",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        3.1
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        2.525
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_06",
+      "source_object": "Left_SquarePier_06",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        6.2
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        5.625
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_06",
+      "source_object": "Right_SquarePier_06",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        6.2
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        5.625
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_07",
+      "source_object": "Left_SquarePier_07",
+      "type": "BOX",
+      "center": [
+        -2.25,
+        1.665,
+        9.3
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -2.825,
+        -0.22,
+        8.725
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_07",
+      "source_object": "Right_SquarePier_07",
+      "type": "BOX",
+      "center": [
+        2.25,
+        1.665,
+        9.3
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.675,
+        -0.22,
+        8.725
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_01",
+      "source_object": "South_Entry_Tread_01",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.1275,
+        11.4
+      ],
+      "size": [
+        3.0,
+        0.185,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        11.2
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_02",
+      "source_object": "South_Entry_Tread_02",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.035,
+        11.8
+      ],
+      "size": [
+        3.0,
+        0.37,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        11.6
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_03",
+      "source_object": "South_Entry_Tread_03",
+      "type": "BOX",
+      "center": [
+        0.0,
+        0.0575,
+        12.2
+      ],
+      "size": [
+        3.0,
+        0.555,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        12.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_04",
+      "source_object": "South_Entry_Tread_04",
+      "type": "BOX",
+      "center": [
+        0.0,
+        0.15,
+        12.6
+      ],
+      "size": [
+        3.0,
+        0.74,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        12.4
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_01",
+      "source_object": "North_Entry_Tread_01",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.1275,
+        -11.4
+      ],
+      "size": [
+        3.0,
+        0.185,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        -11.6
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_02",
+      "source_object": "North_Entry_Tread_02",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.035,
+        -11.8
+      ],
+      "size": [
+        3.0,
+        0.37,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        -12.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_03",
+      "source_object": "North_Entry_Tread_03",
+      "type": "BOX",
+      "center": [
+        0.0,
+        0.0575,
+        -12.2
+      ],
+      "size": [
+        3.0,
+        0.555,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        -12.4
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_04",
+      "source_object": "North_Entry_Tread_04",
+      "type": "BOX",
+      "center": [
+        0.0,
+        0.15,
+        -12.6
+      ],
+      "size": [
+        3.0,
+        0.74,
+        0.4
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.22,
+        -12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_01",
+      "source_object": "East_Entry_Tread_01",
+      "type": "BOX",
+      "center": [
+        3.8,
+        -0.1275,
+        0.0
+      ],
+      "size": [
+        0.4,
+        0.185,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        3.6,
+        -0.22,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_02",
+      "source_object": "East_Entry_Tread_02",
+      "type": "BOX",
+      "center": [
+        4.2,
+        -0.035,
+        0.0
+      ],
+      "size": [
+        0.4,
+        0.37,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        4.0,
+        -0.22,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_03",
+      "source_object": "East_Entry_Tread_03",
+      "type": "BOX",
+      "center": [
+        4.6,
+        0.0575,
+        0.0
+      ],
+      "size": [
+        0.4,
+        0.555,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        4.4,
+        -0.22,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_04",
+      "source_object": "East_Entry_Tread_04",
+      "type": "BOX",
+      "center": [
+        5.0,
+        0.15,
+        0.0
+      ],
+      "size": [
+        0.4,
+        0.74,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        4.8,
+        -0.22,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Connector_Floor_000",
+      "source_object": "South_Connector_Floor_000",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.04,
+        14.4
+      ],
+      "size": [
+        3.0,
+        1.12,
+        3.2
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.6,
+        12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Connector_Roof_000",
+      "source_object": "South_Connector_Roof_000",
+      "type": "BOX",
+      "center": [
+        0.0,
+        3.44,
+        14.52
+      ],
+      "size": [
+        3.0,
+        0.24,
+        2.96
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        3.32,
+        13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Connector_WallFooting_001",
+      "source_object": "South_Connector_WallFooting_001",
+      "type": "BOX",
+      "center": [
+        -1.62,
+        -0.41,
+        14.4
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.74,
+        -0.6,
+        12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Connector_Wall_001",
+      "source_object": "South_Connector_Wall_001",
+      "type": "BOX",
+      "center": [
+        -1.62,
+        1.67,
+        14.52
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.74,
+        -0.22,
+        13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Connector_WallFooting_002",
+      "source_object": "South_Connector_WallFooting_002",
+      "type": "BOX",
+      "center": [
+        1.62,
+        -0.41,
+        14.4
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.5,
+        -0.6,
+        12.8
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_South_Connector_Wall_002",
+      "source_object": "South_Connector_Wall_002",
+      "type": "BOX",
+      "center": [
+        1.62,
+        1.67,
+        14.52
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.5,
+        -0.22,
+        13.04
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Connector_Floor_000",
+      "source_object": "North_Connector_Floor_000",
+      "type": "BOX",
+      "center": [
+        0.0,
+        -0.04,
+        -14.4
+      ],
+      "size": [
+        3.0,
+        1.12,
+        3.2
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        -0.6,
+        -16.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Connector_Roof_000",
+      "source_object": "North_Connector_Roof_000",
+      "type": "BOX",
+      "center": [
+        0.0,
+        3.44,
+        -14.52
+      ],
+      "size": [
+        3.0,
+        0.24,
+        2.96
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.5,
+        3.32,
+        -16.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Connector_WallFooting_001",
+      "source_object": "North_Connector_WallFooting_001",
+      "type": "BOX",
+      "center": [
+        -1.62,
+        -0.41,
+        -14.4
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.74,
+        -0.6,
+        -16.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Connector_Wall_001",
+      "source_object": "North_Connector_Wall_001",
+      "type": "BOX",
+      "center": [
+        -1.62,
+        1.67,
+        -14.52
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        -1.74,
+        -0.22,
+        -16.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Connector_WallFooting_002",
+      "source_object": "North_Connector_WallFooting_002",
+      "type": "BOX",
+      "center": [
+        1.62,
+        -0.41,
+        -14.4
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.5,
+        -0.6,
+        -16.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_North_Connector_Wall_002",
+      "source_object": "North_Connector_Wall_002",
+      "type": "BOX",
+      "center": [
+        1.62,
+        1.67,
+        -14.52
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        1.5,
+        -0.22,
+        -16.0
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Connector_Floor_000",
+      "source_object": "East_Connector_Floor_000",
+      "type": "BOX",
+      "center": [
+        10.6,
+        -0.04,
+        0.0
+      ],
+      "size": [
+        10.8,
+        1.12,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.2,
+        -0.6,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Connector_Roof_000",
+      "source_object": "East_Connector_Roof_000",
+      "type": "BOX",
+      "center": [
+        10.72,
+        3.44,
+        0.0
+      ],
+      "size": [
+        10.56,
+        0.24,
+        3.0
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.44,
+        3.32,
+        -1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Connector_WallFooting_001",
+      "source_object": "East_Connector_WallFooting_001",
+      "type": "BOX",
+      "center": [
+        10.6,
+        -0.41,
+        -1.62
+      ],
+      "size": [
+        10.8,
+        0.38,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.2,
+        -0.6,
+        -1.74
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Connector_Wall_001",
+      "source_object": "East_Connector_Wall_001",
+      "type": "BOX",
+      "center": [
+        10.72,
+        1.67,
+        -1.62
+      ],
+      "size": [
+        10.56,
+        3.78,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.44,
+        -0.22,
+        -1.74
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Connector_WallFooting_002",
+      "source_object": "East_Connector_WallFooting_002",
+      "type": "BOX",
+      "center": [
+        10.6,
+        -0.41,
+        1.62
+      ],
+      "size": [
+        10.8,
+        0.38,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.2,
+        -0.6,
+        1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "COLLISION_East_Connector_Wall_002",
+      "source_object": "East_Connector_Wall_002",
+      "type": "BOX",
+      "center": [
+        10.72,
+        1.67,
+        1.62
+      ],
+      "size": [
+        10.56,
+        3.78,
+        0.24
+      ],
+      "basis": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "position": [
+        5.44,
+        -0.22,
+        1.5
+      ],
+      "transform": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "basis": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "portal_contracts": [
+    {
+      "side": "south",
+      "open": true,
+      "center": [
+        0,
+        0.52,
+        16
+      ],
+      "width": 3,
+      "clear_height": 2.8,
+      "threshold_y": 0.52
+    },
+    {
+      "side": "north",
+      "open": true,
+      "center": [
+        0,
+        0.52,
+        -16
+      ],
+      "width": 3,
+      "clear_height": 2.8,
+      "threshold_y": 0.52
+    },
+    {
+      "side": "east",
+      "open": true,
+      "center": [
+        16,
+        0.52,
+        0
+      ],
+      "width": 3,
+      "clear_height": 2.8,
+      "threshold_y": 0.52
+    },
+    {
+      "side": "west",
+      "open": false,
+      "center": [
+        -16,
+        0.52,
+        0
+      ],
+      "width": 0,
+      "clear_height": 0,
+      "threshold_y": 0.52
+    }
+  ],
+  "water_regions": [
+    {
+      "name": "Basin",
+      "polygon_xz": [
+        [
+          -5.2,
+          -12.8
+        ],
+        [
+          5.2,
+          -12.8
+        ],
+        [
+          5.2,
+          12.8
+        ],
+        [
+          -5.2,
+          12.8
+        ]
+      ],
+      "surface_y": 0.32,
+      "bottom_y": -0.22
+    }
+  ],
+  "water_exclusions": [
+    {
+      "object": "Left_SquarePier_01",
+      "polygon_xz": [
+        [
+          -2.825,
+          -9.875
+        ],
+        [
+          -1.675,
+          -9.875
+        ],
+        [
+          -1.675,
+          -8.725000000000001
+        ],
+        [
+          -2.825,
+          -8.725000000000001
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_01",
+      "polygon_xz": [
+        [
+          1.675,
+          -9.875
+        ],
+        [
+          2.825,
+          -9.875
+        ],
+        [
+          2.825,
+          -8.725000000000001
+        ],
+        [
+          1.675,
+          -8.725000000000001
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Left_SquarePier_02",
+      "polygon_xz": [
+        [
+          -2.825,
+          -6.775
+        ],
+        [
+          -1.675,
+          -6.775
+        ],
+        [
+          -1.675,
+          -5.625
+        ],
+        [
+          -2.825,
+          -5.625
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_02",
+      "polygon_xz": [
+        [
+          1.675,
+          -6.775
+        ],
+        [
+          2.825,
+          -6.775
+        ],
+        [
+          2.825,
+          -5.625
+        ],
+        [
+          1.675,
+          -5.625
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Left_SquarePier_03",
+      "polygon_xz": [
+        [
+          -2.825,
+          -3.675
+        ],
+        [
+          -1.675,
+          -3.675
+        ],
+        [
+          -1.675,
+          -2.5250000000000004
+        ],
+        [
+          -2.825,
+          -2.5250000000000004
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_03",
+      "polygon_xz": [
+        [
+          1.675,
+          -3.675
+        ],
+        [
+          2.825,
+          -3.675
+        ],
+        [
+          2.825,
+          -2.5250000000000004
+        ],
+        [
+          1.675,
+          -2.5250000000000004
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Left_SquarePier_04",
+      "polygon_xz": [
+        [
+          -2.825,
+          -0.575
+        ],
+        [
+          -1.675,
+          -0.575
+        ],
+        [
+          -1.675,
+          0.575
+        ],
+        [
+          -2.825,
+          0.575
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_04",
+      "polygon_xz": [
+        [
+          1.675,
+          -0.575
+        ],
+        [
+          2.825,
+          -0.575
+        ],
+        [
+          2.825,
+          0.575
+        ],
+        [
+          1.675,
+          0.575
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Left_SquarePier_05",
+      "polygon_xz": [
+        [
+          -2.825,
+          2.5250000000000004
+        ],
+        [
+          -1.675,
+          2.5250000000000004
+        ],
+        [
+          -1.675,
+          3.675
+        ],
+        [
+          -2.825,
+          3.675
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_05",
+      "polygon_xz": [
+        [
+          1.675,
+          2.5250000000000004
+        ],
+        [
+          2.825,
+          2.5250000000000004
+        ],
+        [
+          2.825,
+          3.675
+        ],
+        [
+          1.675,
+          3.675
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Left_SquarePier_06",
+      "polygon_xz": [
+        [
+          -2.825,
+          5.625
+        ],
+        [
+          -1.675,
+          5.625
+        ],
+        [
+          -1.675,
+          6.775
+        ],
+        [
+          -2.825,
+          6.775
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_06",
+      "polygon_xz": [
+        [
+          1.675,
+          5.625
+        ],
+        [
+          2.825,
+          5.625
+        ],
+        [
+          2.825,
+          6.775
+        ],
+        [
+          1.675,
+          6.775
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Left_SquarePier_07",
+      "polygon_xz": [
+        [
+          -2.825,
+          8.725000000000001
+        ],
+        [
+          -1.675,
+          8.725000000000001
+        ],
+        [
+          -1.675,
+          9.875
+        ],
+        [
+          -2.825,
+          9.875
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "Right_SquarePier_07",
+      "polygon_xz": [
+        [
+          1.675,
+          8.725000000000001
+        ],
+        [
+          2.825,
+          8.725000000000001
+        ],
+        [
+          2.825,
+          9.875
+        ],
+        [
+          1.675,
+          9.875
+        ]
+      ],
+      "reason": "solid support at water line"
+    },
+    {
+      "object": "South_Entry_Tread_03",
+      "polygon_xz": [
+        [
+          -1.5,
+          12.0
+        ],
+        [
+          1.5,
+          12.0
+        ],
+        [
+          1.5,
+          12.4
+        ],
+        [
+          -1.5,
+          12.4
+        ]
+      ],
+      "reason": "tread above water surface"
+    },
+    {
+      "object": "South_Entry_Tread_04",
+      "polygon_xz": [
+        [
+          -1.5,
+          12.4
+        ],
+        [
+          1.5,
+          12.4
+        ],
+        [
+          1.5,
+          12.8
+        ],
+        [
+          -1.5,
+          12.8
+        ]
+      ],
+      "reason": "tread above water surface"
+    },
+    {
+      "object": "North_Entry_Tread_03",
+      "polygon_xz": [
+        [
+          -1.5,
+          -12.4
+        ],
+        [
+          1.5,
+          -12.4
+        ],
+        [
+          1.5,
+          -12.0
+        ],
+        [
+          -1.5,
+          -12.0
+        ]
+      ],
+      "reason": "tread above water surface"
+    },
+    {
+      "object": "North_Entry_Tread_04",
+      "polygon_xz": [
+        [
+          -1.5,
+          -12.8
+        ],
+        [
+          1.5,
+          -12.8
+        ],
+        [
+          1.5,
+          -12.4
+        ],
+        [
+          -1.5,
+          -12.4
+        ]
+      ],
+      "reason": "tread above water surface"
+    },
+    {
+      "object": "East_Entry_Tread_03",
+      "polygon_xz": [
+        [
+          4.4,
+          -1.5
+        ],
+        [
+          4.800000000000001,
+          -1.5
+        ],
+        [
+          4.800000000000001,
+          1.5
+        ],
+        [
+          4.4,
+          1.5
+        ]
+      ],
+      "reason": "tread above water surface"
+    },
+    {
+      "object": "East_Entry_Tread_04",
+      "polygon_xz": [
+        [
+          4.800000000000001,
+          -1.5
+        ],
+        [
+          5.200000000000001,
+          -1.5
+        ],
+        [
+          5.200000000000001,
+          1.5
+        ],
+        [
+          4.800000000000001,
+          1.5
+        ]
+      ],
+      "reason": "tread above water surface"
+    }
+  ],
+  "steps": [
+    {
+      "object": "South_Entry_Tread_01",
+      "top_y": -0.035,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          11.199999809265137
+        ],
+        [
+          1.5,
+          11.199999809265137
+        ],
+        [
+          1.5,
+          11.600000381469727
+        ],
+        [
+          -1.5,
+          11.600000381469727
+        ]
+      ],
+      "collision": "COLLISION_South_Entry_Tread_01"
+    },
+    {
+      "object": "South_Entry_Tread_02",
+      "top_y": 0.15,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          11.600000381469727
+        ],
+        [
+          1.5,
+          11.600000381469727
+        ],
+        [
+          1.5,
+          12.0
+        ],
+        [
+          -1.5,
+          12.0
+        ]
+      ],
+      "collision": "COLLISION_South_Entry_Tread_02"
+    },
+    {
+      "object": "South_Entry_Tread_03",
+      "top_y": 0.335,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          12.0
+        ],
+        [
+          1.5,
+          12.0
+        ],
+        [
+          1.5,
+          12.399999618530273
+        ],
+        [
+          -1.5,
+          12.399999618530273
+        ]
+      ],
+      "collision": "COLLISION_South_Entry_Tread_03"
+    },
+    {
+      "object": "South_Entry_Tread_04",
+      "top_y": 0.52,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          12.399999618530273
+        ],
+        [
+          1.5,
+          12.399999618530273
+        ],
+        [
+          1.5,
+          12.800000190734863
+        ],
+        [
+          -1.5,
+          12.800000190734863
+        ]
+      ],
+      "collision": "COLLISION_South_Entry_Tread_04"
+    },
+    {
+      "object": "North_Entry_Tread_01",
+      "top_y": -0.035,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          -11.600000381469727
+        ],
+        [
+          1.5,
+          -11.600000381469727
+        ],
+        [
+          1.5,
+          -11.199999809265137
+        ],
+        [
+          -1.5,
+          -11.199999809265137
+        ]
+      ],
+      "collision": "COLLISION_North_Entry_Tread_01"
+    },
+    {
+      "object": "North_Entry_Tread_02",
+      "top_y": 0.15,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          -12.0
+        ],
+        [
+          1.5,
+          -12.0
+        ],
+        [
+          1.5,
+          -11.600000381469727
+        ],
+        [
+          -1.5,
+          -11.600000381469727
+        ]
+      ],
+      "collision": "COLLISION_North_Entry_Tread_02"
+    },
+    {
+      "object": "North_Entry_Tread_03",
+      "top_y": 0.335,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          -12.399999618530273
+        ],
+        [
+          1.5,
+          -12.399999618530273
+        ],
+        [
+          1.5,
+          -12.0
+        ],
+        [
+          -1.5,
+          -12.0
+        ]
+      ],
+      "collision": "COLLISION_North_Entry_Tread_03"
+    },
+    {
+      "object": "North_Entry_Tread_04",
+      "top_y": 0.52,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.40000000000000036,
+      "footprint_xz": [
+        [
+          -1.5,
+          -12.800000190734863
+        ],
+        [
+          1.5,
+          -12.800000190734863
+        ],
+        [
+          1.5,
+          -12.399999618530273
+        ],
+        [
+          -1.5,
+          -12.399999618530273
+        ]
+      ],
+      "collision": "COLLISION_North_Entry_Tread_04"
+    },
+    {
+      "object": "East_Entry_Tread_01",
+      "top_y": -0.035,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.4,
+      "footprint_xz": [
+        [
+          3.5999999046325684,
+          -1.5
+        ],
+        [
+          4.0,
+          -1.5
+        ],
+        [
+          4.0,
+          1.5
+        ],
+        [
+          3.5999999046325684,
+          1.5
+        ]
+      ],
+      "collision": "COLLISION_East_Entry_Tread_01"
+    },
+    {
+      "object": "East_Entry_Tread_02",
+      "top_y": 0.15,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.4,
+      "footprint_xz": [
+        [
+          4.0,
+          -1.5
+        ],
+        [
+          4.400000095367432,
+          -1.5
+        ],
+        [
+          4.400000095367432,
+          1.5
+        ],
+        [
+          4.0,
+          1.5
+        ]
+      ],
+      "collision": "COLLISION_East_Entry_Tread_02"
+    },
+    {
+      "object": "East_Entry_Tread_03",
+      "top_y": 0.335,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.4,
+      "footprint_xz": [
+        [
+          4.400000095367432,
+          -1.5
+        ],
+        [
+          4.800000190734863,
+          -1.5
+        ],
+        [
+          4.800000190734863,
+          1.5
+        ],
+        [
+          4.400000095367432,
+          1.5
+        ]
+      ],
+      "collision": "COLLISION_East_Entry_Tread_03"
+    },
+    {
+      "object": "East_Entry_Tread_04",
+      "top_y": 0.52,
+      "bottom_y": -0.22,
+      "rise_m": 0.185,
+      "tread_depth_m": 0.4,
+      "footprint_xz": [
+        [
+          4.800000190734863,
+          -1.5
+        ],
+        [
+          5.199999809265137,
+          -1.5
+        ],
+        [
+          5.199999809265137,
+          1.5
+        ],
+        [
+          4.800000190734863,
+          1.5
+        ]
+      ],
+      "collision": "COLLISION_East_Entry_Tread_04"
+    }
+  ],
+  "support_contacts": [
+    {
+      "object": "West_ClosedWall",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        26.08
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Wall_-13.04",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        11.54
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Wall_1.5",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        11.54
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Wall_-5.2",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.7,
+        0.24
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Wall_1.5",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.7,
+        0.24
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Wall_-5.2",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.7,
+        0.24
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Wall_1.5",
+      "support": "Colonnade_BasinSlab",
+      "kind": "room wall on basin slab",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.7,
+        0.24
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_01",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_01",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_02",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_02",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_03",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_03",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_04",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_04",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_05",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_05",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_06",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_06",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Left_SquarePier_07",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "Right_SquarePier_07",
+      "support": "Colonnade_BasinSlab",
+      "kind": "pier bears on submerged basin floor",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        1.15,
+        1.15
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Entry_Tread_01",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.400001
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Entry_Tread_02",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.4
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Entry_Tread_03",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.4
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Entry_Tread_04",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.400001
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Entry_Tread_01",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.400001
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Entry_Tread_02",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.4
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Entry_Tread_03",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.4
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Entry_Tread_04",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        3.0,
+        0.400001
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Entry_Tread_01",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.4,
+        3.0
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Entry_Tread_02",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.4,
+        3.0
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Entry_Tread_03",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.4,
+        3.0
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Entry_Tread_04",
+      "support": "Colonnade_BasinSlab",
+      "kind": "solid stair bearing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.4,
+        3.0
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Connector_Wall_001",
+      "support": "South_Connector_WallFooting_001",
+      "kind": "connector wall footing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        2.96
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "South_Connector_Wall_002",
+      "support": "South_Connector_WallFooting_002",
+      "kind": "connector wall footing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        2.96
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Connector_Wall_001",
+      "support": "North_Connector_WallFooting_001",
+      "kind": "connector wall footing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        2.96
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "North_Connector_Wall_002",
+      "support": "North_Connector_WallFooting_002",
+      "kind": "connector wall footing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        0.24,
+        2.96
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Connector_Wall_001",
+      "support": "East_Connector_WallFooting_001",
+      "kind": "connector wall footing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        10.56,
+        0.24
+      ],
+      "measured_from": "evaluated mesh vertices"
+    },
+    {
+      "object": "East_Connector_Wall_002",
+      "support": "East_Connector_WallFooting_002",
+      "kind": "connector wall footing",
+      "object_bottom_y": -0.22,
+      "support_top_y": -0.22,
+      "gap": 0.0,
+      "footprint_overlap_xz": [
+        10.56,
+        0.24
+      ],
+      "measured_from": "evaluated mesh vertices"
+    }
+  ],
+  "lights": [
+    {
+      "name": "AxialFixture_01",
+      "position": [
+        0.0,
+        3.39,
+        -9.3
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.75,
+      "range": 5.8,
+      "source_watts": 75,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_01_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "AxialFixture_02",
+      "position": [
+        0.0,
+        3.39,
+        -6.2
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.75,
+      "range": 5.8,
+      "source_watts": 75,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_02_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "AxialFixture_03",
+      "position": [
+        0.0,
+        3.39,
+        -3.1
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.75,
+      "range": 5.8,
+      "source_watts": 75,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_03_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "AxialFixture_04",
+      "position": [
+        0.0,
+        3.39,
+        0.0
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.75,
+      "range": 5.8,
+      "source_watts": 75,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_04_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "AxialFixture_05",
+      "position": [
+        0.0,
+        3.39,
+        3.1
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.75,
+      "range": 5.8,
+      "source_watts": 75,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_05_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "AxialFixture_06",
+      "position": [
+        0.0,
+        3.39,
+        6.2
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.58,
+      "range": 5.8,
+      "source_watts": 58,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_06_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "AxialFixture_07",
+      "position": [
+        0.0,
+        3.39,
+        9.3
+      ],
+      "color": [
+        0.78,
+        0.92,
+        0.88
+      ],
+      "energy": 0.58,
+      "range": 5.8,
+      "source_watts": 58,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "AxialFixture_07_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "EntranceCeilingFixture",
+      "position": [
+        0.0,
+        3.39,
+        12.05
+      ],
+      "color": [
+        0.82,
+        0.94,
+        0.9
+      ],
+      "energy": 0.42,
+      "range": 5.8,
+      "source_watts": 42,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "EntranceCeilingFixture_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    },
+    {
+      "name": "EastConnector_Light",
+      "position": [
+        10.5,
+        3.16,
+        0.0
+      ],
+      "color": [
+        0.72,
+        0.87,
+        0.82
+      ],
+      "energy": 0.3,
+      "range": 5.8,
+      "source_watts": 30,
+      "type": "omni",
+      "shadow": true,
+      "fixture_object": "EastConnector_Light_Diffuser",
+      "color_space": "linear",
+      "native_type": "spot",
+      "direction": [
+        0,
+        -1,
+        0
+      ],
+      "spot_angle_deg": 85,
+      "spot_angle_attenuation": 0.15,
+      "emitter_radius": 0.005,
+      "native_energy_provisional": true
+    }
+  ],
+  "camera_views": [
+    {
+      "name": "Reference1_Axial",
+      "position": [
+        0,
+        1.5,
+        11.0
+      ],
+      "target": [
+        0,
+        1.35,
+        -8.8
+      ],
+      "lens_mm": 23,
+      "fov_degrees": 76.09409,
+      "fov_axis": "vertical",
+      "reference_resolution": [
+        700,
+        700
+      ],
+      "sensor_fit": "AUTO",
+      "sensor_width_mm": 36.0,
+      "sensor_height_mm": 24.0
+    }
+  ],
+  "composition": {
+    "reference": 1,
+    "interior_width_m": 10.4,
+    "interior_length_m": 25.6,
+    "ceiling_y": 3.55,
+    "pier_pairs": 7,
+    "central_clear_water_aisle_m": 3.35,
+    "intent": "Dark paired square piers, strong axial rectangular light rhythm, shadowed side aisles."
+  },
+  "dry_surfaces": [
+    {
+      "object": "South_Connector_Floor_000",
+      "top_y": 0.52
+    },
+    {
+      "object": "North_Connector_Floor_000",
+      "top_y": 0.52
+    },
+    {
+      "object": "East_Connector_Floor_000",
+      "top_y": 0.52
+    }
+  ],
+  "connector_networks": [
+    {
+      "name": "South_Connector",
+      "union_rectangles_xz": [
+        [
+          -1.5,
+          1.5,
+          12.8,
+          16
+        ]
+      ],
+      "floor_y": 0.52,
+      "ceiling_y": 3.32,
+      "open_boundaries": [
+        {
+          "axis": "z",
+          "value": 12.8,
+          "start": -1.5,
+          "end": 1.5
+        },
+        {
+          "axis": "z",
+          "value": 16,
+          "start": -1.5,
+          "end": 1.5
+        }
+      ]
+    },
+    {
+      "name": "North_Connector",
+      "union_rectangles_xz": [
+        [
+          -1.5,
+          1.5,
+          -16,
+          -12.8
+        ]
+      ],
+      "floor_y": 0.52,
+      "ceiling_y": 3.32,
+      "open_boundaries": [
+        {
+          "axis": "z",
+          "value": -12.8,
+          "start": -1.5,
+          "end": 1.5
+        },
+        {
+          "axis": "z",
+          "value": -16,
+          "start": -1.5,
+          "end": 1.5
+        }
+      ]
+    },
+    {
+      "name": "East_Connector",
+      "union_rectangles_xz": [
+        [
+          5.2,
+          16,
+          -1.5,
+          1.5
+        ]
+      ],
+      "floor_y": 0.52,
+      "ceiling_y": 3.32,
+      "open_boundaries": [
+        {
+          "axis": "x",
+          "value": 5.2,
+          "start": -1.5,
+          "end": 1.5
+        },
+        {
+          "axis": "x",
+          "value": 16,
+          "start": -1.5,
+          "end": 1.5
+        }
+      ]
+    }
+  ],
+  "water_rectangles": [
+    {
+      "name": "Basin",
+      "position": [
+        -5.2,
+        0.32,
+        -12.8
+      ],
+      "size": [
+        10.4,
+        0,
+        25.6
+      ],
+      "clip_polygon_xz": [
+        [
+          -5.2,
+          -12.8
+        ],
+        [
+          5.2,
+          -12.8
+        ],
+        [
+          5.2,
+          12.8
+        ],
+        [
+          -5.2,
+          12.8
+        ]
+      ],
+      "surface_y": 0.32,
+      "bottom_y": -0.22,
+      "note": "Derived bounding rectangle; clip to polygon before subtracting solid exclusions."
+    }
+  ],
+  "threshold_measurements": [
+    {
+      "portal": "south",
+      "threshold_object": "South_Connector_Floor_000",
+      "threshold_top_y": 0.52,
+      "threshold_bottom_y": -0.6,
+      "overhead_object": "South_Connector_Roof_000",
+      "overhead_bottom_y": 3.32,
+      "measured_clear_height_m": 2.8,
+      "support": "Integral solid threshold extends to structural foundation; no floating threshold skin.",
+      "measured_from": "exported mesh vertices at doorway center"
+    },
+    {
+      "portal": "north",
+      "threshold_object": "North_Connector_Floor_000",
+      "threshold_top_y": 0.52,
+      "threshold_bottom_y": -0.6,
+      "overhead_object": "North_Connector_Roof_000",
+      "overhead_bottom_y": 3.32,
+      "measured_clear_height_m": 2.8,
+      "support": "Integral solid threshold extends to structural foundation; no floating threshold skin.",
+      "measured_from": "exported mesh vertices at doorway center"
+    },
+    {
+      "portal": "east",
+      "threshold_object": "East_Connector_Floor_000",
+      "threshold_top_y": 0.52,
+      "threshold_bottom_y": -0.6,
+      "overhead_object": "East_Connector_Roof_000",
+      "overhead_bottom_y": 3.32,
+      "measured_clear_height_m": 2.8,
+      "support": "Integral solid threshold extends to structural foundation; no floating threshold skin.",
+      "measured_from": "exported mesh vertices at doorway center"
+    }
+  ],
+  "audit": {
+    "mesh_audit": "PASS",
+    "issues": [],
+    "missing_uv": [],
+    "tangent_failures": [],
+    "counts": {
+      "visual_meshes": 74,
+      "vertices": 3424,
+      "polygons": 3306
+    },
+    "proxy_count": 56,
+    "measured_support_contacts": 39,
+    "bounds": {
+      "min": [
+        -5.44,
+        -0.6,
+        -16.0
+      ],
+      "max": [
+        16.0,
+        3.83,
+        16.0
+      ]
+    },
+    "validation_scope": "Blender CPU mesh, tangent and contact validation only. No Godot/NVIDIA visual validation."
+  },
+  "connector_route_waypoints": [
+    {
+      "name": "south_to_water",
+      "coordinates": "Godot local feet positions",
+      "waypoints": [
+        [
+          0,
+          0.52,
+          16
+        ],
+        [
+          0,
+          0.52,
+          13.4
+        ],
+        [
+          0,
+          0.52,
+          12.6
+        ],
+        [
+          0,
+          0.335,
+          12.2
+        ],
+        [
+          0,
+          0.15,
+          11.8
+        ],
+        [
+          0,
+          -0.035,
+          11.4
+        ],
+        [
+          0,
+          -0.22,
+          10.8
+        ]
+      ],
+      "status": "geometric route witness; existing-controller traversal is separately tested by integration owner"
+    },
+    {
+      "name": "north_to_water",
+      "coordinates": "Godot local feet positions",
+      "waypoints": [
+        [
+          0,
+          0.52,
+          -16
+        ],
+        [
+          0,
+          0.52,
+          -13.4
+        ],
+        [
+          0,
+          0.52,
+          -12.6
+        ],
+        [
+          0,
+          0.335,
+          -12.2
+        ],
+        [
+          0,
+          0.15,
+          -11.8
+        ],
+        [
+          0,
+          -0.035,
+          -11.4
+        ],
+        [
+          0,
+          -0.22,
+          -10.8
+        ]
+      ],
+      "status": "geometric route witness; existing-controller traversal is separately tested by integration owner"
+    },
+    {
+      "name": "east_to_water_around_pier",
+      "coordinates": "Godot local feet positions",
+      "waypoints": [
+        [
+          16,
+          0.52,
+          0
+        ],
+        [
+          6,
+          0.52,
+          0
+        ],
+        [
+          5,
+          0.52,
+          0
+        ],
+        [
+          4.6,
+          0.335,
+          0
+        ],
+        [
+          4.2,
+          0.15,
+          0
+        ],
+        [
+          3.8,
+          -0.035,
+          0
+        ],
+        [
+          3.35,
+          -0.22,
+          1.1
+        ],
+        [
+          0,
+          -0.22,
+          1.1
+        ]
+      ],
+      "status": "geometric route witness; existing-controller traversal is separately tested by integration owner"
+    }
+  ],
+  "collision_boxes": [
+    {
+      "name": "COLLISION_Colonnade_BasinSlab",
+      "position": [
+        -5.44,
+        -0.6,
+        -13.04
+      ],
+      "size": [
+        10.88,
+        0.38,
+        26.08
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_West_ClosedWall",
+      "position": [
+        -5.44,
+        -0.22,
+        -13.04
+      ],
+      "size": [
+        0.24,
+        3.77,
+        26.08
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Wall_-13.04",
+      "position": [
+        5.2,
+        -0.22,
+        -13.04
+      ],
+      "size": [
+        0.24,
+        3.77,
+        11.54
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Wall_1.5",
+      "position": [
+        5.2,
+        -0.22,
+        1.5
+      ],
+      "size": [
+        0.24,
+        3.77,
+        11.54
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_PortalLintel",
+      "position": [
+        5.2,
+        3.32,
+        -1.5
+      ],
+      "size": [
+        0.24,
+        0.23,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Wall_-5.2",
+      "position": [
+        -5.2,
+        -0.22,
+        -13.04
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Wall_1.5",
+      "position": [
+        1.5,
+        -0.22,
+        -13.04
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_PortalLintel",
+      "position": [
+        -1.5,
+        3.32,
+        -13.04
+      ],
+      "size": [
+        3.0,
+        0.23,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Wall_-5.2",
+      "position": [
+        -5.2,
+        -0.22,
+        12.8
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Wall_1.5",
+      "position": [
+        1.5,
+        -0.22,
+        12.8
+      ],
+      "size": [
+        3.7,
+        3.77,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_PortalLintel",
+      "position": [
+        -1.5,
+        3.32,
+        12.8
+      ],
+      "size": [
+        3.0,
+        0.23,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Colonnade_ThickRoof",
+      "position": [
+        -5.44,
+        3.55,
+        -13.04
+      ],
+      "size": [
+        10.88,
+        0.28,
+        26.08
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_01",
+      "position": [
+        -2.825,
+        -0.22,
+        -9.875
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_01",
+      "position": [
+        1.675,
+        -0.22,
+        -9.875
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_02",
+      "position": [
+        -2.825,
+        -0.22,
+        -6.775
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_02",
+      "position": [
+        1.675,
+        -0.22,
+        -6.775
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_03",
+      "position": [
+        -2.825,
+        -0.22,
+        -3.675
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_03",
+      "position": [
+        1.675,
+        -0.22,
+        -3.675
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_04",
+      "position": [
+        -2.825,
+        -0.22,
+        -0.575
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_04",
+      "position": [
+        1.675,
+        -0.22,
+        -0.575
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_05",
+      "position": [
+        -2.825,
+        -0.22,
+        2.525
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_05",
+      "position": [
+        1.675,
+        -0.22,
+        2.525
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_06",
+      "position": [
+        -2.825,
+        -0.22,
+        5.625
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_06",
+      "position": [
+        1.675,
+        -0.22,
+        5.625
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Left_SquarePier_07",
+      "position": [
+        -2.825,
+        -0.22,
+        8.725
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_Right_SquarePier_07",
+      "position": [
+        1.675,
+        -0.22,
+        8.725
+      ],
+      "size": [
+        1.15,
+        3.77,
+        1.15
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_01",
+      "position": [
+        -1.5,
+        -0.22,
+        11.2
+      ],
+      "size": [
+        3.0,
+        0.185,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_02",
+      "position": [
+        -1.5,
+        -0.22,
+        11.6
+      ],
+      "size": [
+        3.0,
+        0.37,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_03",
+      "position": [
+        -1.5,
+        -0.22,
+        12.0
+      ],
+      "size": [
+        3.0,
+        0.555,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Entry_Tread_04",
+      "position": [
+        -1.5,
+        -0.22,
+        12.4
+      ],
+      "size": [
+        3.0,
+        0.74,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_01",
+      "position": [
+        -1.5,
+        -0.22,
+        -11.6
+      ],
+      "size": [
+        3.0,
+        0.185,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_02",
+      "position": [
+        -1.5,
+        -0.22,
+        -12.0
+      ],
+      "size": [
+        3.0,
+        0.37,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_03",
+      "position": [
+        -1.5,
+        -0.22,
+        -12.4
+      ],
+      "size": [
+        3.0,
+        0.555,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Entry_Tread_04",
+      "position": [
+        -1.5,
+        -0.22,
+        -12.8
+      ],
+      "size": [
+        3.0,
+        0.74,
+        0.4
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_01",
+      "position": [
+        3.6,
+        -0.22,
+        -1.5
+      ],
+      "size": [
+        0.4,
+        0.185,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_02",
+      "position": [
+        4.0,
+        -0.22,
+        -1.5
+      ],
+      "size": [
+        0.4,
+        0.37,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_03",
+      "position": [
+        4.4,
+        -0.22,
+        -1.5
+      ],
+      "size": [
+        0.4,
+        0.555,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Entry_Tread_04",
+      "position": [
+        4.8,
+        -0.22,
+        -1.5
+      ],
+      "size": [
+        0.4,
+        0.74,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Connector_Floor_000",
+      "position": [
+        -1.5,
+        -0.6,
+        12.8
+      ],
+      "size": [
+        3.0,
+        1.12,
+        3.2
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Connector_Roof_000",
+      "position": [
+        -1.5,
+        3.32,
+        13.04
+      ],
+      "size": [
+        3.0,
+        0.24,
+        2.96
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Connector_WallFooting_001",
+      "position": [
+        -1.74,
+        -0.6,
+        12.8
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Connector_Wall_001",
+      "position": [
+        -1.74,
+        -0.22,
+        13.04
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Connector_WallFooting_002",
+      "position": [
+        1.5,
+        -0.6,
+        12.8
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_South_Connector_Wall_002",
+      "position": [
+        1.5,
+        -0.22,
+        13.04
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Connector_Floor_000",
+      "position": [
+        -1.5,
+        -0.6,
+        -16.0
+      ],
+      "size": [
+        3.0,
+        1.12,
+        3.2
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Connector_Roof_000",
+      "position": [
+        -1.5,
+        3.32,
+        -16.0
+      ],
+      "size": [
+        3.0,
+        0.24,
+        2.96
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Connector_WallFooting_001",
+      "position": [
+        -1.74,
+        -0.6,
+        -16.0
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Connector_Wall_001",
+      "position": [
+        -1.74,
+        -0.22,
+        -16.0
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Connector_WallFooting_002",
+      "position": [
+        1.5,
+        -0.6,
+        -16.0
+      ],
+      "size": [
+        0.24,
+        0.38,
+        3.2
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_North_Connector_Wall_002",
+      "position": [
+        1.5,
+        -0.22,
+        -16.0
+      ],
+      "size": [
+        0.24,
+        3.78,
+        2.96
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Connector_Floor_000",
+      "position": [
+        5.2,
+        -0.6,
+        -1.5
+      ],
+      "size": [
+        10.8,
+        1.12,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Connector_Roof_000",
+      "position": [
+        5.44,
+        3.32,
+        -1.5
+      ],
+      "size": [
+        10.56,
+        0.24,
+        3.0
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Connector_WallFooting_001",
+      "position": [
+        5.2,
+        -0.6,
+        -1.74
+      ],
+      "size": [
+        10.8,
+        0.38,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Connector_Wall_001",
+      "position": [
+        5.44,
+        -0.22,
+        -1.74
+      ],
+      "size": [
+        10.56,
+        3.78,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Connector_WallFooting_002",
+      "position": [
+        5.2,
+        -0.6,
+        1.5
+      ],
+      "size": [
+        10.8,
+        0.38,
+        0.24
+      ],
+      "type": "BOX"
+    },
+    {
+      "name": "COLLISION_East_Connector_Wall_002",
+      "position": [
+        5.44,
+        -0.22,
+        1.5
+      ],
+      "size": [
+        10.56,
+        3.78,
+        0.24
+      ],
+      "type": "BOX"
+    }
+  ],
+  "water_steps": [
+    {
+      "name": "South_Entry_Tread_01",
+      "top_y": -0.035,
+      "footprint_xz": [
+        [
+          -1.5,
+          11.199999809265137
+        ],
+        [
+          1.5,
+          11.199999809265137
+        ],
+        [
+          1.5,
+          11.600000381469727
+        ],
+        [
+          -1.5,
+          11.600000381469727
+        ]
+      ]
+    },
+    {
+      "name": "South_Entry_Tread_02",
+      "top_y": 0.15,
+      "footprint_xz": [
+        [
+          -1.5,
+          11.600000381469727
+        ],
+        [
+          1.5,
+          11.600000381469727
+        ],
+        [
+          1.5,
+          12.0
+        ],
+        [
+          -1.5,
+          12.0
+        ]
+      ]
+    },
+    {
+      "name": "South_Entry_Tread_03",
+      "top_y": 0.335,
+      "footprint_xz": [
+        [
+          -1.5,
+          12.0
+        ],
+        [
+          1.5,
+          12.0
+        ],
+        [
+          1.5,
+          12.399999618530273
+        ],
+        [
+          -1.5,
+          12.399999618530273
+        ]
+      ]
+    },
+    {
+      "name": "South_Entry_Tread_04",
+      "top_y": 0.52,
+      "footprint_xz": [
+        [
+          -1.5,
+          12.399999618530273
+        ],
+        [
+          1.5,
+          12.399999618530273
+        ],
+        [
+          1.5,
+          12.800000190734863
+        ],
+        [
+          -1.5,
+          12.800000190734863
+        ]
+      ]
+    },
+    {
+      "name": "North_Entry_Tread_01",
+      "top_y": -0.035,
+      "footprint_xz": [
+        [
+          -1.5,
+          -11.600000381469727
+        ],
+        [
+          1.5,
+          -11.600000381469727
+        ],
+        [
+          1.5,
+          -11.199999809265137
+        ],
+        [
+          -1.5,
+          -11.199999809265137
+        ]
+      ]
+    },
+    {
+      "name": "North_Entry_Tread_02",
+      "top_y": 0.15,
+      "footprint_xz": [
+        [
+          -1.5,
+          -12.0
+        ],
+        [
+          1.5,
+          -12.0
+        ],
+        [
+          1.5,
+          -11.600000381469727
+        ],
+        [
+          -1.5,
+          -11.600000381469727
+        ]
+      ]
+    },
+    {
+      "name": "North_Entry_Tread_03",
+      "top_y": 0.335,
+      "footprint_xz": [
+        [
+          -1.5,
+          -12.399999618530273
+        ],
+        [
+          1.5,
+          -12.399999618530273
+        ],
+        [
+          1.5,
+          -12.0
+        ],
+        [
+          -1.5,
+          -12.0
+        ]
+      ]
+    },
+    {
+      "name": "North_Entry_Tread_04",
+      "top_y": 0.52,
+      "footprint_xz": [
+        [
+          -1.5,
+          -12.800000190734863
+        ],
+        [
+          1.5,
+          -12.800000190734863
+        ],
+        [
+          1.5,
+          -12.399999618530273
+        ],
+        [
+          -1.5,
+          -12.399999618530273
+        ]
+      ]
+    },
+    {
+      "name": "East_Entry_Tread_01",
+      "top_y": -0.035,
+      "footprint_xz": [
+        [
+          3.5999999046325684,
+          -1.5
+        ],
+        [
+          4.0,
+          -1.5
+        ],
+        [
+          4.0,
+          1.5
+        ],
+        [
+          3.5999999046325684,
+          1.5
+        ]
+      ]
+    },
+    {
+      "name": "East_Entry_Tread_02",
+      "top_y": 0.15,
+      "footprint_xz": [
+        [
+          4.0,
+          -1.5
+        ],
+        [
+          4.400000095367432,
+          -1.5
+        ],
+        [
+          4.400000095367432,
+          1.5
+        ],
+        [
+          4.0,
+          1.5
+        ]
+      ]
+    },
+    {
+      "name": "East_Entry_Tread_03",
+      "top_y": 0.335,
+      "footprint_xz": [
+        [
+          4.400000095367432,
+          -1.5
+        ],
+        [
+          4.800000190734863,
+          -1.5
+        ],
+        [
+          4.800000190734863,
+          1.5
+        ],
+        [
+          4.400000095367432,
+          1.5
+        ]
+      ]
+    },
+    {
+      "name": "East_Entry_Tread_04",
+      "top_y": 0.52,
+      "footprint_xz": [
+        [
+          4.800000190734863,
+          -1.5
+        ],
+        [
+          5.199999809265137,
+          -1.5
+        ],
+        [
+          5.199999809265137,
+          1.5
+        ],
+        [
+          4.800000190734863,
+          1.5
+        ]
+      ]
+    }
+  ],
+  "joint_termination_revision": 1
+}

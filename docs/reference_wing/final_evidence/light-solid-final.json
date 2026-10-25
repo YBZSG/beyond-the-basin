@@ -1,0 +1,1185 @@
+{
+  "rooms": [
+    {
+      "room": "stair_gallery",
+      "source_sha256": "a8f6bc5bbd7d162c374889d6545d2f5c7dbb8a80e23dc7652d2105e170930058",
+      "geometry_sha256": "f3523a105b746e58b913c1011ba3075830b5a3acf1973d83b856939176f6c671",
+      "light_count": 17,
+      "lights": [
+        {
+          "name": "CeilingStrip_R0_00",
+          "position_godot": [
+            0.62,
+            11.19,
+            -2.15
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_00_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "LowerLanding",
+            "distance_m": 10.669999122619629,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_01",
+          "position_godot": [
+            0.62,
+            11.19,
+            -0.05
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_01_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "LowerLanding",
+            "distance_m": 10.669999122619629,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_02",
+          "position_godot": [
+            0.62,
+            11.19,
+            2.05
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_02_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 10.030000686645508,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_03",
+          "position_godot": [
+            0.62,
+            11.19,
+            4.15
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_03_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 9.070000648498535,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_04",
+          "position_godot": [
+            0.62,
+            11.19,
+            6.25
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_04_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 7.949999809265137,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_05",
+          "position_godot": [
+            0.62,
+            11.19,
+            8.35
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_05_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 6.989999771118164,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_06",
+          "position_godot": [
+            0.62,
+            11.19,
+            10.45
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_06_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 6.509999752044678,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R0_07",
+          "position_godot": [
+            0.62,
+            11.19,
+            12.55
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R0_07_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 6.509999752044678,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_00",
+          "position_godot": [
+            2.14,
+            11.19,
+            -2.15
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_00_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "LowerLanding",
+            "distance_m": 10.670000076293945,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_01",
+          "position_godot": [
+            2.14,
+            11.19,
+            -0.05
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_01_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "LowerLanding",
+            "distance_m": 10.670000076293945,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_02",
+          "position_godot": [
+            2.14,
+            11.19,
+            2.05
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_02_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 10.029999732971191,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_03",
+          "position_godot": [
+            2.14,
+            11.19,
+            4.15
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_03_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 9.069999694824219,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_04",
+          "position_godot": [
+            2.14,
+            11.19,
+            6.25
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_04_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 7.949999809265137,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_05",
+          "position_godot": [
+            2.14,
+            11.19,
+            8.35
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_05_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 6.990000247955322,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_06",
+          "position_godot": [
+            2.14,
+            11.19,
+            10.45
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_06_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 6.510000228881836,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CeilingStrip_R1_07",
+          "position_godot": [
+            2.14,
+            11.19,
+            12.55
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CeilingStrip_R1_07_Lens",
+            "distance_m": 0.015000343322753906
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "StairFlightAndUpperLanding",
+            "distance_m": 6.509999752044678,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "ContinuationStrip",
+          "position_godot": [
+            0.7,
+            3.2,
+            -10.0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "ContinuationStrip_Lens",
+            "distance_m": 0.039999961853027344
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "NorthContinuationFloor",
+            "distance_m": 2.680000066757202,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        }
+      ],
+      "pass": true,
+      "scope": "Actual evaluated visible meshes, world-space nearest surface and per-object three-direction parity. Sphere bound by nearest distance; no GPU/light brightness inference."
+    },
+    {
+      "room": "colonnade",
+      "source_sha256": "89aabc975e25c20a9fe61f5649139d962d2dbfe196cd2cd80c7e30c24335d571",
+      "geometry_sha256": "024580424a57c4368ce9c6726e525000b2d717139b12e9409797828d20cf953d",
+      "light_count": 9,
+      "lights": [
+        {
+          "name": "AxialFixture_01",
+          "position_godot": [
+            0.0,
+            3.39,
+            -9.3
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_01_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100001335144043,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "AxialFixture_02",
+          "position_godot": [
+            0.0,
+            3.39,
+            -6.2
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_02_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100003719329834,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "AxialFixture_03",
+          "position_godot": [
+            0.0,
+            3.39,
+            -3.1
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_03_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100001335144043,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "AxialFixture_04",
+          "position_godot": [
+            0.0,
+            3.39,
+            0.0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_04_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100001335144043,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "AxialFixture_05",
+          "position_godot": [
+            0.0,
+            3.39,
+            3.1
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_05_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100001335144043,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "AxialFixture_06",
+          "position_godot": [
+            0.0,
+            3.39,
+            6.2
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_06_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100003719329834,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "AxialFixture_07",
+          "position_godot": [
+            0.0,
+            3.39,
+            9.3
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "AxialFixture_07_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Colonnade_BasinSlab",
+            "distance_m": 3.6100001335144043,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "EntranceCeilingFixture",
+          "position_godot": [
+            0.0,
+            3.39,
+            12.05
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "EntranceCeilingFixture_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "South_Entry_Tread_03",
+            "distance_m": 3.055000066757202,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "EastConnector_Light",
+          "position_godot": [
+            10.5,
+            3.16,
+            0.0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "EastConnector_Light_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "East_Connector_Floor_000",
+            "distance_m": 2.640000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        }
+      ],
+      "pass": true,
+      "scope": "Actual evaluated visible meshes, world-space nearest surface and per-object three-direction parity. Sphere bound by nearest distance; no GPU/light brightness inference."
+    },
+    {
+      "room": "cyan_corridor",
+      "source_sha256": "67df09e26ab4d56c166babdd0ac72549965099e0447bca587a5983a1fa568ccd",
+      "geometry_sha256": "9411edd50599f6fd964a700415beae81757b1f14eaefc1e9ba04058c5a007f37",
+      "light_count": 7,
+      "lights": [
+        {
+          "name": "CyanStrip_01",
+          "position_godot": [
+            -1.72,
+            2.925,
+            9.8
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CyanStrip_01_Diffuser",
+            "distance_m": 0.011999964714050293
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Right_SolidWall_-8.3",
+            "distance_m": 3.5199999809265137,
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CyanStrip_02",
+          "position_godot": [
+            -1.72,
+            2.925,
+            7.7
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CyanStrip_02_Diffuser",
+            "distance_m": 0.011999964714050293
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Right_SolidWall_-8.3",
+            "distance_m": 3.5199999809265137,
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CyanStrip_03",
+          "position_godot": [
+            -1.72,
+            2.925,
+            2.9
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CyanStrip_03_Diffuser",
+            "distance_m": 0.011999964714050293
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Right_SolidWall_-8.3",
+            "distance_m": 3.5199999809265137,
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CyanStrip_04",
+          "position_godot": [
+            -1.72,
+            2.925,
+            -2.6
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CyanStrip_04_Diffuser",
+            "distance_m": 0.011999964714050293
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Right_SolidWall_-8.3",
+            "distance_m": 3.520000457763672,
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CyanStrip_05",
+          "position_godot": [
+            -1.72,
+            2.925,
+            -7.4
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CyanStrip_05_Diffuser",
+            "distance_m": 0.011999964714050293
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Right_SolidWall_-8.3",
+            "distance_m": 3.5199999809265137,
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "CyanStrip_06",
+          "position_godot": [
+            -1.72,
+            2.925,
+            -10.7
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "CyanStrip_06_Diffuser",
+            "distance_m": 0.011999964714050293
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Cyan_EastDogleg_Wall_003",
+            "distance_m": 7.119999408721924,
+            "normal": [
+              -0.9999999403953552,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Cyan_ConnectorFixture",
+          "position_godot": [
+            10.0,
+            3.16,
+            0.0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Cyan_ConnectorFixture_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Cyan_EastDogleg_Floor_009",
+            "distance_m": 2.640000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        }
+      ],
+      "pass": true,
+      "scope": "Actual evaluated visible meshes, world-space nearest surface and per-object three-direction parity. Sphere bound by nearest distance; no GPU/light brightness inference."
+    },
+    {
+      "room": "octagonal_bath",
+      "source_sha256": "969c4a67fc03a801ffcec28a4ebb455938d5940971c6163fd849a779aa3e718f",
+      "geometry_sha256": "4eadf0bc13a94eb72a13e068d210af884581be5098fc2e62daed2d3ddfcf9af7",
+      "light_count": 4,
+      "lights": [
+        {
+          "name": "Bath_LeftPortalHiddenLamp",
+          "position_godot": [
+            -1.45,
+            3.16,
+            -7.15
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Bath_LeftPortalHiddenLamp_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Octagonal_Step_01_Facet_01",
+            "distance_m": 4.002727031707764,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Bath_WestConnectorFixture",
+          "position_godot": [
+            -13.0,
+            3.16,
+            0.0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Bath_WestConnectorFixture_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Bath_WestRoute_Floor_000",
+            "distance_m": 2.640000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Bath_SouthConnectorFixture",
+          "position_godot": [
+            0.0,
+            3.16,
+            14.0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Bath_SouthConnectorFixture_Diffuser",
+            "distance_m": 0.03600001335144043
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Bath_SouthRoute_Floor_002",
+            "distance_m": 2.640000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Bath_EntrySidePractical",
+          "position_godot": [
+            0.0,
+            3.05,
+            6.385
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Bath_EntrySidePractical_Diffuser",
+            "distance_m": 0.02299976348876953
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "CeilingCoffer_Ring_04_Facet_01",
+            "distance_m": 11.155359268188477,
+            "normal": [
+              0.0,
+              0.0,
+              -1.0
+            ]
+          },
+          "sphere_clear": true
+        }
+      ],
+      "pass": true,
+      "scope": "Actual evaluated visible meshes, world-space nearest surface and per-object three-direction parity. Sphere bound by nearest distance; no GPU/light brightness inference."
+    },
+    {
+      "room": "ball_lounge",
+      "source_sha256": "45449a83591838fb70b1c06f30d4dd0dd114ce9025de1fca7a3c5fd4408b64bf",
+      "geometry_sha256": "be3166caf7bff05494128ea7881e00912e73c8ec720c16542409cf423e641003",
+      "light_count": 10,
+      "lights": [
+        {
+          "name": "Right_porthole_01_soft_daylight",
+          "position_godot": [
+            3.46,
+            2.0,
+            -6.5
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Right_porthole_01_cyan_glazing",
+            "distance_m": 0.6399998664855957
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Room_left_wall",
+            "distance_m": 6.860000133514404,
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Right_porthole_02_soft_daylight",
+          "position_godot": [
+            3.46,
+            2.0,
+            -3.1
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Right_porthole_02_cyan_glazing",
+            "distance_m": 0.6399998664855957
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Room_left_wall",
+            "distance_m": 6.860000133514404,
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Right_porthole_03_soft_daylight",
+          "position_godot": [
+            3.46,
+            2.0,
+            0.3
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Right_porthole_03_cyan_glazing",
+            "distance_m": 0.6399998664855957
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Room_left_wall",
+            "distance_m": 6.860000133514404,
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Right_porthole_04_soft_daylight",
+          "position_godot": [
+            3.46,
+            2.0,
+            3.7
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Right_porthole_04_cyan_glazing",
+            "distance_m": 0.6399998664855957
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Room_left_wall",
+            "distance_m": 6.860000133514404,
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Rear_porthole_05_soft_daylight",
+          "position_godot": [
+            -1.15,
+            2.0,
+            -8.06
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Rear_porthole_05_cyan_glazing",
+            "distance_m": 0.6399993896484375
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Room_south_wall",
+            "distance_m": 16.060001373291016,
+            "normal": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Connector_practical_00",
+          "position_godot": [
+            -12,
+            3.41,
+            0
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Connector_flush_light_00",
+            "distance_m": 0.014999866485595703
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Closed_connector_floor_and_roof",
+            "distance_m": 2.890000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Connector_practical_01",
+          "position_godot": [
+            -6.5,
+            3.41,
+            3.4
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Connector_flush_light_01",
+            "distance_m": 0.014999866485595703
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Closed_connector_floor_and_roof",
+            "distance_m": 2.890000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              0.9999999403953552
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Connector_practical_02",
+          "position_godot": [
+            -6.5,
+            3.41,
+            -6
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Connector_flush_light_02",
+            "distance_m": 0.014999866485595703
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Closed_connector_floor_and_roof",
+            "distance_m": 2.890000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Connector_practical_03",
+          "position_godot": [
+            0,
+            3.41,
+            -13
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Connector_flush_light_03",
+            "distance_m": 0.014999866485595703
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Closed_connector_floor_and_roof",
+            "distance_m": 2.890000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        },
+        {
+          "name": "Connector_practical_04",
+          "position_godot": [
+            -2.8,
+            3.41,
+            6.3
+          ],
+          "radius_m": 0.005,
+          "nearest": {
+            "object": "Connector_flush_light_04",
+            "distance_m": 0.014999866485595703
+          },
+          "inside_actual_meshes": [],
+          "axis_first_hit": {
+            "object": "Dry_entry_apron",
+            "distance_m": 2.890000104904175,
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "sphere_clear": true
+        }
+      ],
+      "pass": true,
+      "scope": "Actual evaluated visible meshes, world-space nearest surface and per-object three-direction parity. Sphere bound by nearest distance; no GPU/light brightness inference."
+    }
+  ],
+  "pass": true,
+  "rendered": false,
+  "native_gpu": false
+}

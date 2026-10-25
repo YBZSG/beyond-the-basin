@@ -1,0 +1,957 @@
+{
+  "date": "2026-10-24",
+  "source_baseline": "351fcd6f8f2bb5fe21851482e2526dfa262ef406",
+  "passed": true,
+  "scope": "CPU source/math, official Godot headless resource/import and Blender no-render node contracts; no GPU or native visual validation.",
+  "cpu_tests_passed": 10,
+  "headless_lab_parse_passed": true,
+  "shader_frontend_uniform_discovery_passed": true,
+  "runtime_texture_imports": 6,
+  "orm_mip_levels_after_base": 11,
+  "imported_orm_coverage_preserved": true,
+  "legacy_six_shader_hashes_unchanged": true,
+  "material_contract": {
+    "display": "headless",
+    "engine": {
+      "build": "official",
+      "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+      "hex": 263683,
+      "major": 4,
+      "minor": 6,
+      "patch": 3,
+      "status": "stable",
+      "string": "4.6.3-stable (official)",
+      "timestamp": 0
+    },
+    "errors": [],
+    "passed": true,
+    "scope": "Headless resources/bindings and imported texture CPU decoding only. No GPU shader/sampling, visual or native RT acceptance.",
+    "stats": {
+      "base_tile_pitch_metres": 0.1,
+      "materials": 16,
+      "physical_dimensions_by_role": {
+        "ref_tile_cyan_satin": {
+          "bevel_width_metres": 0.0009,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 7.5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            0.727782428264618,
+            1.28766453266144,
+            1.25030124187469
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.34,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            0.570274889469147,
+            1.0518171787262,
+            1.01800072193146
+          ],
+          "grout_width_metres": 0.0027,
+          "joint_relief_metres": 0.00042,
+          "repeat_metres": 1.2,
+          "tile_pitch_metres": 0.15,
+          "tile_scale": 1.5
+        },
+        "ref_tile_cyan_satin_dry": {
+          "bevel_width_metres": 0.0009,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 7.5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            0.727782428264618,
+            1.28766453266144,
+            1.25030124187469
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.4,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            0.570274889469147,
+            1.0518171787262,
+            1.01800072193146
+          ],
+          "grout_width_metres": 0.0027,
+          "joint_relief_metres": 0.00042,
+          "repeat_metres": 1.2,
+          "tile_pitch_metres": 0.15,
+          "tile_scale": 1.5
+        },
+        "ref_tile_dark_teal": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.0750000029802322,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_dark_teal_dry": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.26,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_dry": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.26,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_pearl": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.0750000029802322,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_pearl_ref5_crown": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 0.0003,
+          "crown_radius_metres": 0.04,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 1,
+          "face_roughness": 0.075,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_pink": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.0750000029802322,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_pink_dry": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.26,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_pink_satin": {
+          "bevel_width_metres": 0.0012,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 0.0001,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.4,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0036,
+          "joint_relief_metres": 0.00056,
+          "repeat_metres": 1.6,
+          "tile_pitch_metres": 0.2,
+          "tile_scale": 2.0
+        },
+        "ref_tile_pink_satin_dry": {
+          "bevel_width_metres": 0.0012,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 0.0001,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.4,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0036,
+          "joint_relief_metres": 0.00056,
+          "repeat_metres": 1.6,
+          "tile_pitch_metres": 0.2,
+          "tile_scale": 2.0
+        },
+        "ref_tile_teal": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.0750000029802322,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_teal_dry": {
+          "bevel_width_metres": 0.0006,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.26,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0018,
+          "joint_relief_metres": 0.00028,
+          "repeat_metres": 0.8,
+          "tile_pitch_metres": 0.1,
+          "tile_scale": 1.0
+        },
+        "ref_tile_teal_satin": {
+          "bevel_width_metres": 0.0009,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 7.5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.34,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0027,
+          "joint_relief_metres": 0.00042,
+          "repeat_metres": 1.2,
+          "tile_pitch_metres": 0.15,
+          "tile_scale": 1.5
+        },
+        "ref_tile_teal_satin_dry": {
+          "bevel_width_metres": 0.0009,
+          "centre_tilt_limit_degrees_per_axis": 0.35,
+          "crown_metres": 7.5e-05,
+          "crown_radius_metres": 0.0,
+          "face_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "face_profile": 0,
+          "face_roughness": 0.4,
+          "face_shape_strength": 1.0,
+          "grout_color_gain": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "grout_width_metres": 0.0027,
+          "joint_relief_metres": 0.00042,
+          "repeat_metres": 1.2,
+          "tile_pitch_metres": 0.15,
+          "tile_scale": 1.5
+        }
+      },
+      "roles": [
+        "ref_tile_pearl",
+        "ref_tile_teal",
+        "ref_tile_pink",
+        "ref_tile_dark_teal",
+        "ref_tile_dry",
+        "ref_tile_teal_dry",
+        "ref_tile_pink_dry",
+        "ref_tile_dark_teal_dry",
+        "ref_tile_teal_satin",
+        "ref_tile_teal_satin_dry",
+        "ref_tile_pink_satin",
+        "ref_tile_pink_satin_dry",
+        "ref_tile_pearl_ref5_crown",
+        "ref_tile_cyan_satin",
+        "ref_tile_cyan_satin_dry",
+        "ref_grout"
+      ],
+      "rt_requested": false,
+      "scope": "reference_wing_only",
+      "tile_pitch_metres_by_role": {
+        "ref_tile_cyan_satin": 0.15,
+        "ref_tile_cyan_satin_dry": 0.15,
+        "ref_tile_dark_teal": 0.1,
+        "ref_tile_dark_teal_dry": 0.1,
+        "ref_tile_dry": 0.1,
+        "ref_tile_pearl": 0.1,
+        "ref_tile_pearl_ref5_crown": 0.1,
+        "ref_tile_pink": 0.1,
+        "ref_tile_pink_dry": 0.1,
+        "ref_tile_pink_satin": 0.2,
+        "ref_tile_pink_satin_dry": 0.2,
+        "ref_tile_teal": 0.1,
+        "ref_tile_teal_dry": 0.1,
+        "ref_tile_teal_satin": 0.15,
+        "ref_tile_teal_satin_dry": 0.15
+      },
+      "variant": "combined",
+      "visual_acceptance": false
+    }
+  },
+  "maps": {
+    "count": 10,
+    "bytes": 8424981,
+    "manifest": "assets/materials/reference_wing/material_manifest.json"
+  },
+  "reproduce": "python tests/reference_wing/validate_materials.py --blender blender --output /absolute/evidence-directory",
+  "source_sha256": {
+    "scripts/reference_wing/reference_materials.gd": "556abad8925b56bdea90578f438d6222818ad7510a0cd697eb82036988159bc0",
+    "shaders/reference_wing/reference_glaze.gdshader": "bbcef2a5c9c64cac14263aaa1aef8bc36b5ebba3a04b00653a23b023c11f0044",
+    "shaders/reference_wing/reference_glaze_math.gdshaderinc": "736e136c606600842b4d6a0c1d220cd9ab43f9899f25ae266e0d3ff78b807654",
+    "shaders/reference_wing/reference_glaze_rt.gdshader": "69b81d7c3fa574214bf5f4621c5aee390357de6183eb57a7b1eacb0453371f8b",
+    "shaders/reference_wing/reference_glaze_surface.gdshaderinc": "2351d03cb31c9074faa0967ff7c41f7325952d5ed6de7d4ce0ecfb64eab09f1c",
+    "tools/materials/reference_wing/audit_legacy_faces.py": "69e49c08c7bc2e6dba40fda389f62d7a9cf2c21ae648a57b9f54b551056ab1c1",
+    "tools/materials/reference_wing/audit_satin_reference_spacing.py": "b286be978ab8824847dca7f0223ff90187fc40ec85098effbcfe86451d4c5c8e",
+    "tools/materials/reference_wing/blender_materials.py": "18ee328b3bfcadec59807a414f3eb23b7dae72a4c016c014742269f6edd3915e",
+    "tools/materials/reference_wing/generate.py": "41b57f0e2764593abbd4108ca3d34ba4cc7e9e06a01943dcb60b80ce3dbaa1dd",
+    "tools/materials/reference_wing/generate_shape_candidate.py": "35cbbac3637408d4d3cad61077ac92760c529d194d0b7288d9e21403ead84dbb",
+    "tools/materials/reference_wing/surface_math.py": "b0ab1d0b2cbd6fb2f074faa5a3e1c7f25f4231ac291a41b13c70ac107e569683",
+    "tests/reference_wing/test_materials.py": "ebc4c56df3ea3cda1edda8a4a591ba56b64de86727ee576abcdd3ec6a01a3e47",
+    "tests/reference_wing/validate_materials.py": "183f9ed6257d2699af5036c7670cb8c61b17bdfc9c6187a6a5af37b9a9f28a7b",
+    "tests/reference_wing/blender_material_contract.py": "4d21f00537572bddc90b5d39e2390a51cdfe2d3b4332b2318033794c85bdcbbe",
+    "tests/reference_wing/material_contract.gd": "589d6cd3e178d701ac2472862a8a3471820a77dfb2f22b2e83ce888627df3c70",
+    "tests/reference_wing/material_lab.gd": "c37189e223860f7cad8eba9cb43299406b82d6c44201316c4cc4814b9598ef8e",
+    "assets/materials/reference_wing/material_manifest.json": "e1b55bac72ab364f8fbdbc18894bfdc455b9f7007be9c27c552c9e6e6a466075",
+    "tools/materials/reference_wing/planar_trial_math.py": "7e2060eb3c451938391a80e61a4b4e8f8f63eb3768816205d57bf937dde55318",
+    "tools/materials/reference_wing/generate_planar_candidate.py": "073bf981741d4c321ca4d3b8d92b010468051b1c54a4c27ed1e013a09b81154b",
+    "tests/reference_wing/test_planar_candidate.py": "9188a1da61f5ebdf8c060069ecab2cfe2600960ac5ab9c49c0c68661da84f52b",
+    "tests/reference_wing/test_png16_encoding.py": "ab198495711a9a8d80b7a52086e8a0b69c339309629d8220de4d212d404774fc",
+    "tools/materials/reference_wing/crown_trial_math.py": "1f9d9a3a6aa2088848d3912cb779869da581b3b2174176e73d54b50898f02a8d",
+    "tools/materials/reference_wing/generate_crown_candidate.py": "aec7b8b24abbbf25cbeaadca3149a0ba15495aa7f64eb666a4422a24676d99d6",
+    "tools/materials/reference_wing/measure_reflection_cone.py": "6c52f01420f254be0f279710b4f96ac7e03b61521bf2af586bc414d4b87fc0a5",
+    "tests/reference_wing/test_crown_candidate.py": "d318749de5094f6b4342b38a04cb8e7b37d1df209b70f91dde2b6ad1be3d692f",
+    "tools/materials/reference_wing/audit_imported_data_maps.py": "6b7735b3edec55f71c9374ab3bf6227b291bc3a10be5c91d89569ba862b280df",
+    "tests/reference_wing/dump_imported_data_maps.gd": "67b7b6f92be73bb1358cf8967e22c0c0c0eb521513d38d5e70dbde414fee833e",
+    "assets/materials/reference_wing/bevel_slope_rg_2k.png.import": "5bd769a169c11ab1cf0e8a5f49ec5d2e4d42929ac59a83f59c5b70b5c39e64d7",
+    "assets/materials/reference_wing/glaze_orm_2k.png.import": "40c023032ffed622c8aedd17bd574e306eaa59b40d535b58e7e827d681b18a91"
+  },
+  "not_validated": [
+    "GPU shader execution or texture sampling",
+    "native custom NVIDIA RT/RR/NR execution",
+    "performance",
+    "final visual match to user target"
+  ],
+  "visual_acceptance": false,
+  "legacy_face_measurements": "legacy-face-measurements.json",
+  "cpu_preview_review": "CPU_CROP_REVIEW.md",
+  "cpu_preview_scope": "Independent inspection of the scene builder's controlled CPU Cycles crops; not Godot or NVIDIA rendering.",
+  "blender_node_contract": {
+    "passed": true,
+    "errors": [],
+    "blender": "4.3.2",
+    "tile_roles": [
+      "ref_tile_pearl",
+      "ref_tile_teal",
+      "ref_tile_pink",
+      "ref_tile_dark_teal",
+      "ref_tile_dry",
+      "ref_tile_teal_dry",
+      "ref_tile_pink_dry",
+      "ref_tile_dark_teal_dry",
+      "ref_tile_teal_satin",
+      "ref_tile_teal_satin_dry",
+      "ref_tile_pink_satin",
+      "ref_tile_pink_satin_dry",
+      "ref_tile_pearl_ref5_crown",
+      "ref_tile_cyan_satin",
+      "ref_tile_cyan_satin_dry"
+    ],
+    "role_parameters": {
+      "ref_tile_pearl": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.075
+      },
+      "ref_tile_teal": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.075
+      },
+      "ref_tile_pink": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.075
+      },
+      "ref_tile_dark_teal": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.075
+      },
+      "ref_tile_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_teal_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_pink_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_dark_teal_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_teal_satin": {
+        "tile_scale": 1.5,
+        "tile_pitch_metres": 0.15000000000000002,
+        "grout_width_metres": 0.0027,
+        "joint_relief_metres": 0.00041999999999999996,
+        "crown_metres": 7.500000000000001e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.33999998569488527
+      },
+      "ref_tile_teal_satin_dry": {
+        "tile_scale": 1.5,
+        "tile_pitch_metres": 0.15000000000000002,
+        "grout_width_metres": 0.0027,
+        "joint_relief_metres": 0.00041999999999999996,
+        "crown_metres": 7.500000000000001e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.39999998807907106
+      },
+      "ref_tile_pink_satin": {
+        "tile_scale": 2.0,
+        "tile_pitch_metres": 0.2,
+        "grout_width_metres": 0.0036,
+        "joint_relief_metres": 0.00056,
+        "crown_metres": 0.0001,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.39999998807907106
+      },
+      "ref_tile_pink_satin_dry": {
+        "tile_scale": 2.0,
+        "tile_pitch_metres": 0.2,
+        "grout_width_metres": 0.0036,
+        "joint_relief_metres": 0.00056,
+        "crown_metres": 0.0001,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.39999998807907106
+      },
+      "ref_tile_pearl_ref5_crown": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 0.0003,
+        "crown_radius_metres": 0.04,
+        "face_profile": 1,
+        "face_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "grout_color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "face_roughness": 0.075
+      },
+      "ref_tile_cyan_satin": {
+        "tile_scale": 1.5,
+        "tile_pitch_metres": 0.15000000000000002,
+        "grout_width_metres": 0.0027,
+        "joint_relief_metres": 0.00041999999999999996,
+        "crown_metres": 7.500000000000001e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          0.7277824105632494,
+          1.2876645545294547,
+          1.2503012218572187
+        ],
+        "grout_color_gain": [
+          0.5702749165149684,
+          1.0518171825646274,
+          1.0180007269627296
+        ],
+        "face_roughness": 0.33999998569488527
+      },
+      "ref_tile_cyan_satin_dry": {
+        "tile_scale": 1.5,
+        "tile_pitch_metres": 0.15000000000000002,
+        "grout_width_metres": 0.0027,
+        "joint_relief_metres": 0.00041999999999999996,
+        "crown_metres": 7.500000000000001e-05,
+        "crown_radius_metres": 0.0,
+        "face_profile": 0,
+        "face_color_gain": [
+          0.7277824105632494,
+          1.2876645545294547,
+          1.2503012218572187
+        ],
+        "grout_color_gain": [
+          0.5702749165149684,
+          1.0518171825646274,
+          1.0180007269627296
+        ],
+        "face_roughness": 0.39999998807907106
+      }
+    },
+    "strong_face_candidate_isolation_checked": false,
+    "planar_face_candidate_isolation_checked": false,
+    "localized_crown_candidate_isolation_checked": false,
+    "scoped_cyan_helper_preserves_other_node_identities": true,
+    "scope": "CPU material-node construction, map bindings, color spaces, physical dimensions, V phase and ablation isolation only. No render or GPU/native validation."
+  },
+  "runtime_blender_parameter_parity": true,
+  "parity_errors": [],
+  "strong_face_default_promoted": false,
+  "satin_reference_spacing": "satin/pixel-spacing.json",
+  "qa_planar_blender_contract": {
+    "passed": true,
+    "errors": [],
+    "blender": "4.3.2",
+    "tile_roles": [
+      "ref_tile_pearl",
+      "ref_tile_teal",
+      "ref_tile_pink",
+      "ref_tile_dark_teal",
+      "ref_tile_dry",
+      "ref_tile_teal_dry",
+      "ref_tile_pink_dry",
+      "ref_tile_dark_teal_dry",
+      "ref_tile_teal_satin",
+      "ref_tile_teal_satin_dry",
+      "ref_tile_pink_satin",
+      "ref_tile_pink_satin_dry"
+    ],
+    "role_parameters": {
+      "ref_tile_pearl": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.075
+      },
+      "ref_tile_teal": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.075
+      },
+      "ref_tile_pink": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.075
+      },
+      "ref_tile_dark_teal": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.075
+      },
+      "ref_tile_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_teal_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_pink_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_dark_teal_dry": {
+        "tile_scale": 1.0,
+        "tile_pitch_metres": 0.1,
+        "grout_width_metres": 0.0018,
+        "joint_relief_metres": 0.00028,
+        "crown_metres": 5e-05,
+        "face_roughness": 0.2600000023841858
+      },
+      "ref_tile_teal_satin": {
+        "tile_scale": 1.5,
+        "tile_pitch_metres": 0.15000000000000002,
+        "grout_width_metres": 0.0027,
+        "joint_relief_metres": 0.00041999999999999996,
+        "crown_metres": 7.500000000000001e-05,
+        "face_roughness": 0.33999998569488527
+      },
+      "ref_tile_teal_satin_dry": {
+        "tile_scale": 1.5,
+        "tile_pitch_metres": 0.15000000000000002,
+        "grout_width_metres": 0.0027,
+        "joint_relief_metres": 0.00041999999999999996,
+        "crown_metres": 7.500000000000001e-05,
+        "face_roughness": 0.39999998807907106
+      },
+      "ref_tile_pink_satin": {
+        "tile_scale": 2.0,
+        "tile_pitch_metres": 0.2,
+        "grout_width_metres": 0.0036,
+        "joint_relief_metres": 0.00056,
+        "crown_metres": 0.0001,
+        "face_roughness": 0.39999998807907106
+      },
+      "ref_tile_pink_satin_dry": {
+        "tile_scale": 2.0,
+        "tile_pitch_metres": 0.2,
+        "grout_width_metres": 0.0036,
+        "joint_relief_metres": 0.00056,
+        "crown_metres": 0.0001,
+        "face_roughness": 0.39999998807907106
+      }
+    },
+    "strong_face_candidate_isolation_checked": false,
+    "planar_face_candidate_isolation_checked": true,
+    "scope": "CPU material-node construction, map bindings, color spaces, physical dimensions, V phase and ablation isolation only. No render or GPU/native validation."
+  },
+  "qa_planar_cpu_tests_passed": 4,
+  "strong_face_visual_result": "Not promoted: matched crop retains a coherent band, with only modest extra kinks.",
+  "planar_trial_visual_result": "Not promoted: broad coherent stripe persists; stronger joint-adjacent highlight network. Matched 256-sample image independently reviewed.",
+  "png16_encoding_tests_passed": 2,
+  "png16_lossless_identity_report": "png16-lossless-encoding.json",
+  "qa_localized_crown_cpu_tests_passed": 5,
+  "localized_crown_trial_visual_result": "Close and whole-wall CPU gates passed as scoped direction; dedicated ref5 wall role integrated. Broad envelopes/paired lobes/noise remain, no native/final crispness claim.",
+  "qa_localized_crown_node_isolation_passed": true,
+  "localized_crown_default_promoted": false,
+  "reflection_cone_diagnosis": "reflection-cone-diagnosis.json",
+  "rejected_strong_face_runtime_removed": true,
+  "rejected_strong_face_rejection_headless_test_passed": true,
+  "data_map_lossless_policy": "Only bevel_slope_rg_2k and glaze_orm_2k mode0. Actual RGB8/RGBA8 imports match source base and all 11 reference mip levels byte-for-byte.",
+  "data_map_codec_measurements": "data-map-codec-audit.json",
+  "localized_crown_global_default_promoted": false,
+  "scoped_ref5_profile_integrated": true,
+  "scoped_ref5_profile_status": "Dedicated ref_tile_pearl_ref5_crown selected only on intended stair wall/parapet faces after close and whole-wall CPU gate. Native visual acceptance pending; generic pearl, dry and satin stay profile0.",
+  "cyan_palette_status": "Scoped CPU-reviewed cyan-only palette accepted; runtime/Blender parity verified. Native visual acceptance pending.",
+  "source_hash_import_note": "Two data-map descriptor hashes refreshed after successful central lossless import and exact base+11-mip readback.",
+  "data_map_lossless_readback": "data-map-lossless-readback.json",
+  "data_map_lossless_zero_error_all_mips": true,
+  "freeze_status": "Material functional source frozen; lead owns final imported-world RT-refresh check. Subsequent GLB-only import does not alter these texture pixels."
+}

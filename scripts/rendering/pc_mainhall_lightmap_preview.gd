@@ -22,8 +22,13 @@ const SCOPE := "EXPERIMENTAL: mainhall-only native bake; SDFGI off. Other 4 room
 static func desktop_allowed(args: PackedStringArray = OS.get_cmdline_user_args()) -> bool:
 	return not (OS.has_feature("android") or OS.has_feature("ios") or "--mobile-preview" in args)
 
+# Optional author-only assets are intentionally absent from playable exports.
+# Test availability before opting in so normal lighting remains unchanged.
+static func resources_available() -> bool:
+	return ResourceLoader.exists(VISUAL,"PackedScene") and ResourceLoader.exists(DATA,"LightmapGIData") and ResourceLoader.exists(HDR,"Texture2D")
+
 static func requested(args: PackedStringArray = OS.get_cmdline_user_args()) -> bool:
-	return desktop_allowed(args) and FLAG in args
+	return desktop_allowed(args) and FLAG in args and resources_available()
 
 static func failure(reason: String) -> Dictionary:
 	return {"pass":false, "installed":false, "reason":reason, "scope":SCOPE}
@@ -63,7 +68,7 @@ static func prepare_candidate(room: Node3D, library: RefCounted) -> Dictionary:
 		return failure("Expected original architecture and 254 collision shapes")
 	if not room.find_children("*","LightmapGI",true,false).is_empty():
 		return failure("Existing lightmap ownership is ambiguous")
-	if not ResourceLoader.exists(VISUAL,"PackedScene") or not ResourceLoader.exists(DATA,"LightmapGIData"):
+	if not resources_available():
 		return failure("Native preview resources are absent from this build")
 	var packed := ResourceLoader.load(VISUAL,"PackedScene") as PackedScene
 	if packed == null: return failure("Native preview scene could not load")

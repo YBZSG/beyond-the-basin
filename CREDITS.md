@@ -13,3 +13,9 @@
 - `assets/models/formal/*.glb` and `tools/blender/source/*.blend` are new project-authored Blender geometry, with regeneration scripts, not POOLS assets.
 - The original water-optics generator input and third-party notices are preserved in `source_provenance/`; the full original Web application is not part of this branch. See `source_provenance/README.md`, `docs/SOURCE_LIQUID_LICENSES.md` and `docs/audit/source-caustics-third-party-license.txt`.
 - This Git branch contains the editable Godot project, not exported EXE/PCK/APK downloads. Existing native platform helper libraries remain included with their source and notices. Current validation limits are recorded in the root README; Android work is paused. No private signing key is included.
+
+## Windows 0.6.13 (2026-10-26)
+
+- The Windows installer bundles the patched NVIDIA Godot 4.8-dev engine at upstream commit `135dff3887a3d2ccf45cafbd9bdffa7b718e1e76`, with the patches in `tools/dlss/`. The bundled Godot, Streamline and NVIDIA SDK notices retain their original terms; they are not relicensed by this project.
+- Optional ithappy Creative Character was supplied by the user. Its original mesh/texture files are excluded from public Git source; the playable installation incorporates the derived model in game resources. Attribution and provenance are in `source_provenance/ithappy/`. This notice grants no separate rights to extract or redistribute the character.
+- The source repository contains no player profiles, signing keys, proprietary SDK headers, compiled Godot editor or NVIDIA runtime DLLs. The separately published Windows installer includes the required runtime files and corresponding notices.

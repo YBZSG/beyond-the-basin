@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "production_math_unchanged_since_strong_trial": {
+    "scripts/reference_wing/reference_materials.gd": true,
+    "shaders/reference_wing/reference_glaze.gdshader": true,
+    "shaders/reference_wing/reference_glaze_rt.gdshader": true,
+    "shaders/reference_wing/reference_glaze_surface.gdshaderinc": true,
+    "shaders/reference_wing/reference_glaze_math.gdshaderinc": true,
+    "tools/materials/reference_wing/surface_math.py": true
+  }
+}

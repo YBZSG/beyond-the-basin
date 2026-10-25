@@ -57,6 +57,7 @@ const CarryContact = preload("res://scripts/player/avatar_carry_contact_candidat
 # Reversible gameplay tuning; disabled retains the delivered water speeds.
 @export var depth_wading_response_enabled: bool = false
 var camera: Camera3D
+var flashlight: SpotLight3D
 var enabled: bool = false
 var held: RigidBody3D
 var held_distance: float = HELD_CARRY_DISTANCE
@@ -141,6 +142,24 @@ func _ready() -> void:
 		camera.far = 150.0
 		add_child(camera)
 	camera.current = true
+	# Keep the emitter inside the player capsule so it cannot poke through walls.
+	# One dynamic cone follows the view; hidden by default, with no scene exposure changes.
+	flashlight = SpotLight3D.new()
+	flashlight.name = "Flashlight"
+	flashlight.position = Vector3(0.08, -0.06, -0.06)
+	flashlight.light_color = Color(1.0, 0.96, 0.9)
+	flashlight.light_energy = 3.5
+	flashlight.light_specular = 0.6
+	flashlight.light_size = 0.018
+	flashlight.light_bake_mode = Light3D.BAKE_DISABLED
+	flashlight.light_cull_mask = 1 | 2
+	flashlight.spot_range = 16.0
+	flashlight.spot_angle = 28.0
+	flashlight.spot_attenuation = 1.2
+	flashlight.spot_angle_attenuation = 1.5
+	flashlight.shadow_enabled = true
+	flashlight.visible = false
+	camera.add_child(flashlight)
 	add_to_group("pool_player")
 
 func set_enabled(value: bool) -> void:
@@ -244,6 +263,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey and event.echo:
+		return
+	if _has_action(event, "toggle_flashlight"):
+		flashlight.visible = not flashlight.visible
+		get_viewport().set_input_as_handled()
 		return
 	if _has_action(event, "jump"):
 		_jump_buffer = 0.12
@@ -503,32 +526,28 @@ func _update_travel_water(before: Vector3, point: Vector3, delta: float, grounde
 		for index in range(pieces):
 			var fraction: float = (float(index) + 0.5) / float(pieces)
 			var position_on_segment: Vector3 = before.lerp(point, fraction)
-			if is_instance_valid(_water) and _water.has_method("push"):
+			if is_instance_valid(_water) and (_water.has_method("push_wake") or _water.has_method("push")):
 				# A moving immersed leg displaces a broader strip of water. Keep
 				# this distance-integrated so FPS and stationary input add no energy.
-				_water.call("push", position_on_segment, travel * (1.65 * immersion / float(pieces)), 0.38 + 0.24 * immersion)
+				# Momentum makes the broad bow/trailing wave; do not also inject
+				# a new surface impact at the capsule on every rendered frame.
+				var push_method := "push_wake" if _water.has_method("push_wake") else "push"
+				_water.call(push_method, position_on_segment, travel * (1.65 * immersion / float(pieces)), 0.38 + 0.24 * immersion)
 		if _walk_distance > WADE_STEP_DISTANCE:
 			# Half-cycle events follow actual travelled distance, never elapsed*speed.
 			# Alternation cannot jump sides when accelerating or resuming movement.
 			_footstep_side = -_footstep_side
 			var side: float = _footstep_side
 			var perpendicular := Vector2(-travel.y, travel.x) / maxf(travelled, 0.001)
-			# The planting foot is slightly ahead of the capsule centre.
-			var forward_step := Vector3(travel.x, 0.0, travel.y) / travelled * 0.16
-			var foot: Vector3 = point + Vector3(perpendicular.x, 0.0, perpendicular.y) * (0.12 * side) + forward_step
+			# Plant beside the body. A wide forward dipole at every footfall
+			# looked like a hand repeatedly slapping the water ahead of the eye.
+			var foot: Vector3 = point + Vector3(perpendicular.x, 0.0, perpendicular.y) * (0.16 * side)
 			if is_instance_valid(_water):
-				# Stronger planting waves complement the broad continuous bow wave.
-				# Wave-only footfalls retain the same count and never spawn liquid.
+				# Local alternating foot ripples complement the continuous wake.
 				if _water.has_method("wave_impact"):
-					_water.call("wave_impact", foot, power * 4.0)
+					_water.call("wave_impact", foot, power * 2.2)
 				elif _water.has_method("impact"):
-					_water.call("impact", foot, power * 4.0)
-				if _water.has_method("wake_dipole"):
-					_water.call("wake_dipole", foot, travel / travelled, speed * 1.4, 0.62)
-				if speed > 2.0 and _water.has_method("crest"):
-					# Source caps wading crests at .22; do not "fix" the liquid
-					# crest gate's original minimum-power quirk here.
-					_water.call("crest", foot, minf(0.22, (speed - 2.0) * 0.1))
+					_water.call("impact", foot, power * 2.2)
 			interaction.emit("step_water", foot, speed / WALK_SPEED)
 			_walk_distance = fmod(_walk_distance, WADE_STEP_DISTANCE)
 	elif travelled > 0.0001 and grounded and absf(vertical) < 1.0:
@@ -866,6 +885,8 @@ func get_status() -> Dictionary:
 		var exclude: Array[RID] = [get_rid()]
 		facility_hint = facility_devices.interaction_hint(camera, false, false, exclude)
 	var hint: String = "低头点击水面 · F 切换镜头"
+	if not (OS.has_feature("android") or OS.has_feature("ios")):
+		hint += " · L " + ("关闭手电" if is_instance_valid(flashlight) and flashlight.visible else "开启手电")
 	if get_charge() > 0.0:
 		hint = "右键蓄力 %d%% · 松开投出" % int(get_charge() * 100.0)
 	elif is_instance_valid(held):

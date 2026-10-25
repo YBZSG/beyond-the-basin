@@ -1,0 +1,844 @@
+{
+  "revision": 1,
+  "scope": "Exact supported join termination; no epsilon offsets; metres UV; buried end edges excluded from bevel.",
+  "rooms": {
+    "colonnade": [
+      {
+        "object": "East_Connector_Wall_001",
+        "join_planes": [
+          [
+            0,
+            5.44
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          10.72,
+          1.67,
+          -1.62
+        ],
+        "size": [
+          10.56,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "East_Connector_Wall_002",
+        "join_planes": [
+          [
+            0,
+            5.44
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          10.72,
+          1.67,
+          1.62
+        ],
+        "size": [
+          10.56,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "South_Connector_Wall_001",
+        "join_planes": [
+          [
+            2,
+            13.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -1.62,
+          1.67,
+          14.52
+        ],
+        "size": [
+          0.24,
+          3.78,
+          2.96
+        ]
+      },
+      {
+        "object": "North_Connector_Wall_002",
+        "join_planes": [
+          [
+            2,
+            -13.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          1.62,
+          1.67,
+          -14.52
+        ],
+        "size": [
+          0.24,
+          3.78,
+          2.96
+        ]
+      },
+      {
+        "object": "North_Connector_Wall_001",
+        "join_planes": [
+          [
+            2,
+            -13.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -1.62,
+          1.67,
+          -14.52
+        ],
+        "size": [
+          0.24,
+          3.78,
+          2.96
+        ]
+      },
+      {
+        "object": "South_Connector_Wall_002",
+        "join_planes": [
+          [
+            2,
+            13.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          1.62,
+          1.67,
+          14.52
+        ],
+        "size": [
+          0.24,
+          3.78,
+          2.96
+        ]
+      },
+      {
+        "object": "North_Connector_Roof_000",
+        "join_planes": [
+          [
+            2,
+            -13.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          0.0,
+          3.44,
+          -14.52
+        ],
+        "size": [
+          3.0,
+          0.24,
+          2.96
+        ]
+      },
+      {
+        "object": "South_Connector_Roof_000",
+        "join_planes": [
+          [
+            2,
+            13.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          0.0,
+          3.44,
+          14.52
+        ],
+        "size": [
+          3.0,
+          0.24,
+          2.96
+        ]
+      },
+      {
+        "object": "East_Connector_Roof_000",
+        "join_planes": [
+          [
+            0,
+            5.44
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          10.72,
+          3.44,
+          0.0
+        ],
+        "size": [
+          10.56,
+          0.24,
+          3.0
+        ]
+      }
+    ],
+    "cyan_corridor": [
+      {
+        "object": "Cyan_EastDogleg_Wall_002",
+        "join_planes": [
+          [
+            0,
+            3.66
+          ],
+          [
+            0,
+            2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          2.85,
+          1.67,
+          -8.18
+        ],
+        "size": [
+          1.62,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "Cyan_EastDogleg_Wall_006",
+        "join_planes": [
+          [
+            2,
+            -1.74
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          7.02,
+          1.67,
+          -5.77
+        ],
+        "size": [
+          0.24,
+          3.78,
+          8.06
+        ]
+      },
+      {
+        "object": "Cyan_EastDogleg_Wall_007",
+        "join_planes": [
+          [
+            0,
+            5.64
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          6.27,
+          1.67,
+          -9.92
+        ],
+        "size": [
+          1.26,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "Cyan_SouthConnector_Wall_002",
+        "join_planes": [
+          [
+            2,
+            12.24
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          1.62,
+          1.67,
+          14.12
+        ],
+        "size": [
+          0.24,
+          3.78,
+          3.76
+        ]
+      },
+      {
+        "object": "Cyan_SouthConnector_Wall_001",
+        "join_planes": [
+          [
+            2,
+            12.24
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -1.62,
+          1.67,
+          14.12
+        ],
+        "size": [
+          0.24,
+          3.78,
+          3.76
+        ]
+      },
+      {
+        "object": "Cyan_EastDogleg_Wall_001",
+        "join_planes": [
+          [
+            0,
+            2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          3.72,
+          1.67,
+          -11.42
+        ],
+        "size": [
+          3.36,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "Cyan_SouthConnector_Roof_000",
+        "join_planes": [
+          [
+            2,
+            12.24
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          0.0,
+          3.44,
+          14.12
+        ],
+        "size": [
+          3.0,
+          0.24,
+          3.76
+        ]
+      },
+      {
+        "object": "Window_4_RecessSill",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          0.84,
+          7.7
+        ],
+        "size": [
+          0.58,
+          0.12,
+          2.2
+        ]
+      },
+      {
+        "object": "Window_4_RecessHead",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          2.51,
+          7.7
+        ],
+        "size": [
+          0.58,
+          0.12,
+          2.2
+        ]
+      },
+      {
+        "object": "Cyan_EastDogleg_Roof_000",
+        "join_planes": [
+          [
+            0,
+            2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          2.97,
+          3.44,
+          -10.55
+        ],
+        "size": [
+          1.86,
+          0.24,
+          1.5
+        ]
+      },
+      {
+        "object": "Cyan_EastDogleg_Roof_001",
+        "join_planes": [
+          [
+            0,
+            2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          2.97,
+          3.44,
+          -9.05
+        ],
+        "size": [
+          1.86,
+          0.24,
+          1.5
+        ]
+      },
+      {
+        "object": "Window_3_RecessSill",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          0.84,
+          2.9
+        ],
+        "size": [
+          0.58,
+          0.12,
+          1.8
+        ]
+      },
+      {
+        "object": "Window_3_RecessHead",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          2.51,
+          2.9
+        ],
+        "size": [
+          0.58,
+          0.12,
+          1.8
+        ]
+      },
+      {
+        "object": "Window_2_RecessSill",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          0.84,
+          -2.6
+        ],
+        "size": [
+          0.58,
+          0.12,
+          1.6
+        ]
+      },
+      {
+        "object": "Window_2_RecessHead",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          2.51,
+          -2.6
+        ],
+        "size": [
+          0.58,
+          0.12,
+          1.6
+        ]
+      },
+      {
+        "object": "Window_1_RecessSill",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          0.84,
+          -7.4
+        ],
+        "size": [
+          0.58,
+          0.12,
+          1.4
+        ]
+      },
+      {
+        "object": "Window_1_RecessHead",
+        "join_planes": [
+          [
+            0,
+            -2.04
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -2.33,
+          2.51,
+          -7.4
+        ],
+        "size": [
+          0.58,
+          0.12,
+          1.4
+        ]
+      }
+    ],
+    "octagonal_bath": [
+      {
+        "object": "Bath_WestRoute_Roof_014",
+        "center": [
+          -1.45,
+          3.44,
+          -7.12
+        ],
+        "size": [
+          1.3,
+          0.24,
+          0.76
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_WestRoute_Wall_009",
+        "center": [
+          -0.68,
+          1.67,
+          -8.62
+        ],
+        "size": [
+          0.24,
+          3.78,
+          3.76
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_WestRoute_Wall_010",
+        "center": [
+          -2.22,
+          1.67,
+          -7.0
+        ],
+        "size": [
+          0.24,
+          3.78,
+          0.52
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ],
+          [
+            2,
+            -7.26
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_SouthRoute_Roof_005",
+        "center": [
+          1.15,
+          3.44,
+          -7.12
+        ],
+        "size": [
+          0.7,
+          0.24,
+          0.76
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_SouthRoute_Roof_011",
+        "center": [
+          1.8,
+          3.44,
+          -7.12
+        ],
+        "size": [
+          0.6,
+          0.24,
+          0.76
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_003",
+        "center": [
+          0.68,
+          1.67,
+          -8.62
+        ],
+        "size": [
+          0.24,
+          3.78,
+          3.76
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_006",
+        "center": [
+          2.22,
+          1.67,
+          -7.0
+        ],
+        "size": [
+          0.24,
+          3.78,
+          0.52
+        ],
+        "join_planes": [
+          [
+            2,
+            -6.74
+          ],
+          [
+            2,
+            -7.26
+          ]
+        ],
+        "reason": "Room/connector cap inside rear shell."
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_002",
+        "join_planes": [
+          [
+            0,
+            8.76
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          3.63,
+          1.67,
+          10.38
+        ],
+        "size": [
+          10.26,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_009",
+        "join_planes": [
+          [
+            2,
+            -9.24
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          10.62,
+          1.67,
+          -9.87
+        ],
+        "size": [
+          0.24,
+          3.78,
+          1.26
+        ]
+      },
+      {
+        "object": "Bath_WestRoute_Wall_004",
+        "join_planes": [
+          [
+            0,
+            -10.74
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -11.37,
+          1.67,
+          -9.12
+        ],
+        "size": [
+          1.26,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_010",
+        "join_planes": [
+          [
+            2,
+            12.24
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          10.62,
+          1.67,
+          12.87
+        ],
+        "size": [
+          0.24,
+          3.78,
+          1.26
+        ]
+      },
+      {
+        "object": "Bath_WestRoute_Wall_001",
+        "join_planes": [
+          [
+            0,
+            -12.24
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -14.12,
+          1.67,
+          -1.62
+        ],
+        "size": [
+          3.76,
+          3.78,
+          0.24
+        ]
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_005",
+        "join_planes": [
+          [
+            2,
+            13.74
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          1.62,
+          1.67,
+          14.87
+        ],
+        "size": [
+          0.24,
+          3.78,
+          2.26
+        ]
+      },
+      {
+        "object": "Bath_WestRoute_Wall_007",
+        "join_planes": [
+          [
+            2,
+            -7.26
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          -8.88,
+          1.67,
+          -2.88
+        ],
+        "size": [
+          0.24,
+          3.78,
+          8.76
+        ]
+      },
+      {
+        "object": "Bath_SouthRoute_Wall_008",
+        "join_planes": [
+          [
+            0,
+            8.76
+          ]
+        ],
+        "reason": "Independently witnessed coplanar join; exact interval trim.",
+        "center": [
+          5.43,
+          1.67,
+          -7.38
+        ],
+        "size": [
+          6.66,
+          3.78,
+          0.24
+        ]
+      }
+    ]
+  }
+}

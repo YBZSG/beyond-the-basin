@@ -77,11 +77,7 @@ float foamField(vec2 p){
   }
   return density;
 }
-float foamNoise(vec2 p){
-  // Continuous bounded modulation: the previous lattice noise exposed hard
-  // rectangular seams on the PC water surface. No cell hash or extra texture.
-  return .5+.25*sin(p.x*4.13+sin(p.y*3.71))+.25*sin(p.y*4.57+sin(p.x*3.17));
-}
+#include "res://shaders/source_water/foam_appearance.gdshaderinc"
 void fragment(){
   vec2 p=worldPosition.xz-domain_origin;
   vec3 eye=CAMERA_POSITION_WORLD;
@@ -153,22 +149,13 @@ void fragment(){
   // Optical contact follows geometry depth, rather than the binary grid's
   // staircase. Do not paint a cell-wide bright collar around obstacles.
   color+=vec3(.018,.024,.023)*(1.0-smoothstep(0.0,.025,thickness))*waterlineOn;
-  // Whitewater is a continuous transported density on this exact water
-  // surface. Small pores break up only the field's edge, with footprint
-  // filtering; they never draw cells or separate white spheres.
+  // Density still comes from the simulation; shade sparse, advected patches.
   float density=foamField(p)*foamStrength*foamOn;
-  if(density>.015){
+  if(density>.10){
     vec2 flow=texture(poolSurface,(p+48.0)/96.0).gb;
-    float phase=fract(poolTime*.5),other=fract(phase+.5),weight=abs(phase*2.0-1.0);
-    vec2 materialP=p-flow*phase*2.0,materialQ=p-flow*other*2.0;
-    float coarse=mix(foamNoise(materialP*19.0),foamNoise(materialQ*19.0),weight);
-    float fine=mix(foamNoise(materialP*79.0),foamNoise(materialQ*79.0),weight);
-    float pores=mix(coarse,coarse*.55+fine*.45,1.0-smoothstep(.004,.018,footprint));
-    float crestAffinity=.28+.72*smoothstep(.005,.035,poolHeight(p));
-    float cover=smoothstep(.03,.36,density+(pores-.5)*.18)*(1.0-exp(-density*1.8))*crestAffinity;
-    float illumination=clamp(.65+sqrt(max(dot(reflected,vec3(.2126,.7152,.0722)),0.0))*.35,.65,1.1);
-    vec3 whitewater=vec3(.65,.73,.74)*illumination*(.74+.26*max(N.y,0.0));
-    color=mix(color,whitewater,cover*.93);alpha=mix(alpha,1.0,cover);
+    float cover=foam_coverage(p,flow,density,footprint,poolTime);
+    color=mix(color,foam_lit_color(transmitted,reflected),cover);
+    alpha=mix(alpha,1.0,cover);
   }
   if(debugView>.5){
     alpha=1.0;

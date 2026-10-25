@@ -1,0 +1,23 @@
+{
+  "editable_sources": [
+    "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+    "tools/blender/reference_wing/water_sources/colonnade.blend",
+    "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+    "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+    "tools/blender/reference_wing/lounge_sources/ball_lounge.blend"
+  ],
+  "maps": [
+    "assets/materials/reference_wing/bevel_normal_gl_16.png",
+    "assets/materials/reference_wing/bevel_slope_rg_2k.png",
+    "assets/materials/reference_wing/full_normal_gl_16.png",
+    "assets/materials/reference_wing/glaze_orm_2k.png",
+    "assets/materials/reference_wing/height_16.png",
+    "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+    "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+    "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+    "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+    "assets/materials/reference_wing/ref5_crown_normal_gl_16.png"
+  ],
+  "candidate_excluded": "tools/blender/reference_wing/water_sources/colonnade_pier_teal_candidate.blend",
+  "required_hierarchy": "Preserve project-relative paths; do not flatten source or maps directories."
+}

@@ -1,0 +1,83 @@
+{
+	"checks": 2980,
+	"errors": [],
+	"passed": true,
+	"per_room_roles": {
+		"ball_lounge": {
+
+		},
+		"colonnade": {
+			"ref_tile_dark_teal": 36,
+			"ref_tile_dark_teal_dry": 6,
+			"ref_tile_teal": 14
+		},
+		"cyan_corridor": {
+			"ref_tile_cyan_satin": 75,
+			"ref_tile_cyan_satin_dry": 13
+		},
+		"octagonal_bath": {
+			"ref_tile_pink_satin": 209,
+			"ref_tile_pink_satin_dry": 51
+		},
+		"stair_gallery": {
+			"ref_tile_dry": 1,
+			"ref_tile_pearl": 1,
+			"ref_tile_pearl_ref5_crown": 1,
+			"ref_tile_teal": 1
+		}
+	},
+	"refresh": {
+		"already_correct": 0,
+		"cached_shaders": 2,
+		"discarded_nodes": 0,
+		"duplicate_materials": 4140,
+		"duplicate_queue_requests": 0,
+		"full_refreshes": 4,
+		"geometry_visited": 4296,
+		"last": {
+			"already_correct": 0,
+			"apply_ms": 0.496,
+			"collect_ms": 1.959,
+			"discarded_nodes": 0,
+			"duplicate_materials": 1035,
+			"enabled": false,
+			"geometry_visited": 1074,
+			"kind": "full",
+			"material_occurrences": 1075,
+			"queued_nodes": 0,
+			"shader_changes": 11,
+			"shader_load_failures": 0,
+			"shader_loads": 0,
+			"total_ms": 2.46,
+			"unique_materials": 40,
+			"unmatched_materials": 29
+		},
+		"last_total_ms": 2.46,
+		"material_occurrences": 4300,
+		"max_total_ms": 4.842,
+		"pending_cleared": 0,
+		"pending_nodes": 0,
+		"pending_refreshes": 0,
+		"queue_requests": 0,
+		"shader_changes": 44,
+		"shader_load_failures": 0,
+		"shader_loads": 2,
+		"total_ms": 12.785,
+		"unique_materials": 160,
+		"unmatched_materials": 116
+	},
+	"scope": "Actual imported GLBs plus production room builder and RT material refresher on Godot4.6.3 headless dummy renderer. Shader frontend/binding only, no GPU RT/NR image or performance proof.",
+	"surface_roles": {
+		"ref_tile_cyan_satin": 75,
+		"ref_tile_cyan_satin_dry": 13,
+		"ref_tile_dark_teal": 36,
+		"ref_tile_dark_teal_dry": 6,
+		"ref_tile_dry": 1,
+		"ref_tile_pearl": 1,
+		"ref_tile_pearl_ref5_crown": 1,
+		"ref_tile_pink_satin": 209,
+		"ref_tile_pink_satin_dry": 51,
+		"ref_tile_teal": 15
+	},
+	"unique_tile_materials": 11
+}

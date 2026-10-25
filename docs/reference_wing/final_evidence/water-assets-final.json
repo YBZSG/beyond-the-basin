@@ -1,0 +1,182 @@
+{
+  "status": "FROZEN",
+  "rooms": [
+    {
+      "room": "colonnade",
+      "files": {
+        "blend": {
+          "path": "tools/blender/reference_wing/water_sources/colonnade.blend",
+          "sha256": "89aabc975e25c20a9fe61f5649139d962d2dbfe196cd2cd80c7e30c24335d571",
+          "bytes": 1703315
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/colonnade.glb",
+          "sha256": "b932ef1f37c33e4c57e19ad1a7b649e851c850cd8e386f7c5192ba86799987e7",
+          "bytes": 841924
+        },
+        "geometry": {
+          "path": "assets/models/reference_wing/colonnade.geometry.json",
+          "sha256": "024580424a57c4368ce9c6726e525000b2d717139b12e9409797828d20cf953d",
+          "bytes": 105904
+        }
+      },
+      "enabled_native_lights": 9,
+      "camera_views": [
+        {
+          "name": "Reference1_Axial",
+          "position": [
+            0,
+            1.5,
+            11.0
+          ],
+          "target": [
+            0,
+            1.35,
+            -8.8
+          ],
+          "lens_mm": 23,
+          "fov_degrees": 76.09409,
+          "fov_axis": "vertical",
+          "reference_resolution": [
+            700,
+            700
+          ],
+          "sensor_fit": "AUTO",
+          "sensor_width_mm": 36.0,
+          "sensor_height_mm": 24.0
+        }
+      ],
+      "joint_termination_revision": 1,
+      "native_visual_validation": false
+    },
+    {
+      "room": "cyan_corridor",
+      "files": {
+        "blend": {
+          "path": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+          "sha256": "67df09e26ab4d56c166babdd0ac72549965099e0447bca587a5983a1fa568ccd",
+          "bytes": 2396478
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/cyan_corridor.glb",
+          "sha256": "b0f78182f23c223c95116f02f5d529fa830eaad99c2e12d12eed1e434d855765",
+          "bytes": 1387688
+        },
+        "geometry": {
+          "path": "assets/models/reference_wing/cyan_corridor.geometry.json",
+          "sha256": "9411edd50599f6fd964a700415beae81757b1f14eaefc1e9ba04058c5a007f37",
+          "bytes": 160784
+        }
+      },
+      "enabled_native_lights": 7,
+      "camera_views": [
+        {
+          "name": "Reference2_Corridor",
+          "position": [
+            -0.15,
+            1.45,
+            10.25
+          ],
+          "target": [
+            0,
+            1.3,
+            -9.5
+          ],
+          "lens_mm": 22,
+          "fov_degrees": 77.609411,
+          "fov_axis": "vertical",
+          "reference_resolution": [
+            700,
+            688
+          ],
+          "sensor_fit": "HORIZONTAL",
+          "sensor_width_mm": 36.0,
+          "sensor_height_mm": 24.0,
+          "original_reference_resolution": [
+            400,
+            393
+          ]
+        }
+      ],
+      "joint_termination_revision": 1,
+      "native_visual_validation": false
+    },
+    {
+      "room": "octagonal_bath",
+      "files": {
+        "blend": {
+          "path": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+          "sha256": "969c4a67fc03a801ffcec28a4ebb455938d5940971c6163fd849a779aa3e718f",
+          "bytes": 4436846
+        },
+        "glb": {
+          "path": "assets/models/reference_wing/octagonal_bath.glb",
+          "sha256": "c2cff5a4851fa1cda186b023a32afe7c36489f1f84cf7da4363c73482f1ae20e",
+          "bytes": 2694744
+        },
+        "geometry": {
+          "path": "assets/models/reference_wing/octagonal_bath.geometry.json",
+          "sha256": "4eadf0bc13a94eb72a13e068d210af884581be5098fc2e62daed2d3ddfcf9af7",
+          "bytes": 388718
+        }
+      },
+      "enabled_native_lights": 4,
+      "camera_views": [
+        {
+          "name": "Reference3_OctagonalBath",
+          "position": [
+            0,
+            2.35,
+            5.9
+          ],
+          "target": [
+            0,
+            1.65,
+            -2.9
+          ],
+          "lens_mm": 18,
+          "fov_degrees": 102.680383,
+          "fov_axis": "vertical",
+          "reference_resolution": [
+            700,
+            875
+          ],
+          "sensor_fit": "HORIZONTAL",
+          "sensor_width_mm": 36.0,
+          "sensor_height_mm": 24.0,
+          "original_reference_resolution": [
+            400,
+            500
+          ]
+        }
+      ],
+      "joint_termination_revision": 1,
+      "native_visual_validation": false
+    }
+  ],
+  "required_generator_inputs": [
+    "tools/blender/reference_wing/water_rooms_build.py",
+    "tools/blender/reference_wing/water_rooms_joint_helpers.py",
+    "tools/blender/reference_wing/water_rooms_joint_manifest.json",
+    "tools/blender/reference_wing/water_rooms_lighting_helpers.py",
+    "tools/materials/reference_wing/blender_materials.py",
+    "assets/materials/reference_wing/material_manifest.json",
+    "assets/materials/reference_wing/full_normal_gl_16.png",
+    "assets/materials/reference_wing/glaze_orm_2k.png",
+    "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+    "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+    "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+    "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+    "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png"
+  ],
+  "editable_sources": [
+    "tools/blender/reference_wing/water_sources/colonnade.blend",
+    "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+    "tools/blender/reference_wing/water_sources/octagonal_bath.blend"
+  ],
+  "blender_version": "4.3.2",
+  "external_python_packages": [],
+  "qa_output_input_dependency": false,
+  "runtime_water_exported": false,
+  "visual_scope": "Accepted authored physical layout/palette direction only. Native Godot/NVIDIA appearance, water clarity, caustics and energy calibration require user local test."
+}

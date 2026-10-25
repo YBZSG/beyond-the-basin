@@ -1,0 +1,25 @@
+{
+  "unchanged_preset": {
+    "pack_bytes": 3639976,
+    "geometry_files_present": {
+      "res://assets/models/reference_wing/ball_lounge.geometry.json": true,
+      "res://assets/models/reference_wing/colonnade.geometry.json": true,
+      "res://assets/models/reference_wing/cyan_corridor.geometry.json": true,
+      "res://assets/models/reference_wing/octagonal_bath.geometry.json": true,
+      "res://assets/models/reference_wing/stair_gallery.geometry.json": true
+    },
+    "pass": true
+  },
+  "explicit_json_filter": {
+    "pack_bytes": 3639976,
+    "geometry_files_present": {
+      "res://assets/models/reference_wing/ball_lounge.geometry.json": true,
+      "res://assets/models/reference_wing/colonnade.geometry.json": true,
+      "res://assets/models/reference_wing/cyan_corridor.geometry.json": true,
+      "res://assets/models/reference_wing/octagonal_bath.geometry.json": true,
+      "res://assets/models/reference_wing/stair_gallery.geometry.json": true
+    },
+    "pass": true
+  },
+  "scope": "Existing Godot 4.6.3, headless isolated temporary project; no original config or shared import changes"
+}

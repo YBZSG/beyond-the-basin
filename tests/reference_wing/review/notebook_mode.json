@@ -1,0 +1,10 @@
+{
+  "ERR_INVALID_PARAMETER": 31,
+  "original_world_key": "original:250821",
+  "read_only_no_disk_calls": true,
+  "reference_status": 31,
+  "reference_world_key": "",
+  "scope_note": "Unknown world mode; no discoveries recorded.",
+  "exit_code": 0,
+  "engine_error": false
+}

@@ -1,0 +1,13 @@
+PORTABILITY_SOURCE tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend PASS
+PORTABILITY_SOURCE tools/blender/reference_wing/water_sources/colonnade.blend PASS
+PORTABILITY_SOURCE tools/blender/reference_wing/water_sources/cyan_corridor.blend PASS
+PORTABILITY_SOURCE tools/blender/reference_wing/water_sources/octagonal_bath.blend PASS
+PORTABILITY_SOURCE tools/blender/reference_wing/lounge_sources/ball_lounge.blend PASS
+Blender 4.3.2
+Read blend: "/tmp/reference-wing-portability-nvak55d_/independent_project/tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend"
+Read blend: "/tmp/reference-wing-portability-nvak55d_/independent_project/tools/blender/reference_wing/water_sources/colonnade.blend"
+Read blend: "/tmp/reference-wing-portability-nvak55d_/independent_project/tools/blender/reference_wing/water_sources/cyan_corridor.blend"
+Read blend: "/tmp/reference-wing-portability-nvak55d_/independent_project/tools/blender/reference_wing/water_sources/octagonal_bath.blend"
+Read blend: "/tmp/reference-wing-portability-nvak55d_/independent_project/tools/blender/reference_wing/lounge_sources/ball_lounge.blend"
+
+Blender quit

@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "args": [
+        "--reference-wing"
+      ],
+      "mode": "reference",
+      "expected": "reference",
+      "passed": true
+    },
+    {
+      "args": [
+        "--reference-wing",
+        "--mobile-preview"
+      ],
+      "mode": "original",
+      "expected": "original",
+      "passed": true
+    },
+    {
+      "args": [
+        "--saved-reference"
+      ],
+      "mode": "reference",
+      "expected": "reference",
+      "passed": true
+    },
+    {
+      "args": [
+        "--saved-reference",
+        "--mobile-preview"
+      ],
+      "mode": "original",
+      "expected": "original",
+      "passed": true
+    },
+    {
+      "args": [
+        "--reference-wing",
+        "--original-world"
+      ],
+      "mode": "original",
+      "expected": "original",
+      "passed": true
+    }
+  ],
+  "scope": "Exact main.gd startup mode-selection statements extracted into isolated host with inert input/load hooks. No full game or import."
+}

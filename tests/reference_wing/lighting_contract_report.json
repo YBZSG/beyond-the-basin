@@ -1,0 +1,1467 @@
+{
+  "checks": 852,
+  "errors": [],
+  "gpu_run": false,
+  "native_fixture_total": 47,
+  "passed": true,
+  "rooms": [
+    {
+      "bindings": [
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_00",
+          "name": "CeilingStrip_R0_00",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            -2.15000009536743
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_01",
+          "name": "CeilingStrip_R0_01",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            -0.0500000007450581
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_02",
+          "name": "CeilingStrip_R0_02",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            2.04999995231628
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_03",
+          "name": "CeilingStrip_R0_03",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            4.15000009536743
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_04",
+          "name": "CeilingStrip_R0_04",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            6.25
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_05",
+          "name": "CeilingStrip_R0_05",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            8.35000038146973
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_06",
+          "name": "CeilingStrip_R0_06",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            10.4499998092651
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R0_07",
+          "name": "CeilingStrip_R0_07",
+          "position": [
+            0.620000004768372,
+            11.1899995803833,
+            12.5500001907349
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_00",
+          "name": "CeilingStrip_R1_00",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            -2.15000009536743
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_01",
+          "name": "CeilingStrip_R1_01",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            -0.0500000007450581
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_02",
+          "name": "CeilingStrip_R1_02",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            2.04999995231628
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_03",
+          "name": "CeilingStrip_R1_03",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            4.15000009536743
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_04",
+          "name": "CeilingStrip_R1_04",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            6.25
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_05",
+          "name": "CeilingStrip_R1_05",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            8.35000038146973
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_06",
+          "name": "CeilingStrip_R1_06",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            10.4499998092651
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 4.0,
+          "fixture_object": "CeilingStrip_R1_07",
+          "name": "CeilingStrip_R1_07",
+          "position": [
+            2.14000010490417,
+            11.1899995803833,
+            12.5500001907349
+          ],
+          "radius": 0.005,
+          "range": 12.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.94999748468399,
+            1.0,
+            0.896243870258331
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 2.0,
+          "fixture_object": "ContinuationStrip",
+          "name": "ContinuationStrip",
+          "position": [
+            0.699999988079071,
+            3.20000004768372,
+            -10.0
+          ],
+          "radius": 0.005,
+          "range": 5.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        }
+      ],
+      "fixtures": 17,
+      "id": "stair_gallery",
+      "native_shapes": {
+        "omni": 0,
+        "spot": 17
+      }
+    },
+    {
+      "bindings": [
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.75,
+          "fixture_object": "AxialFixture_01_Diffuser",
+          "name": "AxialFixture_01",
+          "position": [
+            0.0,
+            3.39000010490417,
+            -9.30000019073486
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.75,
+          "fixture_object": "AxialFixture_02_Diffuser",
+          "name": "AxialFixture_02",
+          "position": [
+            0.0,
+            3.39000010490417,
+            -6.19999980926514
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.75,
+          "fixture_object": "AxialFixture_03_Diffuser",
+          "name": "AxialFixture_03",
+          "position": [
+            0.0,
+            3.39000010490417,
+            -3.09999990463257
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.75,
+          "fixture_object": "AxialFixture_04_Diffuser",
+          "name": "AxialFixture_04",
+          "position": [
+            0.0,
+            3.39000010490417,
+            0.0
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.75,
+          "fixture_object": "AxialFixture_05_Diffuser",
+          "name": "AxialFixture_05",
+          "position": [
+            0.0,
+            3.39000010490417,
+            3.09999990463257
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.58,
+          "fixture_object": "AxialFixture_06_Diffuser",
+          "name": "AxialFixture_06",
+          "position": [
+            0.0,
+            3.39000010490417,
+            6.19999980926514
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.896243870258331,
+            0.963976204395294,
+            0.945276916027069
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.58,
+          "fixture_object": "AxialFixture_07_Diffuser",
+          "name": "AxialFixture_07",
+          "position": [
+            0.0,
+            3.39000010490417,
+            9.30000019073486
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.916273534297943,
+            0.973148226737976,
+            0.954687118530273
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.42,
+          "fixture_object": "EntranceCeilingFixture_Diffuser",
+          "name": "EntranceCeilingFixture",
+          "position": [
+            0.0,
+            3.39000010490417,
+            12.0500001907349
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            0.940524995326996,
+            0.916273534297943
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.3,
+          "fixture_object": "EastConnector_Light_Diffuser",
+          "name": "EastConnector_Light",
+          "position": [
+            10.5,
+            3.16000008583069,
+            0.0
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        }
+      ],
+      "fixtures": 9,
+      "id": "colonnade",
+      "native_shapes": {
+        "omni": 0,
+        "spot": 9
+      }
+    },
+    {
+      "bindings": [
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 0.9,
+          "fixture_object": "CyanStrip_01_Diffuser",
+          "name": "CyanStrip_01",
+          "position": [
+            -1.72000002861023,
+            2.92499995231628,
+            9.80000019073486
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 0.8,
+          "fixture_object": "CyanStrip_02_Diffuser",
+          "name": "CyanStrip_02",
+          "position": [
+            -1.72000002861023,
+            2.92499995231628,
+            7.69999980926514
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 0.65,
+          "fixture_object": "CyanStrip_03_Diffuser",
+          "name": "CyanStrip_03",
+          "position": [
+            -1.72000002861023,
+            2.92499995231628,
+            2.90000009536743
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 0.45,
+          "fixture_object": "CyanStrip_04_Diffuser",
+          "name": "CyanStrip_04",
+          "position": [
+            -1.72000002861023,
+            2.92499995231628,
+            -2.59999990463257
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 0.18,
+          "fixture_object": "CyanStrip_05_Diffuser",
+          "name": "CyanStrip_05",
+          "position": [
+            -1.72000002861023,
+            2.92499995231628,
+            -7.40000009536743
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.86504203081131,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 0.06,
+          "fixture_object": "CyanStrip_06_Diffuser",
+          "name": "CyanStrip_06",
+          "position": [
+            -1.72000002861023,
+            2.92499995231628,
+            -10.6999998092651
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.767375648021698,
+            0.930924594402313,
+            0.906331777572632
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.28,
+          "fixture_object": "Cyan_ConnectorFixture_Diffuser",
+          "name": "Cyan_ConnectorFixture",
+          "position": [
+            10.0,
+            3.16000008583069,
+            0.0
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        }
+      ],
+      "fixtures": 7,
+      "id": "cyan_corridor",
+      "native_shapes": {
+        "omni": 0,
+        "spot": 7
+      }
+    },
+    {
+      "bindings": [
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.785776972770691,
+            0.565728425979614
+          ],
+          "direction": [
+            0.0,
+            -0.705768823623657,
+            0.708442211151123
+          ],
+          "energy": 1.2,
+          "fixture_object": "Bath_LeftPortalHiddenLamp_Diffuser",
+          "name": "Bath_LeftPortalHiddenLamp",
+          "position": [
+            -1.45000004768372,
+            3.16000008583069,
+            -7.15000009536743
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 75.0,
+          "spot_attenuation": 0.35,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.779706239700317,
+            0.657627701759338
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.35,
+          "fixture_object": "Bath_WestConnectorFixture_Diffuser",
+          "name": "Bath_WestConnectorFixture",
+          "position": [
+            -13.0,
+            3.16000008583069,
+            0.0
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": false,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.826657056808472,
+            0.870344936847687,
+            0.940524995326996
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 0.35,
+          "fixture_object": "Bath_SouthConnectorFixture_Diffuser",
+          "name": "Bath_SouthConnectorFixture",
+          "position": [
+            0.0,
+            3.16000008583069,
+            14.0
+          ],
+          "radius": 0.005,
+          "range": 5.8,
+          "shadow": false,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.916273534297943,
+            0.954687118530273,
+            1.0
+          ],
+          "direction": [
+            0.0,
+            0.099503718316555,
+            -0.995037138462067
+          ],
+          "energy": 8.0,
+          "fixture_object": "Bath_EntrySidePractical_Diffuser",
+          "name": "Bath_EntrySidePractical",
+          "position": [
+            0.0,
+            3.04999995231628,
+            6.38500022888184
+          ],
+          "radius": 0.005,
+          "range": 16.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 85.0,
+          "spot_attenuation": 0.15,
+          "type": "spot"
+        }
+      ],
+      "fixtures": 4,
+      "id": "octagonal_bath",
+      "native_shapes": {
+        "omni": 0,
+        "spot": 4
+      }
+    },
+    {
+      "bindings": [
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.82097989320755,
+            0.935741007328033,
+            1.0
+          ],
+          "direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Right_porthole_01_cyan_glazing",
+          "name": "Right_porthole_01_soft_daylight",
+          "position": [
+            3.46000003814697,
+            2.0,
+            -6.5
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.82097989320755,
+            0.935741007328033,
+            1.0
+          ],
+          "direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Right_porthole_02_cyan_glazing",
+          "name": "Right_porthole_02_soft_daylight",
+          "position": [
+            3.46000003814697,
+            2.0,
+            -3.09999990463257
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.82097989320755,
+            0.935741007328033,
+            1.0
+          ],
+          "direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Right_porthole_03_cyan_glazing",
+          "name": "Right_porthole_03_soft_daylight",
+          "position": [
+            3.46000003814697,
+            2.0,
+            0.300000011920929
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.82097989320755,
+            0.935741007328033,
+            1.0
+          ],
+          "direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Right_porthole_04_cyan_glazing",
+          "name": "Right_porthole_04_soft_daylight",
+          "position": [
+            3.46000003814697,
+            2.0,
+            3.70000004768372
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            0.82097989320755,
+            0.935741007328033,
+            1.0
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Rear_porthole_05_cyan_glazing",
+          "name": "Rear_porthole_05_soft_daylight",
+          "position": [
+            -1.14999997615814,
+            2.0,
+            -8.0600004196167
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.896243870258331,
+            0.843389213085175
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Connector_flush_light_00",
+          "name": "Connector_practical_00",
+          "position": [
+            -12.0,
+            3.41000008583069,
+            0.0
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.896243870258331,
+            0.843389213085175
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Connector_flush_light_01",
+          "name": "Connector_practical_01",
+          "position": [
+            -6.5,
+            3.41000008583069,
+            3.40000009536743
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.896243870258331,
+            0.843389213085175
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Connector_flush_light_02",
+          "name": "Connector_practical_02",
+          "position": [
+            -6.5,
+            3.41000008583069,
+            -6.0
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.896243870258331,
+            0.843389213085175
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Connector_flush_light_03",
+          "name": "Connector_practical_03",
+          "position": [
+            0.0,
+            3.41000008583069,
+            -13.0
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        },
+        {
+          "attenuation": 2.0,
+          "authored_color_space": "linear",
+          "color": [
+            1.0,
+            0.896243870258331,
+            0.843389213085175
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "energy": 1.0,
+          "fixture_object": "Connector_flush_light_04",
+          "name": "Connector_practical_04",
+          "position": [
+            -2.79999995231628,
+            3.41000008583069,
+            6.30000019073486
+          ],
+          "radius": 0.005,
+          "range": 6.0,
+          "shadow": true,
+          "specular": 0.0,
+          "spot_angle": 80.0,
+          "spot_attenuation": 0.25,
+          "type": "spot"
+        }
+      ],
+      "fixtures": 10,
+      "id": "ball_lounge",
+      "native_shapes": {
+        "omni": 0,
+        "spot": 10
+      }
+    }
+  ],
+  "scope": "Actual production light nodes, transforms, manager lifecycle, and source/new water point input parity. No pixels, shader execution or NVIDIA acceptance.",
+  "engine_error": false,
+  "process_exit": 0,
+  "isolated_home_and_all_xdg": true,
+  "blender_helper_binding_parity": [
+    {
+      "id": "stair_gallery",
+      "native_python_binding_equal": true
+    },
+    {
+      "id": "colonnade",
+      "native_python_binding_equal": true
+    },
+    {
+      "id": "cyan_corridor",
+      "native_python_binding_equal": true
+    },
+    {
+      "id": "octagonal_bath",
+      "native_python_binding_equal": true
+    },
+    {
+      "id": "ball_lounge",
+      "native_python_binding_equal": true
+    }
+  ],
+  "original_source_unchanged": {
+    "scripts/rendering/pool_lighting.gd": true,
+    "scripts/water/source_water_runtime.gd": true
+  },
+  "source_sha256": {
+    "scripts/rendering/pool_lighting.gd": "d931c973f4093b86c89f629380b4a5564c48f17a8f1a2078ebc161aa3bcca408",
+    "scripts/water/source_water_runtime.gd": "b82a3b35275d8ce0afff29a95465a5debb003987d1343430c264252ed94ccc48",
+    "scripts/reference_wing/reference_lighting.gd": "91faef2d88eea33d56aa9d858fd301d81b179b9a0b62adde1b373908d56519c4",
+    "scripts/reference_wing/reference_scene_water_runtime.gd": "509a6dcbdd6eacdb23013cef809291d72ef3077e3d167bb2920497fc2e7acdbe",
+    "scripts/reference_wing/reference_catalog.gd": "d0cb5ba09a9638d5f6d485334f6af8f009f1765e7addce473b4c9c5d8fce0d7c",
+    "tools/blender/reference_wing/native_light_proxy.py": "26ef5f43ec5d8d723c53c291cc7abe3ccdeb2b31d5d8bf6ac91277994e0a61ae"
+  },
+  "geometry_sha256": {
+    "ball_lounge.geometry.json": "be3166caf7bff05494128ea7881e00912e73c8ec720c16542409cf423e641003",
+    "colonnade.geometry.json": "024580424a57c4368ce9c6726e525000b2d717139b12e9409797828d20cf953d",
+    "cyan_corridor.geometry.json": "9411edd50599f6fd964a700415beae81757b1f14eaefc1e9ba04058c5a007f37",
+    "octagonal_bath.geometry.json": "4eadf0bc13a94eb72a13e068d210af884581be5098fc2e62daed2d3ddfcf9af7",
+    "stair_gallery.geometry.json": "f3523a105b746e58b913c1011ba3075830b5a3acf1973d83b856939176f6c671"
+  }
+}

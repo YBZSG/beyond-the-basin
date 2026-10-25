@@ -1,0 +1,4 @@
+import bpy,json,pathlib
+r=pathlib.Path(__file__).resolve().parents[3]
+for n,p in [('colonnade','tools/blender/reference_wing/water_sources/colonnade.blend'),('cyan_corridor','tools/blender/reference_wing/water_sources/cyan_corridor.blend'),('octagonal_bath','output/reference_wing/water_rooms/octagonal_bath_cap_candidate/candidate.blend'),('ball_lounge','tools/blender/reference_wing/lounge_sources/ball_lounge.blend'),('stair_gallery','tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend')]:
+ bpy.ops.wm.open_mainfile(filepath=str(r/p));obs=[o for o in bpy.context.scene.objects if o.type=='MESH'];print('AUDIT',n,'objects',len(obs),'visible',sum(not o.hide_render for o in obs),'polys',sum(len(o.data.polygons) for o in obs if not o.hide_render));print('SAMPLE',[(o.name,o.hide_render,list(o.keys())) for o in obs[:10]]);print('CAMERAS',[(o.name,list(o.location))for o in bpy.context.scene.objects if o.type=='CAMERA'])

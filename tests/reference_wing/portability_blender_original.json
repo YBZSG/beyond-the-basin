@@ -1,0 +1,248 @@
+{
+  "blender_version": "4.3.2",
+  "read_only": true,
+  "sources": [
+    {
+      "source": "tools/blender/reference_wing/stair_gallery/source/stair_gallery.blend",
+      "dependencies": [
+        {
+          "kind": "images",
+          "name": "full_normal_gl_16.png",
+          "path": "//../../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "glaze_orm_2k.png",
+          "path": "//../../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref5_crown_normal_gl_16.png",
+          "path": "//../../../../../assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref5_crown_normal_gl_16.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_dark_teal_albedo_2k.png",
+          "path": "//../../../../../assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_pearl_albedo_2k.png",
+          "path": "//../../../../../assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_pearl_albedo_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_pink_albedo_2k.png",
+          "path": "//../../../../../assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_teal_albedo_2k.png",
+          "path": "//../../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+          "pass": true
+        }
+      ],
+      "objects": 2527,
+      "meshes": 2508,
+      "materials": 8,
+      "external_libraries": 0,
+      "camera": "REFERENCE_5_Composition",
+      "pass": true
+    },
+    {
+      "source": "tools/blender/reference_wing/water_sources/colonnade.blend",
+      "dependencies": [
+        {
+          "kind": "images",
+          "name": "full_normal_gl_16.png",
+          "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "glaze_orm_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_dark_teal_albedo_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_dark_teal_albedo_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_teal_albedo_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+          "pass": true
+        }
+      ],
+      "objects": 141,
+      "meshes": 131,
+      "materials": 6,
+      "external_libraries": 0,
+      "camera": "REFERENCE_CAMERA",
+      "pass": true
+    },
+    {
+      "source": "tools/blender/reference_wing/water_sources/cyan_corridor.blend",
+      "dependencies": [
+        {
+          "kind": "images",
+          "name": "full_normal_gl_16.png",
+          "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "glaze_orm_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_teal_albedo_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_teal_albedo_2k.png",
+          "pass": true
+        }
+      ],
+      "objects": 226,
+      "meshes": 218,
+      "materials": 8,
+      "external_libraries": 0,
+      "camera": "REFERENCE_CAMERA",
+      "pass": true
+    },
+    {
+      "source": "tools/blender/reference_wing/water_sources/octagonal_bath.blend",
+      "dependencies": [
+        {
+          "kind": "images",
+          "name": "full_normal_gl_16.png",
+          "path": "//../../../../assets/materials/reference_wing/full_normal_gl_16.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/full_normal_gl_16.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "glaze_orm_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/glaze_orm_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/glaze_orm_2k.png",
+          "pass": true
+        },
+        {
+          "kind": "images",
+          "name": "ref_tile_pink_albedo_2k.png",
+          "path": "//../../../../assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+          "packed": false,
+          "relative": true,
+          "exists": true,
+          "resolved_within_copy": true,
+          "resolved_relative": "assets/materials/reference_wing/ref_tile_pink_albedo_2k.png",
+          "pass": true
+        }
+      ],
+      "objects": 542,
+      "meshes": 529,
+      "materials": 7,
+      "external_libraries": 0,
+      "camera": "REFERENCE_CAMERA",
+      "pass": true
+    },
+    {
+      "source": "tools/blender/reference_wing/lounge_sources/ball_lounge.blend",
+      "dependencies": [],
+      "objects": 108,
+      "meshes": 94,
+      "materials": 7,
+      "external_libraries": 0,
+      "camera": "Reference4_composition",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

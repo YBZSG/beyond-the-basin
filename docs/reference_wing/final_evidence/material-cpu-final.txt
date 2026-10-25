@@ -1,0 +1,15 @@
+test_generated_math_and_raster_rt_single_source (__main__.ReferenceMaterialContracts.test_generated_math_and_raster_rt_single_source) ... ok
+test_height_gradient_finite_and_independent_from_bevel (__main__.ReferenceMaterialContracts.test_height_gradient_finite_and_independent_from_bevel) ... ok
+test_high_precision_reference_normal_matches_runtime_base_math (__main__.ReferenceMaterialContracts.test_high_precision_reference_normal_matches_runtime_base_math) ... ok
+test_legacy_six_shaders_untouched (__main__.ReferenceMaterialContracts.test_legacy_six_shaders_untouched) ... ok
+test_metric_hash_periodicity_and_negative_uv (__main__.ReferenceMaterialContracts.test_metric_hash_periodicity_and_negative_uv) ... ok
+test_pbr_maps_and_explicit_linear_coverage_import (__main__.ReferenceMaterialContracts.test_pbr_maps_and_explicit_linear_coverage_import) ... ok
+test_room_satin_metric_scale_and_slope_chain_rule (__main__.ReferenceMaterialContracts.test_room_satin_metric_scale_and_slope_chain_rule) ... ok
+test_scoped_cyan_palette_linear_math_and_isolation (__main__.ReferenceMaterialContracts.test_scoped_cyan_palette_linear_math_and_isolation) ... ok
+test_shape_off_preserves_bevel_and_dry_palette_contract (__main__.ReferenceMaterialContracts.test_shape_off_preserves_bevel_and_dry_palette_contract) ... ok
+test_strong_face_candidate_has_continuous_height_bound (__main__.ReferenceMaterialContracts.test_strong_face_candidate_has_continuous_height_bound) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 6.510s
+
+OK

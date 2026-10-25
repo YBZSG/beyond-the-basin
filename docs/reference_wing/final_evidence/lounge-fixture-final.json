@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "errors": [],
+  "unchanged_mesh_objects": 84,
+  "changed_exact_fixture_meshes": [
+    "Connector_flush_light_00",
+    "Connector_flush_light_01",
+    "Connector_flush_light_02",
+    "Connector_flush_light_03",
+    "Connector_flush_light_04",
+    "Connector_light_mount_00",
+    "Connector_light_mount_01",
+    "Connector_light_mount_02",
+    "Connector_light_mount_03",
+    "Connector_light_mount_04"
+  ],
+  "collision_routes_balls_materials_camera_unchanged": true,
+  "mounts": [
+    {
+      "mount": "Connector_light_mount_00",
+      "actual_mount_top_y": 3.5199999809265137,
+      "actual_ceiling_hit": [
+        9.989738464355469e-05,
+        "Closed_connector_floor_and_roof",
+        [
+          -12.0,
+          0.0,
+          3.5199999809265137
+        ]
+      ],
+      "gap_m": 0.0,
+      "light": [
+        -12,
+        3.41,
+        0
+      ],
+      "nearest_surface": [
+        0.014999866485595703,
+        "Connector_flush_light_00"
+      ]
+    },
+    {
+      "mount": "Connector_light_mount_01",
+      "actual_mount_top_y": 3.5199999809265137,
+      "actual_ceiling_hit": [
+        9.989737736759707e-05,
+        "Closed_connector_floor_and_roof",
+        [
+          -6.5,
+          -3.4000000953674316,
+          3.5199999809265137
+        ]
+      ],
+      "gap_m": 0.0,
+      "light": [
+        -6.5,
+        3.41,
+        3.4
+      ],
+      "nearest_surface": [
+        0.014999866485595703,
+        "Connector_flush_light_01"
+      ]
+    },
+    {
+      "mount": "Connector_light_mount_02",
+      "actual_mount_top_y": 3.5199999809265137,
+      "actual_ceiling_hit": [
+        9.989738464355469e-05,
+        "Closed_connector_floor_and_roof",
+        [
+          -6.5,
+          6.0,
+          3.5199999809265137
+        ]
+      ],
+      "gap_m": 0.0,
+      "light": [
+        -6.5,
+        3.41,
+        -6
+      ],
+      "nearest_surface": [
+        0.014999866485595703,
+        "Connector_flush_light_02"
+      ]
+    },
+    {
+      "mount": "Connector_light_mount_03",
+      "actual_mount_top_y": 3.5199999809265137,
+      "actual_ceiling_hit": [
+        9.989738464355469e-05,
+        "Closed_connector_floor_and_roof",
+        [
+          0.0,
+          13.0,
+          3.5199999809265137
+        ]
+      ],
+      "gap_m": 0.0,
+      "light": [
+        0,
+        3.41,
+        -13
+      ],
+      "nearest_surface": [
+        0.014999866485595703,
+        "Connector_flush_light_03"
+      ]
+    },
+    {
+      "mount": "Connector_light_mount_04",
+      "actual_mount_top_y": 3.5199999809265137,
+      "actual_ceiling_hit": [
+        9.98973919195123e-05,
+        "Room_continuous_low_roof",
+        [
+          -2.8000001907348633,
+          -6.300000190734863,
+          3.5199999809265137
+        ]
+      ],
+      "gap_m": 0.0,
+      "light": [
+        -2.8,
+        3.41,
+        6.3
+      ],
+      "nearest_surface": [
+        0.014999866485595703,
+        "Connector_flush_light_04"
+      ]
+    }
+  ],
+  "original_sha256": "2ea8ac5d62c00470029a917dd26f48d9191ca4dd2b3879531a6e823bdaa45d88",
+  "candidate_sha256": "45449a83591838fb70b1c06f30d4dd0dd114ce9025de1fca7a3c5fd4408b64bf",
+  "scope": "Actual evaluated source meshes. Whole-room collision, balls and authored cameras unchanged. No image/GPU claim."
+}

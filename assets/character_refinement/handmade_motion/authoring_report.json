@@ -1,0 +1,31 @@
+{
+  "source_sha256": "472d751447e0819358ea7f0a56846173f6d55886426941da4a3f0b1e6e05e5fc",
+  "rig_bones": 54,
+  "policy": "Original Blender-authored upper-body rotations only; no physics or root-motion tracks. Existing 14 locomotion/action clips unchanged.",
+  "clips": {
+    "Pickup": {
+      "duration_seconds": 0.48333333333333334,
+      "rotation_bones": 44,
+      "keys_per_bone": 30,
+      "loop": false,
+      "loop_seam_radians": 1.6144499778747559,
+      "source_keyframes": 5280
+    },
+    "SetDown": {
+      "duration_seconds": 0.4666666666666667,
+      "rotation_bones": 44,
+      "keys_per_bone": 29,
+      "loop": false,
+      "loop_seam_radians": 1.5430634021759033,
+      "source_keyframes": 5104
+    },
+    "WadeRest": {
+      "duration_seconds": 2.8,
+      "rotation_bones": 44,
+      "keys_per_bone": 169,
+      "loop": true,
+      "loop_seam_radians": 0.0,
+      "source_keyframes": 29744
+    }
+  }
+}

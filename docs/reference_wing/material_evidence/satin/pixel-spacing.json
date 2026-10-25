@@ -1,0 +1,195 @@
+{
+  "scope": "Image-space grid-spacing and existing authored camera comparison. Not a real-world dimension measurement or visual acceptance.",
+  "rooms": {
+    "cyan_corridor": {
+      "image_size": [
+        400,
+        393
+      ],
+      "sample_box_xyxy": [
+        372,
+        377,
+        75,
+        300
+      ],
+      "detected_joint_rows": [
+        79,
+        93,
+        106,
+        120,
+        134,
+        148,
+        161,
+        175,
+        189,
+        203,
+        216,
+        230,
+        244,
+        258,
+        271,
+        285,
+        298
+      ],
+      "row_gaps_pixels": [
+        14,
+        13,
+        14,
+        14,
+        14,
+        13,
+        14,
+        14,
+        14,
+        13,
+        14,
+        14,
+        14,
+        13,
+        14,
+        13
+      ],
+      "median_joint_pitch_pixels": 14.0,
+      "sha256": "5c5b43cd6f5b59b3cc3f46cae003bcf28b5d2d8bb833a44e9e9913ad0f3595f3",
+      "known_camera": {
+        "name": "Reference2_Corridor",
+        "position": [
+          -0.15,
+          1.45,
+          10.25
+        ],
+        "target": [
+          0,
+          1.3,
+          -9.5
+        ],
+        "lens_mm": 22,
+        "fov_degrees": 78.578814,
+        "fov_axis": "vertical",
+        "reference_resolution": [
+          700,
+          700
+        ],
+        "sensor_fit": "AUTO",
+        "sensor_width_mm": 36.0,
+        "sensor_height_mm": 24.0
+      },
+      "sample_world_point": [
+        1.8000000000000003,
+        1.429472551223687,
+        7.561873466360151
+      ],
+      "projected_0_10m_vertical_pitch_at_reference_width_pixels": 9.045942408096964,
+      "reference_to_current_pixel_pitch_ratio": 1.5476552213585497,
+      "candidate_uniform_scale": 1.5,
+      "candidate_tile_pitch_metres": 0.15000000000000002,
+      "candidate_grout_width_metres": 0.0027,
+      "candidate_projected_pitch_at_reference_width_pixels": 13.568913612145447,
+      "candidate_projected_joint_at_reference_width_pixels": 0.24424044501861802,
+      "caution": "Uncalibrated reference lens/framing/aspect and unknown real dimensions. Camera comparison guides a scoped candidate only; joints remain subpixel at distance."
+    },
+    "octagonal_bath": {
+      "image_size": [
+        400,
+        500
+      ],
+      "sample_box_xyxy": [
+        201,
+        204,
+        203,
+        286
+      ],
+      "detected_joint_rows": [
+        206,
+        209,
+        212,
+        215,
+        218,
+        221,
+        224,
+        227,
+        235,
+        238,
+        241,
+        244,
+        247,
+        250,
+        253,
+        256,
+        259,
+        262,
+        265,
+        268,
+        271,
+        274,
+        277,
+        280,
+        283
+      ],
+      "row_gaps_pixels": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        8,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "median_joint_pitch_pixels": 3.0,
+      "sha256": "ae91dae75f0aa78b2707d8ab9eb3d107312d1bb2503f018736ae4f1156de2a68",
+      "known_camera": {
+        "name": "Reference3_OctagonalBath",
+        "position": [
+          0,
+          2.35,
+          5.9
+        ],
+        "target": [
+          0,
+          1.65,
+          -2.9
+        ],
+        "lens_mm": 18,
+        "fov_degrees": 90.0,
+        "fov_axis": "vertical",
+        "reference_resolution": [
+          700,
+          700
+        ],
+        "sensor_fit": "AUTO",
+        "sensor_width_mm": 36.0,
+        "sensor_height_mm": 24.0
+      },
+      "sample_world_point": [
+        0.0,
+        1.6,
+        -6.5
+      ],
+      "projected_0_10m_vertical_pitch_at_reference_width_pixels": 1.6086295631847796,
+      "reference_to_current_pixel_pitch_ratio": 1.864941481033441,
+      "candidate_uniform_scale": 2.0,
+      "candidate_tile_pitch_metres": 0.2,
+      "candidate_grout_width_metres": 0.0036,
+      "candidate_projected_pitch_at_reference_width_pixels": 3.217259126369559,
+      "candidate_projected_joint_at_reference_width_pixels": 0.05791066427465206,
+      "caution": "Uncalibrated reference lens/framing/aspect and unknown real dimensions. Camera comparison guides a scoped candidate only; joints remain subpixel at distance."
+    }
+  }
+}

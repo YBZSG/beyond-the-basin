@@ -1,5 +1,7 @@
 # Godot-generated local editor/import cache
 .godot/
+# Local source-update receipts and original-file backups
+.poolcore-source-updates/
 # Local export and capture products
 output/
 export/
@@ -23,3 +25,6 @@ Thumbs.db
 # Local wind settings contract report
 tests/wind_water/settings_report.json
 
+
+# User-supplied optional character assets (local use)
+assets/models/avatar/ithappy_explorer*

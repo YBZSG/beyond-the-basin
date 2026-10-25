@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "scope": "Promoted encoding-only copies of the three new reference 16-bit maps. Original bytes retained in QA and the immutable previous checkpoint. No shared editor import or shader change.",
+  "records": [
+    {
+      "file": "full_normal_gl_16.png",
+      "old_bytes": 7923952,
+      "new_bytes": 1923098,
+      "saved_bytes": 6000854,
+      "decoded_uint16_bit_identical": true,
+      "array_sha256": "91314aa392749590e7bace4451253f870c35c5ba9d30245bec7f46fbd2b74f1b",
+      "encoding": {
+        "row_filters": {
+          "0": 0,
+          "1": 23,
+          "2": 0,
+          "4": 2025
+        },
+        "bytes": 1923098,
+        "bits_per_sample": 16,
+        "bytes_per_pixel": 6
+      },
+      "original_sha256": "40acaef8c5ac8d1fef5543d5f53454c5f05a2126086499ed1d8c87669b6071b2",
+      "candidate_sha256": "b59584373f011607324b4dc2c4dd695b51e4eead4a825c74ee53f5fb2fc75c29"
+    },
+    {
+      "file": "height_16.png",
+      "old_bytes": 7064826,
+      "new_bytes": 3756411,
+      "saved_bytes": 3308415,
+      "decoded_uint16_bit_identical": true,
+      "array_sha256": "b0baaa61471f05af36d2ebf3989882a2d97e7198b103f32d7b78bc1fe0958c9b",
+      "encoding": {
+        "row_filters": {
+          "0": 0,
+          "1": 16,
+          "2": 0,
+          "4": 2032
+        },
+        "bytes": 3756411,
+        "bits_per_sample": 16,
+        "bytes_per_pixel": 2
+      },
+      "original_sha256": "d7c2d74306751e3a425a5f2a3cea433a0526f71b680a4d5864f8c57ff3c6d533",
+      "candidate_sha256": "db88cf4d0643305359ac1a0e33179990a4cce72ff06d05bf70f6dee59ba49cbb"
+    },
+    {
+      "file": "bevel_normal_gl_16.png",
+      "old_bytes": 61433,
+      "new_bytes": 31724,
+      "saved_bytes": 29709,
+      "decoded_uint16_bit_identical": true,
+      "array_sha256": "dc74069196542f58ac69b023411d089fc472c1483183a7321131c7d063fe454b",
+      "encoding": {
+        "row_filters": {
+          "0": 0,
+          "1": 15,
+          "2": 1999,
+          "4": 34
+        },
+        "bytes": 31724,
+        "bits_per_sample": 16,
+        "bytes_per_pixel": 6
+      },
+      "original_sha256": "b8f34d34457d114f8c963d38fc84c21997a3d1f267197b2ce5752fd657a8ef82",
+      "candidate_sha256": "81b91beffbd3d5b0a6f36963d09fdfcffd7813270c12fa3a7fad8bba3a176a7d"
+    }
+  ],
+  "bytes_saved": 9338978,
+  "promoted": true,
+  "source_pixels_changed": false,
+  "resolution_changed": false,
+  "bit_depth_changed": false
+}

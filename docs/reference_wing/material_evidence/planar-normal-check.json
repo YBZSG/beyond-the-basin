@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "samples": 9,
+  "max_component_error": 1.5259021896696368e-05,
+  "tolerance": 3.0518043793392844e-05,
+  "normal_sha256": "67082c5c3f1a8a4f5715183cc1c90e093d709aa08d6a8e7d0bb1f0d4e747ca87",
+  "production_asset": false,
+  "native_validation": false
+}

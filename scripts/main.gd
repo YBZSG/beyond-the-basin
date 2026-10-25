@@ -1,12 +1,25 @@
 extends Node3D
 ## Integration for the source-based native port. No browser/WebGL runtime remains.
+const CampaignWorld = preload("res://scripts/campaign/campaign_world.gd")
+const CampaignRuntime = preload("res://scripts/campaign/campaign_runtime.gd")
+var _campaign: Node
 const WorldScript = preload("res://scripts/world/pool_world.gd")
+const ReferenceWorld = preload("res://scripts/reference_wing/reference_world.gd")
+const ReferenceCatalog = preload("res://scripts/reference_wing/reference_catalog.gd")
+const ReferenceWater = preload("res://scripts/reference_wing/reference_water_runtime.gd")
+const ReferenceSceneWater = preload("res://scripts/reference_wing/reference_scene_water_runtime.gd")
+const ReferenceLook = preload("res://scripts/reference_wing/reference_look_settings.gd")
+const ReferenceControls = preload("res://scripts/reference_wing/reference_controls.gd")
+const ReferencePlayer = preload("res://scripts/reference_wing/reference_player.gd")
+const ReferenceLighting = preload("res://scripts/reference_wing/reference_lighting.gd")
+var _reference_settings: Dictionary = ReferenceLook.DEFAULT.duplicate()
 const PlayerScript = preload("res://scripts/player/pool_player.gd")
 const AvatarScript = preload("res://scripts/player/pool_avatar.gd")
+const CharacterPreferences = preload("res://scripts/player/character_preferences.gd")
 const ArtCharacter = preload("res://scripts/art_pass/character/art_character_selection.gd")
 const AvatarFinishScript = preload("res://scripts/player/avatar_finish_candidate.gd")
 const FacilityDevicesScript = preload("res://scripts/world/facility_devices_candidate.gd")
-const SPAWN_MODES := ["original", "formal", "expanded", "poolrooms"]
+const SPAWN_MODES := ["original", "formal", "expanded", "poolrooms", "reference"]
 const SEED_INPUT_GUARD_REVISION := 1
 const PropsScript = preload("res://scripts/player/pool_props.gd")
 const WaterScript = preload("res://scripts/water/source_water_runtime.gd")
@@ -30,6 +43,11 @@ var _avatar_finish: RefCounted
 var _avatar_finish_status: Dictionary = {}
 var _facility_devices: Node3D
 var _facility_world_epoch := 0
+var _character_id := "original"
+var _character_settings_path := CharacterPreferences.SETTINGS_PATH
+var _character_select: OptionButton
+var _character_status: Label
+var _character_switching := false
 var _avatar_enabled := true
 var _avatar_fabric_enabled := true
 var _facility_enabled := true
@@ -113,10 +131,15 @@ func _ready() -> void:
 	get_tree().auto_accept_quit = false
 	_setup_inputs()
 	_load_settings()
+	if MainhallPreview.desktop_allowed(): _character_id = CharacterPreferences.load_character(_character_settings_path)
 	if "--formal-hall" in OS.get_cmdline_user_args(): _spawn_mode="formal"
 	if "--expanded-world" in OS.get_cmdline_user_args(): _spawn_mode="expanded"
 	if "--poolrooms-wing" in OS.get_cmdline_user_args(): _spawn_mode="poolrooms"
+	if "--reference-wing" in OS.get_cmdline_user_args(): _spawn_mode="reference"
 	if "--legacy-world" in OS.get_cmdline_user_args() or "--original-world" in OS.get_cmdline_user_args(): _spawn_mode="original"
+	# New authored wing is PC-only. Do not activate it from a copied PC save or
+	# explicit CLI flag on the paused mobile path.
+	if not MainhallPreview.desktop_allowed() and _spawn_mode == "reference": _spawn_mode="original"
 	_pc_preview_return_spawn = _spawn_mode
 	_pc_mainhall_preview = MainhallPreview.requested()
 	if _pc_mainhall_preview: _spawn_mode = "formal"
@@ -130,13 +153,18 @@ func _ready() -> void:
 		if "--qa-user-water" not in OS.get_cmdline_user_args(): _water_settings.clear()
 		_water_visible=true
 	if MainhallPreview.desktop_allowed() and "--no-exploration-notes" not in OS.get_cmdline_user_args():
-		_exploration_notes = preload("res://scripts/gameplay/exploration_notes.gd").new()
+		_exploration_notes = preload("res://scripts/reference_wing/reference_exploration_notes.gd").new()
 		_exploration_notes.name = "ExplorationNotes"
 		add_child(_exploration_notes)
 		_exploration_notes.initialize_store(true)
 	_build_interface()
+	if MainhallPreview.desktop_allowed():
+		_campaign = CampaignRuntime.new()
+		_campaign.name = "Campaign"
+		add_child(_campaign)
+		_campaign.initialize(self)
 	materials = MaterialsScript.new()
-	lighting = LightingScript.new()
+	lighting = ReferenceLighting.new() if MainhallPreview.desktop_allowed() else LightingScript.new()
 	# PC candidates remain explicit until native same-camera acceptance.
 	if _qa and "--qa-distributed-basin-return" in OS.get_cmdline_user_args():
 		lighting.set_formal_basin_return_distribution_enabled(true)
@@ -162,6 +190,7 @@ func _ready() -> void:
 	pool_audio.set_ambience(_ambience_on)
 	_create_world()
 	_booted = true
+	if is_instance_valid(_campaign) and _campaign.active: _campaign.call_deferred("restore_checkpoint")
 	_apply_quality(_quality)
 	_set_gi(_gi_on)
 	set_menu(true)
@@ -202,11 +231,12 @@ func _create_world() -> void:
 	# Retirement is an awaited phase owned by regenerate(), never constructor overlap.
 	assert(not is_instance_valid(world) and not is_instance_valid(water))
 	lighting.invalidate_active_room()
-	water = WaterScript.new()
+	water = ReferenceSceneWater.new() if _spawn_mode == "reference" else (ReferenceWater.new() if MainhallPreview.desktop_allowed() else WaterScript.new())
 	water.name = "NativeWater"
 	add_child(water)
 	water.quality = _initial_water_quality()
 	water.configure(materials)
+	if water.has_method("set_reference_wave_settings"): water.set_reference_wave_settings(_reference_settings)
 	water.set_caustics(_caustics_on)
 	water.set_enabled(_water_visible)
 	for parameter: String in _water_settings: water.set_tuning(parameter,_water_settings[parameter])
@@ -217,7 +247,7 @@ func _create_world() -> void:
 	props.initialize(materials,water)
 	props.water_impact.connect(_water_impact)
 	props.interaction.connect(_interaction)
-	player = PlayerScript.new()
+	player = ReferencePlayer.new() if _spawn_mode == "reference" else PlayerScript.new()
 	player.name = "Player"
 	add_child(player)
 	player.set_water(water)
@@ -227,18 +257,12 @@ func _create_world() -> void:
 	player.interaction.connect(_interaction)
 	player.pause_requested.connect(func(): set_menu(true))
 	props.attach_player(player)
-	avatar = null
-	avatar = ArtCharacter.script_or_original(AvatarScript).new()
-	if "--legacy-avatar-model" not in OS.get_cmdline_user_args():
-		avatar.model_path = AvatarFinishScript.CANDIDATE_PATH
-		if not preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session() and "--legacy-water-actions" not in OS.get_cmdline_user_args():
-			avatar.model_path = "res://assets/water_motion/explorer_water_motion.scn"
-	ArtCharacter.apply_selected_model(avatar)
-	avatar.setup(player)
-	_avatar_finish = AvatarFinishScript.new() if "--legacy-avatar-model" not in OS.get_cmdline_user_args() else null
-	_avatar_finish_status = _avatar_finish.apply_to(avatar,_avatar_fabric_enabled and "--no-avatar-fabric-finish" not in OS.get_cmdline_user_args()) if _avatar_finish != null else {"enabled":false}
-	if _avatar_finish != null and int(_avatar_finish_status.get("applied_surfaces",0)) != 2:
-		push_warning("Avatar fabric surfaces were not both applied: " + str(_avatar_finish_status))
+	avatar = _create_character_visual("original")
+	if _character_id != "original" and not _replace_character_visual(_character_id):
+		_character_id = "original"
+		_set_character_status("新角色不可用，已保留原版探索者。")
+	_sync_character_selector()
+	_apply_character_fabric_finish()
 	avatar.visible = _avatar_enabled
 	avatar.process_mode = Node.PROCESS_MODE_INHERIT if _avatar_enabled else Node.PROCESS_MODE_DISABLED
 	# Native SSR is not the source water reflection. Its late separate-specular
@@ -264,9 +288,10 @@ func _create_world() -> void:
 	var effects:Array[CompositorEffect]=player.camera.compositor.compositor_effects
 	effects.append(source_fog)
 	player.camera.compositor.compositor_effects=effects
-	world = WorldScript.new()
+	world = CampaignWorld.new() if is_instance_valid(_campaign) and _campaign.active else (ReferenceWorld.new() if _spawn_mode == "reference" else WorldScript.new())
+	if is_instance_valid(_campaign) and _campaign.active: world.chapter_index = _campaign.world_chapter()
 	world.formal_mode = _spawn_mode == "formal"
-	world.expanded_mode = _spawn_mode in ["expanded", "poolrooms"]
+	world.expanded_mode = _spawn_mode in ["expanded", "poolrooms", "reference"]
 	world.poolrooms_mode = _spawn_mode == "poolrooms"
 	world.name = "SeededPoolWorld"
 	add_child(world)
@@ -275,7 +300,10 @@ func _create_world() -> void:
 	world.streaming_completed.connect(_on_world_streamed)
 	world.initialize(world_seed, materials)
 	_settle_created_world_lighting()
-	if world.formal_mode:
+	if _spawn_mode == "reference":
+		var view := ReferenceCatalog.camera(0)
+		player.warp_to(world.get_spawn_position(world.current_room),view.target)
+	elif world.formal_mode:
 		player.warp_to(world.get_spawn_position(world.current_room),Vector3(-32,1,-35))
 	elif world.expanded_mode:
 		var spawn: Vector3 = world.get_spawn_position(world.current_room)
@@ -313,6 +341,7 @@ func _trace_world_lifecycle(phase: String) -> void:
 
 func _retire_world() -> void:
 	_trace_world_lifecycle("retire_begin")
+	if is_instance_valid(_campaign): _campaign.world_replacing()
 	_retiring_world = true
 	_gi_refresh_ticket += 1
 	# Freeze the old scene; UI and DesktopQuality remain alive across all awaits.
@@ -384,6 +413,7 @@ func _on_room_loaded(room: Node3D,coord: Vector2i,layout: Dictionary) -> void:
 		print("PC_MAINHALL_LIGHTMAP_PREVIEW ",JSON.stringify(_pc_preview_result))
 	water.add_room(room,coord,layout)
 	props.spawn_for_room(room,coord,layout,world_seed)
+	if is_instance_valid(_campaign): _campaign.room_loaded(room,coord,layout)
 	if is_instance_valid(_facility_devices) and _facility_devices.enabled:
 		_facility_devices.attach_formal_room(room,coord,layout)
 
@@ -413,6 +443,11 @@ func effective_gi_requested(value: bool) -> bool:
 	return value and not _pc_mainhall_preview
 
 func _set_pc_mainhall_preview(enabled: bool, target_spawn: String = "") -> void:
+	if enabled and not MainhallPreview.resources_available():
+		_refresh_pc_preview_interface()
+		return
+	if is_instance_valid(_campaign) and _campaign.busy: return
+	if is_instance_valid(_campaign) and _campaign.active: _campaign.leave_campaign()
 	if not MainhallPreview.desktop_allowed() or _switching_spawn:
 		_refresh_pc_preview_interface()
 		return
@@ -424,7 +459,7 @@ func _set_pc_mainhall_preview(enabled: bool, target_spawn: String = "") -> void:
 func _refresh_pc_preview_interface() -> void:
 	if is_instance_valid(_pc_preview_check):
 		_pc_preview_check.set_pressed_no_signal(_pc_mainhall_preview)
-		_pc_preview_check.disabled = _switching_spawn
+		_pc_preview_check.disabled = _switching_spawn or not MainhallPreview.resources_available()
 	if not is_instance_valid(_pc_preview_status): return
 	_pc_preview_status.visible = _pc_mainhall_preview
 	if _pc_mainhall_preview:
@@ -477,6 +512,7 @@ func _process(delta: float) -> void:
 		_diag.text += "\nHDR room cache: %d · async captures %d" % [int(water_stats.probe.get("cache_hits",0)),int(water_stats.probe.get("captures_completed",0))]
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_instance_valid(_campaign) and _campaign.busy: return
 	if not _booted or _switching_spawn: return
 	if event.is_action_pressed("pause"):
 		set_menu(not menu_open)
@@ -500,7 +536,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_R:
 				if not menu_open:
 					player.release_prop()
-					travel_to(Vector2i(-1,-1) if world.formal_mode else Vector2i.ZERO)
+					if is_instance_valid(_campaign) and _campaign.active: _campaign.restore_checkpoint()
+					else: travel_to(Vector2i(-1,-1) if world.formal_mode else Vector2i.ZERO)
 			KEY_F11:
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_FULLSCREEN else DisplayServer.WINDOW_MODE_FULLSCREEN)
 
@@ -523,6 +560,7 @@ func _refresh_preparation_interface() -> void:
 		_loading_status.visible = not _loading_status.text.is_empty()
 
 func set_menu(value: bool) -> void:
+	if not value and is_instance_valid(_campaign) and _campaign.busy: return
 	# Initial static optical data prepares without freezing the menu. Do not let
 	# floating actors fall through an unprepared depth field on a cold launch.
 	if not value and (_switching_spawn or (is_instance_valid(water) and not water.is_terrain_ready())): value=true
@@ -545,8 +583,10 @@ func set_menu(value: bool) -> void:
 	_resume.text = "进入泳池 / CONTINUE" if is_instance_valid(world) and world.get_discovered_count() <= 1 else "继续探索 / CONTINUE"
 	if value: _refresh_preparation_interface()
 
-func travel_to(coord: Vector2i) -> void:
+func travel_to(coord: Vector2i, campaign_restore: bool = false) -> void:
+	if not campaign_restore and is_instance_valid(_campaign) and _campaign.busy: return
 	if _switching_spawn or not _booted: return
+	if is_instance_valid(_campaign) and _campaign.active and coord not in world.finite_coords: return
 	if world.formal_mode and coord not in preload("res://scripts/world/formal_rooms.gd").COORDS: coord=Vector2i(-1,-1)
 	player.set_enabled(false)
 	var spawn: Vector3 = world.teleport_to_room(coord)
@@ -586,12 +626,15 @@ func _read_seed_input() -> Dictionary:
 	return result
 
 func _rebuild_seed_world() -> void:
+	if is_instance_valid(_campaign) and _campaign.busy: return
 	if _switching_spawn or not _booted: return
 	var parsed := _read_seed_input()
 	if not parsed.ok: return
+	if is_instance_valid(_campaign): _campaign.leave_campaign()
 	regenerate(parsed.seed)
 
 func _choose_spawn(index:int)->void:
+	if is_instance_valid(_campaign) and _campaign.busy: return
 	if _switching_spawn or not _booted:
 		if is_instance_valid(_spawn_select): _spawn_select.select(maxi(0,SPAWN_MODES.find(_spawn_mode)))
 		return
@@ -601,11 +644,13 @@ func _choose_spawn(index:int)->void:
 	if _pc_mainhall_preview:
 		_set_pc_mainhall_preview(false,chosen)
 		return
+	if is_instance_valid(_campaign): _campaign.leave_campaign()
 	_spawn_mode=chosen
 	# Explicit menu action, never a hidden teleport or a deletion of either world.
 	regenerate(parsed.seed)
 
 func _restart_into_selected_world() -> void:
+	if is_instance_valid(_campaign) and _campaign.busy: return
 	if not is_instance_valid(_spawn_select) or not is_instance_valid(_seed_edit): return
 	var parsed := _read_seed_input()
 	if not parsed.ok: return
@@ -625,7 +670,7 @@ func _restart_into_selected_world() -> void:
 		_spawn_select.disabled = true
 		set_menu(true)
 
-func regenerate(seed_value: int) -> void:
+func regenerate(seed_value: int, allow_campaign_cancel: bool = false) -> void:
 	if _switching_spawn or not _booted:return
 	_switching_spawn=true
 	_gi_refresh_ticket+=1
@@ -633,6 +678,10 @@ func regenerate(seed_value: int) -> void:
 	if is_instance_valid(water):
 		water.suspend_preparation(true)
 		while water.preparation_pending():
+			if allow_campaign_cancel and is_instance_valid(_campaign) and _campaign._cancel_requested:
+				water.suspend_preparation(false)
+				_switching_spawn=false
+				return
 			await get_tree().process_frame
 			if not _booted: return
 	await _retire_world()
@@ -665,7 +714,7 @@ func _interaction(kind: String,at: Vector3,power: float) -> void:
 	pool_audio.interaction(kind,at,power)
 
 func _setup_inputs() -> void:
-	var keys := {"move_forward":KEY_W,"move_back":KEY_S,"move_left":KEY_A,"move_right":KEY_D,"sprint":KEY_SHIFT,"jump":KEY_SPACE,"interact":KEY_E,"pause":KEY_ESCAPE}
+	var keys := {"move_forward":KEY_W,"move_back":KEY_S,"move_left":KEY_A,"move_right":KEY_D,"sprint":KEY_SHIFT,"jump":KEY_SPACE,"interact":KEY_E,"pause":KEY_ESCAPE,"toggle_flashlight":KEY_L}
 	for action: String in keys:
 		if not InputMap.has_action(action): InputMap.add_action(action)
 		var event := InputEventKey.new()
@@ -776,6 +825,7 @@ func _build_interface() -> void:
 	_spawn_select.add_item("重做主池厅 / FORMAL HALL",1)
 	_spawn_select.add_item("扩展随机地图 / EXPANDED",2)
 	_spawn_select.add_item("曲廊池区 / POOLROOMS WING",3)
+	if MainhallPreview.desktop_allowed(): _spawn_select.add_item("五境参考场景 / REFERENCE WING",4)
 	_spawn_select.select(maxi(0,SPAWN_MODES.find(_spawn_mode)))
 	_spawn_select.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	spawn_row.add_child(_spawn_select)
@@ -834,6 +884,20 @@ func _build_interface() -> void:
 	if is_instance_valid(_exploration_notes): _exploration_notes.add_menu_summary(column)
 	_gi_check=_add_check(column,"原生间接光 / SDFGI",_gi_on,func(v):_set_gi(v);_save_settings())
 	_caustics_check=_add_check(column,"水下焦散 / CAUSTICS",_caustics_on,func(v):_caustics_on=v;_apply_live_water("set_caustics",[v]);_save_settings())
+	if MainhallPreview.desktop_allowed():
+		_character_select = OptionButton.new()
+		_character_select.name = "CharacterSelector"
+		_character_select.tooltip_text = "即时切换外观；不重置关卡、持物或存档。原版可随时切回。"
+		for character_label: String in CharacterPreferences.LABELS: _character_select.add_item(character_label)
+		_sync_character_selector()
+		_character_select.item_selected.connect(_select_character)
+		column.add_child(_character_select)
+		_character_status = Label.new()
+		_character_status.name = "CharacterSelectionStatus"
+		_character_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_character_status.add_theme_font_size_override("font_size", 12)
+		_character_status.hide()
+		column.add_child(_character_status)
 	_add_check(column,"显示角色身体 / PLAYER BODY",_avatar_enabled,_set_avatar_enabled)
 	_add_check(column,"衣物织纹 / CLOTH FINISH",_avatar_fabric_enabled,_set_avatar_fabric_enabled)
 	if MainhallPreview.desktop_allowed():
@@ -846,12 +910,13 @@ func _build_interface() -> void:
 	_add_check(column,"空间底噪 / AMBIENCE",_ambience_on,func(v):_ambience_on=v;pool_audio.set_ambience(v);_save_settings())
 	var looks:=OptionButton.new()
 	_looks=looks
-	for look_name in ["镜头：原始 / CLEAN","镜头：CCD 摄像机","镜头：VHS 录像","镜头：冷色纪实"]: looks.add_item(look_name)
+	for look_name in ["镜头：原始 / CLEAN","镜头：CCD 摄像机","镜头：VHS 录像","镜头：冷色纪实","镜头：青绿柔光 / POOLROOMS"]: looks.add_item(look_name)
+	looks.select(_filter_mode)
 	looks.item_selected.connect(_set_filter)
 	column.add_child(looks)
 	column.add_child(_button("水体与图层设置 / WATER",func():_menu.hide();_advanced.show()))
 	var controls:=Label.new()
-	controls.text="WASD 移动 · Shift 奔跑 · Space 跳跃 · E 扶梯/阀门\n左键抓取/拖动 · 右键蓄力投掷 · 滚轮：上推远 / 下拉近\nH 隐藏界面 · G 诊断 · F11 全屏 · Esc 暂停"
+	controls.text="WASD 移动 · Shift 奔跑 · Space 跳跃 · E 扶梯/阀门\n左键抓取/拖动 · 右键蓄力投掷 · 滚轮：上推远 / 下拉近\nL 手电筒开关 · H 隐藏界面 · G 诊断 · F11 全屏 · Esc 暂停"
 	controls.add_theme_font_size_override("font_size",13)
 	controls.add_theme_color_override("font_color",Color(0.64,0.73,0.72))
 	column.add_child(controls)
@@ -859,7 +924,7 @@ func _build_interface() -> void:
 	column.add_child(_copy_diagnostics_button)
 	column.add_child(_button("退出 / QUIT",func():_safe_quit()))
 	var film_layer:=CanvasLayer.new()
-	film_layer.layer=2
+	film_layer.layer=0 if MainhallPreview.desktop_allowed() else 2
 	add_child(film_layer)
 	_film_rect=ColorRect.new()
 	_film_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -867,11 +932,91 @@ func _build_interface() -> void:
 	var shader:=Shader.new()
 	shader.code="shader_type canvas_item; uniform sampler2D screen_tex:hint_screen_texture,filter_linear; uniform int look_mode=1; void fragment(){vec2 uv=SCREEN_UV;if(look_mode==2){uv.x+=sin(uv.y*370.0+TIME*8.0)*0.0006;}vec3 c=texture(screen_tex,uv).rgb;float grain=fract(sin(dot(FRAGCOORD.xy+TIME*53.0,vec2(12.9898,78.233)))*43758.5453)-0.5;vec2 v=SCREEN_UV-0.5;if(look_mode==1){c*=1.0-dot(v,v)*0.23;c+=grain*0.018;}else if(look_mode==2){c.r=texture(screen_tex,uv+vec2(0.0015,0)).r;c.b=texture(screen_tex,uv-vec2(0.0015,0)).b;c*=0.98+sin(FRAGCOORD.y*3.14)*0.02;c+=grain*0.025;}else if(look_mode==3){float l=dot(c,vec3(0.2126,0.7152,0.0722));c=mix(vec3(l),c,0.72)*vec3(0.94,1.01,1.07);}COLOR=vec4(c,1.0);}"
 	var film_mat:=ShaderMaterial.new()
-	film_mat.shader=shader
+	film_mat.shader=preload("res://shaders/reference_wing/reference_camera_look.gdshader") if MainhallPreview.desktop_allowed() else shader
 	_film_rect.material=film_mat
 	film_layer.add_child(_film_rect)
 	_film_rect.visible=_ccd_on
+	_apply_reference_settings()
 	_build_water_panel(ui)
+
+func _create_character_visual(character_id: String) -> Node3D:
+	var candidate: Node3D
+	if character_id == "ithappy":
+		if not ResourceLoader.exists("res://assets/models/avatar/ithappy_explorer.glb"): return null
+		# Separate adapter: the original 54-bone contract is never bypassed.
+		var adapter := load("res://scripts/player/ithappy_pool_avatar.gd") as Script
+		if adapter == null or not adapter.can_instantiate(): return null
+		candidate = adapter.new()
+	else:
+		candidate = ArtCharacter.script_or_original(AvatarScript).new()
+		if "--legacy-avatar-model" not in OS.get_cmdline_user_args():
+			candidate.model_path = AvatarFinishScript.CANDIDATE_PATH
+			if not preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session() and "--legacy-water-actions" not in OS.get_cmdline_user_args():
+				candidate.model_path = "res://assets/water_motion/explorer_water_motion.scn"
+		ArtCharacter.apply_selected_model(candidate)
+	candidate.setup(player)
+	return candidate
+
+func _replace_character_visual(character_id: String) -> bool:
+	if character_id not in CharacterPreferences.IDS or not is_instance_valid(player): return false
+	if character_id == "ithappy" and not ResourceLoader.exists("res://scripts/player/ithappy_pool_avatar.gd"): return false
+	var candidate := _create_character_visual(character_id)
+	if not is_instance_valid(candidate): return false
+	var state: Dictionary = candidate.get_debug_state()
+	if not bool(state.get("loaded", false)):
+		push_warning("Character replacement rejected: " + str(state.get("error", "unknown load error")))
+		candidate.free()
+		return false
+	# Commit only after successful load. Controller, held rigid body, camera,
+	# campaign state and physical action serials retain their exact identities.
+	var previous: Node3D = avatar
+	candidate.visible = _avatar_enabled
+	candidate.process_mode = Node.PROCESS_MODE_INHERIT if _avatar_enabled else Node.PROCESS_MODE_DISABLED
+	avatar = candidate
+	if is_instance_valid(previous): previous.free()
+	candidate.name = "PoolAvatar"
+	return true
+
+func _sync_character_selector() -> void:
+	if is_instance_valid(_character_select):
+		_character_select.select(CharacterPreferences.IDS.find(_character_id))
+
+func _set_character_status(message: String) -> void:
+	if is_instance_valid(_character_status):
+		_character_status.text = message
+		_character_status.visible = not message.is_empty()
+
+func _apply_character_fabric_finish() -> void:
+	# The original procedural cloth finish is not compatible with the imported
+	# texture atlas. Never replace the new character's authored materials.
+	_avatar_finish = null
+	_avatar_finish_status = {"enabled":false}
+	if _character_id != "original" or "--legacy-avatar-model" in OS.get_cmdline_user_args(): return
+	_avatar_finish = AvatarFinishScript.new()
+	_avatar_finish_status = _avatar_finish.apply_to(avatar, _avatar_fabric_enabled and "--no-avatar-fabric-finish" not in OS.get_cmdline_user_args())
+	if int(_avatar_finish_status.get("applied_surfaces",0)) != 2:
+		push_warning("Avatar fabric surfaces were not both applied: " + str(_avatar_finish_status))
+
+func _select_character(index: int) -> void:
+	if index < 0 or index >= CharacterPreferences.IDS.size(): return
+	if _character_switching or _switching_spawn or _retiring_world or not is_instance_valid(avatar):
+		_sync_character_selector()
+		return
+	var requested: String = CharacterPreferences.IDS[index]
+	if requested == _character_id:
+		_sync_character_selector()
+		return
+	_character_switching = true
+	var changed: bool = _replace_character_visual(requested)
+	if changed:
+		_character_id = requested
+		_apply_character_fabric_finish()
+		var saved := CharacterPreferences.save_character(_character_id, _character_settings_path)
+		_set_character_status("" if saved == OK else "已切换，但无法保存角色偏好；下次启动可能恢复旧选择。")
+	else:
+		_set_character_status("角色载入失败；保留当前角色。可继续使用原版探索者。")
+	_character_switching = false
+	_sync_character_selector()
 
 func _set_avatar_fabric_enabled(value: bool) -> void:
 	_avatar_fabric_enabled = value
@@ -899,11 +1044,44 @@ func _set_avatar_enabled(value: bool) -> void:
 	_save_settings()
 
 func _set_filter(index: int) -> void:
-	_filter_mode=clampi(index,0,3)
+	_filter_mode=clampi(index,0,4)
+	if MainhallPreview.desktop_allowed():
+		if _filter_mode == 4: _reference_settings = ReferenceLook.POOLROOMS_PRESET.duplicate()
+		else: _reference_settings.referenceLook = false
 	_ccd_on=_filter_mode!=0
 	if is_instance_valid(_film_rect):
 		_film_rect.visible=_ccd_on
 		(_film_rect.material as ShaderMaterial).set_shader_parameter("look_mode",_filter_mode)
+	_apply_reference_settings()
+	_sync_reference_controls()
+	_save_settings()
+
+func _sync_reference_controls() -> void:
+	if not is_instance_valid(_advanced): return
+	for key: String in _reference_settings:
+		var control := _advanced.find_child(key, true, false)
+		if control is CheckButton: control.set_pressed_no_signal(bool(_reference_settings[key]))
+		elif control is HSlider:
+			control.set_value_no_signal(float(_reference_settings[key]))
+			var numeric := control.get_parent().get_node_or_null("NumericValue") as Label
+			if numeric != null: numeric.text = String.num(control.value,3)
+
+func _change_reference_setting(key: String, value: Variant) -> void:
+	_reference_settings[key]=value
+	_reference_settings=ReferenceLook.sanitize(_reference_settings)
+	if key == "referenceLook":
+		_filter_mode = 4 if bool(value) else 0
+		if is_instance_valid(_looks): _looks.select(_filter_mode)
+	_apply_reference_settings()
+	_save_settings()
+
+func _apply_reference_settings() -> void:
+	if not MainhallPreview.desktop_allowed(): return
+	if is_instance_valid(_film_rect):
+		ReferenceLook.apply_camera(_film_rect.material as ShaderMaterial,_reference_settings,_filter_mode)
+		_film_rect.visible=ReferenceLook.camera_visible(_reference_settings,_filter_mode)
+	if is_instance_valid(water) and water.has_method("set_reference_wave_settings"):
+		water.set_reference_wave_settings(_reference_settings)
 
 func _on_world_streamed() -> void:
 	if _retiring_world: return
@@ -964,6 +1142,7 @@ func _build_water_panel(ui: Control) -> void:
 	_advanced.add_theme_stylebox_override("panel",_menu.get_theme_stylebox("panel"))
 	ui.add_child(_advanced)
 	var scroll:=ScrollContainer.new()
+	scroll.follow_focus=MainhallPreview.desktop_allowed()
 	scroll.custom_minimum_size=Vector2(500,520)
 	_advanced.add_child(scroll)
 	var list:=VBoxContainer.new()
@@ -974,6 +1153,8 @@ func _build_water_panel(ui: Control) -> void:
 	title.text="原生水体 / WATER & LAYERS"
 	title.add_theme_font_size_override("font_size",22)
 	list.add_child(title)
+	if MainhallPreview.desktop_allowed():
+		ReferenceControls.build(list,_reference_settings,_change_reference_setting)
 	if MainhallPreview.desktop_allowed():
 		# Keep the small independent wind group visible before the advanced controls.
 		_wind_controls.clear()
@@ -1103,6 +1284,11 @@ func _diagnostics_payload() -> Dictionary:
 	# Read-only runtime facts. Never includes local paths, account details or keys.
 	var result:Dictionary={"format":1,"application_version":str(ProjectSettings.get_setting("application/config/version","development")),"engine":str(Engine.get_version_info().get("string","unknown")),"platform":OS.get_name(),"renderer":RenderingServer.get_current_rendering_method(),"gpu":RenderingServer.get_video_adapter_name(),"seed":world_seed,"spawn_mode":_spawn_mode,"quality":_quality,"frame_times":_frame_metrics.summary(),"gi_refreshes":_gi_refresh_tracker.accepted,"gi_duplicate_notifications":_gi_refresh_tracker.duplicates}
 	result.render_state=_render_diagnostics_state()
+	result.reference_look = _reference_settings.duplicate()
+	if lighting != null and lighting.has_method("reference_lighting_stats"):
+		result.reference_lighting = lighting.reference_lighting_stats()
+	if is_instance_valid(water) and water.has_method("reference_wave_status"):
+		result.reference_wave = water.reference_wave_status()
 	if is_instance_valid(world):
 		result.resident_rooms=world.resident_rooms.size()
 		result.room_streaming=world.profile_counters.duplicate(true)
@@ -1145,6 +1331,15 @@ func _add_check(parent: Node,text: String,value: bool,callback: Callable) -> Che
 func _rebuild_destinations() -> void:
 	_destination.clear()
 	_destinations.clear()
+	if is_instance_valid(_campaign) and _campaign.active:
+		for spec: Dictionary in world.chapter.room_specs:
+			_destinations.append(spec.coord)
+			_destination.add_item(world.get_layout(spec.coord).name)
+		return
+	if _spawn_mode == "reference":
+		for coord: Vector2i in ReferenceCatalog.COORDS:
+			_destinations.append(coord);_destination.add_item(world.get_layout(coord).name)
+		return
 	if world.formal_mode:
 		for coord in preload("res://scripts/world/formal_rooms.gd").COORDS:
 			_destinations.append(coord);_destination.add_item(world.get_layout(coord).name)
@@ -1231,10 +1426,12 @@ func _load_settings() -> void:
 	_gi_on=bool(config.get_value("display","gi",true))
 	_caustics_on=bool(config.get_value("display","caustics",true))
 	_fog_on=bool(config.get_value("display","source_shafts",true))
+	_reference_settings=ReferenceLook.sanitize(config.get_value("reference_wing","look",{}))
 	_water_settings=WaterSettingsScript.sanitize_wind_settings(config.get_value("water","settings",{}))
 	_water_visible=bool(config.get_value("water","visible",true))
-	# Clean imagery is default on each launch; CCD is deliberately opt-in each session.
-	_ccd_on=false
+	# The optional reference style persists; legacy CCD/VHS remain session-only.
+	_filter_mode=4 if bool(_reference_settings.referenceLook) else 0
+	_ccd_on=_filter_mode!=0
 
 func _save_settings(restart_mode: String = "", restart_seed: int = 0, atomic: bool = false) -> Error:
 	# A queued ordinary autosave must not undo the committed restart selection.
@@ -1258,12 +1455,13 @@ func _save_settings(restart_mode: String = "", restart_seed: int = 0, atomic: bo
 	_water_settings = WaterSettingsScript.sanitize_wind_settings(_water_settings)
 	config.set_value("water","settings",_water_settings)
 	config.set_value("water","visible",_water_visible)
+	config.set_value("reference_wing","look",ReferenceLook.sanitize(_reference_settings))
 	return _world_restart.save_config_atomic(config, "user://settings.cfg") if atomic else config.save("user://settings.cfg")
 
 func inspect_state() -> Dictionary:
 	if _retiring_world or not is_instance_valid(world) or not is_instance_valid(player) or not is_instance_valid(water):
-		return {"spawn_mode":_spawn_mode,"seed":world_seed,"transitioning":_switching_spawn,"retiring":_retiring_world,"menu_open":menu_open,"renderer":RenderingServer.get_current_rendering_method(),"gi_requested":_gi_on,"pc_mainhall_lightmap_preview":_pc_mainhall_preview,"frame_metrics":_frame_metrics.summary()}
-	return {"spawn_mode":_spawn_mode,"seed":world_seed,"coord":[world.current_room.x,world.current_room.y],"variant":world.get_layout(world.current_room).variant,"rooms":world.resident_rooms.size(),"visited":world.get_discovered_count(),"props":props.bodies.size(),"player":[player.position.x,player.position.y,player.position.z],"status":player.get_status(),"renderer":RenderingServer.get_current_rendering_method(),"device":RenderingServer.get_video_adapter_name(),"gi":environment.environment.sdfgi_enabled,"gi_requested":_gi_on,"pc_mainhall_lightmap_preview":_pc_mainhall_preview,"pc_mainhall_preview_result":_pc_preview_result,"ccd":_ccd_on,"frame_metrics":_frame_metrics.summary(),"source_fog":source_fog.debug_stats() if source_fog!=null else {},"distance_fog":distance_fog.debug_stats() if distance_fog!=null else {},"avatar":avatar.get_debug_state() if is_instance_valid(avatar) else {},"nearfield":water.nearfield_status()}
+		return {"spawn_mode":_spawn_mode,"seed":world_seed,"transitioning":_switching_spawn,"retiring":_retiring_world,"menu_open":menu_open,"renderer":RenderingServer.get_current_rendering_method(),"gi_requested":_gi_on,"pc_mainhall_lightmap_preview":_pc_mainhall_preview,"frame_metrics":_frame_metrics.summary(),"reference_look":_reference_settings.duplicate(),"reference_lighting":lighting.reference_lighting_stats() if lighting!=null and lighting.has_method("reference_lighting_stats") else {}}
+	return {"spawn_mode":_spawn_mode,"seed":world_seed,"coord":[world.current_room.x,world.current_room.y],"variant":world.get_layout(world.current_room).variant,"rooms":world.resident_rooms.size(),"visited":world.get_discovered_count(),"props":props.bodies.size(),"player":[player.position.x,player.position.y,player.position.z],"status":player.get_status(),"renderer":RenderingServer.get_current_rendering_method(),"device":RenderingServer.get_video_adapter_name(),"gi":environment.environment.sdfgi_enabled,"gi_requested":_gi_on,"pc_mainhall_lightmap_preview":_pc_mainhall_preview,"pc_mainhall_preview_result":_pc_preview_result,"ccd":_ccd_on,"frame_metrics":_frame_metrics.summary(),"source_fog":source_fog.debug_stats() if source_fog!=null else {},"distance_fog":distance_fog.debug_stats() if distance_fog!=null else {},"avatar":avatar.get_debug_state() if is_instance_valid(avatar) else {},"nearfield":water.nearfield_status(),"reference_look":_reference_settings.duplicate(),"reference_lighting":lighting.reference_lighting_stats() if lighting!=null and lighting.has_method("reference_lighting_stats") else {},"reference_wave":water.reference_wave_status() if water.has_method("reference_wave_status") else {},"camera_fov":player.camera.fov}
 
 func _run_qa_capture() -> void:
 	var args:=OS.get_cmdline_user_args()
@@ -1276,6 +1474,8 @@ func _run_qa_capture() -> void:
 		if arg.begins_with("--qa-frames="):frames=int(arg.trim_prefix("--qa-frames="))
 	_set_gi("--qa-no-gi" not in args)
 	var destinations:={"arrival":Vector2i(0,0),"oculus":Vector2i(-1,-1),"vault":Vector2i(1,-1),"changing":Vector2i(-1,1),"arches":Vector2i(0,-1),"pillars":Vector2i(1,1),"sidepool":Vector2i(-1,0),"terrace":Vector2i(0,-2),"bath":Vector2i(-1,-2)}
+	if _spawn_mode == "reference":
+		for index in ReferenceCatalog.IDS.size(): destinations[ReferenceCatalog.IDS[index]]=ReferenceCatalog.COORDS[index]
 	travel_to(destinations.get(destination_name,Vector2i.ZERO))
 	world.complete_pending_streaming()
 	_settle_formal_qa_lighting()
@@ -1289,7 +1489,7 @@ func _run_qa_capture() -> void:
 	if "--qa-view=overview" in args:
 		var center:=Vector3(world.current_room.x*32,0,world.current_room.y*32)
 		player.warp_to(center+Vector3(10,0.54,12),center+Vector3(-3,4.8,-3))
-	if not world.formal_mode:
+	if not world.formal_mode and _spawn_mode != "reference":
 		var source_center:=Vector3(world.current_room.x*32,0,world.current_room.y*32)
 		player.warp_to(source_center+Vector3(10,1.5-PlayerScript.EYE_HEIGHT,12),source_center+Vector3(-4,1.9,-10))
 	if world.formal_mode:
@@ -1306,6 +1506,11 @@ func _run_qa_capture() -> void:
 			player.warp_to(center+Vector3(-1.5,.55,-.5),center+Vector3(-4,1.1,2.6))
 		if destination_name=="sidepool" and "--qa-view=bench" in args:
 			player.warp_to(center+Vector3(-5.15,.55,4.6),center+Vector3(-6.52,1.1,0))
+	if _spawn_mode == "reference":
+		var index: int=ReferenceCatalog.COORDS.find(world.current_room)
+		var view:=ReferenceCatalog.camera(index)
+		player.warp_to(view.position-Vector3.UP*PlayerScript.EYE_HEIGHT,view.target)
+		player.camera.fov=view.fov
 	for arg in args:
 		if arg.begins_with("--qa-water-quality="):water.set_quality(arg.trim_prefix("--qa-water-quality="))
 		if arg.begins_with("--qa-water-debug="):water.set_debug_view(int(arg.trim_prefix("--qa-water-debug=")))

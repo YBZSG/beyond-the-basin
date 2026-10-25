@@ -1,0 +1,26 @@
+[
+  {
+    "room": "cyan_corridor",
+    "status": "PASS",
+    "all_mesh_geometry_uv_material_slots_exactly_match_accepted": true,
+    "mesh_differences": [],
+    "light_data_differences": [],
+    "protected_contract_differences": [],
+    "native_light_contract_differences": [],
+    "main_generator_reads_output_qa": false,
+    "accepted_candidate_source": "cyan_corridor_palette_candidate",
+    "generated_source": "/workspace/scratch/ac93a633a6c8/poolcore-godot-reference-20261024/output/reference_wing/water_rooms/final_build/cyan_corridor/cyan_corridor.blend"
+  },
+  {
+    "room": "octagonal_bath",
+    "status": "PASS",
+    "all_mesh_geometry_uv_material_slots_exactly_match_accepted": true,
+    "mesh_differences": [],
+    "light_data_differences": [],
+    "protected_contract_differences": [],
+    "native_light_contract_differences": [],
+    "main_generator_reads_output_qa": false,
+    "accepted_candidate_source": "octagonal_bath_cavity_candidate",
+    "generated_source": "/workspace/scratch/ac93a633a6c8/poolcore-godot-reference-20261024/output/reference_wing/water_rooms/final_build/octagonal_bath/octagonal_bath.blend"
+  }
+]

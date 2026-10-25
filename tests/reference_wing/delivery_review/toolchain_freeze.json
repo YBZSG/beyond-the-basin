@@ -1,0 +1,19 @@
+{
+  "scope": "Delivery wrapper/builder/docs frozen; final source package not built by reviewer",
+  "core_unchanged": true,
+  "unit_tests_passed": 86,
+  "independent_memory_probes_passed": 65,
+  "files": {
+    "docs/reference_wing/DELIVERY_REVIEW.md": "8ee3dd5aa7c5ef970e5ce4b7f0ad8f0b8ad3c15d49233f9aadfcb55e6c3b98ef",
+    "docs/reference_wing/INSTALL-源码更新.md": "913ca411a774afd8f52d8f77f449a8d8150e78983fafd1ebd7bc94159e239d46",
+    "tools/reference_wing_delivery/APPLY_SOURCE_UPDATE.cmd": "55249f094130a5ed499c609fc4d6457bd2836a22f29fc5f158ed379c7c2a3b31",
+    "tools/reference_wing_delivery/ROLLBACK_SOURCE_UPDATE.cmd": "24735f1fc36279663adbc0b70dc258c779773452dc95fbb16d301a50946a1f1d",
+    "tools/reference_wing_delivery/baseline_prerequisites.py": "ce2c58aa53bdbf333f019790c5a732e10647eab5caf80bf83676a53cb1f6e0b2",
+    "tools/reference_wing_delivery/build_compact_source_update.py": "eac85d0dcc6d365470840c52e2c50ee7a8941d7dc37b3d3b6555ae1a8e5dba32",
+    "tools/reference_wing_delivery/compact_source_update.py": "63626ba14fad48c4dd4fa45e584ec32d95a4a128e52ad851ab32afad781135f2",
+    "tools/reference_wing_delivery/prepare_source_update.py": "4e3ca738e1fa16cc2d5e1ab7633adf746f62517725cc611eb24af8af0f5b7737",
+    "tools/reference_wing_delivery/update_source.py": "eee346a3052c9b025c86d709af6537647d02b9403947bcbd67b963dcf4c34aba",
+    "tests/reference_wing/delivery_review/verify_final_package.py": "01088be1ea1bcdced997468edc4d7281421117c178b6cf43d59d581c18943860",
+    "tests/reference_wing/delivery_review/test_adversarial_delivery.py": "33d89c602debdfd1844e00035acc25e954beae86833974e1bdf64fc3c268ee1c"
+  }
+}

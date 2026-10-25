@@ -1,0 +1,1155 @@
+{
+  "scope": "Actual central ctex get_image/decompress on official Godot CPU, no GPU or import run for this audit. Base-level errors are against source PNG8, not unquantized analytic data.",
+  "region_definition": "4 base texels from every 256-texel/100mm tile boundary contain joint/bevel; interior starts at pixel centre 1.758 mm from the boundary, beyond the 1.5 mm bevel top.",
+  "mip_reference": "Original PNG loaded into Godot Image, converted to RGBA8, generate_mipmaps(); lower-level differences may include import mip construction as well as block codec. Base-level comparison isolates codec loss.",
+  "not_causal_evidence_for_cpu_crop": "Cycles previews use PNG data, not these Godot ctex files.",
+  "recommendation": "Use lossless compress/mode=0 for only the two new data maps; keep albedo compression and all original maps unchanged. Do not claim an interior base-level normal-bias defect: neutral RG and interior roughness/coverage are exact in the measured BPTC/ASTC imports.",
+  "records": [
+    {
+      "codec_requested": "lossless",
+      "compress_mode": 0,
+      "decoded_all_mips_rgba": "bevel_slope_rg_2k_lossless_decoded_mips.rgba",
+      "decoded_base_rgba": "bevel_slope_rg_2k_lossless_decoded.rgba",
+      "decoded_format": 5,
+      "decompress_error": 0,
+      "height": 2048,
+      "imported_path": "/workspace/scratch/ac93a633a6c8/poolcore-godot-reference-20261024/.godot/imported/bevel_slope_rg_2k.png-7ced2cba8719ac7753cbdf8a8545a1cc.ctex",
+      "load_error": 0,
+      "mip_layout": [
+        {
+          "height": 2048,
+          "level": 0,
+          "offset": 0,
+          "width": 2048
+        },
+        {
+          "height": 1024,
+          "level": 1,
+          "offset": 16777216,
+          "width": 1024
+        },
+        {
+          "height": 512,
+          "level": 2,
+          "offset": 20971520,
+          "width": 512
+        },
+        {
+          "height": 256,
+          "level": 3,
+          "offset": 22020096,
+          "width": 256
+        },
+        {
+          "height": 128,
+          "level": 4,
+          "offset": 22282240,
+          "width": 128
+        },
+        {
+          "height": 64,
+          "level": 5,
+          "offset": 22347776,
+          "width": 64
+        },
+        {
+          "height": 32,
+          "level": 6,
+          "offset": 22364160,
+          "width": 32
+        },
+        {
+          "height": 16,
+          "level": 7,
+          "offset": 22368256,
+          "width": 16
+        },
+        {
+          "height": 8,
+          "level": 8,
+          "offset": 22369280,
+          "width": 8
+        },
+        {
+          "height": 4,
+          "level": 9,
+          "offset": 22369536,
+          "width": 4
+        },
+        {
+          "height": 2,
+          "level": 10,
+          "offset": 22369600,
+          "width": 2
+        },
+        {
+          "height": 1,
+          "level": 11,
+          "offset": 22369616,
+          "width": 1
+        }
+      ],
+      "mipmap_count": 11,
+      "name": "bevel_slope_rg_2k",
+      "source_path": "/workspace/scratch/ac93a633a6c8/poolcore-godot-reference-20261024/assets/materials/reference_wing/bevel_slope_rg_2k.png",
+      "source_rgba_with_cpu_mips": "bevel_slope_rg_2k_source_mips.rgba",
+      "stored_format": 4,
+      "was_compressed": false,
+      "width": 2048,
+      "used_channels": "RG slope; B ignored",
+      "source_png_sha256": "a10adda208b4fcff60d1c41da1ff039c7ee34f90bcc1c2c9d2c0b23a691618b8",
+      "imported_file_sha256": "393bb8d19be8ae8abd2ede056bcbedd5560b2cd8be81aa6d39f4ca652d171210",
+      "stored_format_name": "4",
+      "base_regions": {
+        "neutral_face_interior": {
+          "pixels": 3936256,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "four_texel_joint_bevel_band": {
+          "pixels": 258048,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "all": {
+          "pixels": 4194304,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "additional_codec_normal_angle_error_degrees": {
+        "neutral_face_interior": {
+          "maximum": 0.0,
+          "p99": 0.0
+        },
+        "joint_bevel": {
+          "maximum": 0.0,
+          "p99": 0.0
+        }
+      },
+      "mip_comparisons": [
+        {
+          "height": 2048,
+          "level": 0,
+          "offset": 0,
+          "width": 2048,
+          "pixels": 4194304,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 1024,
+          "level": 1,
+          "offset": 16777216,
+          "width": 1024,
+          "pixels": 1048576,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 512,
+          "level": 2,
+          "offset": 20971520,
+          "width": 512,
+          "pixels": 262144,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 256,
+          "level": 3,
+          "offset": 22020096,
+          "width": 256,
+          "pixels": 65536,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 128,
+          "level": 4,
+          "offset": 22282240,
+          "width": 128,
+          "pixels": 16384,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 64,
+          "level": 5,
+          "offset": 22347776,
+          "width": 64,
+          "pixels": 4096,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 32,
+          "level": 6,
+          "offset": 22364160,
+          "width": 32,
+          "pixels": 1024,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 16,
+          "level": 7,
+          "offset": 22368256,
+          "width": 16,
+          "pixels": 256,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 8,
+          "level": 8,
+          "offset": 22369280,
+          "width": 8,
+          "pixels": 64,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 4,
+          "level": 9,
+          "offset": 22369536,
+          "width": 4,
+          "pixels": 16,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 2,
+          "level": 10,
+          "offset": 22369600,
+          "width": 2,
+          "pixels": 4,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 1,
+          "level": 11,
+          "offset": 22369616,
+          "width": 1,
+          "pixels": 1,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "codec_requested": "lossless",
+      "compress_mode": 0,
+      "decoded_all_mips_rgba": "glaze_orm_2k_lossless_decoded_mips.rgba",
+      "decoded_base_rgba": "glaze_orm_2k_lossless_decoded.rgba",
+      "decoded_format": 5,
+      "decompress_error": 0,
+      "height": 2048,
+      "imported_path": "/workspace/scratch/ac93a633a6c8/poolcore-godot-reference-20261024/.godot/imported/glaze_orm_2k.png-7c4ea349ccc107ffdc67685a61a5870b.ctex",
+      "load_error": 0,
+      "mip_layout": [
+        {
+          "height": 2048,
+          "level": 0,
+          "offset": 0,
+          "width": 2048
+        },
+        {
+          "height": 1024,
+          "level": 1,
+          "offset": 16777216,
+          "width": 1024
+        },
+        {
+          "height": 512,
+          "level": 2,
+          "offset": 20971520,
+          "width": 512
+        },
+        {
+          "height": 256,
+          "level": 3,
+          "offset": 22020096,
+          "width": 256
+        },
+        {
+          "height": 128,
+          "level": 4,
+          "offset": 22282240,
+          "width": 128
+        },
+        {
+          "height": 64,
+          "level": 5,
+          "offset": 22347776,
+          "width": 64
+        },
+        {
+          "height": 32,
+          "level": 6,
+          "offset": 22364160,
+          "width": 32
+        },
+        {
+          "height": 16,
+          "level": 7,
+          "offset": 22368256,
+          "width": 16
+        },
+        {
+          "height": 8,
+          "level": 8,
+          "offset": 22369280,
+          "width": 8
+        },
+        {
+          "height": 4,
+          "level": 9,
+          "offset": 22369536,
+          "width": 4
+        },
+        {
+          "height": 2,
+          "level": 10,
+          "offset": 22369600,
+          "width": 2
+        },
+        {
+          "height": 1,
+          "level": 11,
+          "offset": 22369616,
+          "width": 1
+        }
+      ],
+      "mipmap_count": 11,
+      "name": "glaze_orm_2k",
+      "source_path": "/workspace/scratch/ac93a633a6c8/poolcore-godot-reference-20261024/assets/materials/reference_wing/glaze_orm_2k.png",
+      "source_rgba_with_cpu_mips": "glaze_orm_2k_source_mips.rgba",
+      "stored_format": 5,
+      "was_compressed": false,
+      "width": 2048,
+      "used_channels": "R ambient AO, G roughness, A coverage; B metallic ignored/nonmetal forced",
+      "source_png_sha256": "dc00b4c0d621b2f73313d8e3529c83e2852b4acb86e0885583a76b6b3add0d09",
+      "imported_file_sha256": "4e342d1988f0b2c395c3df063f91c3deb1f4ef2c50e90367a453c62b8c0e4f68",
+      "stored_format_name": "5",
+      "base_regions": {
+        "neutral_face_interior": {
+          "pixels": 3936256,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "four_texel_joint_bevel_band": {
+          "pixels": 258048,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "all": {
+          "pixels": 4194304,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "mip_comparisons": [
+        {
+          "height": 2048,
+          "level": 0,
+          "offset": 0,
+          "width": 2048,
+          "pixels": 4194304,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 1024,
+          "level": 1,
+          "offset": 16777216,
+          "width": 1024,
+          "pixels": 1048576,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 512,
+          "level": 2,
+          "offset": 20971520,
+          "width": 512,
+          "pixels": 262144,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 256,
+          "level": 3,
+          "offset": 22020096,
+          "width": 256,
+          "pixels": 65536,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 128,
+          "level": 4,
+          "offset": 22282240,
+          "width": 128,
+          "pixels": 16384,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 64,
+          "level": 5,
+          "offset": 22347776,
+          "width": 64,
+          "pixels": 4096,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 32,
+          "level": 6,
+          "offset": 22364160,
+          "width": 32,
+          "pixels": 1024,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 16,
+          "level": 7,
+          "offset": 22368256,
+          "width": 16,
+          "pixels": 256,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 8,
+          "level": 8,
+          "offset": 22369280,
+          "width": 8,
+          "pixels": 64,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 4,
+          "level": 9,
+          "offset": 22369536,
+          "width": 4,
+          "pixels": 16,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 2,
+          "level": 10,
+          "offset": 22369600,
+          "width": 2,
+          "pixels": 4,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "height": 1,
+          "level": 11,
+          "offset": 22369616,
+          "width": 1,
+          "pixels": 1,
+          "changed_used_channel_fraction": 0.0,
+          "max_abs_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "mean_abs_error_rgba_bytes": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "minimum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "maximum_error_rgba_bytes": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}

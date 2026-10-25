@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "sample_count": 7,
+  "maximum_component_error": 1.5226605869145943e-05,
+  "tolerance": 3.0518043793392844e-05,
+  "sha256": "768172ae8034009d3187f2f7f51187fdfac38fb20072759361184218133172a6",
+  "production_asset": false,
+  "gpu_validation": false
+}

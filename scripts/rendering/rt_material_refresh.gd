@@ -3,6 +3,7 @@ extends RefCounted
 ## Preserve the four existing raster/RT material conversions without rescanning
 ## the resident world for each streamed batch. The caller owns deferred timing.
 const SHADER_PAIRS := {
+	"res://shaders/reference_wing/reference_glaze.gdshader": "res://shaders/reference_wing/reference_glaze_rt.gdshader",
 	"res://shaders/art_pass_pbr.gdshader": "res://shaders/art_pass_pbr_rt.gdshader",
 	"res://shaders/ceramic_world.gdshader": "res://shaders/ceramic_world_rt.gdshader",
 	"res://shaders/pc_source_ceramic.gdshader": "res://shaders/pc_source_ceramic_rt.gdshader",
@@ -12,6 +13,8 @@ const SHADER_PAIRS := {
 var _host: WeakRef
 var _pending: Dictionary = {}
 var _shaders: Dictionary = {}
+var _white_emission: ImageTexture
+var _constant_emitters: Dictionary = {}
 var _stats: Dictionary = {
 	"full_refreshes": 0, "pending_refreshes": 0, "queue_requests": 0,
 	"duplicate_queue_requests": 0, "pending_cleared": 0,
@@ -78,6 +81,7 @@ func get_stats() -> Dictionary:
 	var result := _stats.duplicate(true)
 	result.pending_nodes = _pending.size()
 	result.cached_shaders = _shaders.size()
+	result.constant_emitters = _constant_emitters.size()
 	return result
 
 func _live_host() -> Node:
@@ -113,6 +117,17 @@ func _collect_geometry(node: GeometryInstance3D, materials: Array, batch: Dictio
 
 func _apply_materials(materials: Array, enabled: bool, batch: Dictionary) -> void:
 	var started := Time.get_ticks_usec()
+	# Release retired materials and restore the authored state when RT is off.
+	for identity: int in _constant_emitters.keys():
+		var saved: Dictionary = _constant_emitters[identity]
+		var emitter := saved.reference.get_ref() as BaseMaterial3D
+		if emitter == null:
+			_constant_emitters.erase(identity)
+		elif not enabled or not emitter.emission_enabled:
+			if emitter.emission_texture == _white_emission:
+				emitter.emission_texture = null
+				emitter.emission_operator = saved.operator
+			_constant_emitters.erase(identity)
 	var seen: Dictionary = {}
 	for value: Variant in materials:
 		if not value is Material: continue
@@ -123,6 +138,8 @@ func _apply_materials(materials: Array, enabled: bool, batch: Dictionary) -> voi
 			continue
 		seen[identity] = true
 		batch.unique_materials += 1
+		if enabled and value is BaseMaterial3D:
+			_prepare_constant_emission(value)
 		var material := value as ShaderMaterial
 		if material == null or material.shader == null:
 			batch.unmatched_materials += 1
@@ -153,6 +170,21 @@ func _apply_materials(materials: Array, enabled: bool, batch: Dictionary) -> voi
 		else:
 			batch.already_correct += 1
 	batch.apply_ms = float(Time.get_ticks_usec() - started) / 1000.0
+
+func _prepare_constant_emission(material: BaseMaterial3D) -> void:
+	if not material.emission_enabled or material.emission_texture != null: return
+	# The pinned native RT standard-material path gates emission on HAS_EMISSION_TEX.
+	# Constant GLTF/StandardMaterial lamps otherwise become dark, including in
+	# reflections. White * authored color preserves their original radiance in
+	# both raster and RT; never multiply the energy or replace an authored map.
+	if _white_emission == null:
+		var image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
+		image.fill(Color.WHITE)
+		_white_emission = ImageTexture.create_from_image(image)
+	_constant_emitters[material.get_instance_id()] = {
+		"reference": weakref(material), "operator": material.emission_operator}
+	material.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+	material.emission_texture = _white_emission
 
 func _finish_batch(batch: Dictionary, started: int) -> void:
 	batch.total_ms = float(Time.get_ticks_usec() - started) / 1000.0

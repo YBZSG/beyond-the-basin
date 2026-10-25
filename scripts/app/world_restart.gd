@@ -3,8 +3,8 @@ extends RefCounted
 ## Godot discards engine flags from OS.get_cmdline_args(): use the launcher's
 ## exact argv contract or refuse, rather than guess a renderer, GPU, pack or path.
 const CONTRACT_ENV := "POOLCORE_RESTART_LAUNCH_V1"
-const WORLD_FLAGS := ["--formal-hall", "--expanded-world", "--poolrooms-wing", "--legacy-world", "--original-world"]
-const MODES := ["original", "formal", "expanded", "poolrooms"]
+const WORLD_FLAGS := ["--formal-hall", "--expanded-world", "--poolrooms-wing", "--reference-wing", "--legacy-world", "--original-world", "--campaign"]
+const MODES := ["original", "formal", "expanded", "poolrooms", "reference"]
 const UNSUPPORTED := ["--editor", "-e", "--project-manager", "-p", "--script", "-s", "--path", "--main-pack", "--scene", "--remote-debug", "--editor-pid", "--wid", "--check-only", "--quit", "--quit-after", "--headless", "--write-movie", "--test", "--import"]
 var _requested := false
 

@@ -1,0 +1,3 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PORTABILITY_PACK_JSON={"res://assets/models/reference_wing/ball_lounge.geometry.json":true,"res://assets/models/reference_wing/colonnade.geometry.json":true,"res://assets/models/reference_wing/cyan_corridor.geometry.json":true,"res://assets/models/reference_wing/octagonal_bath.geometry.json":true,"res://assets/models/reference_wing/stair_gallery.geometry.json":true}

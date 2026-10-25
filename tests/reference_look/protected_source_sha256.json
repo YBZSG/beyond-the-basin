@@ -1,0 +1,28 @@
+{
+  "baseline": "351fcd6",
+  "scope": "Original water/terrain sources must remain byte-identical. New optical adapter and derived shader are separate.",
+  "sha256": {
+    "scripts/water/source_water_runtime.gd": "b82a3b35275d8ce0afff29a95465a5debb003987d1343430c264252ed94ccc48",
+    "scripts/water/wind_wave_controller.gd": "4584592683e8b4aea7927dd33ca699b4b68d9fa909b3846a93627ee948322b32",
+    "scripts/water/source_port/source_water_settings.gd": "f32693828884f865a120a06b3b3ab357d5300b17d8cd793fe69a3a1e3cb0e2ee",
+    "scripts/water/source_port/source_wave_solver.gd": "bbd3d865a71c7aae532933978224b42025ba227b69b0cec65fa4647ff5a5de5a",
+    "scripts/water/source_port/source_wave_events.gd": "60e1c8949d888415600fce584ba97b5a396fb8714491357354087a1467d06ed1",
+    "scripts/water/source_port/source_caustics.gd": "3165b8722d179c7536d3e6c98409f925732a0a32f42b998e7dd51419edbea694",
+    "scripts/water/source_terrain_identity.gd": "c7e12d5909c1819f9de990b676a30cdf1a674513128878f7e4b7dec9e55bab9d",
+    "scripts/water/source_terrain_disk_cache.gd": "a7a5c496332ae3018d9fefa44a03c9410cb9823f672951df472f323ec85acafe",
+    "shaders/source_water_surface.gdshader": "c06ca48914c85261b8619587f7c88652b981fbb9c7938e0efb2fdbfed17eeb45",
+    "shaders/source_water/wind_ripples.gdshaderinc": "fad061a07721e03a598612f7d0dd181a38665b6a431314741c618e59761095d9",
+    "shaders/source_water/shared_waves.gdshaderinc": "c47ebbe5298e2b294832b50244c4bb282fe431d2adebf5682a791eb25e88aa62",
+    "shaders/source_water/shared_waves.glslinc": "b445953b0de81de78d2c61d478c6e57832640022fca11b83f1e5cec38edfe168",
+    "shaders/source_water/swe_height.glsl": "48a850941640c768fef2a71d8b5d6558d01c031db58c7fbc6b338a5a9a3cca40",
+    "shaders/source_water/swe_source.glsl": "6d8939b5e4670f313193dc224c68ddf0be76962dd6fe901bbef6c1a743aed2e4",
+    "shaders/source_water/caustic_wave_cache.glslinc": "a7e4d8768cdd00ecf0b3b6deb0c07f531388dcac1ea32aca7dbc9c428e6952fc",
+    "shaders/source_water/caustic_floor_result.glslinc": "c8a96eb267c462a78574cf852cff27c37037b2433a90587161cf5e09cce52872",
+    "scripts/water/source_port/source_terrain_prepare.gd": "383583af884c139ecc45af00d98588901c54227f95df423c259dac1c42e89159",
+    "scripts/water/source_port/source_triangle_bvh.gd": "a0d5f5052a4cd9a61e74a8972ee125c4032b3a9544c03b4d4b008bb6c73b9340",
+    "scripts/water/source_room_snapshot.gd": "ca8574c82e53cf1a0a0f8758090b7b55b47a392026d417b5d95cf7f2e0988bce",
+    "scripts/world/pool_world.gd": "a0ebc2d9a49b359b57e1f2887288d326f22c5c78da46cd44bec3a3e69e74cd5b",
+    "scripts/world/source_architecture_batch.gd": "2a47228a6e2e925abb4fd421654a2a34cbbff0149997587fa69baf6dbac66d10",
+    "scripts/water/source_formal_snapshot_cache.gd": "b92f16b1dea9f2911b38e9e979e5217dfca0cee1e38496518d4772ce8440eb0a"
+  }
+}

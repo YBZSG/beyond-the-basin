@@ -1,0 +1,75 @@
+{
+  "scope": "Source PNG bytes and existing shader 0.08 gain only. Not imported GPU formats, shader execution or visual evidence.",
+  "measurements": {
+    "formal": {
+      "path": "assets/textures/formal_ceramic/pool_ceramic_normal_gl_4k.png",
+      "sha256": "40cda73f3e26ee7e6fe89239f334c67c9f129fc727b4340fc3384d8cb9f3450c",
+      "source_size": [
+        4096,
+        4096
+      ],
+      "tiles_per_axis": 16,
+      "excluded_margin_texels": 8,
+      "interior_xy_unique_bytes": [
+        [
+          127,
+          128
+        ],
+        [
+          127,
+          128
+        ]
+      ],
+      "mean_raw_xy_length": 0.005545935538718002,
+      "after_existing_quiet_face_gain_0_08": 0.00044367484309744014,
+      "quiet_face_angle_degrees_approx": 0.025420696819611906,
+      "per_tile_mean_xy_min": [
+        0.0,
+        6.167905692361981e-20
+      ],
+      "per_tile_mean_xy_max": [
+        0.0,
+        6.167905692361981e-20
+      ],
+      "per_tile_mean_xy_std": [
+        0.0,
+        1.4444474582904269e-34
+      ]
+    },
+    "art_pass": {
+      "path": "assets/materials/art_pass/textures/tile_normal_gl_2k.png",
+      "sha256": "9be0de12e34463cb41237644d9433f2fa10e55807c19491ab1e906804e8ea2ef",
+      "source_size": [
+        2048,
+        2048
+      ],
+      "tiles_per_axis": 8,
+      "excluded_margin_texels": 8,
+      "interior_xy_unique_bytes": [
+        [
+          127,
+          128
+        ],
+        [
+          127,
+          128
+        ]
+      ],
+      "mean_raw_xy_length": 0.005545935538718002,
+      "after_existing_quiet_face_gain_0_08": 0.00044367484309744014,
+      "quiet_face_angle_degrees_approx": 0.025420696819611906,
+      "per_tile_mean_xy_min": [
+        -0.0004019607843137241,
+        -0.0002901688453159031
+      ],
+      "per_tile_mean_xy_max": [
+        0.0005415305010893227,
+        0.0004931917211328958
+      ],
+      "per_tile_mean_xy_std": [
+        0.0001993194542876412,
+        0.00017161560859855682
+      ]
+    }
+  }
+}

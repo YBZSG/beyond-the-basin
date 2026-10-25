@@ -3,7 +3,7 @@ extends RefCounted
 ## model, legacy flags, head/shadow policy and fabric application remain owned by
 ## main.gd and the unchanged PoolAvatar implementation.
 const MobileProfile = preload("res://scripts/mobile/pool_mobile_profile.gd")
-const NaturalAvatar = preload("res://scripts/art_pass/character/natural_pool_avatar.gd")
+const NaturalAvatar = preload("res://scripts/art_pass/character/handmade_pool_avatar.gd")
 const MODEL := "res://assets/character_refinement/natural_hand_finish/explorer_natural_hand.glb"
 const CONTRACT := "res://assets/character_refinement/natural_hand_finish/model_contract.json"
 const DISABLE_FLAGS := ["--legacy-art-pass", "--legacy-art-character", "--legacy-avatar-model", "--legacy-water-actions"]

@@ -1,0 +1,27 @@
+{
+  "result": "passed",
+  "baseline_commit": "351fcd6f8f2bb5fe21851482e2526dfa262ef406",
+  "pristine_baseline_file_count": 1018,
+  "baseline_read_only": true,
+  "packaged_or_applied_final_assets": false,
+  "existing_synthetic_tests": 38,
+  "independent_adversarial_tests": 18,
+  "compact_delivery_tests": 30,
+  "total_unit_tests": 86,
+  "reviewed_installer_sha256": {
+    "update_source.py": "eee346a3052c9b025c86d709af6537647d02b9403947bcbd67b963dcf4c34aba",
+    "prepare_source_update.py": "4e3ca738e1fa16cc2d5e1ab7633adf746f62517725cc611eb24af8af0f5b7737",
+    "compact_source_update.py": "63626ba14fad48c4dd4fa45e584ec32d95a4a128e52ad851ab32afad781135f2",
+    "build_compact_source_update.py": "eac85d0dcc6d365470840c52e2c50ee7a8941d7dc37b3d3b6555ae1a8e5dba32",
+    "baseline_prerequisites.py": "ce2c58aa53bdbf333f019790c5a732e10647eab5caf80bf83676a53cb1f6e0b2",
+    "APPLY_SOURCE_UPDATE.cmd": "55249f094130a5ed499c609fc4d6457bd2836a22f29fc5f158ed379c7c2a3b31",
+    "ROLLBACK_SOURCE_UPDATE.cmd": "24735f1fc36279663adbc0b70dc258c779773452dc95fbb16d301a50946a1f1d"
+  },
+  "not_run": [
+    "final-package install",
+    "Windows cmd.exe execution",
+    "Godot import/graphics",
+    "Blender"
+  ],
+  "fixture_verifier_fix": "Only three exact UI isolated fixture references, with delivered-generator AST checks and non-engine fixture-generation test"
+}

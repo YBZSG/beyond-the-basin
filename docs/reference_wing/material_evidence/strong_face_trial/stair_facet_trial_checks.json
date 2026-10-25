@@ -1,0 +1,326 @@
+{
+  "purpose": "One bounded face-strength1.8 trial at fixed roughness, tile grid, bevel, camera, light, exposure and sample count. Matched baseline also rendered with the identical border; no post-pixel modification, filtering or sharpening.",
+  "cases": [
+    {
+      "case": "baseline_1",
+      "face_shape_strength": 1.0,
+      "wall_roughness_unchanged": 0.075,
+      "dry_roughness_unchanged": 0.26,
+      "tile_pitch_metres_unchanged": 0.1,
+      "bevel_unchanged": true,
+      "changed_role_only": null,
+      "helper_binding": {
+        "rebound_slots": 148,
+        "roles": [
+          "ref_tile_pearl",
+          "ref_tile_teal",
+          "ref_tile_pink",
+          "ref_tile_dark_teal",
+          "ref_tile_dry",
+          "ref_tile_teal_dry",
+          "ref_tile_pink_dry",
+          "ref_tile_dark_teal_dry",
+          "ref_tile_teal_satin",
+          "ref_tile_teal_satin_dry",
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin_dry",
+          "ref_grout"
+        ],
+        "visual_acceptance": false
+      },
+      "new_noise": false,
+      "samples": 256,
+      "seed": 5074,
+      "full_resolution": [
+        640,
+        640
+      ],
+      "border_fraction": [
+        0.25,
+        0.75,
+        0.25,
+        0.75
+      ],
+      "pixel_crop_top_left_convention": [
+        160,
+        160,
+        480,
+        480
+      ],
+      "cropped_resolution": [
+        320,
+        320
+      ],
+      "camera": {
+        "id": "stair_right_wall_10cm_grid",
+        "camera_name": "DIAGNOSTIC_RightWall_10cm_Grid",
+        "diagnostic_only": true,
+        "not_a_spawn": true,
+        "from": [
+          2.299999952316284,
+          7.0,
+          4.0
+        ],
+        "toward": [
+          2.9000000953674316,
+          7.876041889190674,
+          3.59375
+        ],
+        "fov_degrees": 39.99999849896589,
+        "fov_axis": "vertical",
+        "horizontal_fov_degrees": 39.99999849896589,
+        "reference_resolution": [
+          640,
+          640
+        ],
+        "reference_pixel_aspect": [
+          1,
+          1
+        ],
+        "lens_mm": 32.969730377197266,
+        "sensor_fit": "VERTICAL",
+        "source_fixture": "CeilingStrip_R0_02_Lens",
+        "actual_lens_emitting_face_center": [
+          0.6200000047683716,
+          11.204999923706055,
+          2.049999952316284
+        ],
+        "mirrored_source_center": [
+          5.179999828338623,
+          11.204999923706055,
+          2.049999952316284
+        ],
+        "target_method": "Analytic reflection of actual lens centre across right wall x=2.9, intersected by the eye-to-virtual-source ray. No guessed highlight target.",
+        "target_projected_px": [
+          319.99963760375977,
+          320.00083923339844
+        ],
+        "projection_matrix_updated_and_center_checked": true,
+        "wall_tile_pitch_metres": 0.1,
+        "meter_scale_note": "Each ceramic grid cell is 0.10 m; ten cells span 1 m. Wall geometry, lights, material and exposure are unchanged.",
+        "wall_tile_at_target_projected_px": {
+          "corners": [
+            [
+              287.388858795166,
+              362.11585998535156
+            ],
+            [
+              353.68892669677734,
+              328.35460662841797
+            ],
+            [
+              351.44622802734375,
+              279.38899993896484
+            ],
+            [
+              289.4947624206543,
+              312.43640899658203
+            ]
+          ],
+          "along_corridor": 74.40108354042522,
+          "vertical": 49.01693927397034
+        },
+        "optional_filter_enabled": false,
+        "native_godot_validation": false
+      },
+      "exposure_unchanged": -1.0,
+      "lighting_unchanged": true,
+      "image": "stair_facet_baseline_1_crop.png",
+      "pearl_maps": [
+        {
+          "image": "ref_tile_pearl_albedo_2k.png",
+          "sha256": "6b916ce8942a75e125f57357acd31d77c88712a316b46d88690650a0e018769e"
+        },
+        {
+          "image": "glaze_orm_2k.png",
+          "sha256": "dc00b4c0d621b2f73313d8e3529c83e2852b4acb86e0885583a76b6b3add0d09"
+        },
+        {
+          "image": "full_normal_gl_16.png",
+          "sha256": "40acaef8c5ac8d1fef5543d5f53454c5f05a2126086499ed1d8c87669b6071b2"
+        }
+      ],
+      "default_source_not_saved": true
+    },
+    {
+      "case": "trial_18",
+      "face_shape_strength": 1.8,
+      "wall_roughness_unchanged": 0.075,
+      "dry_roughness_unchanged": 0.26,
+      "tile_pitch_metres_unchanged": 0.1,
+      "bevel_unchanged": true,
+      "changed_role_only": "ref_tile_pearl",
+      "helper_binding": {
+        "rebound_slots": 148,
+        "roles": [
+          "ref_tile_pearl",
+          "ref_tile_teal",
+          "ref_tile_pink",
+          "ref_tile_dark_teal",
+          "ref_tile_dry",
+          "ref_tile_teal_dry",
+          "ref_tile_pink_dry",
+          "ref_tile_dark_teal_dry",
+          "ref_tile_teal_satin",
+          "ref_tile_teal_satin_dry",
+          "ref_tile_pink_satin",
+          "ref_tile_pink_satin_dry",
+          "ref_grout"
+        ],
+        "visual_acceptance": false,
+        "strong_face_trial": {
+          "candidate": "strong_face",
+          "role": "ref_tile_pearl",
+          "strength": 1.8,
+          "roughness": 0.075,
+          "physical_bounds": {
+            "strength": 1.8,
+            "samples_per_cell_axis": 512,
+            "sampled_min_metres": -0.00015923191126552945,
+            "sampled_max_metres": 0.0002758873858412382,
+            "continuous_bound_margin_metres": 3.7164157041917745e-06,
+            "absolute_height_bound_metres": 0.00027960380154543,
+            "relief_metres": 0.00028,
+            "centre_tilt_limit_degrees": 0.6299824477370713,
+            "crown_metres": 9e-05,
+            "method": "512x512 midpoint samples per cell plus conservative analytic gradient/Lipschitz remainder; includes zero boundaries."
+          },
+          "normal_file": "qa_face_shape_1_8_normal.png",
+          "sha256": "768172ae8034009d3187f2f7f51187fdfac38fb20072759361184218133172a6",
+          "bevel_unchanged": true,
+          "default_unchanged": true,
+          "production_asset": false,
+          "visual_acceptance": false,
+          "scope": "QA-only exact base-level runtime normal at face_shape_strength=1.8. Not a promoted material or native visual validation."
+        }
+      },
+      "new_noise": false,
+      "samples": 256,
+      "seed": 5074,
+      "full_resolution": [
+        640,
+        640
+      ],
+      "border_fraction": [
+        0.25,
+        0.75,
+        0.25,
+        0.75
+      ],
+      "pixel_crop_top_left_convention": [
+        160,
+        160,
+        480,
+        480
+      ],
+      "cropped_resolution": [
+        320,
+        320
+      ],
+      "camera": {
+        "id": "stair_right_wall_10cm_grid",
+        "camera_name": "DIAGNOSTIC_RightWall_10cm_Grid",
+        "diagnostic_only": true,
+        "not_a_spawn": true,
+        "from": [
+          2.299999952316284,
+          7.0,
+          4.0
+        ],
+        "toward": [
+          2.9000000953674316,
+          7.876041889190674,
+          3.59375
+        ],
+        "fov_degrees": 39.99999849896589,
+        "fov_axis": "vertical",
+        "horizontal_fov_degrees": 39.99999849896589,
+        "reference_resolution": [
+          640,
+          640
+        ],
+        "reference_pixel_aspect": [
+          1,
+          1
+        ],
+        "lens_mm": 32.969730377197266,
+        "sensor_fit": "VERTICAL",
+        "source_fixture": "CeilingStrip_R0_02_Lens",
+        "actual_lens_emitting_face_center": [
+          0.6200000047683716,
+          11.204999923706055,
+          2.049999952316284
+        ],
+        "mirrored_source_center": [
+          5.179999828338623,
+          11.204999923706055,
+          2.049999952316284
+        ],
+        "target_method": "Analytic reflection of actual lens centre across right wall x=2.9, intersected by the eye-to-virtual-source ray. No guessed highlight target.",
+        "target_projected_px": [
+          319.99963760375977,
+          320.00083923339844
+        ],
+        "projection_matrix_updated_and_center_checked": true,
+        "wall_tile_pitch_metres": 0.1,
+        "meter_scale_note": "Each ceramic grid cell is 0.10 m; ten cells span 1 m. Wall geometry, lights, material and exposure are unchanged.",
+        "wall_tile_at_target_projected_px": {
+          "corners": [
+            [
+              287.388858795166,
+              362.11585998535156
+            ],
+            [
+              353.68892669677734,
+              328.35460662841797
+            ],
+            [
+              351.44622802734375,
+              279.38899993896484
+            ],
+            [
+              289.4947624206543,
+              312.43640899658203
+            ]
+          ],
+          "along_corridor": 74.40108354042522,
+          "vertical": 49.01693927397034
+        },
+        "optional_filter_enabled": false,
+        "native_godot_validation": false
+      },
+      "exposure_unchanged": -1.0,
+      "lighting_unchanged": true,
+      "image": "stair_facet_trial_18_crop.png",
+      "pearl_maps": [
+        {
+          "image": "ref_tile_pearl_albedo_2k.png",
+          "sha256": "6b916ce8942a75e125f57357acd31d77c88712a316b46d88690650a0e018769e"
+        },
+        {
+          "image": "glaze_orm_2k.png",
+          "sha256": "dc00b4c0d621b2f73313d8e3529c83e2852b4acb86e0885583a76b6b3add0d09"
+        },
+        {
+          "image": "qa_face_shape_1_8_normal.png",
+          "sha256": "768172ae8034009d3187f2f7f51187fdfac38fb20072759361184218133172a6"
+        }
+      ],
+      "default_source_not_saved": true
+    }
+  ],
+  "before_source_sha256": "8991dea71a1ddd610de299b2a491a16fb8453fdaa50f07450525775c86e62392",
+  "after_source_sha256": "8991dea71a1ddd610de299b2a491a16fb8453fdaa50f07450525775c86e62392",
+  "before_glb_sha256": "2fbf47c66ef2445e7fe247d7cfbb98bbaa07fbcf213511a813878c35a66f3ff4",
+  "after_glb_sha256": "2fbf47c66ef2445e7fe247d7cfbb98bbaa07fbcf213511a813878c35a66f3ff4",
+  "production_defaults_changed": false,
+  "native_godot_or_nvidia_validation": false,
+  "visible_review": {
+    "assessment": "Strength 1.8 adds modest tile-linked kinks and local warping, but the long reflected source remains a coherent strip; it is not an isolated-glint conversion.",
+    "comparison_excludes_stamp_rows": 16,
+    "mean_absolute_rgb_difference_8bit": 1.7610985471491227,
+    "differences_are_material_plus_monte_carlo_path_response_not_a_noise_texture": true,
+    "independent_review_pending": false,
+    "independent_recommendation": "Keep production strength 1.0. Do not promote this QA candidate or run a second gain trial. The model C1 zero-slope boundary retains strip continuity; gain alone does not solve it."
+  }
+}

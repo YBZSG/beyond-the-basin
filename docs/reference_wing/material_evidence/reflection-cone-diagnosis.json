@@ -1,0 +1,185 @@
+{
+  "scope": "Geometric source footprints and exact analytic normal fields only. No image rendering or visual acceptance.",
+  "camera_contract": "output/reference_wing/stair/stair_planar_interior_trial_checks.json",
+  "camera_contract_sha256": "d88dd73a11fe600220b2d65dc7888910885ed949f9b79714178922fce44fd9b9",
+  "eye_metres": [
+    2.299999952316284,
+    7.0,
+    4.0
+  ],
+  "wall_point_metres": [
+    2.9000000953674316,
+    7.876041889190674,
+    3.59375
+  ],
+  "eye_to_wall_metres": 1.1368766977021572,
+  "wall_to_lens_metres": 4.3201303473876465,
+  "view_angle_from_normal_degrees": 58.14564395568622,
+  "emitters": [
+    {
+      "name": "emissive_lens",
+      "center_metres": [
+        0.6200000047683716,
+        11.204999923706055,
+        2.049999952316284
+      ],
+      "width_metres": 0.098,
+      "length_metres": 1.53,
+      "width_angle_at_wall_degrees": 1.103982879790596,
+      "width_angle_of_virtual_source_at_camera_degrees": 0.873984841542464,
+      "half_vector_transverse_width_degrees": 0.5474437250569955,
+      "half_vector_transverse_interval_at_source_midpoint_degrees": [
+        -0.2720834624917759,
+        0.2753602625652196
+      ],
+      "ideal_reflected_width_px_perpendicular_to_strip": 13.026920274705175,
+      "ideal_reflected_length_px": 230.80617899315388
+    },
+    {
+      "name": "cpu_area",
+      "center_metres": [
+        0.6200000047683716,
+        11.179999923706054,
+        2.049999952316284
+      ],
+      "width_metres": 0.12,
+      "length_metres": 1.53,
+      "width_angle_at_wall_degrees": 1.355513979766643,
+      "width_angle_of_virtual_source_at_camera_degrees": 1.0725035696897791,
+      "half_vector_transverse_width_degrees": 0.671593427665682,
+      "half_vector_transverse_interval_at_source_midpoint_degrees": [
+        -0.4294900045480252,
+        0.24210342311765676
+      ],
+      "ideal_reflected_width_px_perpendicular_to_strip": 15.977504435829553,
+      "ideal_reflected_length_px": 231.50798420042034
+    }
+  ],
+  "ggx_assumed_alpha": 0.005625,
+  "ggx_normal_distribution_hwhm_degrees": 0.20742692824066256,
+  "normal_envelope_caveat": "GGX alpha=roughness squared, isotropic NDF only. Expanding the exact curved half-vector source boundaries by NDF HWHM is a diagnostic angular envelope, not a BRDF convolution, intensity threshold, full renderer or prediction of dark pixels. Includes both enabled lens and 22.45% wider Area; Fresnel, masking, tails, all other fixtures and multiple bounces are not modelled.",
+  "field_sampling": "256x256 points over each of all 64 periodic cells; distributions exclude a 4 mm cell-edge band, not genuine bevel. Basis follows actual right-wall exported UVs.",
+  "cell_centre_tilt_statistics": [
+    {
+      "tilt_limit_degrees_per_axis": 0.15,
+      "transverse_angle_std_degrees": 0.08206330718943201,
+      "transverse_angle_range_degrees": [
+        -0.1779220785761769,
+        0.14037378242732426
+      ],
+      "adjacent_difference_median_p90_max_degrees": [
+        0.07870386574307527,
+        0.18357290427448728,
+        0.303734380586948
+      ]
+    },
+    {
+      "tilt_limit_degrees_per_axis": 0.35,
+      "transverse_angle_std_degrees": 0.191481531625905,
+      "transverse_angle_range_degrees": [
+        -0.4151522651207035,
+        0.32753677490835253
+      ],
+      "adjacent_difference_median_p90_max_degrees": [
+        0.1836432339639163,
+        0.4283383142900079,
+        0.7087127230024206
+      ]
+    },
+    {
+      "tilt_limit_degrees_per_axis": 0.63,
+      "transverse_angle_std_degrees": 0.3446691353573112,
+      "transverse_angle_range_degrees": [
+        -0.7472670826977669,
+        0.58956675734696
+      ],
+      "adjacent_difference_median_p90_max_degrees": [
+        0.33056217043433966,
+        0.7710165607434091,
+        1.2756787938849725
+      ]
+    }
+  ],
+  "field_statistics": [
+    {
+      "case": "production",
+      "nominal_crown_metres": 5e-05,
+      "sampled_min_height_metres": -8.846195212986146e-05,
+      "sampled_max_height_metres": 0.00015326635227668104,
+      "transverse_normal_angle_std_degrees": 0.10663030025746688,
+      "transverse_normal_angle_range_degrees": [
+        -0.4201182006770219,
+        0.37765004446859984
+      ],
+      "outside_combined_lens_area_plus_ggx_hwhm_envelope_fraction": 0.0,
+      "maximum_normal_deflection_degrees": 0.46652683242263643
+    },
+    {
+      "case": "rejected_gain_1_8",
+      "nominal_crown_metres": 9e-05,
+      "sampled_min_height_metres": -0.00015923151383375063,
+      "sampled_max_height_metres": 0.0002758794340980259,
+      "transverse_normal_angle_std_degrees": 0.19193267325838614,
+      "transverse_normal_angle_range_degrees": [
+        -0.7561838842159276,
+        0.6797465528643216
+      ],
+      "outside_combined_lens_area_plus_ggx_hwhm_envelope_fraction": 0.011425023789859236,
+      "maximum_normal_deflection_degrees": 0.8397067322460013
+    },
+    {
+      "case": "full_cell_crown_120um",
+      "nominal_crown_metres": 0.00012,
+      "sampled_min_height_metres": -5.495311894223501e-05,
+      "sampled_max_height_metres": 0.00021146287081975652,
+      "transverse_normal_angle_std_degrees": 0.14305992520919905,
+      "transverse_normal_angle_range_degrees": [
+        -0.447282251116584,
+        0.486873536413951
+      ],
+      "outside_combined_lens_area_plus_ggx_hwhm_envelope_fraction": 2.5809752944556164e-05,
+      "maximum_normal_deflection_degrees": 0.5079312234010098
+    },
+    {
+      "case": "full_cell_crown_150um",
+      "nominal_crown_metres": 0.00015,
+      "sampled_min_height_metres": -4.3538370670173384e-05,
+      "sampled_max_height_metres": 0.0002381991533221311,
+      "transverse_normal_angle_std_degrees": 0.16327148096791866,
+      "transverse_normal_angle_range_degrees": [
+        -0.4926455574234614,
+        0.5356208565669534
+      ],
+      "outside_combined_lens_area_plus_ggx_hwhm_envelope_fraction": 0.0008730429474288997,
+      "maximum_normal_deflection_degrees": 0.5584916089613179
+    },
+    {
+      "case": "full_cell_crown_180um",
+      "nominal_crown_metres": 0.00018,
+      "sampled_min_height_metres": -3.365110959971109e-05,
+      "sampled_max_height_metres": 0.00026580227299221584,
+      "transverse_normal_angle_std_degrees": 0.18499956873380846,
+      "transverse_normal_angle_range_degrees": [
+        -0.5388827591415228,
+        0.5853295937786087
+      ],
+      "outside_combined_lens_area_plus_ggx_hwhm_envelope_fraction": 0.0031207357799482908,
+      "maximum_normal_deflection_degrees": 0.6100308663857946
+    },
+    {
+      "case": "qa_localized_crown_300um_r40mm",
+      "nominal_crown_metres": 0.0003,
+      "sampled_min_height_metres": -8.935715351921385e-05,
+      "sampled_max_height_metres": 0.00035904341294526427,
+      "transverse_normal_angle_std_degrees": 0.27451741857414,
+      "transverse_normal_angle_range_degrees": [
+        -1.0032443241893203,
+        0.916509971873789
+      ],
+      "outside_combined_lens_area_plus_ggx_hwhm_envelope_fraction": 0.08637626580005746,
+      "maximum_normal_deflection_degrees": 1.0358113352434561
+    }
+  ],
+  "production_materials_changed": false,
+  "native_validation": false
+}
