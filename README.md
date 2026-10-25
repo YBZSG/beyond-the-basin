@@ -18,6 +18,68 @@
 
 本源码不附带 Godot 编辑器、Windows 游戏 EXE/PCK 或 APK。Windows 导出配置已保留；需安装匹配的官方导出模板。运行游戏读取 GLB，不要求安装 Blender；编辑模型与重建几何的基准为 Blender 4.3.2。
 
+## 自行编译带 NR 的引擎
+
+NR（原生神经渲染）不是官方 Godot 的功能，需要打了补丁的 NVIDIA 引擎分支。仓库只保存补丁和构建脚本：`nvngx_dlssnr.dll` 单个文件约 266 MB，超过 GitHub 单文件限制；NVIDIA RTX SDKs 许可允许把 SDK 集成进应用，但商业发布前需要通知 NVIDIA。因此 SDK 头文件、静态库、运行时 DLL 和编译出的 EXE/PCK 都不提交到本仓库，源码发布里也不附带。想运行 NR 版本，按下面步骤自行下载 SDK 并编译。
+
+### 需要自己准备的外部文件
+
+| 用途 | 来源 | 必需内容 |
+| --- | --- | --- |
+| 引擎源码 | [NVIDIA-RTX/godot](https://github.com/NVIDIA-RTX/godot/tree/135dff3887a3d2ccf45cafbd9bdffa7b718e1e76)，提交 `135dff3887a3d2ccf45cafbd9bdffa7b718e1e76`（`nvidia-pt-dlss`，Godot 4.8-dev） | 完整源码树（含 `SConstruct`）。源码归档 SHA-256：`8f9d9604270ccca92d14cc57afca142079476cbe050e0486a90b84da17ce907a` |
+| NGX 基础头文件与静态库 | NVIDIA/DLSS 提交 `9981c6350dc58c0ce21f024fd65e31e851c31689` | `<ngx-base>/include/`：`nvsdk_ngx.h`、`nvsdk_ngx_defs.h`、`nvsdk_ngx_defs_vk.h`、`nvsdk_ngx_helpers_vk.h`、`nvsdk_ngx_params.h`、`nvsdk_ngx_vk.h`；`<ngx-base>/lib/nvsdk_ngx_s.lib`（3,782,490 字节，SHA-256 `7b9a5239c1145af5f645ab472aa066f9ea79db36ac819562312aae69d65f3765`） |
+| NR SDK `rtx-remix-ngx_sdk_dlnr@2` | 官方 Remix Packman 地址（记录在 [`tools/dlss/NR_DEPENDENCIES.json`](tools/dlss/NR_DEPENDENCIES.json)） | `<nr-sdk>/include/` 必须含 `nvsdk_ngx_helpers_dlssnr_vk.h`（同包的 `nvsdk_ngx_defs_dlssnr.h`、`nvsdk_ngx_helpers_dlssnr.h` 等一并保留）；运行时在 `<nr-sdk>/lib/Windows_x86_64/rel/nvngx_dlssnr.dll`（266,424,944 字节，SHA-256 `2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f`） |
+| Streamline 运行时 v2.14.16 | [NVIDIA-RTX/Streamline v2.14.16](https://github.com/NVIDIA-RTX/Streamline/releases/tag/v2.14.16) | `sl.interposer.dll`、`sl.common.dll`、`sl.dlss.dll`、`sl.dlss_d.dll`、`sl.dlss_g.dll`、`sl.nis.dll`、`sl.pcl.dll`、`sl.reflex.dll`、`NvLowLatencyVk.dll`，以及 `nvngx_dlss.dll`、`nvngx_dlssd.dll`、`nvngx_dlssg.dll` |
+| 编译工具链 | 本机安装 | Python 3.13、SCons 4.11.1、Visual Studio 2026 x64 C++ 工具（MSVC 14.5）、Windows SDK 10.0.26100.0、Git。NR SDK 可参考 `NR_DEPENDENCIES.json` 中的地址和校验值自行下载，并放在本工程目录之外 |
+
+### 编译引擎
+
+```powershell
+# 1. 取固定提交的引擎源码（也可用同提交的源码归档）
+git clone https://github.com/NVIDIA-RTX/godot.git engine
+git -C engine checkout 135dff3887a3d2ccf45cafbd9bdffa7b718e1e76
+
+# 2. 第一次：打补丁并编译编辑器
+python tools/dlss/build_nr.py `
+  --engine <引擎目录> `
+  --nr-sdk <nr-sdk 目录> `
+  --ngx-sdk <ngx-base 目录> `
+  --apply
+
+# 之后增量重编：去掉 --apply
+python tools/dlss/build_nr.py --engine <引擎目录> --nr-sdk <nr-sdk> --ngx-sdk <ngx-base>
+```
+
+脚本会按顺序应用 `engine-taa-rg16f.patch`、`engine-fg-rt.patch`、`engine-camera-visibility.patch`、`engine-scene-retirement.patch`、`engine-dlss-nr.patch`、`engine-dlss-nr-controls.patch`，再通过进程内的 `POOLCORE_NR_SDK` / `POOLCORE_NGX_SDK` 把两个 SDK 传给 SCons。补丁只对上面这个固定提交有效，不要套到其他 Godot 版本。没有 NR SDK 时仍能编译，但那只是空实现 stub，菜单里不会出现可用的 NR。
+
+产物在 `<引擎目录>/bin/`：
+
+- `godot.windows.editor.x86_64.exe` —— 本工程的本地实验运行程序就是它（可改名 `PoolCore.exe`）
+- `godot.windows.editor.x86_64.console.exe`
+
+要发布正式包时，还需要在同样的环境变量下再编发行模板：
+
+```powershell
+$env:POOLCORE_NR_SDK = "<nr-sdk>"
+$env:POOLCORE_NGX_SDK = "<ngx-base>"
+python -m SCons platform=windows target=template_release arch=x86_64 d3d12=no accesskit=no use_streamline=yes dev_build=no debug_symbols=no optimize=speed -j12
+```
+
+### 导出 PCK 并放置 DLL
+
+```powershell
+<引擎目录>\bin\godot.windows.editor.x86_64.exe --path <本工程> --export-pack "Windows Desktop" PoolCore.pck
+```
+
+用这个编辑器首次打开工程完成导入，再导出，别用官方 4.6/4.7 编辑器的导入缓存混编。把 `PoolCore.pck`、`nvngx_dlssnr.dll`、上表列出的全部 Streamline/DLSS DLL 和对应许可文件放到 EXE 同目录。缺少 `nvngx_dlssnr.dll` 时画质菜单的 NR 项会被禁用，不会假装支持。
+
+### 运行与自检
+
+- NR 用环境变量 `POOLCORE_DLSS_NR=1` 打开（[`tools/dlss/Launch-PoolCore-NR.cmd`](tools/dlss/Launch-PoolCore-NR.cmd) 和 `Start-PoolCore-Scene.ps1` 已设置），NR 与帧生成互斥，开启 NR 会强制关闭 FG。
+- 只有日志出现 `PoolCore NR dispatch OK` 才代表 NR 真正执行；菜单勾选、能力查询成功、驱动加载成功都不算。
+- `POOLCORE_NR_PRESET=B` 可选轻量档；默认单层，1–4 层属于实验项。
+- SDK 版本、许可和验证命令（`run_qa.py` 的 timing/controls/对照基线）见 [`tools/dlss/NR_README.md`](tools/dlss/NR_README.md)。
+
 ## 世界与交互
 
 - 首次默认原仓库的种子随机场景。主页可选择 Original、Expanded 或 Formal，并保存出生地。
