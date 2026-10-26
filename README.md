@@ -1,12 +1,14 @@
 # Beyond the Basin · Godot 版本
 
-这是独立的 Godot 工程分支。仓库根目录的 `project.godot` 是入口；原 Web 游戏保留在 `main` 分支，不需要 npm、浏览器壳或 Web 构建流程。
+本仓库以 **Godot 版为开发主线**，默认分支 `main` 即完整 Godot 工程，根目录的 `project.godot` 是入口。原 Web 版保留在 [`legacy/web-20261026`](https://github.com/YBZSG/beyond-the-basin/tree/legacy/web-20261026) 分支；Godot 工程无需 npm 或 Web 构建流程。
+
+`main` 已包含六章机关、中文交互界面，以及水面光栅折射与倒影抗闪烁修复。当前安装包仍为下面的 0.6.13；体验这些后续更新请按下方步骤运行最新源码。旧 `godot/waterfeel-20261023` 分支保留，后续更新以 `main` 为准。
 
 当前 Windows 版本为 **0.6.13（2026-10-26）**：六章探索主线、参考翼、球池与软垫互动、青绿柔光镜头、水波、手电筒和人物切换。原池保持浅水，本版没有新增深水区或游泳动作。
 
 **[下载 Windows 安装包](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.13-pc-20261026)** · [本版说明与验证范围](docs/releases/0.6.13.md)
 
-当前本地分支新增 **天玑 8400 / 12GB Android 适配**：移除手机版立体水花管线，保留动态水面、折射、焦散与倒影；减少常驻房间、限制高分屏像素预算，默认 High / 30 FPS 上限。已用 Godot 4.7 实际导出并校验 ARM64 APK，说明与验证边界见 [Android 8400 移植](docs/ANDROID-8400-20261023.md)。APK 与图形日志位于 `output/`；此目录不提交 Git。
+工程包含 **天玑 8400 / 12GB Android 适配**：移除手机版立体水花管线，保留动态水面、折射、焦散与倒影；减少常驻房间、限制高分屏像素预算，默认 High / 30 FPS 上限。已用 Godot 4.7 实际导出并校验 ARM64 APK，说明与验证边界见 [Android 8400 移植](docs/ANDROID-8400-20261023.md)。APK 与图形日志位于 `output/`；此目录不提交 Git。
 
 最新 `0.6.4-mobile-8400-avatar` 已修复手机版人物被桌面条件挡住的问题，恢复人物、服装和动画；请安装 `PoolCore-Mobile-8400-AvatarFix.apk`。详见 [人物恢复更新](docs/ANDROID-AVATAR-FIX-20261023.md)。
 
@@ -23,15 +25,14 @@
 ## 另一台电脑下载源码后怎么运行
 
 1. 安装同一发布页的 **PoolCore-PC-0.6.13-Setup.exe**。安装目录中提供 **PoolCoreEditor.exe**，它是本工程使用的定制 Godot 4.8-dev 编辑器，所需 DLL 已随包提供。
-2. 下载 **godot/waterfeel-20261023** 分支源码 ZIP，完整解压到可写目录，例如 `D:\PoolCoreSource`。默认 `main` 是 Web 工程。也可执行：
+2. 下载默认 **main** 分支的 [源码 ZIP](https://github.com/YBZSG/beyond-the-basin/archive/refs/heads/main.zip)，完整解压到可写目录，例如 `D:\PoolCoreSource`。也可执行：
 
    ```powershell
-   git clone --branch godot/waterfeel-20261023 --single-branch https://github.com/YBZSG/beyond-the-basin.git PoolCoreSource
+   git clone https://github.com/YBZSG/beyond-the-basin.git PoolCoreSource
    cd PoolCoreSource
-   git checkout v0.6.13-pc-20261026
    ```
 
-   `git checkout` 固定到与安装包对应的源码；需要后续开发更新则继续使用分支。
+   默认进入 `main`，后续可用 `git pull --ff-only` 更新。只有需要复现 0.6.13 安装包对应源码时，才执行 `git checkout v0.6.13-pc-20261026`；这会切回该旧版本。
 3. 双击源码根目录 **Open-Editor.cmd**。如果游戏装在自定义目录，将该目录的 **PoolCoreEditor.exe** 拖到 CMD 上；保留编辑器旁的 DLL，不要只复制 EXE。
 4. 等待首次资源导入结束，然后按 **F5** 运行工程，主场景是 `scenes/main.tscn`。完成首次导入后，也可以双击 **Run-Source.cmd** 运行源码。
 
