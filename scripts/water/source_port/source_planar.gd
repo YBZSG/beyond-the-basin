@@ -15,6 +15,9 @@ var output:Texture2D
 var texture_matrix:=Projection.IDENTITY
 var capture_msaa:int=Viewport.MSAA_4X
 var resolution:=768
+var requested_resolution:=768
+var rt_budget:=false
+var _raster_msaa:int=Viewport.MSAA_4X
 var interval:=0
 var capture_ready:=false
 var enabled:=true
@@ -38,8 +41,17 @@ func configure(camera:Camera3D, environment:Environment)->void:
  output=viewport.get_texture()
  RenderingServer.frame_post_draw.connect(_captured)
 func set_quality(size_value:int, refresh:int=0)->void:
- resolution=size_value;interval=maxi(0,refresh);_age=1000
+ requested_resolution=size_value
+ resolution=mini(size_value,1024) if rt_budget else size_value
+ interval=maxi(0,refresh);_age=1000
  if viewport:viewport.size=Vector2i(resolution,resolution)
+func set_rt_budget(active:bool)->void:
+ if rt_budget==active:return
+ if active:_raster_msaa=capture_msaa
+ rt_budget=active
+ capture_msaa=Viewport.MSAA_2X if active else _raster_msaa
+ if is_instance_valid(viewport):viewport.msaa_3d=capture_msaa
+ set_quality(requested_resolution,interval)
 func refresh_lighting()->void:
  if mirror and _environment:
   if CaptureEnvironment.synchronize(_environment,mirror.environment):_age=1000

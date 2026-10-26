@@ -78,6 +78,11 @@ static func chapters(seed_value: int = DEFAULT_SEED) -> Array[Dictionary]:
 			var item: Dictionary = entry.items[item_index]
 			var source_mode: String = "quiet" if entry.id=="quiet_archive" else str(entry.mode)
 			entry.room_specs.append({"coord":item.coord,"source_coord":item.coord,"source_mode":source_mode,"source_index":item_index+8 if source_mode=="quiet" else item_index})
+	var goals: Array = ["隔离故障照明支路并恢复馈电。", "平衡相互牵制的三路水压。", "重定向回水并稳定出口水位。", "按建筑回声重演四拍记忆。", "按联锁次序恢复旧馆通风。", "汇聚日光并开启穹顶出口。"]
+	var departures: Array = ["通过侧向检修门", "启动泵房升降台", "穿过弯曲回水廊", "推开记忆屏风", "打开通风检修门", "走向日光出口"]
+	var stories: Array = ["上一班没有留下钥匙，只留下仍在呼吸的电路。", "水压彼此牵制，静止的指针也能讲述管路的方向。", "出口不在最响的水声后面，而在两段流向相遇的地方。", "空间记得经过它的次序。", "先让噪声停止，再让空气流动。", "光需要方向，不需要通行证。"]
+	for i in range(result.size()):
+		result[i].objective=goals[i];result[i].departure_label=departures[i];result[i].story=stories[i]
 	_cache[seed_value]=result
 	return result
 

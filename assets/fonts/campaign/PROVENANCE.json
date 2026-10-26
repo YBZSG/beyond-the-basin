@@ -1,0 +1,12 @@
+{
+  "source_path": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+  "source_sha256": "b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a",
+  "source_face": 2,
+  "source_family": "Noto Sans CJK SC",
+  "font_face_copyright": "© 2014-2021 Adobe (http://www.adobe.com/).",
+  "modified_family": "PoolCore Campaign SC",
+  "license": "SIL Open Font License 1.1",
+  "requested_codepoints": 1009,
+  "covered_codepoints": 1009,
+  "source_symbols_not_covered": []
+}

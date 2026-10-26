@@ -1,0 +1,39 @@
+{
+  "baseline_zip_sha256": "eeb633ebf6dd66b008190d35502c8f114557ae4d7fd77322195c2aeba4459908",
+  "baseline_manifest_file_count": 1548,
+  "protected_existing_files_compared": 621,
+  "protected_scope": [
+    "assets/",
+    "scripts/player/",
+    "scripts/audio/",
+    "scripts/world/",
+    "scripts/rendering/",
+    "scripts/reference_wing/",
+    "scripts/poolrooms_wing/",
+    "shaders/",
+    "scenes/",
+    "native/",
+    "docs/characters/",
+    "project.godot",
+    "default_bus_layout.tres",
+    "export_presets.cfg"
+  ],
+  "protected_mismatches": [],
+  "all_protected_identical": true,
+  "changed_existing_files": [
+    "CREDITS.md",
+    "docs/campaign/README.md",
+    "docs/campaign/STATE-API.md",
+    "scripts/campaign/campaign_catalog.gd",
+    "scripts/campaign/campaign_runtime.gd",
+    "scripts/campaign/campaign_state.gd",
+    "scripts/main.gd",
+    "tests/campaign/runtime-test-result.log",
+    "tests/campaign/state-test-result.log",
+    "tests/campaign/test_runtime.gd",
+    "tests/campaign/test_state.gd",
+    "tests/campaign/test_transition.gd",
+    "tests/campaign/transition-test-result.log"
+  ],
+  "note": "Checks bytes, not runtime behavior. All existing avatars/models/textures/import sidecars, controller/audio/world/rendering, shaders, scenes/native, and character license records in scope are unchanged. New campaign-only code/assets are not misrepresented as baseline."
+}

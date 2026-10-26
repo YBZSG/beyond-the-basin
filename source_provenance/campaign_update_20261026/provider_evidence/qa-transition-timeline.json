@@ -1,0 +1,105 @@
+{
+	"checks": 129,
+	"failures": [],
+	"runs": [
+		{
+			"activation_alpha": 1.0,
+			"frames": 300,
+			"handoff_alphas": [
+				1.0
+			],
+			"mode": 0,
+			"scenario": "chapter0",
+			"visible_play_frames": 229
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 347,
+			"handoff_alphas": [
+				1.0
+			],
+			"mode": 1,
+			"scenario": "chapter1",
+			"visible_play_frames": 277
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 359,
+			"handoff_alphas": [
+				1.0
+			],
+			"mode": 2,
+			"scenario": "chapter2",
+			"visible_play_frames": 289
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 335,
+			"handoff_alphas": [
+				1.0
+			],
+			"mode": 3,
+			"scenario": "chapter3",
+			"visible_play_frames": 265
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 341,
+			"handoff_alphas": [
+				1.0
+			],
+			"mode": 4,
+			"scenario": "chapter4",
+			"visible_play_frames": 271
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 358,
+			"handoff_alphas": [],
+			"mode": 5,
+			"scenario": "chapter5",
+			"visible_play_frames": 289
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 75,
+			"handoff_alphas": [],
+			"mode": 0,
+			"scenario": "cancel",
+			"visible_play_frames": 6
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 324,
+			"handoff_alphas": [
+				1.0,
+				1.0
+			],
+			"mode": 0,
+			"scenario": "timeout",
+			"visible_play_frames": 229
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 299,
+			"handoff_alphas": [
+				1.0,
+				1.0
+			],
+			"mode": 0,
+			"scenario": "save_error",
+			"visible_play_frames": 229
+		},
+		{
+			"activation_alpha": 1.0,
+			"frames": 76,
+			"handoff_alphas": [
+				1.0
+			],
+			"mode": 0,
+			"scenario": "skip",
+			"visible_play_frames": 6
+		}
+	],
+	"scope": "actual coordinator/fade/transition geometry and Camera3D current selection; stubbed water/world/mount preparation, not GPU or full world handoff"
+}

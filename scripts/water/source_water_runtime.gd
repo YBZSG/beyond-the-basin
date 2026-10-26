@@ -8,6 +8,7 @@ const Events=preload("res://scripts/water/source_port/source_wave_events.gd")
 const Solver=preload("res://scripts/water/source_port/source_wave_solver.gd")
 const Caustics=preload("res://scripts/water/source_port/source_caustics.gd")
 const Planar=preload("res://scripts/water/source_port/source_planar.gd")
+const Refraction=preload("res://scripts/water/source_port/source_refraction.gd")
 const Liquid=preload("res://scripts/water/source_port/source_liquid_mpm.gd")
 const Whitewater=preload("res://scripts/water/source_port/source_whitewater_particles.gd")
 const LiquidSurface=preload("res://scripts/water/source_port/source_liquid_surface.gd")
@@ -28,6 +29,8 @@ var quality_levels:Dictionary=MobileProfile.WATER_QUALITY if mobile_optimized el
 var settings:Dictionary=Settings.DEFAULT.duplicate()
 var events:=Events.new()
 var quality: String="High"
+var _raster_water_rt:=false
+var raster_refraction:Node
 var _initialization_stats:Dictionary={"initial_quality":"High","solver_configure_calls":0,"quality_reconfigurations":0}
 var caustics_enabled:=true
 var enabled:=true
@@ -156,6 +159,9 @@ func configure_camera(camera:Camera3D,environment:Environment)->void:
   planar.resolution=int(quality_levels[quality].reflection)
   planar.capture_msaa=Viewport.MSAA_2X
  planar.name="SourcePlanarReflection";add_child(planar);planar.configure(camera,environment);planar.set_quality(quality_levels[quality].reflection)
+ if not mobile_optimized:
+  raster_refraction=Refraction.new();raster_refraction.name="SourceRasterRefraction"
+  add_child(raster_refraction);raster_refraction.configure(camera,environment)
  _compositor=Compositor.new()
  if _liquid_surface:_compositor.compositor_effects=[_liquid_surface]
  camera.compositor=_compositor
@@ -165,6 +171,13 @@ func configure_camera(camera:Camera3D,environment:Environment)->void:
 func refresh_capture_lighting()->void:
  if is_instance_valid(planar):planar.refresh_lighting()
  _invalidate_probe_capture_lighting(true)
+func set_raster_water_rt_context(active:bool)->void:
+ _raster_water_rt=active
+ if is_instance_valid(planar):planar.set_rt_budget(active)
+ _sync_raster_refraction()
+ for material:ShaderMaterial in _materials.values():_apply_surface(material)
+func _sync_raster_refraction()->void:
+ if is_instance_valid(raster_refraction):raster_refraction.set_enabled(_raster_water_rt and enabled and quality!="Low")
 func _probe_target_committed()->bool:
  # A retained 96m terrain field deliberately remains usable while its adjacent
  # replacement prepares. That does not authorize capturing the OLD origin.
@@ -634,6 +647,10 @@ func _apply_surface(material:ShaderMaterial)->void:
  for key in _surface_uniforms:material.set_shader_parameter(key,_surface_uniforms[key])
  if is_instance_valid(planar):
   material.set_shader_parameter("mirrorSampler",planar.output);material.set_shader_parameter("textureMatrix",planar.texture_matrix);material.set_shader_parameter("reflectionReady",1.0 if planar.capture_ready else 0.0);material.set_shader_parameter("reflectionSize",float(planar.resolution))
+ var raster_active:bool=is_instance_valid(raster_refraction) and raster_refraction.enabled
+ material.set_shader_parameter("rasterTransmissionOn",1.0 if raster_active else 0.0)
+ material.set_shader_parameter("rasterTransmissionReady",1.0 if raster_active and raster_refraction.capture_ready else 0.0)
+ if raster_active:material.set_shader_parameter("rasterTransmission",raster_refraction.output)
 func _bind_all()->void:
  for material in _materials.values():_apply_surface(material)
  var gain:float=float(_surface_uniforms.causticGain) if caustics_enabled and settings.caustics and quality!="Low" else 0.0
@@ -677,6 +694,7 @@ func _process(delta:float)->void:
  if caustics_enabled and quality!="Low":caustics.render(_time,changed,active)
  stage_started=_stage("caustic_submit",stage_started)
  if is_instance_valid(planar):planar.update()
+ if is_instance_valid(raster_refraction):raster_refraction.update()
  stage_started=_stage("planar_update",stage_started)
  for material in _materials.values():_apply_surface(material)
  _stage("surface_uniforms",stage_started)
@@ -749,6 +767,7 @@ func _refresh_surface_visibility()->void:
   group.visible=enabled and (_layouts.get(coord,{}).get("formal",false) or maxi(absi(delta.x),absi(delta.y))<=1)
 func set_enabled(value:bool)->void:
  enabled=value
+ _sync_raster_refraction()
  _refresh_surface_visibility()
  if is_instance_valid(planar):planar.enabled=value and bool(settings.reflection)
 func set_caustics(value:bool)->void:caustics_enabled=value;_bind_all()
@@ -779,6 +798,7 @@ func _apply_settings()->void:
  _surface_uniforms.microOn=1.0 if settings.microNormals and quality in ["High","Ultra"] else 0.0
  _surface_uniforms.foamOn=1.0 if settings.foam and quality!="Low" else 0.0
  _surface_uniforms.sceneReady=0.0 if quality=="Low" else 1.0
+ _sync_raster_refraction()
  solver.impact_scale=settings.impact;solver.ring_waves=settings.ringWaves;solver.wave_speed=settings.waveSpeed;solver.damping=settings.damping;solver.viscosity=settings.viscosity;solver.wall_loss=settings.wallLoss;solver.max_steps=roundi(settings.solverSteps);solver.detail_max_steps=roundi(settings.rippleSteps);solver.foam_decay=1.0/maxf(settings.foamLife,.25);solver.detail_frequency=settings.rippleFrequency;solver.detail_enabled=settings.ripples and quality!="Low"
  events.apply_settings(settings)
  if is_instance_valid(planar):planar.enabled=enabled and bool(settings.reflection)
@@ -947,7 +967,7 @@ func dispose()->void:
  _terrain_collection_jobs.clear();_terrain_retired_collections.clear();_terrain_collecting_coords.clear()
  # Detach Godot RenderingServer material aliases before retiring native RD textures.
  for material:ShaderMaterial in _materials.values():
-  for parameter:String in ["poolSurface","poolDepth","poolDetail","poolCaustics","mirrorSampler"]:material.set_shader_parameter(parameter,null)
+  for parameter:String in ["poolSurface","poolDepth","poolDetail","poolCaustics","mirrorSampler","rasterTransmission"]:material.set_shader_parameter(parameter,null)
  if _library and _library.has_method("set_source_water_uniforms"):_library.set_source_water_uniforms(null,null,domain_origin,0.0)
  if is_instance_valid(_camera):_camera.compositor=null
  if _compositor:_compositor.compositor_effects=[]
@@ -956,6 +976,7 @@ func dispose()->void:
  if is_instance_valid(_probe):_probe.dispose()
  solver.dispose();caustics.dispose()
  if is_instance_valid(planar):planar.dispose()
+ if is_instance_valid(raster_refraction):raster_refraction.dispose()
  if _liquid:_liquid.dispose()
 
 func _exit_tree()->void:dispose()

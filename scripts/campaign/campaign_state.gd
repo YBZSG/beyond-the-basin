@@ -1,7 +1,8 @@
 extends RefCounted
 ## Durable progression; begin/finish are separate so a failed landing never skips a chapter.
 const Catalog = preload("res://scripts/campaign/campaign_catalog.gd")
-const REVISION := 1
+const Objectives = preload("res://scripts/campaign/campaign_objectives.gd")
+const REVISION := 2
 var seed: int = Catalog.DEFAULT_SEED
 var chapter_index := 0
 var inventory: Dictionary = {}
@@ -9,10 +10,17 @@ var visited: Dictionary = {}
 var checkpoint_room := ""
 var pending_transition := false
 var completed := false
+var objective: Dictionary = {}
+var elapsed := 0.0
+var relaxed := false
+var reduced_effects := false
+var legacy_credit := 0
+var repairs := 0
 
 func _init(seed_value: int = Catalog.DEFAULT_SEED) -> void:
 	seed = clampi(seed_value,0,Catalog.MAX_SEED)
 	checkpoint_room = str(Catalog.chapter(0,seed).items[0].room_key)
+	objective = Objectives.initial(0)
 
 func current_chapter() -> Dictionary:
 	return Catalog.chapter(chapter_index,seed)
@@ -37,9 +45,50 @@ func visit(room: String) -> bool:
 	return false
 
 func can_depart() -> bool:
-	if completed or pending_transition: return false
-	for item: Dictionary in current_chapter().items:
-		if not inventory.has(item.id): return false
+	return not completed and not pending_transition and bool(objective.solved)
+
+func operate(id: String) -> Dictionary:
+	if completed or pending_transition: return {"accepted":false,"message":"当前不能操作。"}
+	var index := -1
+	for i in range(current_chapter().items.size()):
+		if current_chapter().items[i].id==id: index=i
+	var result: Dictionary = Objectives.action(chapter_index,objective,index)
+	if result.accepted:
+		objective=result.snapshot
+		_stamp_completion()
+	return result
+
+func advance_time(delta: float, playable: bool) -> void:
+	if not playable or completed or pending_transition or not is_finite(delta) or delta<=0.0: return
+	# A suspended/stalled process is not player time. Never charge a long frame.
+	var step := minf(delta,0.25)
+	objective=Objectives.tick(chapter_index,objective,step)
+	if not relaxed and not objective.solved: elapsed=minf(86400.0,elapsed+step)
+	_stamp_completion()
+
+func _stamp_completion() -> void:
+	if objective.solved:
+		for item: Dictionary in current_chapter().items: inventory[item.id]=true
+
+func pressure_limit() -> float:
+	return Objectives.LIMITS[chapter_index]+float(legacy_credit)*30.0
+
+func corruption() -> float:
+	if relaxed or completed or objective.solved: return 0.0
+	return clampf((elapsed-pressure_limit())/120.0,0.0,1.0)
+
+func repair() -> bool:
+	if pending_transition or completed or corruption()<=0.0: return false
+	elapsed=pressure_limit()*0.55
+	repairs=mini(repairs+1,1000000)
+	return true
+
+func retry_chapter() -> bool:
+	if pending_transition or completed: return false
+	objective=Objectives.initial(chapter_index);elapsed=0.0;repairs=0
+	for item: Dictionary in current_chapter().items: inventory.erase(item.id)
+	legacy_credit=0
+	checkpoint_room=str(current_chapter().items[0].room_key)
 	return true
 
 func begin_transition() -> bool:
@@ -57,6 +106,7 @@ func finish_transition() -> bool:
 		completed = true
 	else:
 		chapter_index += 1
+		objective=Objectives.initial(chapter_index);elapsed=0.0;legacy_credit=0;repairs=0
 		checkpoint_room = str(current_chapter().items[0].room_key)
 	return true
 
@@ -67,7 +117,7 @@ func collected_count() -> int:
 	return count
 
 func serialize() -> Dictionary:
-	return {"revision":REVISION,"seed":seed,"chapter_index":chapter_index,"inventory":inventory.keys(),"visited":visited.keys(),"checkpoint_room":checkpoint_room,"pending_transition":pending_transition,"completed":completed}
+	return {"revision":REVISION,"seed":seed,"chapter_index":chapter_index,"inventory":inventory.keys(),"visited":visited.keys(),"checkpoint_room":checkpoint_room,"pending_transition":pending_transition,"completed":completed,"objective":objective.duplicate(true),"elapsed":elapsed,"relaxed":relaxed,"reduced_effects":reduced_effects,"legacy_credit":legacy_credit,"repairs":repairs}
 
 static func _integer(value: Variant, minimum: int, maximum: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value)==floor(float(value)) and float(value)>=minimum and float(value)<=maximum
@@ -75,7 +125,7 @@ static func _integer(value: Variant, minimum: int, maximum: int) -> bool:
 func restore(data: Variant) -> Dictionary:
 	# Validate into locals. On failure this instance is unchanged.
 	if not data is Dictionary: return {"ok":false,"reason":"Save root is not an object."}
-	if not _integer(data.get("revision"),REVISION,REVISION): return {"ok":false,"reason":"Unsupported save revision."}
+	if not _integer(data.get("revision"),1,REVISION): return {"ok":false,"reason":"Unsupported save revision."}
 	if not _integer(data.get("seed"),0,Catalog.MAX_SEED): return {"ok":false,"reason":"Invalid seed."}
 	if not _integer(data.get("chapter_index"),0,Catalog.CHAPTER_COUNT-1): return {"ok":false,"reason":"Invalid chapter."}
 	if not data.get("pending_transition") is bool or not data.get("completed") is bool: return {"ok":false,"reason":"Invalid transition state."}
@@ -110,6 +160,32 @@ func restore(data: Variant) -> Dictionary:
 	if data.completed or data.pending_transition:
 		for item: Dictionary in all[index].items:
 			if not new_inventory.has(item.id): return {"ok":false,"reason":"Incomplete departure checkpoint."}
+	var new_objective: Dictionary = Objectives.initial(index)
+	var new_elapsed := 0.0
+	var new_relaxed := false
+	var new_reduced := false
+	var new_credit := 0
+	var new_repairs := 0
+	if int(data.revision)==1:
+		# Never revoke a v1 cleared chapter. Partial gathered objects remain recorded;
+		# new mechanisms start safe with 30 seconds grace for each retained object.
+		for item: Dictionary in all[index].items:
+			if new_inventory.has(item.id): new_credit+=1
+		new_objective.solved=new_credit==all[index].items.size()
+	else:
+		if not Objectives.valid(index,data.get("objective")): return {"ok":false,"reason":"Invalid objective snapshot."}
+		if not (data.get("elapsed") is int or data.get("elapsed") is float) or not is_finite(float(data.elapsed)) or float(data.elapsed)<0.0 or float(data.elapsed)>86400.0: return {"ok":false,"reason":"Invalid active-play timer."}
+		if not data.get("relaxed") is bool or not data.get("reduced_effects") is bool: return {"ok":false,"reason":"Invalid accessibility options."}
+		if not _integer(data.get("legacy_credit"),0,all[index].items.size()) or not _integer(data.get("repairs"),0,1000000): return {"ok":false,"reason":"Invalid recovery counters."}
+		new_objective=data.objective.duplicate(true);new_elapsed=float(data.elapsed)
+		for i in range(new_objective.values.size()):new_objective.values[i]=int(new_objective.values[i])
+		for i in range(new_objective.sequence.size()):new_objective.sequence[i]=int(new_objective.sequence[i])
+		new_relaxed=data.relaxed;new_reduced=data.reduced_effects;new_credit=int(data.legacy_credit);new_repairs=int(data.repairs)
+		if (data.completed or data.pending_transition) and not new_objective.solved: return {"ok":false,"reason":"Unsolved departure checkpoint."}
+		if new_objective.solved:
+			for item: Dictionary in all[index].items:
+				if not new_inventory.has(item.id): return {"ok":false,"reason":"Missing completed objective stamp."}
+	objective=new_objective;elapsed=new_elapsed;relaxed=new_relaxed;reduced_effects=new_reduced;legacy_credit=new_credit;repairs=new_repairs
 	seed=new_seed; chapter_index=index; inventory=new_inventory; visited=new_visited
 	checkpoint_room=checkpoint; completed=bool(data.completed)
 	# Crash or quit during the drop returns to the proven old room, never the unready next floor.

@@ -19,3 +19,7 @@
 - The Windows installer bundles the patched NVIDIA Godot 4.8-dev engine at upstream commit `135dff3887a3d2ccf45cafbd9bdffa7b718e1e76`, with the patches in `tools/dlss/`. The bundled Godot, Streamline and NVIDIA SDK notices retain their original terms; they are not relicensed by this project.
 - Optional ithappy Creative Character was supplied by the user. Its original mesh/texture files are excluded from public Git source; the playable installation incorporates the derived model in game resources. Attribution and provenance are in `source_provenance/ithappy/`. This notice grants no separate rights to extract or redistribute the character.
 - The source repository contains no player profiles, signing keys, proprietary SDK headers, compiled Godot editor or NVIDIA runtime DLLs. The separately published Windows installer includes the required runtime files and corresponding notices.
+
+## Campaign Chinese font
+
+`assets/fonts/campaign/PoolCoreCampaignSC.otf` is a renamed, character-subset derivative of Noto Sans CJK SC Regular (face2 of the locally installed Noto CJK TTC), distributed under SIL Open Font License1.1. Original font-face metadata: ©2014–2021 Adobe (http://www.adobe.com/). The local package also retains a Copyright2010–2012 Google Corporation upstream notice. Full license and provenance/hash accompany the font in that directory. The original font is not authored by this project. The subset is used only by the new campaign UI, arrival captions and station labels; existing character/license boundaries are unchanged.

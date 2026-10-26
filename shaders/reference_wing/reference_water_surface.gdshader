@@ -54,6 +54,7 @@ float source_view_depth(vec2 uv,mat4 inv_projection){
     vec4 p=inv_projection*vec4(uv*2.0-1.0,depth,1.0);
     return -p.z/p.w;
 }
+#include "res://shaders/source_water/rt_transmission_filter.gdshaderinc"
 float foamField(vec2 p){
   vec2 uv=(p+48.0)/96.0,g=(p+48.0)/poolCell-.5,cell=floor(g),f=fract(g);
   float inv=poolCell/96.0;
@@ -125,7 +126,7 @@ void fragment(){
   vec2 refractUv=clamp(screenUv+offset,vec2(.002),vec2(.998));
   float offsetZ=source_view_depth(refractUv,INV_PROJECTION_MATRIX);
   if(offsetZ<-viewP.z+.02)refractUv=screenUv;
-  vec3 transmitted=texture(sceneColor,refractUv).rgb;
+  vec3 transmitted=water_transmission(refractUv,-viewP.z,INV_PROJECTION_MATRIX);
   vec3 absorption=exp(-vec3(.11,.033,.021)*absorptionStrength*absorptionOn*thickness);
   transmitted=transmitted*absorption+vec3(.13,.29,.30)*(1.0-absorption)*.24;
   vec2 reflectUv=mirrorCoord.xy/max(mirrorCoord.w,.001);
@@ -149,7 +150,7 @@ void fragment(){
   // PC_NEARFIELD_END
   vec2 border=vec2(1.5/reflectionSize);
   reflectUv=clamp(reflectUv,border,1.0-border);
-  vec3 reflected=texture(mirrorSampler,reflectUv).rgb;
+  vec3 reflected=water_reflection(reflectUv);
   reflected=mix(waterColor*.25,reflected,reflectionReady);
   float spec=pow(max(dot(N,normalize(V+sunDirection)),0.0),260.0)*.15;
   vec3 color=mix(transmitted,reflected,fresnel*reflectionOn)+sunColor*spec*fresnel;

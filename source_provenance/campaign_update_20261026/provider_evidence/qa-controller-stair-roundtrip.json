@@ -1,0 +1,102 @@
+{
+	"legs": [
+		{
+			"actual": [
+				1.39999997615814,
+				0.521217167377472,
+				0.378760129213333
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				0.200000002980232
+			],
+			"ticks": 840
+		},
+		{
+			"actual": [
+				1.39999997615814,
+				4.38353395462036,
+				8.42168617248535
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				8.60000038146973
+			],
+			"ticks": 747
+		},
+		{
+			"actual": [
+				1.39999997615814,
+				4.68121767044067,
+				10.624813079834
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				10.8000001907349
+			],
+			"ticks": 169
+		},
+		{
+			"actual": [
+				0.539438843727112,
+				4.68121767044067,
+				11.3987493515015
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.400000005960464,
+				11.5
+			],
+			"ticks": 88
+		},
+		{
+			"actual": [
+				0.401464641094208,
+				4.68121767044067,
+				13.7729501724243
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.400000005960464,
+				13.9499998092651
+			],
+			"ticks": 177
+		},
+		{
+			"actual": [
+				1.22303199768066,
+				4.68121767044067,
+				13.9642400741577
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				13.9499998092651
+			],
+			"ticks": 77
+		}
+	],
+	"passed": true,
+	"scope": "actual production reference player 120Hz, production world and mounted stations; static authored depth not GPU water; only initial warp"
+}

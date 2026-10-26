@@ -300,7 +300,12 @@ func _create_world() -> void:
 	world.streaming_completed.connect(_on_world_streamed)
 	world.initialize(world_seed, materials)
 	_settle_created_world_lighting()
-	if _spawn_mode == "reference":
+	if is_instance_valid(_campaign) and _campaign.active:
+		# Chapter transitions verify collision while input/physics are paused.
+		# Start on the authored floor, rather than relying on gravity to settle.
+		var spawn: Vector3 = world.get_spawn_position(world.current_room)
+		player.warp_to(spawn,spawn+Vector3(0,1.45,-6))
+	elif _spawn_mode == "reference":
 		var view := ReferenceCatalog.camera(0)
 		player.warp_to(world.get_spawn_position(world.current_room),view.target)
 	elif world.formal_mode:
@@ -493,6 +498,7 @@ func _process(delta: float) -> void:
 	if menu_open: _refresh_preparation_interface()
 	var coord: Vector2i = world.current_room
 	_status.text = "SECTOR %02d / %02d   ·   SEED %d   ·   %d ROOMS" % [coord.x,coord.y,world_seed,world.get_discovered_count()]
+	if is_instance_valid(_campaign) and _campaign.active: _status.text="POOLCORE · CAMPAIGN"
 	if _pc_mainhall_preview:
 		_status.text += " · EXPERIMENTAL MAINHALL BAKE" if _pc_preview_result.get("installed",false) else " · BAKE UNAVAILABLE / ORIGINAL VISUALS"
 	var ps: Dictionary = player.get_status()
@@ -560,13 +566,14 @@ func _refresh_preparation_interface() -> void:
 		_loading_status.visible = not _loading_status.text.is_empty()
 
 func set_menu(value: bool) -> void:
-	if not value and is_instance_valid(_campaign) and _campaign.busy: return
+	if not value and is_instance_valid(_campaign) and (_campaign.busy or not _campaign.can_resume()): return
 	# Initial static optical data prepares without freezing the menu. Do not let
 	# floating actors fall through an unprepared depth field on a cold launch.
 	if not value and (_switching_spawn or (is_instance_valid(water) and not water.is_terrain_ready())): value=true
 	if value and is_instance_valid(_exploration_notes):
 		_exploration_notes.flush()
 		_exploration_notes.refresh_menu_summary()
+	if value and not menu_open and is_instance_valid(_campaign): _campaign.flush()
 	menu_open = value
 	_menu.visible = value
 	_refresh_pc_preview_interface()
@@ -677,7 +684,12 @@ func regenerate(seed_value: int, allow_campaign_cancel: bool = false) -> void:
 	set_menu(true)
 	if is_instance_valid(water):
 		water.suspend_preparation(true)
+		var preparation_started:int=Time.get_ticks_msec()
 		while water.preparation_pending():
+			if is_instance_valid(_campaign) and _campaign.active and Time.get_ticks_msec()-preparation_started>45000:
+				water.suspend_preparation(false);_switching_spawn=false
+				_campaign._cancel_requested=true;_campaign.message="水体准备超时。已保留当前世界与机关进度，请重试或安全退出。"
+				return
 			if allow_campaign_cancel and is_instance_valid(_campaign) and _campaign._cancel_requested:
 				water.suspend_preparation(false)
 				_switching_spawn=false
@@ -1896,6 +1908,7 @@ func _record_walkthrough() -> bool:
 
 func _safe_quit(exit_code: int = 0) -> void:
 	if not _booted: return
+	if is_instance_valid(_campaign): _campaign.flush()
 	if is_instance_valid(_exploration_notes): _exploration_notes.flush()
 	_booted=false
 	_retiring_world=true

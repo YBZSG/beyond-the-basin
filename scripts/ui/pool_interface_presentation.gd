@@ -210,6 +210,8 @@ func _build_main_presentation() -> void:
 	if is_instance_valid(campaign):
 		_move(campaign.get("_menu_summary"), world_card)
 		_move(campaign.get("_continue"), world_card)
+		for field in ["_relaxed_check", "_reduced_check", "_repair_button", "_retry_button", "_rebuild_button", "_recovery_button"]:
+			_move(campaign.get(field), world_card)
 	var spawn := main.get("_spawn_select") as OptionButton
 	var spawn_row := spawn.get_parent()
 	_move(spawn_row, world_card)
@@ -283,7 +285,7 @@ func _build_main_presentation() -> void:
 			preference_card.add_child(node)
 		elif node is Label and node.text.begins_with("WASD"):
 			node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			node.text = "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 交互 / 收集\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\nL 手电筒 · F 镜头 · H 隐藏界面\nG 诊断 · F11 全屏 · Esc 暂停 / 返回"
+			node.text = "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 交互 · Q 阅读机关铭牌\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\nL 手电筒 · F 镜头 · H 隐藏界面\nG 诊断 · F11 全屏 · Esc 暂停 / 返回"
 			preference_card.add_child(node)
 		elif node is Button and (node.text.contains("DIAGNOSTICS") or node.text.contains("QUIT")):
 			node.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -1,0 +1,17 @@
+{
+  "tests/campaign/independent/test_adversarial_independent.gd": "d34d00edc0bddd8ed175eca26282cdbc31bc1bb468175bd02b515743f3ef1423",
+  "tests/campaign/independent/test_inspection_layout_independent.gd": "2db24210631f09e1402edc51dadc498f1acc5feea08da091307d78d68cf8cb42",
+  "tests/campaign/independent/test_interaction_independent.gd": "283855381dafa6288405aaaebf3c53a09b470654d53b80e862b4ad4a5d9dc3c6",
+  "tests/campaign/independent/test_loaded_world_corruption.gd": "7834ac86375a08f052f8aa6dd204c7c88753482d96a090e9d337cfda2f20f7f5",
+  "tests/campaign/independent/test_mechanics_independent.gd": "8379869fc9d28cd2ca1ea540e41f2a9bffb012f651190e9d3306760956a9369e",
+  "tests/campaign/independent/test_menu_independent.gd": "2ce5a472a053cd3baf9e77117aacf43816f70e2b55ff010619d230ba7ea8457d",
+  "tests/campaign/independent/test_midpuzzle_reload.gd": "6285b1888fa3391128e2e0d28e8c72d7a9a80ec3758ba129562b355994405d76",
+  "tests/campaign/independent/test_migration_independent.gd": "5dd3afd166d73ae0219e76ef169c5fb3f8b13c677707cf05769dc851c255786f",
+  "tests/campaign/independent/test_recovery_copy_independent.gd": "fe6cd422859c6bb02db4314334c1d4331669240847b501315d3553d54a257278",
+  "tests/campaign/independent/test_reference_return.gd": "1a0e662ae50fb688a1a1bef2ed894ae4095d32604bcc65973a338c575b30a237",
+  "tests/campaign/independent/test_reference_routes_bottom.gd": "26826ce76dc0e3501b9315afdc26f3e61760c62ae309ea04ab417aba236b8b6f",
+  "tests/campaign/independent/test_reference_routes_fine.gd": "e84dca4774fedee8aa653f60b1862bd2341ff010024ee3574e3956f1da9cd265",
+  "tests/campaign/independent/test_reference_walk.gd": "9ad80777b297e7df9f2c204fea668729d1bbb7a8de74e3a3ff40b9e8307442d6",
+  "tests/campaign/independent/test_routes_fine.gd": "aeaac585e1f41ffe236c6e65ce2c0497560b0e3a2425239776c4f0f53b7c4184",
+  "tests/campaign/independent/test_timeline_independent.gd": "91358bbe2e93f640cf08be2b6392fb64ea3edb58275d1a51ab5daa24f35677ec"
+}

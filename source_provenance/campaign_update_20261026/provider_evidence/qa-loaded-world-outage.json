@@ -1,0 +1,79 @@
+{
+	"checks": 268,
+	"failures": [],
+	"rows": [
+		{
+			"active_room_tracked": 2,
+			"chapter": 0,
+			"eligible_outage_candidates": 18,
+			"maximum_simultaneously_off": 1,
+			"native_lights": 36,
+			"off_samples": 32,
+			"rooms": 16,
+			"same_room_safety": true,
+			"tracked": 24,
+			"visible_tracked": 18
+		},
+		{
+			"active_room_tracked": 4,
+			"chapter": 1,
+			"eligible_outage_candidates": 14,
+			"maximum_simultaneously_off": 1,
+			"native_lights": 14,
+			"off_samples": 32,
+			"rooms": 4,
+			"same_room_safety": true,
+			"tracked": 14,
+			"visible_tracked": 14
+		},
+		{
+			"active_room_tracked": 4,
+			"chapter": 2,
+			"eligible_outage_candidates": 12,
+			"maximum_simultaneously_off": 1,
+			"native_lights": 12,
+			"off_samples": 32,
+			"rooms": 3,
+			"same_room_safety": true,
+			"tracked": 12,
+			"visible_tracked": 12
+		},
+		{
+			"active_room_tracked": 17,
+			"chapter": 3,
+			"eligible_outage_candidates": 26,
+			"maximum_simultaneously_off": 1,
+			"native_lights": 47,
+			"off_samples": 32,
+			"rooms": 5,
+			"same_room_safety": true,
+			"tracked": 47,
+			"visible_tracked": 27
+		},
+		{
+			"active_room_tracked": 2,
+			"chapter": 4,
+			"eligible_outage_candidates": 6,
+			"maximum_simultaneously_off": 1,
+			"native_lights": 6,
+			"off_samples": 32,
+			"rooms": 3,
+			"same_room_safety": true,
+			"tracked": 6,
+			"visible_tracked": 6
+		},
+		{
+			"active_room_tracked": 6,
+			"chapter": 5,
+			"eligible_outage_candidates": 17,
+			"maximum_simultaneously_off": 1,
+			"native_lights": 17,
+			"off_samples": 32,
+			"rooms": 5,
+			"same_room_safety": true,
+			"tracked": 17,
+			"visible_tracked": 17
+		}
+	],
+	"scope": "actual loaded production campaign geometry plus exact production lighting callbacks/visibility selection; Light3D state only, no rendered-pixel or water claim"
+}

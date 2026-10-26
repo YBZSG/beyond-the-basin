@@ -1,0 +1,42 @@
+{
+  "source_zip_sha256": "62c254c0237bea3e7d945d431d949414ff24f22d3b132eee6489ada77be925f0",
+  "local_checks": {
+    "migration_checks": 1285,
+    "mechanics_checks": 635,
+    "transition_checks": 22,
+    "gpu": {
+      "checks": {
+        "camera_restored_and_progress_committed": true,
+        "chapter_four_devices_safely_mounted": true,
+        "chapter_four_exit_unlocked": true,
+        "character_selection_and_avatar_retained": true,
+        "e_operates_station_without_collecting_it": true,
+        "legacy_checkpoint_preserved": true,
+        "menu_group__reduced_check": true,
+        "menu_group__relaxed_check": true,
+        "menu_group__repair_button": true,
+        "menu_group__retry_button": true,
+        "migrated_copy_saved_and_reloaded": true,
+        "migration_writable_revision2": true,
+        "native_raytracing_retained": true,
+        "new_chapter_water_collision_devices_ready": true,
+        "production_transition_reaches_chapter_five": true,
+        "q_opens_readable_chinese_plate": true,
+        "q_returns_to_play": true,
+        "reading_pauses_timer": true,
+        "real_camera_targets_device": true,
+        "real_legacy_chapter_and_items_preserved": true,
+        "station_remains_after_action": true
+      },
+      "passed": true
+    },
+    "gpu_scope": "RTX 5070 Laptop, native RT enabled, NR/FG disabled; actual player input E/Q, copied chapter-four save migration and production transition to chapter five; remaining puzzle steps prepared using QA state, not a full playthrough",
+    "known_diagnostics": [
+      "OpTypeForwardPointer is not supported yet",
+      "7 leaked Texture RIDs on shutdown"
+    ]
+  },
+  "runtime_resources": 533,
+  "profile_preserved": true,
+  "local_only": true
+}

@@ -1,0 +1,693 @@
+[
+	{
+		"name": "new",
+		"save": {
+			"chapter_index": 0,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": []
+		}
+	},
+	{
+		"name": "chapter_0_partial",
+		"save": {
+			"chapter_index": 0,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_0_ready",
+		"save": {
+			"chapter_index": 0,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_0_pending",
+		"save": {
+			"chapter_index": 0,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7"
+			],
+			"pending_transition": true,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_1_partial",
+		"save": {
+			"chapter_index": 1,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_1_ready",
+		"save": {
+			"chapter_index": 1,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_1_pending",
+		"save": {
+			"chapter_index": 1,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition"
+			],
+			"pending_transition": true,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_2_partial",
+		"save": {
+			"chapter_index": 2,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_2_ready",
+		"save": {
+			"chapter_index": 2,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_2_pending",
+		"save": {
+			"chapter_index": 2,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath"
+			],
+			"pending_transition": true,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_3_partial",
+		"save": {
+			"chapter_index": 3,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_3_ready",
+		"save": {
+			"chapter_index": 3,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_3_pending",
+		"save": {
+			"chapter_index": 3,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge"
+			],
+			"pending_transition": true,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_4_partial",
+		"save": {
+			"chapter_index": 4,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_4_ready",
+		"save": {
+			"chapter_index": 4,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0",
+				"quiet_1",
+				"quiet_2"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_4_pending",
+		"save": {
+			"chapter_index": 4,
+			"checkpoint_room": "0,0",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0",
+				"quiet_1",
+				"quiet_2"
+			],
+			"pending_transition": true,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0"
+			]
+		}
+	},
+	{
+		"name": "chapter_5_partial",
+		"save": {
+			"chapter_index": 5,
+			"checkpoint_room": "-1,-1",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0",
+				"quiet_1",
+				"quiet_2",
+				"formal_0"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0",
+				"daylight:-1,-1"
+			]
+		}
+	},
+	{
+		"name": "chapter_5_ready",
+		"save": {
+			"chapter_index": 5,
+			"checkpoint_room": "-1,-1",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0",
+				"quiet_1",
+				"quiet_2",
+				"formal_0",
+				"formal_1",
+				"formal_2",
+				"formal_3",
+				"formal_4"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0",
+				"daylight:-1,-1"
+			]
+		}
+	},
+	{
+		"name": "chapter_5_pending",
+		"save": {
+			"chapter_index": 5,
+			"checkpoint_room": "-1,-1",
+			"completed": false,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0",
+				"quiet_1",
+				"quiet_2",
+				"formal_0",
+				"formal_1",
+				"formal_2",
+				"formal_3",
+				"formal_4"
+			],
+			"pending_transition": true,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0",
+				"daylight:-1,-1"
+			]
+		}
+	},
+	{
+		"name": "completed",
+		"save": {
+			"chapter_index": 5,
+			"checkpoint_room": "-1,-1",
+			"completed": true,
+			"inventory": [
+				"source_0",
+				"source_1",
+				"source_2",
+				"source_3",
+				"source_4",
+				"source_5",
+				"source_6",
+				"source_7",
+				"facility_shower_changing",
+				"facility_low_arched_bath",
+				"facility_skylight_gallery",
+				"facility_service_transition",
+				"wing_poolrooms_court",
+				"wing_poolrooms_lanes",
+				"wing_poolrooms_bath",
+				"reference_stair_gallery",
+				"reference_colonnade",
+				"reference_cyan_corridor",
+				"reference_octagonal_bath",
+				"reference_ball_lounge",
+				"quiet_0",
+				"quiet_1",
+				"quiet_2",
+				"formal_0",
+				"formal_1",
+				"formal_2",
+				"formal_3",
+				"formal_4"
+			],
+			"pending_transition": false,
+			"revision": 1,
+			"seed": 250821,
+			"visited": [
+				"lost_shift:0,0",
+				"maintenance:0,0",
+				"return_water:0,0",
+				"five_memories:0,0",
+				"quiet_archive:0,0",
+				"daylight:-1,-1"
+			]
+		}
+	}
+]

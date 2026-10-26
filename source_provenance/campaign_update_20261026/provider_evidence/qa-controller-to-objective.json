@@ -1,0 +1,276 @@
+{
+	"legs": [
+		{
+			"actual": [
+				0.657146096229553,
+				4.68121767044067,
+				11.1301593780518
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.5,
+				11.1999998092651
+			],
+			"ticks": 71
+		},
+		{
+			"actual": [
+				0.492926746606827,
+				4.68121767044067,
+				9.36788177490234
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.5,
+				9.19999980926514
+			],
+			"ticks": 154
+		},
+		{
+			"actual": [
+				1.25427281856537,
+				4.52121734619141,
+				8.69099712371826
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				8.60000038146973
+			],
+			"ticks": 79
+		},
+		{
+			"actual": [
+				1.39955723285675,
+				0.521217346191406,
+				0.378771901130676
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				0.200000002980232
+			],
+			"ticks": 678
+		},
+		{
+			"actual": [
+				2.17434597015381,
+				0.521217286586761,
+				0.186254993081093
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				2.34999990463257,
+				0.200000002980232
+			],
+			"ticks": 73
+		},
+		{
+			"actual": [
+				2.35437726974487,
+				0.521217405796051,
+				-2.33282160758972
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				2.34999990463257,
+				-2.5
+			],
+			"ticks": 202
+		},
+		{
+			"actual": [
+				1.44032621383667,
+				0.521217167377472,
+				-4.3352313041687
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				-4.5
+			],
+			"ticks": 167
+		},
+		{
+			"actual": [
+				0.0215833391994238,
+				0.521217167377472,
+				-15.8250398635864
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_0/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-16.0
+			],
+			"ticks": 842
+		},
+		{
+			"actual": [
+				0.00279271299950778,
+				0.521217405796051,
+				-16.9247360229492
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-1/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-17.1000003814697
+			],
+			"ticks": 80
+		},
+		{
+			"actual": [
+				1.32397818565369,
+				0.396749198436737,
+				-19.8442516326904
+			],
+			"colliders": [],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				-20.0
+			],
+			"ticks": 235
+		},
+		{
+			"actual": [
+				0.104573398828506,
+				-0.218782618641853,
+				-21.7636203765869
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-1/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-21.8999996185303
+			],
+			"ticks": 228
+		},
+		{
+			"actual": [
+				1.22230088710785,
+				-0.218782529234886,
+				-21.8973484039307
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-1/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				-21.8999996185303
+			],
+			"ticks": 132
+		},
+		{
+			"actual": [
+				1.39533686637878,
+				-0.218782544136047,
+				-24.8251895904541
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-1/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				1.39999997615814,
+				-25.0
+			],
+			"ticks": 300
+		},
+		{
+			"actual": [
+				0.0406157858669758,
+				-0.218782633543015,
+				-30.6265983581543
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-1/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-30.7999992370605
+			],
+			"ticks": 586
+		},
+		{
+			"actual": [
+				0.00041099451482296,
+				0.521217465400696,
+				-45.8287124633789
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-1/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-46.0
+			],
+			"ticks": 1450
+		},
+		{
+			"actual": [
+				0.0000223811712203315,
+				0.521217405796051,
+				-48.9217796325684
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-2/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-49.0999984741211
+			],
+			"ticks": 225
+		},
+		{
+			"actual": [
+				0.000000674796467592387,
+				-0.218782529234886,
+				-54.9207763671875
+			],
+			"colliders": [
+				"/root/@Node3D@2/@Node3D@5/CampaignRoom_0_-2/ReferenceSolidStructure"
+			],
+			"reached": true,
+			"target": [
+				0.0,
+				-55.0999984741211
+			],
+			"ticks": 497
+		}
+	],
+	"passed": true,
+	"scope": "actual production reference player 120Hz, production world and mounted stations; static authored depth not GPU water; only initial warp"
+}

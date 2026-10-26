@@ -1,0 +1,1410 @@
+{
+  "chapters": [
+    {
+      "chapter": 0,
+      "id": "lost_shift",
+      "limit_reached": false,
+      "room_spawns": [
+        {
+          "id": "source_0",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            -0.64,
+            14.0
+          ]
+        },
+        {
+          "id": "source_1",
+          "overlaps": [],
+          "spawn": [
+            -32.0,
+            -0.64,
+            -18.0
+          ]
+        },
+        {
+          "id": "source_2",
+          "overlaps": [],
+          "spawn": [
+            64.0,
+            -0.64,
+            -50.0
+          ]
+        },
+        {
+          "id": "source_3",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            -0.64,
+            -18.0
+          ]
+        },
+        {
+          "id": "source_4",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            -0.64,
+            46.0
+          ]
+        },
+        {
+          "id": "source_5",
+          "overlaps": [],
+          "spawn": [
+            32.0,
+            -0.64,
+            14.0
+          ]
+        },
+        {
+          "id": "source_6",
+          "overlaps": [],
+          "spawn": [
+            -32.0,
+            -0.64,
+            14.0
+          ]
+        },
+        {
+          "id": "source_7",
+          "overlaps": [],
+          "spawn": [
+            32.0,
+            -0.64,
+            46.0
+          ]
+        }
+      ],
+      "sampled_points": 81794,
+      "spawn": [
+        0.0,
+        -0.64,
+        14.0
+      ],
+      "spawn_colliders": [],
+      "spawn_valid": true,
+      "stations": [
+        {
+          "approach": [
+            2.4,
+            -0.68,
+            14.15
+          ],
+          "approach_clear": true,
+          "id": "source_0",
+          "interaction_label": "\u4e3b\u9988\u7535\u590d\u4f4d\u6746",
+          "los_target": "source_0",
+          "route": true,
+          "route_endpoint": [
+            1.6,
+            -0.68,
+            14.0
+          ],
+          "station": [
+            2.4,
+            -0.7,
+            13.0
+          ]
+        },
+        {
+          "approach": [
+            -34.4,
+            -0.68,
+            -17.85
+          ],
+          "approach_clear": true,
+          "id": "source_1",
+          "interaction_label": "\u6d45\u6c60\u7167\u660e\u652f\u8def",
+          "los_target": "source_1",
+          "route": true,
+          "route_endpoint": [
+            -33.6,
+            -0.68,
+            -17.2
+          ],
+          "station": [
+            -34.4,
+            -0.7,
+            -19.0
+          ]
+        },
+        {
+          "approach": [
+            66.4,
+            -0.68,
+            -49.85
+          ],
+          "approach_clear": true,
+          "id": "source_2",
+          "interaction_label": "\u6df1\u6c60\u7167\u660e\u652f\u8def",
+          "los_target": "source_2",
+          "route": true,
+          "route_endpoint": [
+            65.6,
+            -0.68,
+            -49.2
+          ],
+          "station": [
+            66.4,
+            -0.7,
+            -51.0
+          ]
+        },
+        {
+          "approach": [
+            2.4,
+            -0.68,
+            -17.85
+          ],
+          "approach_clear": true,
+          "id": "source_3",
+          "interaction_label": "\u62f1\u5385\u7167\u660e\u652f\u8def",
+          "los_target": "source_3",
+          "route": true,
+          "route_endpoint": [
+            2.0,
+            -0.68,
+            -16.8
+          ],
+          "station": [
+            2.4,
+            -0.7,
+            -19.0
+          ]
+        },
+        {
+          "approach": [
+            2.4,
+            -0.68,
+            46.15
+          ],
+          "approach_clear": true,
+          "id": "source_4",
+          "interaction_label": "\u591c\u73ed\u7167\u660e\u652f\u8def",
+          "los_target": "source_4",
+          "route": true,
+          "route_endpoint": [
+            3.2,
+            -0.68,
+            45.6
+          ],
+          "station": [
+            2.4,
+            -0.7,
+            45.0
+          ]
+        },
+        {
+          "approach": [
+            34.4,
+            -0.68,
+            14.15
+          ],
+          "approach_clear": true,
+          "id": "source_5",
+          "interaction_label": "\u8df3\u53f0\u7167\u660e\u652f\u8def",
+          "los_target": "source_5",
+          "route": true,
+          "route_endpoint": [
+            33.6,
+            -0.68,
+            13.6
+          ],
+          "station": [
+            34.4,
+            -0.7,
+            13.0
+          ]
+        },
+        {
+          "approach": [
+            -34.4,
+            -0.68,
+            14.15
+          ],
+          "approach_clear": true,
+          "id": "source_6",
+          "interaction_label": "\u8fde\u6c60\u7167\u660e\u652f\u8def",
+          "los_target": "source_6",
+          "route": true,
+          "route_endpoint": [
+            -33.6,
+            -0.68,
+            13.6
+          ],
+          "station": [
+            -34.4,
+            -0.7,
+            13.0
+          ]
+        },
+        {
+          "approach": [
+            34.4,
+            -0.68,
+            46.15
+          ],
+          "approach_clear": true,
+          "id": "source_7",
+          "interaction_label": "\u67f1\u5385\u7167\u660e\u652f\u8def",
+          "los_target": "source_7",
+          "route": true,
+          "route_endpoint": [
+            33.6,
+            -0.68,
+            45.6
+          ],
+          "station": [
+            34.4,
+            -0.7,
+            45.0
+          ]
+        },
+        {
+          "approach": [
+            4.5,
+            -0.68,
+            15.15
+          ],
+          "approach_clear": true,
+          "id": "optional_bell",
+          "interaction_label": "\u62e8\u52a8\u503c\u73ed\u94c3",
+          "los_target": "optional_bell",
+          "route": true,
+          "route_endpoint": [
+            3.6,
+            -0.68,
+            14.8
+          ],
+          "station": [
+            4.5,
+            -0.7,
+            14.0
+          ]
+        },
+        {
+          "approach": [
+            36.5,
+            -0.68,
+            47.15
+          ],
+          "approach_clear": true,
+          "id": "optional_locker",
+          "interaction_label": "\u6253\u5f00 / \u5408\u4e0a\u65e7\u67dc\u95e8",
+          "los_target": "optional_locker",
+          "route": true,
+          "route_endpoint": [
+            35.6,
+            -0.68,
+            46.8
+          ],
+          "station": [
+            36.5,
+            -0.7,
+            46.0
+          ]
+        },
+        {
+          "approach": [
+            -3.2,
+            -0.68,
+            15.15
+          ],
+          "approach_clear": true,
+          "id": "departure",
+          "interaction_label": "\u901a\u8fc7\u4fa7\u5411\u68c0\u4fee\u95e8",
+          "los_target": "departure",
+          "route": true,
+          "route_endpoint": [
+            -2.4,
+            -0.68,
+            14.8
+          ],
+          "station": [
+            -3.2,
+            -0.7,
+            14.0
+          ]
+        },
+        {
+          "approach": [
+            2.5,
+            -0.68,
+            16.35
+          ],
+          "approach_clear": true,
+          "id": "repair",
+          "interaction_label": "\u5e94\u6025\u7535\u6e90\u590d\u4f4d",
+          "los_target": "repair",
+          "route": true,
+          "route_endpoint": [
+            1.6,
+            -0.68,
+            16.0
+          ],
+          "station": [
+            2.5,
+            -0.7,
+            15.2
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 1,
+      "id": "maintenance",
+      "limit_reached": false,
+      "room_spawns": [
+        {
+          "id": "facility_shower_changing",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            0.6,
+            9.8
+          ]
+        },
+        {
+          "id": "facility_low_arched_bath",
+          "overlaps": [],
+          "spawn": [
+            32.0,
+            0.6,
+            9.8
+          ]
+        },
+        {
+          "id": "facility_skylight_gallery",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            0.6,
+            -22.2
+          ]
+        },
+        {
+          "id": "facility_service_transition",
+          "overlaps": [],
+          "spawn": [
+            -32.0,
+            0.6,
+            9.8
+          ]
+        }
+      ],
+      "sampled_points": 23264,
+      "spawn": [
+        0.0,
+        0.6,
+        9.8
+      ],
+      "spawn_colliders": [],
+      "spawn_valid": true,
+      "stations": [
+        {
+          "approach": [
+            -1.7,
+            0.56,
+            9.25
+          ],
+          "approach_clear": true,
+          "id": "facility_shower_changing",
+          "interaction_label": "\u6dcb\u6d74\u65c1\u901a\u9600",
+          "los_target": "facility_shower_changing",
+          "route": true,
+          "route_endpoint": [
+            -0.8,
+            0.56,
+            9.8
+          ],
+          "station": [
+            -1.7,
+            0.54,
+            8.1
+          ]
+        },
+        {
+          "approach": [
+            30.3,
+            0.56,
+            9.25
+          ],
+          "approach_clear": true,
+          "id": "facility_low_arched_bath",
+          "interaction_label": "\u9759\u6d74\u56de\u6d41\u9600",
+          "los_target": "facility_low_arched_bath",
+          "route": true,
+          "route_endpoint": [
+            31.2,
+            0.56,
+            8.6
+          ],
+          "station": [
+            30.3,
+            0.54,
+            8.1
+          ]
+        },
+        {
+          "approach": [
+            -1.7,
+            0.56,
+            -22.75
+          ],
+          "approach_clear": true,
+          "id": "facility_skylight_gallery",
+          "interaction_label": "\u5929\u7a97\u8865\u6c34\u9600",
+          "los_target": "facility_skylight_gallery",
+          "route": true,
+          "route_endpoint": [
+            -1.2,
+            0.56,
+            -21.8
+          ],
+          "station": [
+            -1.7,
+            0.54,
+            -23.9
+          ]
+        },
+        {
+          "approach": [
+            -33.7,
+            0.56,
+            9.25
+          ],
+          "approach_clear": true,
+          "id": "facility_service_transition",
+          "interaction_label": "\u8bbe\u5907\u5ba4\u538b\u529b\u9a8c\u6536",
+          "los_target": "facility_service_transition",
+          "route": true,
+          "route_endpoint": [
+            -32.8,
+            0.56,
+            8.6
+          ],
+          "station": [
+            -33.7,
+            0.54,
+            8.1
+          ]
+        },
+        {
+          "approach": [
+            4.5,
+            0.56,
+            9.75
+          ],
+          "approach_clear": true,
+          "id": "optional_bell",
+          "interaction_label": "\u62e8\u52a8\u503c\u73ed\u94c3",
+          "los_target": "optional_bell",
+          "route": true,
+          "route_endpoint": [
+            3.6,
+            0.56,
+            9.8
+          ],
+          "station": [
+            4.5,
+            0.54,
+            8.6
+          ]
+        },
+        {
+          "approach": [
+            -27.5,
+            0.56,
+            9.75
+          ],
+          "approach_clear": true,
+          "id": "optional_locker",
+          "interaction_label": "\u6253\u5f00 / \u5408\u4e0a\u65e7\u67dc\u95e8",
+          "los_target": "optional_locker",
+          "route": true,
+          "route_endpoint": [
+            -26.4,
+            0.56,
+            9.4
+          ],
+          "station": [
+            -27.5,
+            0.54,
+            8.6
+          ]
+        },
+        {
+          "approach": [
+            -0.3,
+            0.33,
+            12.65
+          ],
+          "approach_clear": true,
+          "id": "departure",
+          "interaction_label": "\u542f\u52a8\u6cf5\u623f\u5347\u964d\u53f0",
+          "los_target": "departure",
+          "route": true,
+          "route_endpoint": [
+            0.8,
+            0.44,
+            12.2
+          ],
+          "station": [
+            -0.3,
+            0.54,
+            11.5
+          ]
+        },
+        {
+          "approach": [
+            2.5,
+            0.56,
+            9.75
+          ],
+          "approach_clear": true,
+          "id": "repair",
+          "interaction_label": "\u5e94\u6025\u7535\u6e90\u590d\u4f4d",
+          "los_target": "repair",
+          "route": true,
+          "route_endpoint": [
+            1.6,
+            0.56,
+            9.8
+          ],
+          "station": [
+            2.5,
+            0.54,
+            8.6
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 2,
+      "id": "return_water",
+      "limit_reached": false,
+      "room_spawns": [
+        {
+          "id": "wing_poolrooms_court",
+          "overlaps": [],
+          "spawn": [
+            7.0,
+            0.6,
+            8.0
+          ]
+        },
+        {
+          "id": "wing_poolrooms_lanes",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            0.6,
+            -22.2
+          ]
+        },
+        {
+          "id": "wing_poolrooms_bath",
+          "overlaps": [],
+          "spawn": [
+            39.0,
+            0.6,
+            0.0
+          ]
+        }
+      ],
+      "sampled_points": 16743,
+      "spawn": [
+        7.0,
+        0.6,
+        8.0
+      ],
+      "spawn_colliders": [],
+      "spawn_valid": true,
+      "stations": [
+        {
+          "approach": [
+            7.0,
+            0.56,
+            7.15
+          ],
+          "approach_clear": true,
+          "id": "wing_poolrooms_court",
+          "interaction_label": "\u66f2\u5eca\u5206\u6d41\u5668",
+          "los_target": "wing_poolrooms_court",
+          "route": true,
+          "route_endpoint": [
+            7.0,
+            0.56,
+            8.0
+          ],
+          "station": [
+            7.0,
+            0.54,
+            6.0
+          ]
+        },
+        {
+          "approach": [
+            2.4,
+            0.56,
+            -21.85
+          ],
+          "approach_clear": true,
+          "id": "wing_poolrooms_lanes",
+          "interaction_label": "\u53cc\u5eca\u5bfc\u6d41\u5668",
+          "los_target": "wing_poolrooms_lanes",
+          "route": true,
+          "route_endpoint": [
+            1.4,
+            0.56,
+            -21.2
+          ],
+          "station": [
+            2.4,
+            0.56,
+            -23.0
+          ]
+        },
+        {
+          "approach": [
+            39.0,
+            0.56,
+            -0.85
+          ],
+          "approach_clear": true,
+          "id": "wing_poolrooms_bath",
+          "interaction_label": "\u5706\u6c60\u51fa\u53e3\u95f8",
+          "los_target": "wing_poolrooms_bath",
+          "route": true,
+          "route_endpoint": [
+            38.2,
+            0.56,
+            0.0
+          ],
+          "station": [
+            39.0,
+            0.54,
+            -2.0
+          ]
+        },
+        {
+          "approach": [
+            43.5,
+            0.56,
+            1.15
+          ],
+          "approach_clear": true,
+          "id": "optional_locker",
+          "interaction_label": "\u6253\u5f00 / \u5408\u4e0a\u65e7\u67dc\u95e8",
+          "los_target": "optional_locker",
+          "route": true,
+          "route_endpoint": [
+            42.6,
+            0.56,
+            1.6
+          ],
+          "station": [
+            43.5,
+            0.54,
+            0.0
+          ]
+        },
+        {
+          "approach": [
+            3.8,
+            0.56,
+            9.15
+          ],
+          "approach_clear": true,
+          "id": "departure",
+          "interaction_label": "\u7a7f\u8fc7\u5f2f\u66f2\u56de\u6c34\u5eca",
+          "los_target": "departure",
+          "route": true,
+          "route_endpoint": [
+            4.6,
+            0.56,
+            9.6
+          ],
+          "station": [
+            3.8,
+            0.54,
+            8.0
+          ]
+        },
+        {
+          "approach": [
+            9.5,
+            0.56,
+            9.15
+          ],
+          "approach_clear": true,
+          "id": "repair",
+          "interaction_label": "\u5e94\u6025\u7535\u6e90\u590d\u4f4d",
+          "los_target": "repair",
+          "route": true,
+          "route_endpoint": [
+            8.6,
+            0.56,
+            8.8
+          ],
+          "station": [
+            9.5,
+            0.54,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 3,
+      "id": "five_memories",
+      "limit_reached": false,
+      "room_spawns": [
+        {
+          "id": "reference_stair_gallery",
+          "overlaps": [],
+          "spawn": [
+            1.4,
+            4.76,
+            10.8
+          ]
+        },
+        {
+          "id": "reference_colonnade",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            0.6,
+            -17.6
+          ]
+        },
+        {
+          "id": "reference_cyan_corridor",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            0.6,
+            -49.6
+          ]
+        },
+        {
+          "id": "reference_octagonal_bath",
+          "overlaps": [],
+          "spawn": [
+            17.6,
+            0.6,
+            -64.0
+          ]
+        },
+        {
+          "id": "reference_ball_lounge",
+          "overlaps": [],
+          "spawn": [
+            30.35,
+            0.52,
+            -25.7
+          ]
+        }
+      ],
+      "sampled_points": 6277,
+      "spawn": [
+        1.4,
+        4.76,
+        10.8
+      ],
+      "spawn_colliders": [],
+      "spawn_valid": true,
+      "stations": [
+        {
+          "approach": [
+            0.8,
+            0.55,
+            0.05
+          ],
+          "approach_clear": true,
+          "id": "reference_stair_gallery",
+          "interaction_label": "\u9636\u5385\u8d77\u97f3\u8e0f\u677f",
+          "los_target": "reference_stair_gallery",
+          "route": true,
+          "station": [
+            0.8,
+            0.54,
+            -1.1
+          ],
+          "route_basis": "lower0.4m sample from actual controller-reached stair bottom"
+        },
+        {
+          "approach": [
+            0.0,
+            -0.18,
+            -21.9
+          ],
+          "approach_clear": true,
+          "id": "reference_colonnade",
+          "interaction_label": "\u6697\u67f1\u56de\u97f3\u8e0f\u677f",
+          "los_target": "reference_colonnade",
+          "route": true,
+          "station": [
+            0.0,
+            -0.2,
+            -23.05
+          ],
+          "route_basis": "lower0.4m sample from actual controller-reached stair bottom"
+        },
+        {
+          "approach": [
+            0.0,
+            -0.18,
+            -55.1
+          ],
+          "approach_clear": true,
+          "id": "reference_cyan_corridor",
+          "interaction_label": "\u9752\u7a97\u6298\u8fd4\u8e0f\u677f",
+          "los_target": "reference_cyan_corridor",
+          "route": true,
+          "station": [
+            0.0,
+            -0.2,
+            -56.25
+          ],
+          "route_basis": "lower0.4m sample from actual controller-reached stair bottom"
+        },
+        {
+          "approach": [
+            20.99,
+            0.56,
+            -66.89
+          ],
+          "approach_clear": true,
+          "id": "reference_octagonal_bath",
+          "interaction_label": "\u516b\u89d2\u7ec8\u97f3\u8e0f\u677f",
+          "los_target": "reference_octagonal_bath",
+          "route": true,
+          "station": [
+            20.99,
+            0.54,
+            -68.04
+          ],
+          "route_basis": "lower0.4m sample from actual controller-reached stair bottom"
+        },
+        {
+          "approach": [
+            20.0,
+            0.56,
+            -31.5
+          ],
+          "approach_clear": true,
+          "id": "reference_ball_lounge",
+          "interaction_label": "\u5706\u7a97\u8bb0\u5fc6\u9a8c\u6536",
+          "los_target": "reference_ball_lounge",
+          "route": true,
+          "station": [
+            20.0,
+            0.54,
+            -32.65
+          ],
+          "route_basis": "lower0.4m sample from actual controller-reached stair bottom"
+        },
+        {
+          "approach": [
+            1.4,
+            4.72,
+            13.95
+          ],
+          "approach_clear": true,
+          "id": "departure",
+          "interaction_label": "\u63a8\u5f00\u8bb0\u5fc6\u5c4f\u98ce",
+          "los_target": "departure",
+          "route": true,
+          "station": [
+            1.4,
+            4.7,
+            12.8
+          ],
+          "route_basis": "upper0.2m sample + actual120Hz stair roundtrip"
+        },
+        {
+          "approach": [
+            1.4,
+            4.72,
+            13.95
+          ],
+          "approach_clear": true,
+          "id": "repair",
+          "interaction_label": "\u901a\u9053\u7ec8\u7aef \u00b7 \u5e94\u6025\u7535\u6e90\u590d\u4f4d\uff08\u4fdd\u7559\u673a\u5173\u8fdb\u5ea6\uff09",
+          "los_target": "repair",
+          "route": true,
+          "station": [
+            1.4,
+            4.7,
+            12.8
+          ],
+          "route_basis": "upper0.2m sample + actual120Hz stair roundtrip"
+        }
+      ]
+    },
+    {
+      "chapter": 4,
+      "id": "quiet_archive",
+      "limit_reached": false,
+      "room_spawns": [
+        {
+          "id": "quiet_0",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            -0.64,
+            14.0
+          ]
+        },
+        {
+          "id": "quiet_1",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            -0.64,
+            -18.0
+          ]
+        },
+        {
+          "id": "quiet_2",
+          "overlaps": [],
+          "spawn": [
+            32.0,
+            -0.64,
+            14.0
+          ]
+        }
+      ],
+      "sampled_points": 13067,
+      "spawn": [
+        0.0,
+        -0.64,
+        14.0
+      ],
+      "spawn_colliders": [],
+      "spawn_valid": true,
+      "stations": [
+        {
+          "approach": [
+            2.4,
+            -0.69,
+            14.15
+          ],
+          "approach_clear": true,
+          "id": "quiet_0",
+          "interaction_label": "\u73af\u5ead\u566a\u58f0\u9694\u79bb\u95f8",
+          "los_target": "quiet_0",
+          "route": true,
+          "route_endpoint": [
+            1.6,
+            -0.69,
+            14.0
+          ],
+          "station": [
+            2.4,
+            -0.7,
+            13.0
+          ]
+        },
+        {
+          "approach": [
+            2.4,
+            -0.68,
+            -17.85
+          ],
+          "approach_clear": true,
+          "id": "quiet_1",
+          "interaction_label": "\u7a79\u5eca\u6392\u98ce\u767e\u53f6",
+          "los_target": "quiet_1",
+          "route": true,
+          "route_endpoint": [
+            2.0,
+            -0.68,
+            -16.8
+          ],
+          "station": [
+            2.4,
+            -0.7,
+            -19.0
+          ]
+        },
+        {
+          "approach": [
+            34.4,
+            -0.69,
+            14.15
+          ],
+          "approach_clear": true,
+          "id": "quiet_2",
+          "interaction_label": "\u66f4\u8863\u95f4\u6392\u98ce\u7535\u673a",
+          "los_target": "quiet_2",
+          "route": true,
+          "route_endpoint": [
+            33.6,
+            -0.69,
+            13.6
+          ],
+          "station": [
+            34.4,
+            -0.7,
+            13.0
+          ]
+        },
+        {
+          "approach": [
+            6.9,
+            -0.69,
+            15.15
+          ],
+          "approach_clear": true,
+          "id": "optional_bell",
+          "interaction_label": "\u62e8\u52a8\u503c\u73ed\u94c3",
+          "los_target": "optional_bell",
+          "route": true,
+          "route_endpoint": [
+            6.0,
+            -0.69,
+            14.8
+          ],
+          "station": [
+            6.9,
+            -0.7,
+            14.0
+          ]
+        },
+        {
+          "approach": [
+            36.5,
+            -0.69,
+            15.15
+          ],
+          "approach_clear": true,
+          "id": "optional_locker",
+          "interaction_label": "\u6253\u5f00 / \u5408\u4e0a\u65e7\u67dc\u95e8",
+          "los_target": "optional_locker",
+          "route": true,
+          "route_endpoint": [
+            35.6,
+            -0.69,
+            14.8
+          ],
+          "station": [
+            36.5,
+            -0.7,
+            14.0
+          ]
+        },
+        {
+          "approach": [
+            -2.0,
+            -0.69,
+            15.15
+          ],
+          "approach_clear": true,
+          "id": "departure",
+          "interaction_label": "\u6253\u5f00\u901a\u98ce\u68c0\u4fee\u95e8",
+          "los_target": "departure",
+          "route": true,
+          "route_endpoint": [
+            -1.2,
+            -0.69,
+            14.8
+          ],
+          "station": [
+            -2.0,
+            -0.7,
+            14.0
+          ]
+        },
+        {
+          "approach": [
+            4.9,
+            -0.69,
+            15.15
+          ],
+          "approach_clear": true,
+          "id": "repair",
+          "interaction_label": "\u5e94\u6025\u7535\u6e90\u590d\u4f4d",
+          "los_target": "repair",
+          "route": true,
+          "route_endpoint": [
+            4.0,
+            -0.69,
+            14.8
+          ],
+          "station": [
+            4.9,
+            -0.7,
+            14.0
+          ]
+        }
+      ]
+    },
+    {
+      "chapter": 5,
+      "id": "daylight",
+      "limit_reached": false,
+      "room_spawns": [
+        {
+          "id": "formal_0",
+          "overlaps": [],
+          "spawn": [
+            -32.0,
+            0.55,
+            -24.0
+          ]
+        },
+        {
+          "id": "formal_1",
+          "overlaps": [],
+          "spawn": [
+            -9.0,
+            0.55,
+            -32.0
+          ]
+        },
+        {
+          "id": "formal_2",
+          "overlaps": [],
+          "spawn": [
+            -32.0,
+            0.55,
+            5.5
+          ]
+        },
+        {
+          "id": "formal_3",
+          "overlaps": [],
+          "spawn": [
+            0.0,
+            0.55,
+            -57.0
+          ]
+        },
+        {
+          "id": "formal_4",
+          "overlaps": [],
+          "spawn": [
+            -32.0,
+            0.55,
+            -56.6
+          ]
+        }
+      ],
+      "sampled_points": 13060,
+      "spawn": [
+        -32.0,
+        0.55,
+        -24.0
+      ],
+      "spawn_colliders": [],
+      "spawn_valid": true,
+      "stations": [
+        {
+          "approach": [
+            -30.3,
+            0.52,
+            -21.85
+          ],
+          "approach_clear": true,
+          "id": "formal_0",
+          "interaction_label": "\u4e3b\u6c60\u91c7\u5149\u603b\u95f8",
+          "los_target": "formal_0",
+          "route": true,
+          "route_endpoint": [
+            -31.2,
+            0.56,
+            -22.4
+          ],
+          "station": [
+            -30.3,
+            0.54,
+            -23.0
+          ]
+        },
+        {
+          "approach": [
+            -9.0,
+            0.55,
+            -32.75
+          ],
+          "approach_clear": true,
+          "id": "formal_1",
+          "interaction_label": "\u62f1\u5eca\u53cd\u5c04\u955c",
+          "los_target": "formal_1",
+          "route": true,
+          "route_endpoint": [
+            -10.0,
+            0.55,
+            -32.4
+          ],
+          "station": [
+            -9.0,
+            0.54,
+            -33.9
+          ]
+        },
+        {
+          "approach": [
+            -34.55,
+            -0.49,
+            3.4
+          ],
+          "approach_clear": true,
+          "id": "formal_2",
+          "interaction_label": "\u4fa7\u6c60\u6d88\u6ce2\u6392\u6c34\u9600",
+          "los_target": "formal_2",
+          "route": true,
+          "route_endpoint": [
+            -33.6,
+            -0.49,
+            2.8
+          ],
+          "station": [
+            -34.55,
+            -0.5,
+            2.25
+          ]
+        },
+        {
+          "approach": [
+            2.4,
+            0.56,
+            -56.55
+          ],
+          "approach_clear": true,
+          "id": "formal_3",
+          "interaction_label": "\u5929\u4e95\u53cd\u5c04\u955c",
+          "los_target": "formal_3",
+          "route": true,
+          "route_endpoint": [
+            2.0,
+            0.56,
+            -55.6
+          ],
+          "station": [
+            2.4,
+            0.54,
+            -57.7
+          ]
+        },
+        {
+          "approach": [
+            -30.3,
+            0.51,
+            -54.45
+          ],
+          "approach_clear": true,
+          "id": "formal_4",
+          "interaction_label": "\u7a79\u9876\u65e5\u5149\u51fa\u53e3",
+          "los_target": "formal_4",
+          "route": true,
+          "route_endpoint": [
+            -29.6,
+            0.35,
+            -53.6
+          ],
+          "station": [
+            -30.3,
+            0.54,
+            -55.6
+          ]
+        },
+        {
+          "approach": [
+            -26.3,
+            0.55,
+            -22.85
+          ],
+          "approach_clear": true,
+          "id": "optional_bell",
+          "interaction_label": "\u62e8\u52a8\u503c\u73ed\u94c3",
+          "los_target": "optional_bell",
+          "route": true,
+          "route_endpoint": [
+            -27.2,
+            0.56,
+            -23.2
+          ],
+          "station": [
+            -26.3,
+            0.54,
+            -24.0
+          ]
+        },
+        {
+          "approach": [
+            -29.2,
+            0.56,
+            -57.15
+          ],
+          "approach_clear": true,
+          "id": "optional_locker",
+          "interaction_label": "\u6253\u5f00 / \u5408\u4e0a\u65e7\u67dc\u95e8",
+          "los_target": "optional_locker",
+          "route": true,
+          "route_endpoint": [
+            -30.0,
+            0.56,
+            -56.4
+          ],
+          "station": [
+            -29.2,
+            0.54,
+            -58.3
+          ]
+        },
+        {
+          "approach": [
+            -34.0,
+            0.55,
+            -22.85
+          ],
+          "approach_clear": true,
+          "id": "departure",
+          "interaction_label": "\u8d70\u5411\u65e5\u5149\u51fa\u53e3",
+          "los_target": "departure",
+          "route": true,
+          "route_endpoint": [
+            -33.2,
+            0.56,
+            -23.2
+          ],
+          "station": [
+            -34.0,
+            0.54,
+            -24.0
+          ]
+        },
+        {
+          "approach": [
+            -28.3,
+            0.55,
+            -22.85
+          ],
+          "approach_clear": true,
+          "id": "repair",
+          "interaction_label": "\u5e94\u6025\u7535\u6e90\u590d\u4f4d",
+          "los_target": "repair",
+          "route": true,
+          "route_endpoint": [
+            -29.2,
+            0.56,
+            -23.2
+          ],
+          "station": [
+            -28.3,
+            0.54,
+            -24.0
+          ]
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "scope": "Combined actual collision sampled connectivity + measured reference player stair link, not full controller playthrough/GPU acceptance"
+}

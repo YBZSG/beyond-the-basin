@@ -265,6 +265,8 @@ func apply_settings() -> void:
 		_water_applied_quality = ""
 	if is_instance_valid(_water):
 		var water_id := _water.get_instance_id()
+		if _changed("raster_water_rt_context", [water_id, raytracing_status.active]) and _water.has_method("set_raster_water_rt_context"):
+			_water.call("set_raster_water_rt_context", bool(raytracing_status.active))
 		var quality_changed := _water_applied_quality != str(settings.water)
 		if quality_changed:
 			_water.call("set_quality", str(settings.water))
@@ -588,7 +590,7 @@ func _refresh_interface() -> void:
 	nr_note += "\n叠加是独立历史的串联 NR 实验，默认 1 层；2–4 层增加 GPU 工作和显存，不保证更好，不用于掩盖切房间卡顿。"
 	_notes.text += "\n" + nr_note
 	_notes.text += "\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。"
-	_notes.text += "\n实验光追：建筑、人物使用硬件路径追踪与 DLSS 光线重建；透明水面保留原波浪、平面反射及焦散。首次开启需要编译材质；性能开销较大。"
+	_notes.text += "\n实验光追用于建筑和人物。水面使用光栅倒影；开启场景光追时，水下折射也采用独立光栅画面，避免池底光追亮点闪烁。波浪和焦散保留；关闭光追后恢复所选倒影质量。"
 	if not bool(frame_generation_status.get("available", false)): _notes.text += "\n帧生成不可用：" + str(frame_generation_status.get("reason", "Reflex 不可用"))
 	if not bool(raytracing_status.get("available", false)): _notes.text += "\n光追不可用：" + str(raytracing_status.get("reason", ""))
 	if not bool(dlss_status.get("available", false)):

@@ -1,7 +1,11 @@
 extends SceneTree
+const Helper=preload("res://tests/campaign/objective_test_helpers.gd")
 const Runtime=preload("res://scripts/campaign/campaign_runtime.gd")
 const State=preload("res://scripts/campaign/campaign_state.gd")
 const Catalog=preload("res://scripts/campaign/campaign_catalog.gd")
+class TestRuntime extends Runtime:
+	# Coordinator test doubles geometry mount readiness; test_runtime uses real rooms.
+	func _mounts_ready_for(_index:int)->bool:return true
 class MockCamera extends Node3D:
 	var current:=true
 class MockPlayer extends CharacterBody3D:
@@ -60,8 +64,9 @@ func check(value:bool,label:String)->void:
 func _initialize()->void:call_deferred("run")
 func setup()->MockMain:
 	var main:=MockMain.new();root.add_child(main)
-	var runtime:=Runtime.new();main.runtime=runtime;runtime.main=main;runtime.state=State.new();runtime.active=true;runtime.save_path="user://transition_test_%d_%d.json"%[Time.get_ticks_usec(),randi()];main.add_child(runtime);runtime._build_ui();runtime.set_process(false)
-	for item:Dictionary in Catalog.chapter(0).items:runtime.state.collect(item.id)
+	var runtime:=TestRuntime.new();main.runtime=runtime;runtime.main=main;runtime.state=State.new();runtime.active=true;runtime.save_path="user://transition_test_%d_%d.json"%[Time.get_ticks_usec(),randi()];main.add_child(runtime);runtime._build_ui();runtime.set_process(false)
+	Helper.solve(runtime.state)
+	runtime.state.reduced_effects=true
 	return main
 func run()->void:
 	# GPU-water is mocked, not treated as a graphical run. Exercise the real async coordinator.
@@ -92,6 +97,30 @@ func run()->void:
 	while main.runtime.busy:await process_frame
 	check(main.runtime.state.chapter_index==0,"drain cancellation preserves old stage")
 	check(main.regenerations==1,"drain cancellation does not repeat stuck wait")
+	main.queue_free();await process_frame
+	main=setup();main.water.terrain_ready=false;main.runtime.load_timeout_seconds=.1
+	main.runtime._depart()
+	while main.runtime.busy:await process_frame
+	check(main.runtime.state.chapter_index==0,"readiness timeout returns old chapter")
+	check(main.runtime.state.can_depart(),"readiness timeout preserves solved objective")
+	check(not main.runtime.state.pending_transition,"timeout clears in-memory pending")
+	main.queue_free();await process_frame
+	main=setup();main.runtime._depart();main.runtime._depart()
+	await create_timer(.8).timeout
+	main.runtime._cancel_requested=true
+	if is_instance_valid(main.runtime._cinematic):main.runtime._cinematic.cancel()
+	while main.runtime.busy:await process_frame
+	check(main.regenerations==0,"cancel during cinematic never rebuilds world")
+	check(main.runtime.state.chapter_index==0 and main.runtime.state.can_depart(),"cinematic cancel preserves ready old stage")
+	main.queue_free();await process_frame
+	main=setup();Helper.advance_to(main.runtime.state,5);Helper.solve(main.runtime.state)
+	var elapsed_before:float=main.runtime.state.elapsed
+	main.runtime._depart()
+	check(main.runtime.busy,"ending uses distinct cinematic lifecycle")
+	while main.runtime.busy:await process_frame
+	check(main.runtime.state.completed,"ending commits completion after vignette")
+	check(main.regenerations==0,"ending does not fabricate seventh world")
+	check(main.runtime.state.elapsed==elapsed_before,"transition never charges active clock")
 	main.queue_free();await process_frame
 	print("CAMPAIGN_TRANSITION_TEST ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(0 if failures.is_empty() else 1)

@@ -1,0 +1,17 @@
+{
+  "scripts/campaign/campaign_arrivals.gd": "b6b3b54d044fd16b571abc727c1c70d0e6d2b8f68ad45679d43f6df68ce4f1a2",
+  "scripts/campaign/campaign_catalog.gd": "9530458a90976fc45bbc1cf59ca22a075cea305842893df5cbda0ecbb9f6fd4a",
+  "scripts/campaign/campaign_corruption.gd": "6232b56aa38f34d72a6da56ad4710f8c6a4597d808d4d152487efc345f55681f",
+  "scripts/campaign/campaign_descent.gd": "2824062837b617cf44f2cef441a0f7847d51ceb141665b2713d7796c25184654",
+  "scripts/campaign/campaign_interactables.gd": "18eefe6e1a9ecf9b5b3cdd27095486434869da87dd3144e93f1d660ca0b7eece",
+  "scripts/campaign/campaign_objectives.gd": "b8959e0f319e54e4c3b33c2515715620955923f9dd6259df2f9ee97638c577e5",
+  "scripts/campaign/campaign_room_builder.gd": "87b8c040e0adb234984f0e7672006dd24ee51a0176912f76e52d4b8629f385ef",
+  "scripts/campaign/campaign_runtime.gd": "4371dc652eff5dba3d8c69bdfd36f8e976bb6b6bf504459ee32b433c21a25bff",
+  "scripts/campaign/campaign_state.gd": "2b8764548d7d76c5610458c339ec5b64aff176d097bbd16cc789ba7564a37928",
+  "scripts/campaign/campaign_store.gd": "928fb888d7aac7f9210ffc42846e6a4c69b965e5b0a8ccefc8c16da03f5c8a74",
+  "scripts/campaign/campaign_transition.gd": "f2648d060d3d7f3e7de362e19a4b160e968069e50e2c7ced3435af196e5f50c9",
+  "scripts/campaign/campaign_world.gd": "df9e1340c3d7ef6acd0e8cf3952d3d3e1b999a39b1a0914ef9c965481f57ef98",
+  "scripts/main.gd": "b54e8e279e00ac955ef2624a5eba27c8a6e4dadb3eca9845aafbaa9c3b459aef",
+  "assets/fonts/campaign/PoolCoreCampaignSC.otf": "56ed3df71d3cdd7040a9fc1f537fcbc2f54db18c206dde7da60fa338ed9dbeff",
+  "assets/fonts/campaign/PoolCoreCampaignSC.otf.import": "966a266bf4046f1afee59f1544db526807276653dea46370396a42c6902a87a8"
+}

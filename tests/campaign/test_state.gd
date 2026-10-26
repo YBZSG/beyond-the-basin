@@ -1,4 +1,5 @@
 extends SceneTree
+const Helper = preload("res://tests/campaign/objective_test_helpers.gd")
 const Catalog = preload("res://scripts/campaign/campaign_catalog.gd")
 const State = preload("res://scripts/campaign/campaign_state.gd")
 const Store = preload("res://scripts/campaign/campaign_store.gd")
@@ -8,7 +9,8 @@ func check(value: bool, note: String) -> void:
 	checks += 1
 	if not value: failures.append(note); push_error(note)
 func complete_chapter(state: RefCounted) -> void:
-	for item: Dictionary in state.current_chapter().items: check(state.collect(item.id),"collect "+item.id)
+	Helper.solve(state)
+	check(state.can_depart(),"real objective solved")
 func _initialize() -> void:
 	var catalog := Catalog.chapters()
 	check(catalog.size()==6,"six existing regions")
@@ -35,6 +37,8 @@ func _initialize() -> void:
 	check(not state.visit("0,0"),"repeat visit not new")
 	for item: Dictionary in catalog[0].items:
 		if item.id!="source_0":check(state.collect(item.id),"collect remaining")
+	check(not state.can_depart(),"legacy pickups never bypass new objective")
+	Helper.solve(state)
 	check(state.can_depart(),"departure unlocked")
 	check(state.begin_transition(),"begin departure")
 	check(not state.begin_transition(),"duplicate departure rejected")
