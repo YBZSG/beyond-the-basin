@@ -1,0 +1,30 @@
+{
+  "authorship": "Original deterministic periodic scalar fields; no external texture/image input",
+  "generator": "tools/late_references/generate_hand_stone.py",
+  "resolution": [
+    2048,
+    2048
+  ],
+  "metric_period_m": 4.8,
+  "normal_strength": 0.32,
+  "roughness_range": [
+    0.75,
+    0.92
+  ],
+  "albedo_mean_srgb_255": [
+    174.22362112998962,
+    172.2089982032776,
+    167.17931532859802
+  ],
+  "metallic": 0,
+  "files": {
+    "assets/dreamcore/late_references/hanging_hand_stone_albedo.png": "75b6e2b7e985140b369eec7a34a8f8a890de7b18313f535de1a6630691ad609e",
+    "assets/dreamcore/late_references/hanging_hand_stone_normal.png": "e77600ab9e3246fede7471806206d34416f55057f1480566f05888a6c4b39648",
+    "assets/dreamcore/late_references/hanging_hand_stone_orm.png": "bd5135bb7223d430ac9bc20b2a4baa5a55dd198555084339aa9bf14f6c5f12f0"
+  },
+  "mapping": "world_triplanar",
+  "blend_sharpness": 1.0,
+  "specular": 0.3,
+  "projection_reference": "https://github.com/godotengine/godot/blob/4.6/scene/resources/material.cpp",
+  "mapping_reason": "Continuous curved-surface mapping avoids the hard dominant-axis UV seams on knuckles."
+}

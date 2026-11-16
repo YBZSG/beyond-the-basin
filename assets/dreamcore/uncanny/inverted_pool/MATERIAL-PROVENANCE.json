@@ -1,0 +1,29 @@
+{
+  "generator": "tools/uncanny/crossing_inverted/generate_materials.py",
+  "seed": 27102603,
+  "license": "Original project-authored procedural texture; no third-party input",
+  "dimensions": [
+    1024,
+    1024
+  ],
+  "concrete_period_m": 3.2,
+  "tile_period_m": 3.2,
+  "tile_pitch_m": 0.2,
+  "normal_convention": "OpenGL tangent space",
+  "orm_channels": "R=occlusion,G=roughness,B=metallic",
+  "import_contract": "albedo sRGB; normal normal_map mode enabled; ORM linear; mipmaps all enabled; do not modify old metadata",
+  "files": {
+    "blue_albedo.png": "dfbfedc3ed27d5fcd92316eb673c2876adda36125881c4a1f8a333cb9f338108",
+    "blue_normal.png": "64b8de660f8243ee8f4b8141ef257c935febf758fec42e76d10556c78bae43f2",
+    "blue_orm.png": "92211e5a726bdd667e23d0c4a28116ed2e75b184fb6373428ca12604f1edbd84",
+    "concrete_albedo.png": "4042f08ec6c3a28f477a2e6173247cde410e724dba7006e859e130b13df2b1b0",
+    "concrete_normal.png": "eece3dfd4492c1a4a8e0f175575365345817c45e8f7efa2c582200f9e585c013",
+    "concrete_orm.png": "ae428233f2399395112f66760b5ff6757019cf120f354ff4dba53f71ce9881b1",
+    "cyan_albedo.png": "27eb34f8d9380612b21f1a0103dc80195dd72d08d8a8ad688bf81e4a46c3246e",
+    "cyan_normal.png": "64b8de660f8243ee8f4b8141ef257c935febf758fec42e76d10556c78bae43f2",
+    "cyan_orm.png": "47e810c660beb5bfc2e9b0e1c6be4ff25f0f6931ce609342a67b51e42837c308",
+    "tile_albedo.png": "1b905a339c9b627fb31b8673c2e1d706004480ccf1c2ee06e486bb5a0238dd5e",
+    "tile_normal.png": "64b8de660f8243ee8f4b8141ef257c935febf758fec42e76d10556c78bae43f2",
+    "tile_orm.png": "deb590b9d755f0a11b47ce3c8709c87d46ce0dc6aa67664eeb96fcaaa4fb6f90"
+  }
+}

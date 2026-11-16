@@ -1,0 +1,2750 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "当前不是 Forward+，光照与水体效果不完整。\n请检查本机 Godot 渲染设备与 Vulkan / Direct3D 12 支持。"
+msgstr "Forward+ is inactive. Lighting and water effects are incomplete.\nCheck your Godot renderer and Vulkan / Direct3D 12 support."
+
+msgid "新角色不可用，已保留原版探索者。"
+msgstr "The new character is unavailable. The original explorer is active."
+
+msgid "泳池"
+msgstr "Pool"
+
+msgid "实验预览：仅主池厅有原生烘焙，SDFGI 暂停；其余 4 厅保留直接光/环境光，但间接光不等价。退出恢复所选 GI。\n"
+msgstr "Experimental preview. Only the main pool hall has baked lighting. SDFGI is paused. The other four halls retain direct and ambient light. Your GI setting returns on exit.\n"
+
+msgid "BAKE UNAVAILABLE · 原场景保留："
+msgstr "BAKE UNAVAILABLE · Original scene retained. "
+
+msgid "WASD 移动 · Esc 菜单"
+msgstr "WASD Move · Esc Menu"
+
+msgid "正在切换场景 / SWITCHING WORLD…"
+msgstr "Switching world…"
+
+msgid "正在释放上一场景 / RELEASING PREVIOUS WORLD…"
+msgstr "Releasing previous world…"
+
+msgid "正在准备水体 / PREPARING WATER…"
+msgstr "Preparing water…"
+
+msgid "继续探索 / CONTINUE"
+msgstr "Continue exploring"
+
+msgid "进入泳池 / CONTINUE"
+msgstr "Enter the pool"
+
+msgid "请输入整数种子（不可含小数或字母）。 / Enter an integer seed (no decimals or letters)."
+msgstr "Enter an integer seed without decimals or letters."
+
+msgid "种子超出有符号 64 位整数范围。 / Seed is outside the signed 64-bit range.\n-9223372036854775808 … 9223372036854775807"
+msgstr "Seed is outside the signed 64-bit range.\n-9223372036854775808 … 9223372036854775807"
+
+msgid "正在加载场景"
+msgstr "Loading scene"
+
+msgid "水体准备尚未完成；原世界保留，可重试。"
+msgstr "Water preparation is incomplete. Your current world is retained. Try again."
+
+msgid "水体准备超时。已保留当前世界与机关进度，请重试或安全退出。"
+msgstr "Water preparation timed out. Your world and puzzle progress are retained. Retry or exit safely."
+
+msgid "场景尚未准备完成，请等待后继续或返回菜单重试。"
+msgstr "The scene is still preparing. Wait to continue or return to the menu and retry."
+
+msgid "POOLCORE · PC EXPLORER EDITION\n原版 / 主池厅 / 扩展随机地图 · 骨骼角色 · 原水体交互"
+msgstr "POOLCORE · PC EXPLORER EDITION\nOriginal pools / Main hall / Expanded maps · Animated explorer · Interactive water"
+
+msgid "出生地 / STARTING WORLD"
+msgstr "Starting world"
+
+msgid "原仓库场景 / ORIGINAL"
+msgstr "Original pools"
+
+msgid "重做主池厅 / FORMAL HALL"
+msgstr "Main pool hall"
+
+msgid "扩展随机地图 / EXPANDED"
+msgstr "Expanded maps"
+
+msgid "曲廊池区 / POOLROOMS WING"
+msgstr "Poolrooms wing"
+
+msgid "五境参考场景 / REFERENCE WING"
+msgstr "Reference wing"
+
+msgid "在此出生"
+msgstr "Spawn here"
+
+msgid "重启到所选世界 / RESTART INTO SELECTED WORLD"
+msgstr "Restart into selected world"
+
+msgid "完全退出后重新打开；可选兼容方式，不保证修复黑屏/绿屏。 / Optional fresh-process fallback, not a black/green-screen fix."
+msgstr "Exit fully and reopen in the selected world. Optional compatibility restart."
+
+msgid "实验主池厅烘焙 / EXPERIMENTAL PC PREVIEW"
+msgstr "Experimental main hall bake"
+
+msgid "前往"
+msgstr "Travel"
+
+msgid "重建种子世界"
+msgstr "Rebuild seeded world"
+
+msgid "原生间接光 / SDFGI"
+msgstr "Indirect lighting / SDFGI"
+
+msgid "水下焦散 / CAUSTICS"
+msgstr "Underwater caustics"
+
+msgid "即时切换外观；不重置关卡、持物或存档。原版可随时切回。"
+msgstr "Switch appearance instantly. Your level, held item and saves are retained."
+
+msgid "显示角色身体 / PLAYER BODY"
+msgstr "Player body"
+
+msgid "衣物织纹 / CLOTH FINISH"
+msgstr "Cloth weave"
+
+msgid "主厅设施互动 / QUIET VALVES"
+msgstr "Facility interactions"
+
+msgid "深水步行减速 / DEPTH RESPONSE"
+msgstr "Depth slowdown"
+
+msgid "声音 / ORIGINAL SOUND EFFECTS"
+msgstr "Sound effects"
+
+msgid "空间底噪 / AMBIENCE"
+msgstr "Ambience"
+
+msgid "镜头：原始 / CLEAN"
+msgstr "Lens · Clean"
+
+msgid "镜头：CCD 摄像机"
+msgstr "Lens · CCD camera"
+
+msgid "镜头：VHS 录像"
+msgstr "Lens · VHS"
+
+msgid "镜头：冷色纪实"
+msgstr "Lens · Cool documentary"
+
+msgid "镜头：模拟摄像机 / 青绿柔光"
+msgstr "Lens · Soft teal camera"
+
+msgid "水体与图层设置 / WATER"
+msgstr "Water settings"
+
+msgid "WASD 移动 · Shift 奔跑 · Space 跳跃 · E 扶梯/阀门\n左键抓取/拖动 · 右键蓄力投掷 · 滚轮：上推远 / 下拉近\nL 手电筒开关 · H 隐藏界面 · G 诊断 · F11 全屏 · Esc 暂停"
+msgstr "WASD Move · Shift Run · Space Jump · E Ladder / Valve\nLeft mouse Grab / Drag · Right mouse Charge throw · Wheel Adjust distance\nL Flashlight · H Hide HUD · G Diagnostics · F11 Fullscreen · Esc Pause"
+
+msgid "复制运行诊断 / COPY DIAGNOSTICS"
+msgstr "Copy diagnostics"
+
+msgid "退出 / QUIT"
+msgstr "Quit"
+
+msgid "已切换，但无法保存角色偏好；下次启动可能恢复旧选择。"
+msgstr "Character switched. Saving the preference failed. The previous choice may return next time."
+
+msgid "角色载入失败；保留当前角色。可继续使用原版探索者。"
+msgstr "Character loading failed. The current character remains active."
+
+msgid "原生水体 / WATER & LAYERS"
+msgstr "Water and layers"
+
+msgid "轻微室内风纹 · 水面光学近似，非完整风场物理。\n关闭风纹仍保留脚步、涉水和物体交互。"
+msgstr "Subtle indoor wind ripples use an optical approximation.\nFootstep, wading and object ripples remain active when wind ripples are disabled."
+
+msgid "恢复轻微室内风 / RESET WIND"
+msgstr "Reset indoor wind"
+
+msgid "只恢复风纹开关、强度、方向和细密度，不改变其他水体、画质、阴影或交互设置。"
+msgstr "Reset wind ripple enable, strength, direction and density."
+
+msgid "平面反射（原仓库镜像相机）"
+msgstr "Planar reflections"
+
+msgid "深度折射"
+msgstr "Depth refraction"
+
+msgid "原仓库体积光束 / SOURCE LIGHT SHAFTS"
+msgstr "Volumetric light shafts"
+
+msgid "显示水面"
+msgstr "Show water"
+
+msgid "完整水面"
+msgstr "Complete surface"
+
+msgid "浅水高度"
+msgstr "Shallow-water height"
+
+msgid "速度场"
+msgstr "Velocity field"
+
+msgid "模拟法线"
+msgstr "Simulation normals"
+
+msgid "细波纹"
+msgstr "Fine ripples"
+
+msgid "最终法线"
+msgstr "Final normals"
+
+msgid "水深"
+msgstr "Water depth"
+
+msgid "折射"
+msgstr "Refraction"
+
+msgid "焦散"
+msgstr "Caustics"
+
+msgid "反射"
+msgstr "Reflections"
+
+msgid "浮沫"
+msgstr "Foam"
+
+msgid "返回 / BACK"
+msgstr "Back"
+
+msgid "已复制诊断 / COPIED"
+msgstr "Diagnostics copied"
+
+msgid "仅支持桌面版 / Desktop only."
+msgstr "Desktop only."
+
+msgid "缺少完整启动参数 / Missing exact launcher arguments."
+msgstr "Exact launcher arguments are missing."
+
+msgid "启动信息无效 / Invalid launch identity."
+msgstr "Invalid launch identity."
+
+msgid "启动程序不匹配 / Executable identity differs."
+msgstr "Executable identity differs."
+
+msgid "仅支持同名相邻 PCK / Matching adjacent PCK required."
+msgstr "A matching adjacent PCK is required."
+
+msgid "启动参数无效 / Invalid launch argument."
+msgstr "Invalid launch argument."
+
+msgid "启动参数过多 / Too many launch arguments."
+msgstr "Too many launch arguments."
+
+msgid "自定义场景/编辑器/测试启动不支持重启 / Exit fully; relaunch with supplied CMD, not custom scene/editor/test arguments."
+msgstr "Exit fully and relaunch with the supplied CMD launcher."
+
+msgid "预览/测试模式不支持重启 / Preview or QA mode is unsupported."
+msgstr "Preview or QA mode does not support restarting."
+
+msgid "当前参数与启动器不一致 / Current user arguments differ from launcher."
+msgstr "Current arguments differ from the launcher."
+
+msgid "渲染器与启动参数不一致 / Active renderer differs from launch arguments."
+msgstr "Active renderer differs from the launch arguments."
+
+msgid "请完全退出后通过启动器打开 / Exit fully and use the launcher, not the editor/debugger."
+msgstr "Exit fully and open through the launcher."
+
+msgid "请完全退出后用随包 CMD 启动器打开 / Exit fully and use the supplied CMD launcher."
+msgstr "Exit fully and use the supplied CMD launcher."
+
+msgid "启动信息损坏 / Invalid launcher contract."
+msgstr "Invalid launcher contract."
+
+msgid "启动文件已移动 / Executable or matching PCK is missing."
+msgstr "Executable or matching PCK is missing."
+
+msgid "当前启动方式不支持重启 / Current invocation is unsupported."
+msgstr "This invocation does not support restarting."
+
+msgid "正在切换或退出，请稍候 / A transition or shutdown is already in progress."
+msgstr "A transition or shutdown is already in progress."
+
+msgid "出生地或回调无效 / Invalid selection or callback."
+msgstr "Invalid starting world or callback."
+
+msgid "设置保存失败，未退出 / Settings save failed; game remains open."
+msgstr "Settings could not be saved. The game remains open."
+
+msgid "未能请求重启，请手动重新打开 / Restart could not be armed; reopen manually."
+msgstr "Restart could not be prepared. Reopen manually."
+
+msgid "已保存，正在完全退出并重新打开 / Saved; exiting fully and reopening."
+msgstr "Saved. Exiting fully and reopening."
+
+msgid "旧泳池"
+msgstr "Old pool"
+
+msgid "水拍旧瓷砖，跳台隐在高处。"
+msgstr "Water laps against old tiles. A diving platform hides above."
+
+msgid "漂浮物厅"
+msgstr "Floating objects hall"
+
+msgid "漂浮物轻碰池沿，空厅传来细响。"
+msgstr "Floating objects tap the edge. A faint sound crosses the empty hall."
+
+msgid "沉阶水厅"
+msgstr "Submerged steps"
+
+msgid "阶沿没入浅水，脚下仍有去路。"
+msgstr "The steps sink into shallow water. A path remains underfoot."
+
+msgid "高拱门大厅"
+msgstr "High arch hall"
+
+msgid "日光穿过高拱，回声拉长。"
+msgstr "Daylight crosses the high arches. The echoes stretch."
+
+msgid "夜间浴场"
+msgstr "Night baths"
+
+msgid "低顶灯下，一段电流声并不平稳。"
+msgstr "Beneath low ceiling lights, an electrical hum falters."
+
+msgid "跳台高廊"
+msgstr "Diving platform gallery"
+
+msgid "高处栏杆映着光，水声留在下方。"
+msgstr "Light catches the high railings. Water sounds below."
+
+msgid "连通浴池"
+msgstr "Connected baths"
+
+msgid "浅水连接岛台，干湿脚步交替。"
+msgstr "Shallow water links the islands. Footsteps alternate between wet and dry."
+
+msgid "柱阵水厅"
+msgstr "Pillared pool hall"
+
+msgid "柱影层层延伸，水声绕过暗处。"
+msgstr "Rows of shadows extend into the distance. Water echoes around them."
+
+msgid "淋浴更衣间"
+msgstr "Showers and changing rooms"
+
+msgid "长凳划开干湿区，滴水声贴近墙面。"
+msgstr "Benches divide wet and dry. Drops fall close to the wall."
+
+msgid "低拱静浴"
+msgstr "Low-arched baths"
+
+msgid "四座浅池围着步道，低拱收住回声。"
+msgstr "Four shallow pools border a path. Low arches hold the echoes."
+
+msgid "天窗泳廊"
+msgstr "Skylight gallery"
+
+msgid "真实天光落入蓝瓷，水面缓慢映亮。"
+msgstr "Daylight falls across blue tiles. The water slowly brightens."
+
+msgid "设备过渡厅"
+msgstr "Service transition"
+
+msgid "设备门旁的导向牌，在风机声里静止。"
+msgstr "A sign beside the service door stands still in the fan's hum."
+
+msgid "曲廊镜池"
+msgstr "Curved mirror pool"
+
+msgid "曲墙遮住池尾，反光先到达脚边。"
+msgstr "A curved wall hides the far end. Reflected light reaches your feet first."
+
+msgid "拱顶水廊"
+msgstr "Vaulted water lanes"
+
+msgid "两条水道向前延伸，天光只剩窄缝。"
+msgstr "Two channels continue ahead. Daylight narrows to a slit."
+
+msgid "圆门侧浴"
+msgstr "Circular-door baths"
+
+msgid "圆门框住静水，休息龛里声音变轻。"
+msgstr "A round doorway frames still water. Sound softens in the resting alcove."
+
+msgid "釉光阶厅"
+msgstr "Glazed stair hall"
+
+msgid "干燥的楼梯向下，砖缝接住灯影。"
+msgstr "Dry stairs descend. Tile joints catch the light."
+
+msgid "暗柱水厅"
+msgstr "Dark pillar hall"
+
+msgid "中轴灯照出方柱，侧面依然安静。"
+msgstr "Central lamps reveal square columns. The sides stay quiet."
+
+msgid "青窗水廊"
+msgstr "Teal window channel"
+
+msgid "青窗照着水道，旧标志留在原位。"
+msgstr "Teal windows light the waterway. Old signs remain in place."
+
+msgid "粉阶八角池"
+msgstr "Pink octagonal pool"
+
+msgid "粉色阶沿环住八角水面，穹顶叠起。"
+msgstr "Pink steps surround an octagonal pool beneath layered vaults."
+
+msgid "圆窗球池休息室"
+msgstr "Round-window ball lounge"
+
+msgid "软垫收住脚步声，圆窗嵌在墙里。"
+msgstr "Soft mats absorb your footsteps. A round window rests in the wall."
+
+msgid "天光环庭"
+msgstr "Daylight ring court"
+
+msgid "天光穿过环庭，风在上层绕行。"
+msgstr "Daylight crosses the ring court. Wind circles above."
+
+msgid "穹顶泳廊"
+msgstr "Vaulted swimming gallery"
+
+msgid "拱券重复，长水道尽头仍留着暖光。"
+msgstr "Arches repeat. Warm light remains at the end of the long channel."
+
+msgid "更衣回廊"
+msgstr "Changing gallery"
+
+msgid "旧柜与淋浴间之间，浅水漫过砖缝。"
+msgstr "Between old lockers and showers, shallow water covers the tile joints."
+
+msgid "采光主池厅"
+msgstr "Daylit main pool"
+
+msgid "宽阔的水面接住自然光，空气渐静。"
+msgstr "Natural light rests on the broad pool. The air grows still."
+
+msgid "连续拱廊"
+msgstr "Continuous arcade"
+
+msgid "干地脚步穿过一道又一道拱门。"
+msgstr "Dry footsteps pass through arch after arch."
+
+msgid "静水侧池"
+msgstr "Still side pool"
+
+msgid "侧池没有另一扇出口，适合停留片刻。"
+msgstr "The side pool has one entrance. Stay for a moment."
+
+msgid "浅水天井"
+msgstr "Shallow courtyard"
+
+msgid "天空打开，浅浅的水几乎贴着地面。"
+msgstr "The sky opens above water that barely covers the ground."
+
+msgid "穹顶静浴"
+msgstr "Domed quiet bath"
+
+msgid "水光托着穹顶，远处终于有了风声。"
+msgstr "Reflected light supports the dome. At last, wind sounds in the distance."
+
+msgid "值班室铜钥匙"
+msgstr "Duty-room brass key"
+
+msgid "漂流防水筒"
+msgstr "Floating waterproof tube"
+
+msgid "水位刻度片"
+msgstr "Water-level scale"
+
+msgid "拱厅铭牌"
+msgstr "Arch hall plaque"
+
+msgid "夜班保险丝"
+msgstr "Night-shift fuse"
+
+msgid "跳台检修卡"
+msgstr "Diving platform service card"
+
+msgid "连池阀柄"
+msgstr "Connecting pool valve handle"
+
+msgid "柱厅线路图"
+msgstr "Pillar hall wiring plan"
+
+msgid "第一章 · 无人的值班"
+msgstr "Chapter One · An Unattended Shift"
+
+msgid "找回八处值班记录，恢复检修通道。"
+msgstr "Recover eight duty records and restore maintenance access."
+
+msgid "开启检修井"
+msgstr "Open maintenance shaft"
+
+msgid "你沿着还在工作的灯，寻找上一班留下的交接物。"
+msgstr "Follow the lights still working. Find what the previous shift left behind."
+
+msgid "更衣柜门牌"
+msgstr "Locker number plate"
+
+msgid "静浴阀门芯"
+msgstr "Quiet bath valve core"
+
+msgid "天窗反射片"
+msgstr "Skylight reflector"
+
+msgid "设备室通行章"
+msgstr "Service-room pass"
+
+msgid "第二章 · 恢复水路"
+msgstr "Chapter Two · Restore the Waterways"
+
+msgid "收集四件维护部件，打开下层回水通道。"
+msgstr "Collect four maintenance parts and open the lower return channel."
+
+msgid "打开回水井"
+msgstr "Open return shaft"
+
+msgid "水路依旧通向更深处，检修记录却停在了昨天。"
+msgstr "The pipes lead deeper. The maintenance records end yesterday."
+
+msgid "曲廊黄铜徽章"
+msgstr "Curved gallery brass badge"
+
+msgid "水廊压力表"
+msgstr "Water lane pressure gauge"
+
+msgid "圆门锁芯"
+msgstr "Round-door lock core"
+
+msgid "第三章 · 回水的方向"
+msgstr "Chapter Three · The Return Flow"
+
+msgid "找齐三件回水装置，解锁旧浴场的下行口。"
+msgstr "Find three return-flow components and unlock the way down."
+
+msgid "释放下行舱"
+msgstr "Release descent chamber"
+
+msgid "反光里的门重复出现，但只有一扇与水声相连。"
+msgstr "Doors repeat in the reflections. Only one follows the sound of water."
+
+msgid "阶厅编号瓷片"
+msgstr "Numbered stair hall tile"
+
+msgid "暗柱灯管端盖"
+msgstr "Dark pillar lamp end cap"
+
+msgid "青窗红色通行牌"
+msgstr "Teal window red pass"
+
+msgid "八角池刻度环"
+msgstr "Octagonal pool scale ring"
+
+msgid "圆窗房旧手环"
+msgstr "Old round-window wristband"
+
+msgid "第四章 · 五间记忆"
+msgstr "Chapter Four · Five Rooms of Memory"
+
+msgid "五处遗留物组成最后一份交接记录。"
+msgstr "Five objects form the final handover record."
+
+msgid "进入深层采光井"
+msgstr "Enter the deep light well"
+
+msgid "这里既像公共浴场，也像被水浸湿的记忆。"
+msgstr "This place feels like a public bath and a memory soaked in water."
+
+msgid "环庭通风栅片"
+msgstr "Ring court vent grille"
+
+msgid "穹廊检修尺"
+msgstr "Vaulted gallery service ruler"
+
+msgid "旧更衣柜手牌"
+msgstr "Old locker wrist tag"
+
+msgid "第五章 · 封存的静翼"
+msgstr "Chapter Five · The Sealed Quiet Wing"
+
+msgid "取回三件旧馆遗留物，重启通往采光层的通风井。"
+msgstr "Recover three objects from the old wing and restart the ventilation shaft."
+
+msgid "打开通风井"
+msgstr "Open ventilation shaft"
+
+msgid "新馆的交接记录，指向一片早已封存的旧馆。"
+msgstr "The new wing's handover records point toward an old, sealed hall."
+
+msgid "主池泵房钥匙"
+msgstr "Main pool pump-room key"
+
+msgid "拱廊玻璃棱片"
+msgstr "Arcade glass prism"
+
+msgid "侧池排水塞"
+msgstr "Side pool drain plug"
+
+msgid "天井日照刻度"
+msgstr "Courtyard sunlight scale"
+
+msgid "穹顶出口铭牌"
+msgstr "Dome exit plaque"
+
+msgid "第六章 · 光的出口"
+msgstr "Chapter Six · A Way into the Light"
+
+msgid "完成最后五处交接，开启回到地面的出口。"
+msgstr "Complete the final five handovers and open the way to the surface."
+
+msgid "完成交接 · 开启出口"
+msgstr "Complete handover · Open exit"
+
+msgid "水不再向下流，远处终于有了风声。"
+msgstr "Water no longer flows down. At last, wind sounds in the distance."
+
+msgid "隔离故障照明支路并恢复馈电。"
+msgstr "Isolate the faulty lighting circuit and restore the main supply."
+
+msgid "平衡相互牵制的三路水压。"
+msgstr "Balance the three linked water pressures."
+
+msgid "重定向回水并稳定出口水位。"
+msgstr "Redirect the return flow and stabilize the outlet level."
+
+msgid "按建筑回声重演四拍记忆。"
+msgstr "Replay the four-beat memory through the building's echoes."
+
+msgid "按联锁次序恢复旧馆通风。"
+msgstr "Restore the old wing's ventilation in interlock order."
+
+msgid "汇聚日光并开启穹顶出口。"
+msgstr "Gather daylight and open the domed exit."
+
+msgid "通过侧向检修门"
+msgstr "Pass through the side service door"
+
+msgid "启动泵房升降台"
+msgstr "Start pump-room lift"
+
+msgid "穿过弯曲回水廊"
+msgstr "Cross the curved return channel"
+
+msgid "推开记忆屏风"
+msgstr "Push open the memory screen"
+
+msgid "打开通风检修门"
+msgstr "Open ventilation service door"
+
+msgid "走向日光出口"
+msgstr "Walk toward the daylight exit"
+
+msgid "上一班没有留下钥匙，只留下仍在呼吸的电路。"
+msgstr "The previous shift left breathing circuits in place of keys."
+
+msgid "水压彼此牵制，静止的指针也能讲述管路的方向。"
+msgstr "The pressures pull against each other. Even a still needle reveals the pipes' direction."
+
+msgid "出口不在最响的水声后面，而在两段流向相遇的地方。"
+msgstr "The exit lies where two currents meet."
+
+msgid "空间记得经过它的次序。"
+msgstr "The space remembers the order of your steps."
+
+msgid "先让噪声停止，再让空气流动。"
+msgstr "Let the noise stop, then let the air move."
+
+msgid "光需要方向，不需要通行证。"
+msgstr "Light needs direction."
+
+msgid "检修设备"
+msgstr "Maintenance equipment"
+
+msgid "主馈电复位杆"
+msgstr "Main supply reset lever"
+
+msgid "浅池照明支路"
+msgstr "Shallow pool lighting"
+
+msgid "深池照明支路"
+msgstr "Deep pool lighting"
+
+msgid "拱厅照明支路"
+msgstr "Arch hall lighting"
+
+msgid "夜班照明支路"
+msgstr "Night-shift lighting"
+
+msgid "跳台照明支路"
+msgstr "Diving platform lighting"
+
+msgid "连池照明支路"
+msgstr "Connecting pool lighting"
+
+msgid "柱厅照明支路"
+msgstr "Pillar hall lighting"
+
+msgid "淋浴旁通阀"
+msgstr "Shower bypass valve"
+
+msgid "静浴回流阀"
+msgstr "Quiet bath return valve"
+
+msgid "天窗补水阀"
+msgstr "Skylight supply valve"
+
+msgid "设备室压力验收"
+msgstr "Service-room pressure check"
+
+msgid "曲廊分流器"
+msgstr "Curved gallery diverter"
+
+msgid "双廊导流器"
+msgstr "Twin channel diverter"
+
+msgid "圆池出口闸"
+msgstr "Circular pool outlet gate"
+
+msgid "阶厅起音踏板"
+msgstr "Stair hall opening pedal"
+
+msgid "暗柱回音踏板"
+msgstr "Dark pillar echo pedal"
+
+msgid "青窗折返踏板"
+msgstr "Teal window return pedal"
+
+msgid "八角终音踏板"
+msgstr "Octagonal final pedal"
+
+msgid "圆窗记忆验收"
+msgstr "Round-window memory check"
+
+msgid "环庭噪声隔离闸"
+msgstr "Ring court noise isolation gate"
+
+msgid "穹廊排风百叶"
+msgstr "Vaulted gallery exhaust louvres"
+
+msgid "更衣间排风电机"
+msgstr "Changing-room exhaust motor"
+
+msgid "主池采光总闸"
+msgstr "Main pool daylight shutter"
+
+msgid "拱廊反射镜"
+msgstr "Arcade reflector"
+
+msgid "侧池消波排水阀"
+msgstr "Side pool stilling drain"
+
+msgid "天井反射镜"
+msgstr "Courtyard reflector"
+
+msgid "穹顶日光出口"
+msgstr "Domed daylight exit"
+
+msgid "隔离漏电支路，恢复其余照明，再拉下主馈电杆。"
+msgstr "Isolate the leaking circuit, restore the other lights, then pull the main supply lever."
+
+msgid "调节相互牵制的三路水压，在设备室验收。"
+msgstr "Adjust the three linked pressures and confirm them in the service room."
+
+msgid "让两段回水流向同一出口，再开启圆池闸门。"
+msgstr "Direct both return flows to the same outlet, then open the circular pool gate."
+
+msgid "按空间留下的回声顺序重演四拍，在圆窗房确认。"
+msgstr "Replay the four echoes in order, then confirm in the round-window room."
+
+msgid "先隔离噪声，再打开排风通路，最后启动电机。"
+msgstr "Isolate the noise, open the exhaust route, then start the motor."
+
+msgid "让拱廊与天井的光汇入主池，蓄光后开启穹顶。"
+msgstr "Bring the arcade and courtyard light into the main pool, charge it, then open the dome."
+
+msgid "注意配电柜的焦痕和支路名称；不要一味接通全部回路。"
+msgstr "Look for scorch marks and circuit names on the cabinet."
+
+msgid "转动一个阀门会影响两枚压力表。设备室铭牌标着安全刻度。"
+msgstr "Each valve affects two gauges. The service-room plate marks the safe values."
+
+msgid "沿着设备上的管线图比对外环与回水方向，闸门不会强行开启。"
+msgstr "Compare the outer ring and return flow with the pipe diagram on the equipment."
+
+msgid "阶厅留下了四幅空间图案。圆窗房只负责听完整段回声。"
+msgstr "The stair hall holds four spatial patterns. The round-window room listens to the full echo."
+
+msgid "电机、百叶与噪声闸有安全联锁，刻牌留下了维修次序。"
+msgstr "The motor, louvres and noise gate are interlocked. The plate gives the service order."
+
+msgid "镜架上的方位刻线与采光总闸相连；水面安静时光会更稳。"
+msgstr "Mirror direction marks connect to the daylight shutter. Still water steadies the light."
+
+msgid "配电记录：只有夜班支路漏电。其余六路应保持通电，最后复位主馈电。"
+msgstr "Electrical record. Only the night-shift circuit leaks. Keep the other six on, then reset the main supply."
+
+msgid "铭牌：旁通 A、回流 B、补水 C 各有 0–3 档。验收须同时满足 A+B=3、B+C=4、A+C=5。"
+msgstr "Plate. Bypass A, return B and supply C have settings 0–3. Required A+B=3, B+C=4 and A+C=5."
+
+msgid "水路刻线：曲廊通向外环（2），双廊通向回水（1）；圆池水位平稳后才可离开。"
+msgstr "Flow marks. Curved gallery to outer ring (2), twin channel to return (1). Stabilize the circular pool level before leaving."
+
+msgid "墙上旧节目单：阶厅 → 青窗 → 暗柱 → 八角。圆窗是听众，不是第五拍。"
+msgstr "Old programme. Stair hall → Teal window → Dark pillars → Octagon. The round window is the audience."
+
+msgid "检修警示：关噪声闸 → 开百叶 → 启动电机。逆序联锁拒绝，操作仍可重试。"
+msgstr "Service warning. Close noise gate → Open louvres → Start motor. Retry after any interlock rejection."
+
+msgid "日照刻线：拱廊镜朝东（1），天井镜向下（2），再开主池总闸；侧池消波可让蓄光更快。"
+msgstr "Sunlight marks. Arcade mirror east (1), courtyard mirror down (2), then open the main shutter. Stilling the side pool speeds charging."
+
+msgid "无效控制。"
+msgstr "Invalid control."
+
+msgid "系统已稳定，无需再次操作。"
+msgstr "System stable. Further operation is unnecessary."
+
+msgid "支路已"
+msgstr "Circuit "
+
+msgid "接通"
+msgstr "connected"
+
+msgid "隔离"
+msgstr "isolated"
+
+msgid "馈电复位："
+msgstr "Supply reset · "
+
+msgid "正在观察稳定性…"
+msgstr "Observing stability…"
+
+msgid "保护联锁仍在报警。检查漏电支路与其余照明。"
+msgstr "The safety alarm remains active. Check the leaking circuit and other lights."
+
+msgid "阀门转至 %d 档；压力读数：%d / %d / %d"
+msgstr "Valve set to %d. Pressures %d / %d / %d"
+
+msgid "三路压力验收通过。"
+msgstr "All three pressures passed inspection."
+
+msgid "压力不平衡。目标读数 3 / 4 / 5；阀门互相影响，请继续调节。"
+msgstr "Unbalanced pressure. Target 3 / 4 / 5. The valves affect each other. Keep adjusting."
+
+msgid "导流器转至 %d 档。出口联锁已复位。"
+msgstr "Diverter set to %d. Outlet interlock reset."
+
+msgid "出口闸已"
+msgstr "Outlet gate "
+
+msgid "打开，等待水位平稳。"
+msgstr "open. Waiting for the level to settle."
+
+msgid "关闭。"
+msgstr "closed."
+
+msgid "出口压力反向。先比对两段刻线与流向，闸门未动。"
+msgstr "Outlet pressure is reversed. Check both flow marks. The gate stays in place."
+
+msgid "四拍回声吻合。"
+msgstr "The four echoes match."
+
+msgid "回声尚未重现完整；四拍之后再验收。"
+msgstr "The echo sequence is incomplete. Confirm after all four beats."
+
+msgid "回声记住了第 %d 拍。"
+msgstr "The echo remembers beat %d."
+
+msgid "回声散去。顺序已清空，可从阶厅重新开始。"
+msgstr "The echo fades. The sequence is cleared. Restart from the stair hall."
+
+msgid "噪声闸已"
+msgstr "Noise gate "
+
+msgid "隔离。可以打开百叶。"
+msgstr "isolated. Open the louvres."
+
+msgid "解除隔离；排风已安全停止。"
+msgstr "released. Exhaust stopped safely."
+
+msgid "百叶已"
+msgstr "Louvres "
+
+msgid "打开。可以启动电机。"
+msgstr "open. Start the motor."
+
+msgid "关闭，电机已停。"
+msgstr "closed. Motor stopped."
+
+msgid "电机已"
+msgstr "Motor "
+
+msgid "启动，正在排出滞气…"
+msgstr "running. Venting stale air…"
+
+msgid "停止。"
+msgstr "stopped."
+
+msgid "安全联锁拒绝：必须先隔离噪声，再打开百叶。"
+msgstr "Safety interlock. Isolate the noise and open the louvres first."
+
+msgid "反射镜转至 %d 档；总闸已关闭以保护眼睛。"
+msgstr "Mirror set to %d. The shutter closed for eye protection."
+
+msgid "消波排水"
+msgstr "Stilling drain "
+
+msgid "开启，水面更稳定。"
+msgstr "open. The water is steadier."
+
+msgid "采光总闸已"
+msgstr "Daylight shutter "
+
+msgid "打开，正在蓄光。"
+msgstr "open. Charging light."
+
+msgid "穹顶机械锁释放。日光出口已开启。"
+msgstr "Dome lock released. The daylight exit is open."
+
+msgid "光线尚未汇聚或蓄光不足。检查两面镜子和主池总闸。"
+msgstr "Light is misaligned or insufficiently charged. Check both mirrors and the main shutter."
+
+msgid "系统稳定 · 出口已解锁"
+msgstr "System stable · Exit unlocked"
+
+msgid "主馈电 %s · 故障支路 %s · 稳定 %.1f / 8 秒"
+msgstr "Main supply %s · Faulty circuit %s · Stable %.1f / 8 s"
+
+msgid "开"
+msgstr "On"
+
+msgid "关"
+msgstr "Off"
+
+msgid "三路压力 %d / %d / %d（目标 3 / 4 / 5）"
+msgstr "Pressures %d / %d / %d (target 3 / 4 / 5)"
+
+msgid "流向 %d → %d · 闸 %s · 平稳 %.1f / 6 秒"
+msgstr "Flow %d → %d · Gate %s · Stable %.1f / 6 s"
+
+msgid "回声 %d / 4 拍 · 错序可从阶厅重演"
+msgstr "Echo %d / 4 beats · Restart at the stair hall after a wrong order"
+
+msgid "隔离 %s / 百叶 %s / 电机 %s · 排风 %.1f / 10 秒"
+msgstr "Isolation %s / Louvres %s / Motor %s · Venting %.1f / 10 s"
+
+msgid "反射 %d / %d · 蓄光 %.1f / 12 秒"
+msgstr "Mirrors %d / %d · Light charge %.1f / 12 s"
+
+msgid "系统已稳定 · 出口联锁解除"
+msgstr "System stable · Exit interlock released"
+
+msgid "回声已记住 %d / 4 拍"
+msgstr "Echo remembers %d / 4 beats"
+
+msgid "设备正在运行，等待稳定；可继续观察附近环境。"
+msgstr "Equipment running. Wait for stability and explore nearby."
+
+msgid "系统尚未稳定。附近设备的刻线和痕迹留下了线索。"
+msgstr "System unstable. Nearby markings and wear provide clues."
+
+msgid "主线存档只读："
+msgstr "Campaign save is read-only. "
+
+msgid "本章场景尚未重建成功。请重试或安全退出；原进度保留。"
+msgstr "This chapter could not be rebuilt. Retry or exit safely. Your progress is retained."
+
+msgid "重试本章机关…"
+msgstr "Retry chapter puzzles…"
+
+msgid " · 已通关"
+msgstr " · Completed"
+
+msgid "\n旧版已收集记录保留；当前机关获得 %d 秒额外宽限。"
+msgstr "\nEarlier collection records retained. Current puzzles gain %d seconds of grace."
+
+msgid "\n只读恢复：本次进度无法写入，请保留原存档。"
+msgstr "\nRead-only recovery. Progress cannot be written. Keep your original save."
+
+msgid "\n舒缓模式 · 无时间侵蚀"
+msgstr "\nRelaxed mode · No timed erosion"
+
+msgid "\n稳定窗口 %02d:%02d"
+msgstr "\nStability window %02d:%02d"
+
+msgid " · 侵蚀 %d%% · 入口复位台 / 暂停菜单可修复"
+msgstr " · Erosion %d%% · Repair at the entrance or pause menu"
+
+msgid "  [Q] 阅读检修刻牌"
+msgstr "  [Q] Read service plate"
+
+msgid "\n本设备读数："
+msgstr "\nEquipment reading · "
+
+msgid "\n系统稳定。返回本层入口终端继续。"
+msgstr "\nSystem stable. Return to the entrance terminal to continue."
+
+msgid "\n靠近设备查看刻线和操作提示；暂停菜单可修复或重试。"
+msgstr "\nApproach equipment for marks and hints. Repair or retry from the pause menu."
+
+msgid "\n设备布置未通过安全检查，计时暂停。请在菜单选择「重建本章场景」。"
+msgstr "\nEquipment placement failed. Timer paused. Choose Rebuild chapter in the menu."
+
+msgid "\n正在检查本层设备与通道，计时暂停。"
+msgstr "\nChecking equipment and passages. Timer paused."
+
+msgid "系统尚未稳定。先完成本层设备操作，不需要寻找钥匙。"
+msgstr "System unstable. Complete this floor's equipment operations."
+
+msgid "旧柜门轻轻打开，里面只有水汽留下的痕迹。"
+msgstr "The old locker opens gently. Only traces of moisture remain inside."
+
+msgid "柜门合上了。"
+msgstr "The locker closes."
+
+msgid "你拨动了值班铃的摆锤。"
+msgstr "You nudge the duty bell's pendulum."
+
+msgid "出口就绪"
+msgstr "Exit ready"
+
+msgid "系统联锁"
+msgstr "System interlock"
+
+msgid "可复位侵蚀；机关进度保留"
+msgstr "Reset erosion while retaining puzzle progress"
+
+msgid "应急电源已复位。机关进度保留，侵蚀退去；可继续探索。"
+msgstr "Emergency power reset. Erosion cleared and puzzle progress retained. Continue exploring."
+
+msgid "系统暂不需要应急修复。"
+msgstr "Emergency repair is currently unnecessary."
+
+msgid "再次点击：重置本章机关（保留前章）"
+msgstr "Click again to reset this chapter's puzzles"
+
+msgid "本章机关和稳定窗口已重置。前章进度不受影响。"
+msgstr "This chapter's puzzles and stability window reset. Previous chapters are retained."
+
+msgid "检修终端"
+msgstr "Service terminal"
+
+msgid "通道终端 · 应急电源复位（保留机关进度）"
+msgstr "Passage terminal · Reset emergency power"
+
+msgid "交接物落点检查失败，请勿继续："
+msgstr "Handover item placement failed. Stop here. "
+
+msgid "本层系统稳定后才能通行。"
+msgstr "Stabilize this floor's systems to pass."
+
+msgid "入口通道设备没有安全落点。请暂停并重试本章；不会跳过进度。"
+msgstr "Entrance equipment lacks a safe position. Pause and retry this chapter."
+
+msgid "应急电源复位"
+msgstr "Reset emergency power"
+
+msgid "侵蚀出现后可复位；不清除机关进度。"
+msgstr "Reset after erosion appears. Puzzle progress is retained."
+
+msgid "应急复位台没有安全落点；计时暂停，可在菜单重建本章。"
+msgstr "Emergency reset station lacks a safe position. Timer paused. Rebuild from the menu."
+
+msgid "拨动值班铃"
+msgstr "Ring duty bell"
+
+msgid "打开 / 合上旧柜门"
+msgstr "Open / Close old locker"
+
+msgid "可自由摆弄，不影响通关。"
+msgstr "Interact freely. Completion progress is unaffected."
+
+msgid "存档不可写，本次进度未保存。请先保留并处理原存档。"
+msgstr "Save is read-only. This session's progress was not saved."
+
+msgid "保存失败（%d），暂不进入下一层。"
+msgstr "Save failed (%d). Staying on the current floor."
+
+msgid "通道已解锁 · Esc 可取消"
+msgstr "Passage unlocked · Esc to cancel"
+
+msgid "交接完成。你终于找到了天光。主线已通关，可继续自由探索。"
+msgstr "Handover complete. You found daylight. Campaign completed. Free exploration remains available."
+
+msgid "已返回出口前，机关进度保留。"
+msgstr "Returned to the exit. Puzzle progress retained."
+
+msgid "正在准备下一层，落点与水体就绪后继续…"
+msgstr "Preparing the next floor. Waiting for safe footing and water…"
+
+msgid "资源准备超时，已安全返回。可重试或检查资源。"
+msgstr "Resource preparation timed out. Returned safely. Retry or check resources."
+
+msgid "下一章设备未通过安全布置，正在返回。"
+msgstr "Next chapter equipment placement failed. Returning."
+
+msgid "落点或水体准备超时，返回前章。可重试或安全退出。"
+msgstr "Footing or water preparation timed out. Returning to the previous chapter."
+
+msgid "正在返回上一检查点，机关进度保留…"
+msgstr "Returning to the previous checkpoint. Puzzle progress retained…"
+
+msgid "已返回上一检查点，机关进度保留。未跳过关卡；可重试或检查水体与存档状态。"
+msgstr "Returned to the previous checkpoint with puzzle progress. Retry or check water and save status."
+
+msgid "回程场景尚未准备好。已锁住移动并保留原章进度；请重建本章或安全退出。"
+msgstr "Return scene is still preparing. Movement is locked and chapter progress retained. Rebuild or exit safely."
+
+msgid "返回上一检查点"
+msgstr "Return to previous checkpoint"
+
+msgid "安全退出"
+msgstr "Exit safely"
+
+msgid "主线 · 继续旅程 / CAMPAIGN"
+msgstr "Campaign · Continue journey"
+
+msgid "重建本章场景（保留机关进度）"
+msgstr "Rebuild chapter scene"
+
+msgid "另存恢复副本（保留原存档）"
+msgstr "Save a recovery copy"
+
+msgid "舒缓模式：不计时、不侵蚀"
+msgstr "Relaxed mode · No timer or erosion"
+
+msgid "减弱主线异变：柔和新照明与镜头"
+msgstr "Reduced campaign effects"
+
+msgid "应急修复：保留机关进度"
+msgstr "Emergency repair · Retain puzzle progress"
+
+msgid "合上刻牌 · Q / Esc（阅读期间计时暂停）"
+msgstr "Close plate · Q / Esc (timer paused while reading)"
+
+msgid "恢复副本已存在，请稍后重试。"
+msgstr "A recovery copy already exists. Try again later."
+
+msgid "无法创建恢复副本（%d）；原存档保留。"
+msgstr "Could not create recovery copy (%d). Original save retained."
+
+msgid "恢复副本已保存，但无法记住副本路径："
+msgstr "Recovery copy saved. Its path could not be recorded. "
+
+msgid "恢复副本已启用；原存档未改动："
+msgstr "Recovery copy activated. Original save retained. "
+
+msgid "\n\n当前读数："
+msgstr "\n\nCurrent reading · "
+
+msgid "当前不能操作。"
+msgstr "Cannot operate now."
+
+msgid "初始化原版水体 / STARTING WATER"
+msgstr "Starting water"
+
+msgid "装配房间 / BUILDING ROOMS"
+msgstr "Building rooms"
+
+msgid "校验静态场景 / VALIDATING SCENE CACHE"
+msgstr "Validating scene cache"
+
+msgid "读取碰撞与模型 / READING GEOMETRY"
+msgstr "Reading geometry"
+
+msgid "转换静态模型 / PREPARING GEOMETRY"
+msgstr "Preparing geometry"
+
+msgid "排队准备水体 / QUEUED"
+msgstr "Queued for water preparation"
+
+msgid "定位水域 / LOCATING WATER"
+msgstr "Locating water"
+
+msgid "计算水深与边界 / WATER DEPTH"
+msgstr "Calculating depth and boundaries"
+
+msgid "计算湿区 / WET REGIONS"
+msgstr "Calculating wet regions"
+
+msgid "构建光线路径 / OPTICAL GEOMETRY"
+msgstr "Building optical geometry"
+
+msgid "计算光照遮挡 / LIGHT OCCLUSION"
+msgstr "Calculating light occlusion"
+
+msgid "应用水体数据 / APPLYING WATER DATA"
+msgstr "Applying water data"
+
+msgid "后台准备相邻空间 / PREPARING NEARBY ROOMS"
+msgstr "Preparing nearby rooms"
+
+msgid "等待房间装配 / WAITING FOR ROOMS"
+msgstr "Waiting for rooms"
+
+msgid "水体初始化失败 / WATER ERROR\n"
+msgstr "Water initialization failed\n"
+
+msgid "可开始探索，倒影正在准备 / READY; REFLECTIONS PREPARING"
+msgstr "Ready to explore · Reflections preparing"
+
+msgid "准备水体 / PREPARING WATER"
+msgstr "Preparing water"
+
+msgid " · %d / %d 间"
+msgstr " · %d / %d rooms"
+
+msgid "\n已用 %.0f 秒 / ELAPSED %.0f s"
+msgstr "\nElapsed %.0f seconds / %.0f s"
+
+msgid "青柠回廊"
+msgstr "Lime Gallery"
+
+msgid "暮色运动场"
+msgstr "Dusk Sportsground"
+
+msgid "雾中水庭"
+msgstr "Misty Water Court"
+
+msgid "水族中庭"
+msgstr "Aquarium Atrium"
+
+msgid "末班车站"
+msgstr "Last Bus Stop"
+
+msgid "天眼巨厅"
+msgstr "Oculus Hall"
+
+msgid "云朵球海"
+msgstr "Cloud Ballpit"
+
+msgid "悬手浅池"
+msgstr "Hanging Hand Pool"
+
+msgid "无尽交错楼梯"
+msgstr "Endless Stair Labyrinth"
+
+msgid "压顶水库"
+msgstr "Soffit Reservoir"
+
+msgid "错尺长池"
+msgstr "Parallax Bath"
+
+msgid "交错旱渠"
+msgstr "Crossing Channels"
+
+msgid "倒悬浴场"
+msgstr "Inverted Pool"
+
+msgid "空面水殿"
+msgstr "Hollow Visage"
+
+msgid "浅水深井"
+msgstr "Glasswell Bath"
+
+msgid "场景资源尚未就绪。"
+msgstr "Scene resources are still preparing."
+
+msgid "已取消到安全菜单。原进度保留，可重新进入。"
+msgstr "Cancelled to the safe menu. Your progress is retained."
+
+msgid "准备地形、水体与安全落点… Esc 可取消到菜单。"
+msgstr "Preparing terrain, water and safe footing… Esc returns to the menu."
+
+msgid "地形、水体或落点尚未就绪；进度未推进。可重建或安全退出。"
+msgstr "Terrain, water or footing is still preparing. Rebuild or exit safely."
+
+msgid "慢慢探索，不必赶路。"
+msgstr "Take your time exploring."
+
+msgid "继续旅程"
+msgstr "Continue journey"
+
+msgid "控制台"
+msgstr "Console"
+
+msgid "新增地图 · 独立进度 / DREAMCORE"
+msgstr "Dreamcore maps · Separate progress"
+
+msgid " · 只读，原文件保留"
+msgstr " · Read-only · Original file retained"
+
+msgid "观察点"
+msgstr "Observation point"
+
+msgid "观察空间，读懂设施，再继续。"
+msgstr "Observe the space, understand its equipment, then continue."
+
+msgid "\n舒缓探索 · 不计时"
+msgstr "\nRelaxed exploration · No timer"
+
+msgid "\n可选侵蚀 %d%% · 菜单可随时修复"
+msgstr "\nOptional erosion %d%% · Repair from the menu"
+
+msgid "\n[E] 继续旅程"
+msgstr "\n[E] Continue journey"
+
+msgid "\n设施尚未稳定；观察刻牌与读数。"
+msgstr "\nEquipment is unstable. Read the plates and gauges."
+
+msgid "\n静静观察 %.0f / %.0f 秒"
+msgstr "\nObserve quietly %.0f / %.0f seconds"
+
+msgid "\n设施已稳定。可继续漫游，或前往离场终端。"
+msgstr "\nEquipment stable. Keep exploring or visit the departure terminal."
+
+msgid "旅程已记录。这里依然空旷，你可以留下，也可以从菜单重访。"
+msgstr "Journey recorded. Stay in this empty space or revisit from the menu."
+
+msgid "上游尚未接通，或前一段广播尚未交接。已完成的部分保留。"
+msgstr "The upstream connection or previous broadcast is incomplete. Completed steps are retained."
+
+msgid "独立续篇存档只读；原文件未改动，本次进度未保存。"
+msgstr "Dreamcore save is read-only. This session's progress was not saved."
+
+msgid "续篇保存失败（%d）；不推进旅程。"
+msgstr "Dreamcore save failed (%d). The journey remains here."
+
+msgid "进入所选地图 / ENTER"
+msgstr "Enter selected map"
+
+msgid "地图舒缓探索（默认）：无计时侵蚀"
+msgstr "Relaxed exploration · No timed erosion"
+
+msgid "地图减弱效果（无频闪）"
+msgstr "Reduced map effects"
+
+msgid "地图应急复位（保留设施进度）"
+msgstr "Reset map erosion"
+
+msgid "地图另存恢复副本（保留原文件）"
+msgstr "Save map recovery copy"
+
+msgid "恢复副本已存在，请稍后再试。"
+msgstr "A recovery copy already exists. Try again later."
+
+msgid "恢复副本无法写入；原文件仍保留。"
+msgstr "Could not write recovery copy. Original file retained."
+
+msgid "副本已保存但路径未记住："
+msgstr "Copy saved. Its path could not be recorded. "
+
+msgid "已启用独立恢复副本；旧存档与中断写入证据均保留。"
+msgstr "Recovery copy activated. Original save and interrupted-write evidence retained."
+
+msgid "调整"
+msgstr "Adjust"
+
+msgid "广播交接 %d / 3 · 按起点→中场→终点依次发送；不是旋钮密码"
+msgstr "Broadcast relay %d / 3 · Send from start → midfield → finish"
+
+msgid "水路指示："
+msgstr "Waterway · "
+
+msgid "关闭 CLOSED"
+msgstr "Closed"
+
+msgid "北线 NORTH"
+msgstr "North"
+
+msgid "东线 EAST"
+msgstr "East"
+
+msgid "溢流 OVERFLOW"
+msgstr "Overflow"
+
+msgid " · 上游未就绪"
+msgstr " · Upstream unready"
+
+msgid " · 调整出流方向"
+msgstr " · Adjust outlet direction"
+
+msgid "站牌信号已接通；去远处观察点等候回应"
+msgstr "Bus-stop signal connected. Wait at the distant observation point for a response"
+
+msgid "接通末班站牌（无倒计时催促）"
+msgstr "Connect last bus signal"
+
+msgid "光色："
+msgstr "Light · "
+
+msgid "夜色"
+msgstr "Night"
+
+msgid "清晨"
+msgstr "Morning"
+
+msgid "天光"
+msgstr "Daylight"
+
+msgid "暮色"
+msgstr "Dusk"
+
+msgid "模式："
+msgstr "Mode · "
+
+msgid "关闭"
+msgstr "Off"
+
+msgid "微弱"
+msgstr "Subtle"
+
+msgid "安静"
+msgstr "Quiet"
+
+msgid "全部"
+msgstr "All"
+
+msgid "调整 · 当前 %d"
+msgstr "Adjust · Current %d"
+
+msgid "已发送"
+msgstr "Sent"
+
+msgid "等待交接"
+msgstr "Awaiting relay"
+
+msgid "北线"
+msgstr "North"
+
+msgid "东线"
+msgstr "East"
+
+msgid "溢流"
+msgstr "Overflow"
+
+msgid "已接通"
+msgstr "Connected"
+
+msgid "未接通"
+msgstr "Disconnected"
+
+msgid "侵蚀已复位，设施进度保留。"
+msgstr "Erosion reset. Equipment progress retained."
+
+msgid "压顶水库 · 侧门"
+msgstr "Soffit Reservoir · Side door"
+
+msgid "错尺长池 · 门廊"
+msgstr "Parallax Bath · Portico"
+
+msgid "交错旱渠 · 侧门"
+msgstr "Crossing Channels · Side door"
+
+msgid "倒悬浴场 · 侧门"
+msgstr "Inverted Pool · Side door"
+
+msgid "空面水殿 · 侧门"
+msgstr "Hollow Visage · Side door"
+
+msgid "浅水深井 · 回廊"
+msgstr "Glasswell Bath · Gallery"
+
+msgid "\n\n正在准备这个空间…"
+msgstr "\n\nPreparing this space…"
+
+msgid "跳过画面"
+msgstr "Skip transition"
+
+msgid "取消"
+msgstr "Cancel"
+
+msgid "退出"
+msgstr "Quit"
+
+msgid "尚未记录 / Nothing recorded yet"
+msgstr "Nothing recorded yet"
+
+msgid "探索手记 / EXPLORATION NOTES\n%s · SEED %s\n已记录 %d 处 / Recorded places · %d 类房间 / Room types\n%s"
+msgstr "EXPLORATION NOTES\n%s · SEED %s\n%d places recorded · %d room types\n%s"
+
+msgid "\n已保留前 4096 处坐标 / First 4096 coordinates retained; further types can still be noted."
+msgstr "\nFirst 4096 coordinates retained. Further room types can still be recorded."
+
+msgid "\n只读 / READ ONLY: new discoveries are session-only."
+msgstr "\nREAD ONLY · New discoveries are session-only."
+
+msgid "\n尚未保存 / Not yet saved"
+msgstr "\nUnsaved"
+
+msgid "\n尚无记录 / No saved discoveries yet"
+msgstr "\nNo saved discoveries yet"
+
+msgid "\n已保存 / Saved"
+msgstr "\nSaved"
+
+msgid "手机版画质 / MOBILE GRAPHICS"
+msgstr "Mobile graphics"
+
+msgid "实时阴影 / REAL-TIME SHADOWS"
+msgstr "Real-time shadows"
+
+msgid "反射探针 + 原版平面倒影 / REFLECTIONS"
+msgstr "Reflection probes and planar reflections"
+
+msgid "后期抗锯齿：关闭 / OFF"
+msgstr "Post-process AA · Off"
+
+msgid "后期抗锯齿：FXAA"
+msgstr "Post-process AA · FXAA"
+
+msgid "后期抗锯齿：SMAA"
+msgstr "Post-process AA · SMAA"
+
+msgid "动态焦散更新间隔 / CAUSTIC INTERVAL"
+msgstr "Caustic update interval"
+
+msgid "每次更新 / EVERY FRAME"
+msgstr "Every frame"
+
+msgid "间隔 %d 帧 / %d FRAMES"
+msgstr "Every %d frames / %d FRAMES"
+
+msgid "帧率上限 / CAP: %d"
+msgstr "Frame rate cap · %d"
+
+msgid "不限制帧率 / UNCAPPED"
+msgstr "Uncapped frame rate"
+
+msgid "视角灵敏度 / LOOK SENSITIVITY"
+msgstr "Look sensitivity"
+
+msgid "3D 渲染比例 / RESOLUTION: %d%%"
+msgstr "3D resolution · %d%%"
+
+msgid "渲染器：%s。保留动态水面、涟漪、折射、焦散和平面倒影；手机版已移除立体水花和飞溅粒子。高画质控制在最长边 1600、短边 900 像素以内，再应用上方比例。"
+msgstr "Renderer %s. Dynamic water, ripples, refraction, caustics and planar reflections remain active. Mobile omits volumetric splashes and particles. High quality caps the viewport at 1600 × 900 before applying the scale above."
+
+msgid "\nLow 保留主浅水，关闭细波、微法线、泡沫、焦散及倒影等外观层。"
+msgstr "\nLow retains shallow-water simulation and disables fine waves, micro-normals, foam, caustics and reflections."
+
+msgid "\nMobile 不支持 Godot SDFGI、SSAO、SSIL、引擎 SSR、原生体积雾或 TAA。原仓库光束雾为独立光线步进效果，不是这些功能的冒牌替代。"
+msgstr "\nMobile does not support SDFGI, SSAO, SSIL, engine SSR, native volumetric fog or TAA. The source light-shaft fog uses independent ray marching."
+
+msgid "\n主画面使用 FXAA/SMAA，平面倒影使用 2×MSAA。默认 30 帧上限以减少持续发热，可自行改为 60；实际帧率取决于设备。"
+msgstr "\nThe main view uses FXAA/SMAA and planar reflections use 2× MSAA. Default cap is 30 FPS to reduce sustained heat. You can choose 60 FPS."
+
+msgid "\n画质自动保存。Ultra 增加显存、耗电和发热；真机兼容性与性能尚待验证。"
+msgstr "\nGraphics settings save automatically. Ultra uses more VRAM and power. Device compatibility and performance await hardware testing."
+
+msgid "POOLCORE · ORIGINAL WATER · ANDROID\n原仓库场景 / 重做主池厅 / 原版水体 / 触屏"
+msgstr "POOLCORE · ORIGINAL WATER · ANDROID\nOriginal pools / Main hall / Interactive water / Touch controls"
+
+msgid "左摇杆移动，推满奔跑 · 右侧滑动视角\n拿起后可单手瞄准，按住投掷蓄力\n跳跃 / 扶梯 / 拍水 / 拉近 / 推远 · MENU 暂停"
+msgstr "Left stick Move, full tilt Run · Swipe right side Look\nHold Throw to charge while aiming\nJump / Ladder / Splash / Pull / Push · MENU Pause"
+
+msgid "原版水体无法运行 / ORIGINAL WATER UNAVAILABLE\n"
+msgstr "Original water unavailable\n"
+
+msgid "\n需要支持完整 Vulkan 计算/存储缓冲和纹理的设备；不会静默替换水体。"
+msgstr "\nRequires Vulkan compute, storage buffers and textures."
+
+msgid "持物 %.2fm · 按住蓄力，松开投出"
+msgstr "Holding %.2fm · Hold to charge, release to throw"
+
+msgid "左侧移动 · 推满奔跑 · 右侧滑动视角"
+msgstr "Left Move · Full tilt Run · Right Look"
+
+msgid "跳跃"
+msgstr "Jump"
+
+msgid "放下"
+msgstr "Drop"
+
+msgid "拿起"
+msgstr "Pick up"
+
+msgid "投掷"
+msgstr "Throw"
+
+msgid "扶梯"
+msgstr "Ladder"
+
+msgid "拍水"
+msgstr "Splash"
+
+msgid "拉近"
+msgstr "Pull closer"
+
+msgid "推远"
+msgstr "Push farther"
+
+msgid "角色：原版探索者 / ORIGINAL"
+msgstr "Character · Original explorer"
+
+msgid "角色：ithappy 创意角色 / CREATIVE"
+msgstr "Character · ithappy explorer"
+
+msgid "低头点击水面 · F 切换镜头"
+msgstr "Look down and click the water · F Change lens"
+
+msgid "关闭手电"
+msgstr "Flashlight off"
+
+msgid "开启手电"
+msgstr "Flashlight on"
+
+msgid "右键蓄力 %d%% · 松开投出"
+msgstr "Throw charge %d%% · Release to throw"
+
+msgid "右键按住蓄力投掷 · 滚轮调整距离 · E 放下"
+msgstr "Hold right mouse to charge · Wheel Adjust distance · E Drop"
+
+msgid "W / S 攀爬 · E 松开"
+msgstr "W / S Climb · E Release"
+
+msgid " · 左键拖动 / E 拿起"
+msgstr " · Left mouse Drag / E Pick up"
+
+msgid "E 攀爬梯子"
+msgstr "E Climb ladder"
+
+msgid "鸡蛋"
+msgstr "Egg"
+
+msgid "小黄鸭"
+msgstr "Rubber duck"
+
+msgid "海滩球"
+msgstr "Beach ball"
+
+msgid "曲墙 / 浅水 / 环池步道"
+msgstr "Curved walls / Shallow water / Poolside path"
+
+msgid "低拱 / 双水道 / 天光窄缝"
+msgstr "Low vaults / Twin channels / Narrow skylights"
+
+msgid "圆门 / 静水侧池 / 干地休息龛"
+msgstr "Round door / Still side pool / Dry resting alcove"
+
+msgid "珊瑚色软垫"
+msgstr "Coral cushion"
+
+msgid "球池小球"
+msgstr "Ballpit ball"
+
+msgid "干地 / 下行楼梯 / 分砖灯影"
+msgstr "Dry floor / Descending stairs / Tiled light"
+
+msgid "方柱 / 中轴顶灯 / 静水"
+msgstr "Square pillars / Central ceiling lights / Still water"
+
+msgid "青窗 / 水道 / 禁行标志"
+msgstr "Teal windows / Waterway / No-entry sign"
+
+msgid "八角台阶 / 叠级穹顶 / 双门"
+msgstr "Octagonal steps / Layered dome / Twin doors"
+
+msgid "软垫 / 球池 / 圆形窗龛"
+msgstr "Cushions / Ballpit / Round-window alcove"
+
+msgid "模拟摄像机与大波纹"
+msgstr "Camera and large waves"
+
+msgid "镜头与大波纹独立保存。关闭大波纹仍保留踩踏、涉水涟漪；光晕只处理镜头亮部。"
+msgstr "Lens and wave settings save separately. Footstep and wading ripples remain when large waves are off. Halation affects lens highlights."
+
+msgid "大波纹 / 交错水面"
+msgstr "Large crossing waves"
+
+msgid "模拟摄像机 / 青绿柔光"
+msgstr "Soft teal camera"
+
+msgid "水波起伏强度"
+msgstr "Wave strength"
+
+msgid "波浪传播方向 °"
+msgstr "Wave direction °"
+
+msgid "波长尺度"
+msgstr "Wavelength scale"
+
+msgid "灯光光晕"
+msgstr "Light halation"
+
+msgid "镜头彩边 / 像素"
+msgstr "Lens fringe / Pixels"
+
+msgid "颗粒强度"
+msgstr "Film grain"
+
+msgid "暗角强度"
+msgstr "Vignette"
+
+msgid "五境参考场景暂不记录探索手记；原地图记录保留。 / Reference wing is not recorded; existing discoveries are retained."
+msgstr "Reference wing exploration is unrecorded. Existing discoveries are retained."
+
+msgid "需要桌面图形设备"
+msgstr "Requires a desktop graphics device"
+
+msgid "需要 Forward+ 渲染器"
+msgstr "Requires Forward+"
+
+msgid "当前引擎未集成 DLSS"
+msgstr "This engine lacks DLSS integration"
+
+msgid "当前引擎缺少 DLSS 能力检测"
+msgstr "This engine lacks DLSS capability detection"
+
+msgid "显卡、驱动或 DLSS 运行库不可用"
+msgstr "GPU, driver or DLSS runtime unavailable"
+
+msgid "引擎缺少此功能"
+msgstr "This engine lacks this feature"
+
+msgid "显卡、驱动或运行库不支持"
+msgstr "Unsupported GPU, driver or runtime"
+
+msgid "当前引擎不支持硬件路径追踪"
+msgstr "This engine lacks hardware path tracing"
+
+msgid "当前图形设备不支持硬件光追"
+msgstr "This device lacks hardware ray tracing"
+
+msgid "已自动保存 / SAVED"
+msgstr "Saved automatically"
+
+msgid "已应用，保存失败 / SAVE FAILED (%s)"
+msgstr "Applied. Save failed (%s)"
+
+msgid "Reflex 不可用："
+msgstr "Reflex unavailable · "
+
+msgid "桌面画质 / PC GRAPHICS"
+msgstr "PC graphics"
+
+msgid "Low · 低"
+msgstr "Low"
+
+msgid "Medium · 中"
+msgstr "Medium"
+
+msgid "High · 高（默认）"
+msgstr "High (default)"
+
+msgid "Ultra · 极致"
+msgstr "Ultra"
+
+msgid "关闭 / Off"
+msgstr "Off"
+
+msgid "质量 / Quality"
+msgstr "Quality"
+
+msgid "平衡 / Balanced"
+msgstr "Balanced"
+
+msgid "性能 / Performance"
+msgstr "Performance"
+
+msgid "原生抗锯齿 / DLAA"
+msgstr "Native AA / DLAA"
+
+msgid "NVIDIA 帧生成 2× + Reflex"
+msgstr "NVIDIA 2× Frame Generation + Reflex"
+
+msgid "原生神经渲染 NR（与帧生成互斥）"
+msgstr "Neural Rendering NR (exclusive with FG)"
+
+msgid "NR 叠加层数 / EXPERIMENTAL"
+msgstr "NR layers / Experimental"
+
+msgid "1 层 · 默认"
+msgstr "1 layer · Default"
+
+msgid "2 层 · 实验"
+msgstr "2 layers · Experimental"
+
+msgid "3 层 · 高开销"
+msgstr "3 layers · High cost"
+
+msgid "4 层 · 很高开销"
+msgstr "4 layers · Very high cost"
+
+msgid "NR 混合强度 / INTENSITY"
+msgstr "NR blend intensity"
+
+msgid "NR 局部色调 / TONE"
+msgstr "NR local tone"
+
+msgid "NR 结构细节 / STRUCTURE"
+msgstr "NR structure detail"
+
+msgid "全场景硬件光追 + 光线重建（水面保留光栅）"
+msgstr "Hardware path tracing + Ray Reconstruction"
+
+msgid "只缩放 3D，不降低菜单清晰度；100% 为原生分辨率，超过 100% 为超采样。"
+msgstr "Scales 3D rendering. Menus retain native resolution. Above 100% enables supersampling."
+
+msgid "多重采样 / MSAA"
+msgstr "Multisample AA / MSAA"
+
+msgid "时间抗锯齿 / TAA"
+msgstr "Temporal AA / TAA"
+
+msgid "光照与阴影 / LIGHTING"
+msgstr "Lighting and shadows"
+
+msgid "真实光源阴影 / SHADOWS"
+msgstr "Light shadows"
+
+msgid "阴影图集 / SHADOW ATLAS"
+msgstr "Shadow atlas"
+
+msgid "间接光 / SDFGI"
+msgstr "Indirect light / SDFGI"
+
+msgid "环境遮蔽 / SSAO"
+msgstr "Ambient occlusion / SSAO"
+
+msgid "屏幕空间间接光 / SSIL"
+msgstr "Screen-space indirect light / SSIL"
+
+msgid "高光辉光 / GLOW"
+msgstr "Glow"
+
+msgid "水面与反射 / WATER"
+msgstr "Water and reflections"
+
+msgid "水体模拟精度 / WATER"
+msgstr "Water simulation quality"
+
+msgid "平面反射宽度 / MIRROR"
+msgstr "Planar reflection width"
+
+msgid "反射更新 / REFRESH"
+msgstr "Reflection refresh"
+
+msgid "每帧 / Every frame"
+msgstr "Every frame"
+
+msgid "每 2 帧"
+msgstr "Every 2 frames"
+
+msgid "每 3 帧"
+msgstr "Every 3 frames"
+
+msgid "每 4 帧"
+msgstr "Every 4 frames"
+
+msgid "每 6 帧"
+msgstr "Every 6 frames"
+
+msgid "焦散更新 / PHOTON REFRESH"
+msgstr "Caustic refresh"
+
+msgid "每 3 帧（原设置）"
+msgstr "Every 3 frames (original)"
+
+msgid "每 5 帧"
+msgstr "Every 5 frames"
+
+msgid "每 7 帧"
+msgstr "Every 7 frames"
+
+msgid "%s%s · 立即生效 / LIVE"
+msgstr "%s%s · Live"
+
+msgid " + 自定义 / CUSTOM"
+msgstr " + Custom"
+
+msgid "3D 渲染比例 / RESOLUTION SCALE: %d%%"
+msgstr "3D resolution scale · %d%%"
+
+msgid "实验 NR 参数，不增加场景真实光照；高层数增加耗时和显存，可能破坏水面或手部细节。"
+msgstr "Experimental NR parameters. Higher layer counts use more GPU time and VRAM and can reduce water or hand detail."
+
+msgid "需要新版 NR 引擎确认能力，并先开启 NR；旧引擎不伪装支持新参数。"
+msgstr "Enable NR using an engine with adjustable-parameter support."
+
+msgid "DLSS %s · 内部渲染 %d%% · 菜单保持原生清晰度"
+msgstr "DLSS %s · Internal resolution %d%% · Native-resolution menus"
+
+msgid "DLSS 已负责时间抗锯齿；关闭 DLSS 后恢复保存的选择。"
+msgstr "DLSS handles temporal AA. Saved AA options return when DLSS is off."
+
+msgid "当前渲染器不支持；保存的选择会在兼容的渲染器下启用。"
+msgstr "Unsupported by this renderer. The saved choice activates with a compatible renderer."
+
+msgid "DLSS 默认 Quality；DLAA 使用原生分辨率。启用时由 DLSS 负责抗锯齿和渲染比例，关闭后恢复原有比例、MSAA 与 TAA。水体模拟、反射精度和菜单分辨率独立保留。"
+msgstr "DLSS defaults to Quality. DLAA uses native resolution. DLSS controls AA and scaling while active. Saved resolution, MSAA and TAA return when disabled. Water and reflection settings remain independent."
+
+msgid "NR：关闭。NR 与帧生成不是同一功能，二者互斥。"
+msgstr "NR off. NR and Frame Generation are mutually exclusive."
+
+msgid "NR：旧引擎单层请求；未确认新参数接口。叠加与强度设置需重新编译新版引擎，当前不声称生效。"
+msgstr "NR requested through the older single-layer interface. Adjustable parameters need a rebuilt engine."
+
+msgid "NR：原生已执行 %d 层（请求 %d 层）；强度 %.2f / 色调 %.2f / 结构 %.2f。"
+msgstr "NR executed %d layers (requested %d). Intensity %.2f / Tone %.2f / Structure %.2f."
+
+msgid "NR：请求 %d 层，未确认当前参数执行。%s"
+msgstr "NR requested %d layers. Parameter execution unconfirmed. %s"
+
+msgid "等待原生状态"
+msgstr "Awaiting native status"
+
+msgid "NR：被帧生成旁路，请关闭 FG。"
+msgstr "NR bypassed by Frame Generation. Disable FG."
+
+msgid "NR：被 DLSS 关闭状态旁路。"
+msgstr "NR bypassed while DLSS is off."
+
+msgid "\n叠加是独立历史的串联 NR 实验，默认 1 层；2–4 层增加 GPU 工作和显存，不保证更好，不用于掩盖切房间卡顿。"
+msgstr "\nNR layers use separate histories in series. Default 1. Layers 2–4 increase GPU work and VRAM usage."
+
+msgid "\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。"
+msgstr "\nFrame Generation increases displayed frames. Input response follows the base frame rate. Requires DLSS / DLAA and a compatible RTX GPU."
+
+msgid "\n实验光追用于建筑和人物。水面使用光栅倒影；开启场景光追时，水下折射也采用独立光栅画面，避免池底光追亮点闪烁。波浪和焦散保留；关闭光追后恢复所选倒影质量。"
+msgstr "\nExperimental path tracing lights architecture and characters. Water reflections and underwater refraction use raster captures. Waves and caustics remain active. Selected reflection quality returns when path tracing is off."
+
+msgid "\n帧生成不可用："
+msgstr "\nFrame Generation unavailable · "
+
+msgid "Reflex 不可用"
+msgstr "Reflex unavailable"
+
+msgid "\n光追不可用："
+msgstr "\nPath tracing unavailable · "
+
+msgid "\nDLSS 不可用：%s。当前使用保存的常规渲染设置。"
+msgstr "\nDLSS unavailable · %s. Using saved conventional rendering settings."
+
+msgid "\n移动视角时反射始终逐帧更新；更新间隔仅用于静止视角。当前渲染器：%s。关闭 DLSS 时 High 默认原生分辨率，Ultra 默认 125%% 超采样与 8× MSAA。选择预设会重置单项设置，修改自动保存。"
+msgstr "\nReflections update every frame while the camera moves. The interval applies to a still camera. Renderer %s. With DLSS off, High uses native resolution and Ultra uses 125%% supersampling with 8× MSAA. Presets reset individual settings. Changes save automatically."
+
+msgid "\n水体精度改变模拟、细波纹和水面网格；反射宽度与刷新频率独立可调。关闭阴影不会开启原本不投影的灯光。High / Ultra 默认逐帧计算焦散；这提高动画连续性，也增加 GPU 负担，不改变光子数量或波浪公式。"
+msgstr "\nWater quality controls simulation, fine ripples and surface meshes. Reflection width and refresh are independent. High / Ultra update caustics every frame for smoother animation with additional GPU cost."
+
+msgid "\nPC 近景阴影采用 5/14/60/120 米分配，保留原最远覆盖；High/Ultra 增加软阴影采样。更高滤波可能增加 GPU 负担，不会改变角色轮廓。"
+msgstr "\nPC shadow splits use 5/14/60/120 metres. High / Ultra increase soft-shadow sampling and GPU cost."
+
+msgid "\nTAA、SDFGI、SSAO 和 SSIL 仅支持 Forward+，不可用选项已禁用；本页不会假装即时更换渲染器。"
+msgstr "\nTAA, SDFGI, SSAO and SSIL require Forward+. Unavailable options are disabled."
+
+msgid "需要支持 NR 可调参数的新版自编译引擎；旧引擎继续使用原单层 NR。"
+msgstr "Adjustable NR requires an updated custom engine. Older engines retain single-layer NR."
+
+msgid "WASD 移动   Shift 奔跑   Space 跳跃   E 交互   Q 铭牌\n左键抓取   右键蓄力投掷   滚轮调距离\nL 手电筒   F 镜头   Esc 菜单   H 隐藏界面   G 诊断"
+msgstr "WASD Move   Shift Run   Space Jump   E Interact   Q Plate\nLeft mouse Grab   Right mouse Charge throw   Wheel Distance\nL Flashlight   F Lens   Esc Menu   H Hide HUD   G Diagnostics"
+
+msgid "正在准备这个空间…"
+msgstr "Preparing this space…"
+
+msgid "失败"
+msgstr "failed"
+
+msgid "泳池之外   /   FIELD CAMERA     ·     待机 STANDBY"
+msgstr "BEYOND THE BASIN   /   FIELD CAMERA     ·     STANDBY"
+
+msgid "01   选择世界 / STARTING WORLD"
+msgstr "01   Starting world"
+
+msgid "02   相机与探索 / CAMERA SETUP"
+msgstr "02   Camera setup"
+
+msgid "镜头 / LENS"
+msgstr "Lens"
+
+msgid "关闭大波纹仍保留脚步与涉水涟漪。\nF 切换镜头 · 按住 Tab 查看提示，松开隐藏。"
+msgstr "Footstep and wading ripples remain when large waves are off.\nF Change lens · Hold Tab for hints."
+
+msgid "新增地图 / DREAMCORE"
+msgstr "Dreamcore maps"
+
+msgid "快速前往 / DESTINATION"
+msgstr "Destination"
+
+msgid "世界种子 / SEED"
+msgstr "World seed"
+
+msgid "兼容方式：重启到所选世界"
+msgstr "Restart into selected world"
+
+msgid "实验主池厅烘焙 / PC PREVIEW"
+msgstr "Experimental main hall bake"
+
+msgid "角色选择 / CHARACTER"
+msgstr "Character"
+
+msgid "即时切换并自动保存；低头查看身体，抓取物品查看手部。"
+msgstr "Switch and save instantly. Look down to see your body. Pick up an object to see your hands."
+
+msgid "水下焦散"
+msgstr "Underwater caustics"
+
+msgid "角色身体"
+msgstr "Player body"
+
+msgid "衣物织纹"
+msgstr "Cloth weave"
+
+msgid "设施互动"
+msgstr "Facility interactions"
+
+msgid "深水减速"
+msgstr "Depth slowdown"
+
+msgid "声音效果"
+msgstr "Sound effects"
+
+msgid "空间底噪"
+msgstr "Ambience"
+
+msgid "画质 / GRAPHICS"
+msgstr "Graphics"
+
+msgid "水体 / WATER"
+msgstr "Water"
+
+msgid "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 交互 · Q 阅读机关铭牌\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\n按住 Tab 查看提示 · L 手电筒 · F 镜头\nH 隐藏取景界面 · G 诊断（Tab 查看） · F11 全屏 · Esc 暂停 / 返回"
+msgstr "WASD Move · Shift Run\nSpace Jump / Rise in water · E Interact · Q Read plate\nLeft mouse Grab · Right mouse Charge throw · Wheel Distance\nHold Tab Hints · L Flashlight · F Lens\nH Hide viewfinder · G Diagnostics (with Tab) · F11 Fullscreen · Esc Pause / Back"
+
+msgid "当前选择在点击「在此出生」后应用。"
+msgstr "Apply your selection with Spawn here."
+
+msgid "镜头与水面设置独立保存。\n实验主池厅烘焙仅在本次运行生效。"
+msgstr "Lens and water settings save separately.\nThe experimental main hall bake applies to this session."
+
+msgid "泳池之外  ·  选择旅程"
+msgstr "Beyond the Basin · Choose a journey"
+
+msgid "01   继续旅程"
+msgstr "01   Continue journey"
+
+msgid "进入主线"
+msgstr "Enter campaign"
+
+msgid "当前场景"
+msgstr "Current scene"
+
+msgid "进度自动保存 · Esc 返回菜单"
+msgstr "Progress saves automatically · Esc Menu"
+
+msgid "02   选择地图"
+msgstr "02   Choose a map"
+
+msgid "新增地图  ·  独立进度"
+msgstr "Dreamcore maps · Separate progress"
+
+msgid "进入"
+msgstr "Enter"
+
+msgid "原有场景"
+msgstr "Existing worlds"
+
+msgid "选择场景后加载；设置中可更改种子。"
+msgstr "Choose a scene to load. Change the world seed in Settings."
+
+msgid "设置  /  SETTINGS"
+msgstr "Settings"
+
+msgid "镜头 · 水体 · 画质 · 声音"
+msgstr "Lens · Water · Graphics · Sound"
+
+msgid "←  返回主页"
+msgstr "←  Home"
+
+msgid "原仓库场景\n保留原始房间与熟悉的水面交互。"
+msgstr "Original pools\nExplore the original rooms and interactive water."
+
+msgid "重做主池厅\n从宽阔的主池空间开始安静探索。"
+msgstr "Main pool hall\nBegin a quiet journey in the broad main pool."
+
+msgid "扩展随机地图\n由世界种子生成更多相连的泳池空间。"
+msgstr "Expanded maps\nMore connected pool spaces generated from the world seed."
+
+msgid "曲廊池区\n三处新池厅相连，外侧延续种子地图。"
+msgstr "Poolrooms wing\nThree connected pool halls with seeded spaces beyond."
+
+msgid "五境参考场景\n阶厅、暗柱水厅、青窗水廊、八角池与球池休息室。"
+msgstr "Reference wing\nStairs, dark pillars, teal windows, an octagonal pool and a ball lounge."
+
+msgid "更改会自动保存 · Esc 返回\n无需额外点击应用"
+msgstr "Changes save automatically · Esc Back"
+
+msgid "WATER & LAYERS   /   光学、交互与表面细节分别调节"
+msgstr "WATER & LAYERS   /   Optics, interactions and surface detail"
+
+msgid "大波纹 / CROSS WAVES"
+msgstr "Crossing waves"
+
+msgid "与镜头滤镜独立；关闭后仍可踩出小涟漪。"
+msgstr "Independent of lens filters. Small footstep ripples remain when disabled."
+
+msgid "室内风纹 / WIND"
+msgstr "Indoor wind ripples"
+
+msgid "波浪与交互 / WAVES & INTERACTION"
+msgstr "Waves and interaction"
+
+msgid "表面与光学 / SURFACE & OPTICS"
+msgstr "Surface and optics"
+
+msgid "焦散与浮沫 / CAUSTICS & FOAM"
+msgstr "Caustics and foam"
+
+msgid "图层与诊断 / LAYERS & DEBUG"
+msgstr "Layers and diagnostics"
+
+msgid "PC GRAPHICS   /   预设是起点，每项设置均可独立调整"
+msgstr "PC GRAPHICS   /   Start with a preset, then adjust individual settings"
+
+msgid "细水波：可选 High 专用，默认关闭"
+msgstr "Fine water waves · Optional High feature, off by default"
+
+msgid "细水波：已启用（可选 High）；光子三角形约1.94倍，不代表帧耗时倍数"
+msgstr "Fine water waves enabled. Photon triangles approximately 1.94×. Frame-time cost differs."
+
+msgid "细水波：未启用，仅支持 High；保留当前画质，不自动提升"
+msgstr "Fine water waves inactive. Requires High quality."
+
+msgid "细水波：手动水体设置优先，本次运行不再自动启用"
+msgstr "Fine water waves use your manual settings for this session."
+
+msgid "细水波：未启用，需要启动时选择256/160光子采样"
+msgstr "Fine water waves inactive. Launch with 256/160 photon sampling."
+
+msgid "细水波：未启用，微表面法线已关闭"
+msgstr "Fine water waves inactive. Micro-surface normals are off."
+
+msgid "细水波：设置所有权冲突，未覆盖现有设置"
+msgstr "Fine water waves inactive due to settings ownership conflict."
+
+msgid "；High的额外光子采样仍有效，需重启并移除采样参数恢复默认成本"
+msgstr ". Additional High photon sampling remains active. Restart without sampling arguments to restore default cost."
+
+msgid "干湿分区 / 淋浴隔间 / 更衣长凳"
+msgstr "Wet and dry zones / Shower stalls / Changing benches"
+
+msgid "低拱券 / 四座浅池 / 连通步道"
+msgstr "Low arches / Four shallow pools / Connected paths"
+
+msgid "真实天窗 / 蓝瓷浅池 / 池边休息"
+msgstr "Skylights / Blue-tiled pool / Poolside rest"
+
+msgid "设备门 / 导向标识 / 顶部采光"
+msgstr "Service doors / Direction signs / Overhead light"
+
+msgid "E 关闭回水阀"
+msgstr "E Close return valve"
+
+msgid "E 开启回水阀"
+msgstr "E Open return valve"
+
+msgid "午后\n无人"
+msgstr "AFTERNOON\nEMPTY"
+
+msgid "禁止\n跳水"
+msgstr "NO\nDIVING"
+
+msgid "泳池\n须知"
+msgstr "POOL\nRULES"
+
+msgid "出口\n不存在"
+msgstr "EXIT\nABSENT"
+
+msgid "沉阶\n浅水"
+msgstr "STEPS\nSHALLOW"
+
+msgid "请勿\n逗留"
+msgstr "KEEP\nMOVING"
+
+msgid "水位\n上升"
+msgstr "WATER\nRISING"
+
+msgid "此处\n无人"
+msgstr "NOBODY\nHERE"
+
+msgid "本区\n已停用"
+msgstr "AREA\nCLOSED"
+
+msgid "维护\n中"
+msgstr "UNDER\nSERVICE"
+
+msgid "暂不\n开放"
+msgstr "CLOSED\nFOR NOW"
+
+msgid "静水\n回廊"
+msgstr "STILL\nGALLERY"
+
+msgid "夜间\n浴场"
+msgstr "NIGHT\nBATHS"
+
+msgid "上方\n禁止\n停留"
+msgstr "KEEP\nCLEAR\nABOVE"
+
+msgid "柱顶\n观察间"
+msgstr "PILLAR\nLOOKOUT"
+
+msgid "柱影\n重重"
+msgstr "PILLAR\nSHADOWS"
+
+msgid "褪色瓷砖与旧跳台"
+msgstr "Faded tiles and an old diving platform"
+
+msgid "水面上的异物"
+msgstr "Objects on the water"
+
+msgid "台阶没入安静的水面"
+msgstr "Steps sink into quiet water"
+
+msgid "高处洒下的日光"
+msgstr "Daylight falls from above"
+
+msgid "低矮而安静的荧光灯"
+msgstr "Low, quiet fluorescent lamps"
+
+msgid "从高处望向下一片水"
+msgstr "Look down toward the next pool"
+
+msgid "岛台之间的浅水"
+msgstr "Shallow water between islands"
+
+msgid "不断重组的柱影"
+msgstr "Pillar shadows rearrange"
+
+msgid "日光 / 双层尺度 / 环形看台"
+msgstr "Daylight / Two scales / Ring terrace"
+
+msgid "重复拱券 / 长水道 / 暖光尽头"
+msgstr "Repeated vaults / Long channel / Distant warmth"
+
+msgid "淹水更衣区 / 淋浴间 / 维修细节"
+msgstr "Flooded changing area / Showers / Service details"
+
+msgid "水面随风漂移的细纹光学近似，不模拟真实风场。关闭仅移除风纹，保留脚步、涉水和物体波纹。"
+msgstr "An optical approximation of wind-driven surface ripples. Footstep, wading and object waves remain when disabled."
+
+msgid "风纹强弱：0 为无风纹，1 为最强；默认 0.18 是轻微室内气流。仅改变水面观感，不增加角色推力。"
+msgstr "Wind ripple strength from 0 to 1. Default 0.18 represents subtle indoor airflow."
+
+msgid "风纹传播（吹向）方向，不是气象学来向。按世界坐标：0° 为 +X，90° 为 +Z；360° 与 0° 相同，不随镜头转动。"
+msgstr "Direction the ripples travel in world space. 0° is +X, 90° is +Z. Independent of the camera."
+
+msgid "风纹细密程度：数值越高，波纹越细密。不是水体模拟分辨率，不改变画质档位。"
+msgstr "Higher density produces finer wind ripples. Simulation resolution and quality are independent."
+
+msgid "风纹强度"
+msgstr "Wind strength"
+
+msgid "风纹方向（度）"
+msgstr "Wind direction °"
+
+msgid "风纹细密度"
+msgstr "Wind ripple density"
+
+msgid "波浪起伏"
+msgstr "Wave amplitude"
+
+msgid "波速"
+msgstr "Wave speed"
+
+msgid "波浪阻尼"
+msgstr "Wave damping"
+
+msgid "黏性扩散"
+msgstr "Viscosity"
+
+msgid "池壁耗散"
+msgstr "Wall dissipation"
+
+msgid "细波强度"
+msgstr "Fine ripple strength"
+
+msgid "细波频率"
+msgstr "Fine ripple frequency"
+
+msgid "微法线强度"
+msgstr "Micro-normal strength"
+
+msgid "环境微扰"
+msgstr "Ambient disturbance"
+
+msgid "波浪反光"
+msgstr "Wave highlights"
+
+msgid "倒影偏移"
+msgstr "Reflection distortion"
+
+msgid "折射强度"
+msgstr "Refraction strength"
+
+msgid "Fresnel 强度"
+msgstr "Fresnel strength"
+
+msgid "水体吸收"
+msgstr "Water absorption"
+
+msgid "焦散亮度"
+msgstr "Caustic brightness"
+
+msgid "焦散细节尺度"
+msgstr "Caustic detail scale"
+
+msgid "焦散微动速度"
+msgstr "Caustic motion speed"
+
+msgid "焦散更新间隔"
+msgstr "Caustic update interval"
+
+msgid "求解子步上限"
+msgstr "Solver substep limit"
+
+msgid "细波子步上限"
+msgstr "Ripple substep limit"
+
+msgid "折射抓帧间隔"
+msgstr "Refraction capture interval"
+
+msgid "泡沫浓度"
+msgstr "Foam density"
+
+msgid "泡沫存留"
+msgstr "Foam lifetime"
+
+msgid "交互强度"
+msgstr "Interaction strength"
+
+msgid "浪尖飞沫"
+msgstr "Wave crest spray"
+
+msgid "物理波频率"
+msgstr "Physical wave frequency"
+
+msgid "随波推力"
+msgstr "Wave force"
+
+msgid "随风波纹 / WIND RIPPLES"
+msgstr "Wind ripples"
+
+msgid "浅水表面"
+msgstr "Shallow-water surface"
+
+msgid "交互细波纹"
+msgstr "Interactive fine ripples"
+
+msgid "微表面法线"
+msgstr "Micro-surface normals"
+
+msgid "屏幕折射"
+msgstr "Screen refraction"
+
+msgid "深度吸收"
+msgstr "Depth absorption"
+
+msgid "动态焦散"
+msgstr "Dynamic caustics"
+
+msgid "平面反射"
+msgstr "Planar reflections"
+
+msgid "接触水线"
+msgstr "Contact waterline"
+
+msgid "表面浮沫"
+msgstr "Surface foam"
+
+msgid "彩色小球"
+msgstr "Coloured ball"
+
+msgid "悬浮的折带 / 无人的水光"
+msgstr "Floating ribbons / Unattended waterlight"
+
+msgid "水下的天光"
+msgstr "Underwater daylight"
+
+msgid "环灯不必全部点亮。"
+msgstr "Some ring lights can remain dark."
+
+msgid "浅池的呼吸"
+msgstr "The shallow pool's breath"
+
+msgid "让二十厘米的水面安静下来。"
+msgstr "Let the shallow water settle."
+
+msgid "折带的间隙"
+msgstr "A gap in the ribbons"
+
+msgid "从折带的空隙望向最高的光环。"
+msgstr "Look through the ribbons toward the highest ring."
+
+msgid "云墙的夜灯"
+msgstr "Night light in the cloud wall"
+
+msgid "球海的回声"
+msgstr "Echoes of the ball sea"
+
+msgid "梯子尽头的黑门"
+msgstr "The black door beyond the ladder"
+
+msgid "水早已离开，回声仍在上面交叉。"
+msgstr "The water has left. Echoes still cross above."
+
+msgid "沿缓坡走进旱渠，转动声学挡板，再从侧面看清两渠的实空。"
+msgstr "Walk down the slope into the dry channel, turn the acoustic baffle, then view both channels from the side."
+
+msgid "声闸检修门把手"
+msgstr "Acoustic gate service handle"
+
+msgid "旱渠声学挡板"
+msgstr "Dry-channel acoustic baffle"
+
+msgid "近端 / 闷响"
+msgstr "Near / Muffled"
+
+msgid "远端 / 延迟回声"
+msgstr "Far / Delayed echo"
+
+msgid "转动声学挡板"
+msgstr "Turn acoustic baffle"
+
+msgid "指针在近路与远路间转动。响声不是密码：静音时仍可看见传动杆和远端回响指示片。"
+msgstr "The pointer turns between near and far routes. Watch the linkage and distant echo indicator even with sound muted."
+
+msgid "水只到脚踝，井一直落到灯下。"
+msgstr "The water reaches your ankles. The well falls to the lights below."
+
+msgid "在岸边开启深度回声器，沿玻璃边框确认脚下的真实尺度。"
+msgstr "Activate the depth sounder on the bank. Follow the glass frame to judge the scale below."
+
+msgid "井深回声器"
+msgstr "Well depth sounder"
+
+msgid "待机 / 井底暗灯"
+msgstr "Standby / Dim well lights"
+
+msgid "测深 / 井底指示"
+msgstr "Sounding / Well indicator"
+
+msgid "发送 / 复位测深"
+msgstr "Send / Reset sounding"
+
+msgid "脚下浅水只深二十厘米。按下回声器，机械指针与井底指示灯会标出四十米的干井。"
+msgstr "The water underfoot is twenty centimetres deep. The sounder's pointer and lights mark a forty-metre dry well."
+
+msgid "顶光的温度"
+msgstr "The warmth of overhead light"
+
+msgid "指尖下的涟漪"
+msgstr "Ripples under fingertips"
+
+msgid "五根手指的影子"
+msgstr "Shadows of five fingers"
+
+msgid "石头闭着眼 / 鼻尖在墙的另一边"
+msgstr "Stone closes its eyes / The nose is behind the wall"
+
+msgid "绕行负形面铸模，切换固定掠射灯，再沿背衬检修廊回看。"
+msgstr "Circle the hollow face cast, switch the fixed raking light, then look back through the service gallery."
+
+msgid "背衬检修门"
+msgstr "Backing service door"
+
+msgid "固定掠射灯柄"
+msgstr "Fixed raking-light handle"
+
+msgid "柔光"
+msgstr "Soft light"
+
+msgid "固定掠射光"
+msgstr "Fixed raking light"
+
+msgid "切换 / 对照铸模"
+msgstr "Switch / Compare cast"
+
+msgid "鼻的负形藏在墙后。侧光不移动，脸也不转动。"
+msgstr "The nose's hollow shape hides behind the wall. The side light stays still. The face stays still."
+
+msgid "泳道在头顶，铅垂线仍然朝下。"
+msgstr "Swimming lanes above. The plumb line still points down."
+
+msgid "沿侧岸找到卷线器，放下铅锤，看清倒过来的是建筑。"
+msgstr "Find the reel on the side bank. Lower the plumb bob to reveal the inverted architecture."
+
+msgid "干燥耳廊门把手"
+msgstr "Dry side gallery handle"
+
+msgid "铅垂线卷线器"
+msgstr "Plumb-line reel"
+
+msgid "收起 / 高位"
+msgstr "Retracted / High"
+
+msgid "下放 / 垂直基准"
+msgstr "Lowered / Vertical reference"
+
+msgid "转动卷线手柄"
+msgstr "Turn reel handle"
+
+msgid "铅锤只在封闭维修槽中下降。地面和水面不动，重力没有翻转。"
+msgstr "The plumb bob descends inside a closed service slot. The floor, water and gravity remain in place."
+
+msgid "一张长椅 / 六十五米的弧线"
+msgstr "One bench / A sixty-five-metre curve"
+
+msgid "玻璃后的日光"
+msgstr "Daylight behind glass"
+
+msgid "让回廊只留下清晨的颜色。"
+msgstr "Leave the gallery in the colours of early morning."
+
+msgid "草原的潮声"
+msgstr "The grassland's tide"
+
+msgid "微弱的回声，来自窗外而非脚下。"
+msgstr "A faint echo comes from beyond the window."
+
+msgid "远方的穹顶"
+msgstr "The distant dome"
+
+msgid "站在这里，望向草原上唯一的穹顶。"
+msgstr "Stand here and look toward the grassland's only dome."
+
+msgid "时刻表没有下一班，但远处的灯还亮着。"
+msgstr "The timetable has no next bus. Distant lights still glow."
+
+msgid "末班时刻表"
+msgstr "Last bus timetable"
+
+msgid "接通站牌，等待远处楼梯的回应。"
+msgstr "Connect the sign and await a response from the distant stairs."
+
+msgid "高架观察点"
+msgstr "Elevated observation point"
+
+msgid "在空旷路面停留，凝望楼梯上的灯。"
+msgstr "Pause on the empty road and watch the stair lights."
+
+msgid "同心圆之后 / 四十米高的童年"
+msgstr "Beyond concentric circles / Childhood forty metres high"
+
+msgid "圆窗的昼色"
+msgstr "Daylight in the round window"
+
+msgid "留下最浅的一层青色。"
+msgstr "Leave the palest layer of teal."
+
+msgid "光井里的细雨"
+msgstr "Fine rain in the light well"
+
+msgid "细小的彩光，不应淹没空旷。"
+msgstr "Small coloured lights leave the empty space open."
+
+msgid "三重圆拱"
+msgstr "Three round arches"
+
+msgid "从地面看向圆窗的中央，停留片刻。"
+msgstr "From the ground, watch the round window's centre for a moment."
+
+msgid "一百米的错觉 / 同一把尺的两种距离"
+msgstr "A hundred-metre illusion / Two distances on one ruler"
+
+msgid "沿池岸走到尽头，展开检尺，再从等尺度侧廊返回。"
+msgstr "Walk to the end of the bank, unfold the measuring rod, then return through the equal-scale gallery."
+
+msgid "复核廊的门把手"
+msgstr "Verification gallery handle"
+
+msgid "折叠检尺"
+msgstr "Folding measuring rod"
+
+msgid "检尺收起"
+msgstr "Rod folded"
+
+msgid "检尺展开"
+msgstr "Rod unfolded"
+
+msgid "展开 / 收起检尺"
+msgstr "Unfold / Fold measuring rod"
+
+msgid "一米八的尺不会随远近变小。"
+msgstr "The 1.8-metre rod keeps its size at every distance."
+
+msgid "原作空间 / 人的尺度与巨大的沉默"
+msgstr "Original spaces / Human scale and vast silence"
+
+msgid "慢慢走，留意空间的回声。"
+msgstr "Walk slowly. Listen to the space."
+
+msgid "在水声停止之前，找到门的尺度。"
+msgstr "Before the water falls silent, find the scale of the door."
+
+msgid "西庭水闸"
+msgstr "West court sluice"
+
+msgid "西闸铭牌：NORTH。先将进水导向北侧。"
+msgstr "West plate · NORTH. Direct the inlet north first."
+
+msgid "东庭水闸"
+msgstr "East court sluice"
+
+msgid "东闸铭牌：OVERFLOW。西闸向北后，接通溢流。"
+msgstr "East plate · OVERFLOW. After west points north, connect the overflow."
+
+msgid "轴心水闸"
+msgstr "Axial sluice"
+
+msgid "轴心铭牌：EAST。溢流接通后，出口向东。"
+msgstr "Axis plate · EAST. After overflow connects, direct the outlet east."
+
+msgid "一整座水库，停在头顶三米六。"
+msgstr "An entire reservoir stops 3.6 metres above your head."
+
+msgid "转动检修手轮，沿变宽的暖光缝找到侧廊。"
+msgstr "Turn the service wheel. Follow the widening warm-light slit to the side gallery."
+
+msgid "检修廊门把手"
+msgstr "Service gallery handle"
+
+msgid "检修百叶手轮"
+msgstr "Service louvre wheel"
+
+msgid "遮光 / 闭合"
+msgstr "Shaded / Closed"
+
+msgid "检修 / 开启"
+msgstr "Service / Open"
+
+msgid "转动手轮"
+msgstr "Turn wheel"
+
+msgid "手轮连着后墙的百叶。开启后，暖光会标出右侧的检修通道。"
+msgstr "The wheel moves the rear-wall louvres. Open them to light the service passage on the right."
+
+msgid "最后一次广播以后，跑道仍然通向暮色。"
+msgstr "After the last broadcast, the running track still leads into dusk."
+
+msgid "起点接力台"
+msgstr "Starting relay station"
+
+msgid "第一接力：在起点发送载波，再前往中场。"
+msgstr "First relay. Send the carrier from the start, then go to midfield."
+
+msgid "中场转发台"
+msgstr "Midfield relay station"
+
+msgid "第二接力：接收起点载波，再转发给终点。"
+msgstr "Second relay. Receive the starting carrier and forward it to the finish."
+
+msgid "终点广播台"
+msgstr "Finish broadcast station"
+
+msgid "第三接力：收到中场信号后，完成最后广播。"
+msgstr "Third relay. Receive the midfield signal and complete the last broadcast."
+
+msgid "黑暗里的刻度"
+msgstr "Marks in the dark"
+
+msgid "交错的回声"
+msgstr "Crossing echoes"
+
+msgid "交错的最高处"
+msgstr "The highest crossing"
+
+msgid "连续双厅预览 / CONNECTED HALLS"
+msgstr "Connected halls preview"
+
+msgid "连续双厅预览；移除启动参数后返回原地图。"
+msgstr "Connected halls preview. Remove its launch argument to return to the original maps."
+
+msgid "连续设施预览 · 悬手浅池 — 检修廊 — 水族中庭\n同一世界步行连接；尚非完整大地图。"
+msgstr "Connected halls · Hanging Hand — Service Link — Aquarium\nWalk between two halls in one world."
+
+msgid "连续双厅 · 安全起点"
+msgstr "Connected halls · Safe starting point"
+
+msgid "连续设施 · 双厅切片"
+msgstr "Connected facility · Two halls"
+
+msgid "悬手浅池 / 检修廊 / 水族中庭"
+msgstr "Hanging Hand / Service Link / Aquarium Atrium"
+
+msgid "检修连廊"
+msgstr "Service link"
+
+msgid "两座大厅之间的真实步行连接"
+msgstr "A walkable connection between two halls"
+
+msgid "检修门受阻或已暂停 · E 反向（不会自动续动）"
+msgstr "Service door blocked or paused · E Reverse"
+
+msgid "检修门移动中 · E 反向 · 请让开门扇"
+msgstr "Service door moving · E Reverse · Stand clear"
+
+msgid "E 关闭检修门"
+msgstr "E Close service door"
+
+msgid "E 打开检修门 · 请让开门扇"
+msgstr "E Open service door · Stand clear"
+
+msgid "E 检修灯：关 / 左照 / 右照（不影响通行）"
+msgstr "E Service lamp · Off / Left / Right"
+
+msgid "检修连廊 / MAINTENANCE LINK"
+msgstr "Maintenance link"
+
+msgid "悬手浅池 / HANGING HAND"
+msgstr "Hanging Hand Pool"
+
+msgid "水族中庭 / AQUARIUM ATRIUM"
+msgstr "Aquarium Atrium"
+
+msgid "让池中的涟漪安静下来。"
+msgstr "Let the pool's ripples settle."
+
+msgid "语言保存失败（%s）"
+msgstr "Language could not be saved (%s)"
+
+msgid "简体中文"
+msgstr "简体中文"
+
+msgid "午后\n无人\nPOOL / 1.2 M"
+msgstr "AFTERNOON\nEMPTY\nPOOL / 1.2 M"
+
+msgid "禁止\n跳水\nPOOL / 1.2 M"
+msgstr "NO\nDIVING\nPOOL / 1.2 M"
+
+msgid "泳池\n须知\nPOOL / 1.2 M"
+msgstr "POOL\nRULES\nPOOL / 1.2 M"
+
+msgid "出口\n不存在\nPOOL / 1.2 M"
+msgstr "EXIT\nABSENT\nPOOL / 1.2 M"
+
+msgid "沉阶\n浅水\nPOOL / 1.2 M"
+msgstr "STEPS\nSHALLOW\nPOOL / 1.2 M"
+
+msgid "请勿\n逗留\nPOOL / 1.2 M"
+msgstr "KEEP\nMOVING\nPOOL / 1.2 M"
+
+msgid "水位\n上升\nPOOL / 1.2 M"
+msgstr "WATER\nRISING\nPOOL / 1.2 M"
+
+msgid "此处\n无人\nPOOL / 1.2 M"
+msgstr "NOBODY\nHERE\nPOOL / 1.2 M"
+
+msgid "本区\n已停用\nPOOL / 1.2 M"
+msgstr "AREA\nCLOSED\nPOOL / 1.2 M"
+
+msgid "维护\n中\nPOOL / 1.2 M"
+msgstr "UNDER\nSERVICE\nPOOL / 1.2 M"
+
+msgid "暂不\n开放\nPOOL / 1.2 M"
+msgstr "CLOSED\nFOR NOW\nPOOL / 1.2 M"
+
+msgid "静水\n回廊\nPOOL / 1.2 M"
+msgstr "STILL\nGALLERY\nPOOL / 1.2 M"
+
+msgid "夜间\n浴场\nPOOL / 1.2 M"
+msgstr "NIGHT\nBATHS\nPOOL / 1.2 M"
+
+msgid "上方\n禁止\n停留\nPOOL / 1.2 M"
+msgstr "KEEP\nCLEAR\nABOVE\nPOOL / 1.2 M"
+
+msgid "柱顶\n观察间\nPOOL / 1.2 M"
+msgstr "PILLAR\nLOOKOUT\nPOOL / 1.2 M"
+
+msgid "柱影\n重重\nPOOL / 1.2 M"
+msgstr "PILLAR\nSHADOWS\nPOOL / 1.2 M"

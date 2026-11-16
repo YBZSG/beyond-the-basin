@@ -8,22 +8,24 @@ const DEFAULT := {
 	"referenceWaveDirection": 35.0,
 	"referenceWaveScale": 1.0,
 	"referenceLook": false,
-	"referenceFringePx": 0.8,
-	"referenceGrain": 0.006,
-	"referenceVignette": 0.07,
+	"referenceFringePx": 3.8,
+	"referenceGrain": 0.004,
+	"referenceVignette": 0.26,
+	"referenceHalation": 1.3,
 }
 const POOLROOMS_PRESET := {
 	"referenceWaves":true,"referenceWaveStrength":0.82,"referenceWaveDirection":18.0,"referenceWaveScale":1.0,
-	"referenceLook":true,"referenceFringePx":3.4,"referenceGrain":0.003,"referenceVignette":0.26,
+	"referenceLook":true,"referenceFringePx":3.8,"referenceGrain":0.004,"referenceVignette":0.26,"referenceHalation":1.3,
 }
 const WAVE_KEYS := ["referenceWaves", "referenceWaveStrength", "referenceWaveDirection", "referenceWaveScale"]
-const CAMERA_KEYS := ["referenceLook", "referenceFringePx", "referenceGrain", "referenceVignette"]
+const CAMERA_KEYS := ["referenceLook", "referenceFringePx", "referenceGrain", "referenceVignette", "referenceHalation"]
 const RANGES := {
 	"referenceWaveStrength": [0.0, 1.0],
 	"referenceWaveScale": [0.6, 1.6],
 	"referenceFringePx": [0.0, 8.0],
 	"referenceGrain": [0.0, 0.02],
 	"referenceVignette": [0.0, 0.45],
+	"referenceHalation": [0.0, 2.0],
 }
 
 static func sanitize(values: Variant) -> Dictionary:
@@ -55,3 +57,4 @@ static func apply_camera(material: ShaderMaterial, values: Variant, legacy_mode:
 	material.set_shader_parameter("reference_fringe_px", clean.referenceFringePx)
 	material.set_shader_parameter("reference_grain", clean.referenceGrain)
 	material.set_shader_parameter("reference_vignette", clean.referenceVignette)
+	material.set_shader_parameter("reference_halation", clean.referenceHalation)

@@ -1,0 +1,10 @@
+PoolCore Dreamcore Outdoor Architecture
+Original code-authored geometry, procedural shaders and design by this project,
+2026-10-26. No third-party textures, models, scans, trademarks or private assets.
+Use and modify these original files with the PoolCore project.
+The three AI-generated reference images in the adjacent workspace are conceptual
+art direction, not imported textures or claims of runtime screenshot fidelity.
+
+The sky-only dusk PNG is an original built-in image_gen generation, with prompt,
+measured mapping and LDR/seam limitations documented in SKY_PROVENANCE.md. It
+contains no copied terrain or architecture and is not a game screenshot.

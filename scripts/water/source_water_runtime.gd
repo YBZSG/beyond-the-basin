@@ -499,8 +499,8 @@ func _pump_room_snapshots()->void:
    else:_terrain_metrics.authored_snapshot_misses+=1
    _formal_snapshot_job=null
    if not _terrain_room_snapshots.is_empty():return
-  if _formal_snapshot_attempt_revision!=_terrain_revision:
-   if not FormalSnapshotCache.eligible(_layouts) or not _geometry_debounce_ready():return
+  if _formal_snapshot_attempt_revision!=_terrain_revision and FormalSnapshotCache.eligible(_layouts):
+   if not _geometry_debounce_ready():return
    _formal_snapshot_attempt_revision=_terrain_revision
    _formal_snapshot_job=FormalSnapshotCache.new();_formal_snapshot_job.revision=_terrain_revision
    _formal_snapshot_job.spec=FormalSnapshotCache.specification(_layouts,_rooms.keys(),_terrain_geometry_origin)

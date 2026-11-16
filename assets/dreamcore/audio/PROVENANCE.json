@@ -1,0 +1,49 @@
+{
+  "authoring": "tools/dreamcore/build_ambience.py",
+  "external_samples": false,
+  "playback_gain_db": -26,
+  "files": [
+    {
+      "file": "lime_gallery.wav",
+      "sha256": "95d854f7f6c847f3a9aba559d8483a57e3fdfa65f5f91c00e41ef0fbf14c381d",
+      "seconds": 16,
+      "peak": 0.15790276802880948,
+      "source": "original deterministic filtered noise and sine"
+    },
+    {
+      "file": "sportsground.wav",
+      "sha256": "c842c2cafdbab86de9a767cc5ec1aba26ef1204a9e36e778f23f7d9d770541f8",
+      "seconds": 16,
+      "peak": 0.13864558854945525,
+      "source": "original deterministic filtered noise and sine"
+    },
+    {
+      "file": "sluice_courtyard.wav",
+      "sha256": "2c1621edacf4539ff3f3cf437f22cefc5682e3538775fa3b70926563f7f8ab69",
+      "seconds": 16,
+      "peak": 0.1501815851313822,
+      "source": "original deterministic filtered noise and sine"
+    },
+    {
+      "file": "aquarium_atrium.wav",
+      "sha256": "81f30c5faeeb01ca1b747503d323d0eaba35aa66541305d81f25fa1185f5714d",
+      "seconds": 16,
+      "peak": 0.14487136448255866,
+      "source": "original deterministic filtered noise and sine"
+    },
+    {
+      "file": "night_busstop.wav",
+      "sha256": "5a06e0132aaaf6f0a3b9058282deb3f29c0d8e9d34ba923d8adbf3c6b45bd22d",
+      "seconds": 16,
+      "peak": 0.1682790612506485,
+      "source": "original deterministic filtered noise and sine"
+    },
+    {
+      "file": "oculus_hall.wav",
+      "sha256": "dbf3a1be9149a4ec54598c6ecc7e1d8abcd441c532112ca3000abe31376e8aa0",
+      "seconds": 16,
+      "peak": 0.13623462630085148,
+      "source": "original deterministic filtered noise and sine"
+    }
+  ]
+}

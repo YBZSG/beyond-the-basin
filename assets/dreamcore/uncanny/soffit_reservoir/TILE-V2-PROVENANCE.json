@@ -1,0 +1,21 @@
+{
+  "generator": "tools/uncanny/soffit_reservoir/generate_tile_v2.py",
+  "generator_sha256": "3832f4e9b32407445c3c9377867e8741794c2efec397ac843fcba54d0bb8d9c9",
+  "seed": 60102703,
+  "license": "Original procedural project texture; no external image input",
+  "dimensions": [
+    2048,
+    2048
+  ],
+  "period_m": 1.6,
+  "tile_pitch_m": 0.1,
+  "grout_width_m": 0.002,
+  "tile_bevel_height_m": 0.00022,
+  "tile_bevel_width_m": 0.0015,
+  "normal_convention": "OpenGL",
+  "files": {
+    "ivory_tile_albedo.png": "b2acaa9c1a974ef40009d2c83cf1b9e4ab2b1f73f0810179ea122a0af3cec5e1",
+    "ivory_tile_normal.png": "f1ea57478eb73f4c7b4b91accd8866ba4d4c7da1af98f65ec10466f3be1f818a",
+    "ivory_tile_orm.png": "7d844e9cc3e342a4d4b0cea03bb3487e6623c2f09fd12bc579a7ae3f1b813a4b"
+  }
+}

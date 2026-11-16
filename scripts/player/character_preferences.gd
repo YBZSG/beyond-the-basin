@@ -2,8 +2,8 @@ extends RefCounted
 ## Character preference is deliberately separate from campaign checkpoints and
 ## graphics settings. Unknown IDs and damaged/missing files fall back safely.
 const SETTINGS_PATH := "user://character.cfg"
-const IDS := ["original", "ithappy"]
-const LABELS := ["角色：原版探索者 / ORIGINAL", "角色：ithappy 创意角色 / CREATIVE"]
+static var IDS := ["original", "ithappy"] if ResourceLoader.exists("res://assets/models/avatar/ithappy_explorer.glb") else ["original"]
+static var LABELS := ["角色：原版探索者 / ORIGINAL", "角色：ithappy 创意角色 / CREATIVE"] if IDS.size() == 2 else ["角色：原版探索者 / ORIGINAL"]
 
 static func sanitize(value: String) -> String:
 	return value if value in IDS else "original"

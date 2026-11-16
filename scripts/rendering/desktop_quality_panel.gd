@@ -147,7 +147,7 @@ func save_settings(path: String = "") -> Error:
 	for key: String in settings: config.set_value("graphics", key, settings[key])
 	var result := config.save(settings_path if path.is_empty() else path)
 	if is_instance_valid(_status):
-		_status.text = "已自动保存 / SAVED" if result == OK else "已应用，保存失败 / SAVE FAILED (%s)" % error_string(result)
+		_status.text = "已自动保存 / SAVED" if result == OK else tr("已应用，保存失败 / SAVE FAILED (%s)") % error_string(result)
 	return result
 
 func _validated(key: String, value: Variant, fallback: Variant) -> Variant:
@@ -546,20 +546,20 @@ func _refresh_interface() -> void:
 	if not is_instance_valid(_preset_selector): return
 	_preset_selector.select(PRESET_NAMES.find(preset))
 	var custom: bool = settings != preset_settings(preset)
-	_summary.text = "%s%s · 立即生效 / LIVE" % [preset, " + 自定义 / CUSTOM" if custom else ""]
+	_summary.text = TranslationServer.translate("%s%s · 立即生效 / LIVE") % [preset, TranslationServer.translate(" + 自定义 / CUSTOM") if custom else ""]
 	_scale.set_value_no_signal(float(settings.scale) * 100.0)
-	_scale_label.text = "3D 渲染比例 / RESOLUTION SCALE: %d%%" % roundi(float(settings.scale) * 100.0)
+	_scale_label.text = TranslationServer.translate("3D 渲染比例 / RESOLUTION SCALE: %d%%") % roundi(float(settings.scale) * 100.0)
 	var dlss_active := bool(dlss_status.get("active", false))
 	var nr_controls_available := _nr_controls_available()
 	for key: String in _nr_sliders:
 		var slider: HSlider = _nr_sliders[key]
 		slider.set_value_no_signal(float(settings[key]))
 		slider.editable = nr_controls_available
-		slider.tooltip_text = "实验 NR 参数，不增加场景真实光照；高层数增加耗时和显存，可能破坏水面或手部细节。" if nr_controls_available else "需要新版 NR 引擎确认能力，并先开启 NR；旧引擎不伪装支持新参数。"
-		_nr_labels[key].text = "%s: %.2f" % [_nr_labels[key].get_meta("caption"), float(settings[key])]
+		slider.tooltip_text = TranslationServer.translate("实验 NR 参数，不增加场景真实光照；高层数增加耗时和显存，可能破坏水面或手部细节。") if nr_controls_available else TranslationServer.translate("需要新版 NR 引擎确认能力，并先开启 NR；旧引擎不伪装支持新参数。")
+		_nr_labels[key].text = "%s: %.2f" % [tr(str(_nr_labels[key].get_meta("caption"))), float(settings[key])]
 	_scale.editable = not dlss_active
 	if dlss_active:
-		_scale_label.text = "DLSS %s · 内部渲染 %d%% · 菜单保持原生清晰度" % [settings.dlss, roundi(float(dlss_status.scale) * 100.0)]
+		_scale_label.text = TranslationServer.translate("DLSS %s · 内部渲染 %d%% · 菜单保持原生清晰度") % [settings.dlss, roundi(float(dlss_status.scale) * 100.0)]
 	for key: String in _options:
 		var option := _options[key] as OptionButton
 		option.disabled = (key == "dlss" and not bool(dlss_status.get("available", false))) or (key == "msaa" and dlss_active) or (key == "nr_layers" and not nr_controls_available)
@@ -575,31 +575,31 @@ func _refresh_interface() -> void:
 		if key == "raytracing": check.disabled = not bool(raytracing_status.get("available", false)) or not dlss_active
 		if key in ["gi", "ssao", "ssil"] and bool(raytracing_status.get("active", false)): check.disabled = true
 		check.set_pressed_no_signal(bool(settings[key]) and not check.disabled)
-		check.tooltip_text = "DLSS 已负责时间抗锯齿；关闭 DLSS 后恢复保存的选择。" if key == "taa" and dlss_active else ("当前渲染器不支持；保存的选择会在兼容的渲染器下启用。" if check.disabled else "")
-	_notes.text = "DLSS 默认 Quality；DLAA 使用原生分辨率。启用时由 DLSS 负责抗锯齿和渲染比例，关闭后恢复原有比例、MSAA 与 TAA。水体模拟、反射精度和菜单分辨率独立保留。"
-	var nr_note := "NR：关闭。NR 与帧生成不是同一功能，二者互斥。"
+		check.tooltip_text = TranslationServer.translate("DLSS 已负责时间抗锯齿；关闭 DLSS 后恢复保存的选择。") if key == "taa" and dlss_active else (TranslationServer.translate("当前渲染器不支持；保存的选择会在兼容的渲染器下启用。") if check.disabled else "")
+	_notes.text = TranslationServer.translate("DLSS 默认 Quality；DLAA 使用原生分辨率。启用时由 DLSS 负责抗锯齿和渲染比例，关闭后恢复原有比例、MSAA 与 TAA。水体模拟、反射精度和菜单分辨率独立保留。")
+	var nr_note := TranslationServer.translate("NR：关闭。NR 与帧生成不是同一功能，二者互斥。")
 	if bool(settings.get("nr", false)):
 		if not bool(nr_status.get("acknowledged", false)):
-			nr_note = "NR：旧引擎单层请求；未确认新参数接口。叠加与强度设置需重新编译新版引擎，当前不声称生效。"
+			nr_note = TranslationServer.translate("NR：旧引擎单层请求；未确认新参数接口。叠加与强度设置需重新编译新版引擎，当前不声称生效。")
 		elif bool(nr_status.get("current_request_applied", false)):
-			nr_note = "NR：原生已执行 %d 层（请求 %d 层）；强度 %.2f / 色调 %.2f / 结构 %.2f。" % [int(nr_status.applied_layers), int(settings.nr_layers), float(settings.nr_intensity), float(settings.nr_tone), float(settings.nr_structure)]
+			nr_note = TranslationServer.translate("NR：原生已执行 %d 层（请求 %d 层）；强度 %.2f / 色调 %.2f / 结构 %.2f。") % [int(nr_status.applied_layers), int(settings.nr_layers), float(settings.nr_intensity), float(settings.nr_tone), float(settings.nr_structure)]
 		else:
-			nr_note = "NR：请求 %d 层，未确认当前参数执行。%s" % [int(settings.nr_layers), str(nr_status.get("reason", nr_status.get("state", "等待原生状态")))]
-		if bool(frame_generation_status.get("active", false)): nr_note = "NR：被帧生成旁路，请关闭 FG。"
-		elif not dlss_active: nr_note = "NR：被 DLSS 关闭状态旁路。"
-	nr_note += "\n叠加是独立历史的串联 NR 实验，默认 1 层；2–4 层增加 GPU 工作和显存，不保证更好，不用于掩盖切房间卡顿。"
+			nr_note = TranslationServer.translate("NR：请求 %d 层，未确认当前参数执行。%s") % [int(settings.nr_layers), str(nr_status.get("reason", nr_status.get("state", TranslationServer.translate("等待原生状态"))))]
+		if bool(frame_generation_status.get("active", false)): nr_note = TranslationServer.translate("NR：被帧生成旁路，请关闭 FG。")
+		elif not dlss_active: nr_note = TranslationServer.translate("NR：被 DLSS 关闭状态旁路。")
+	nr_note += TranslationServer.translate("\n叠加是独立历史的串联 NR 实验，默认 1 层；2–4 层增加 GPU 工作和显存，不保证更好，不用于掩盖切房间卡顿。")
 	_notes.text += "\n" + nr_note
-	_notes.text += "\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。"
-	_notes.text += "\n实验光追用于建筑和人物。水面使用光栅倒影；开启场景光追时，水下折射也采用独立光栅画面，避免池底光追亮点闪烁。波浪和焦散保留；关闭光追后恢复所选倒影质量。"
-	if not bool(frame_generation_status.get("available", false)): _notes.text += "\n帧生成不可用：" + str(frame_generation_status.get("reason", "Reflex 不可用"))
-	if not bool(raytracing_status.get("available", false)): _notes.text += "\n光追不可用：" + str(raytracing_status.get("reason", ""))
+	_notes.text += TranslationServer.translate("\n帧生成增加显示帧，操作响应仍取决于基础帧率；需要 DLSS / DLAA 和支持帧生成的 RTX 显卡。")
+	_notes.text += TranslationServer.translate("\n实验光追用于建筑和人物。水面使用光栅倒影；开启场景光追时，水下折射也采用独立光栅画面，避免池底光追亮点闪烁。波浪和焦散保留；关闭光追后恢复所选倒影质量。")
+	if not bool(frame_generation_status.get("available", false)): _notes.text += TranslationServer.translate("\n帧生成不可用：") + tr(str(frame_generation_status.get("reason", "Reflex 不可用")))
+	if not bool(raytracing_status.get("available", false)): _notes.text += TranslationServer.translate("\n光追不可用：") + tr(str(raytracing_status.get("reason", "")))
 	if not bool(dlss_status.get("available", false)):
-		_notes.text += "\nDLSS 不可用：%s。当前使用保存的常规渲染设置。" % str(dlss_status.get("reason", ""))
-	_notes.text += "\n移动视角时反射始终逐帧更新；更新间隔仅用于静止视角。当前渲染器：%s。关闭 DLSS 时 High 默认原生分辨率，Ultra 默认 125%% 超采样与 8× MSAA。选择预设会重置单项设置，修改自动保存。" % renderer
-	_notes.text += "\n水体精度改变模拟、细波纹和水面网格；反射宽度与刷新频率独立可调。关闭阴影不会开启原本不投影的灯光。High / Ultra 默认逐帧计算焦散；这提高动画连续性，也增加 GPU 负担，不改变光子数量或波浪公式。"
-	_notes.text += "\nPC 近景阴影采用 5/14/60/120 米分配，保留原最远覆盖；High/Ultra 增加软阴影采样。更高滤波可能增加 GPU 负担，不会改变角色轮廓。"
+		_notes.text += TranslationServer.translate("\nDLSS 不可用：%s。当前使用保存的常规渲染设置。") % tr(str(dlss_status.get("reason", "")))
+	_notes.text += TranslationServer.translate("\n移动视角时反射始终逐帧更新；更新间隔仅用于静止视角。当前渲染器：%s。关闭 DLSS 时 High 默认原生分辨率，Ultra 默认 125%% 超采样与 8× MSAA。选择预设会重置单项设置，修改自动保存。") % renderer
+	_notes.text += TranslationServer.translate("\n水体精度改变模拟、细波纹和水面网格；反射宽度与刷新频率独立可调。关闭阴影不会开启原本不投影的灯光。High / Ultra 默认逐帧计算焦散；这提高动画连续性，也增加 GPU 负担，不改变光子数量或波浪公式。")
+	_notes.text += TranslationServer.translate("\nPC 近景阴影采用 5/14/60/120 米分配，保留原最远覆盖；High/Ultra 增加软阴影采样。更高滤波可能增加 GPU 负担，不会改变角色轮廓。")
 	if renderer != "forward_plus":
-		_notes.text += "\nTAA、SDFGI、SSAO 和 SSIL 仅支持 Forward+，不可用选项已禁用；本页不会假装即时更换渲染器。"
+		_notes.text += TranslationServer.translate("\nTAA、SDFGI、SSAO 和 SSIL 仅支持 Forward+，不可用选项已禁用；本页不会假装即时更换渲染器。")
 
 func _fit_panel() -> void:
 	if not is_instance_valid(_panel): return

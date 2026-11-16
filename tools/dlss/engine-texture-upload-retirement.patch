@@ -1,0 +1,32 @@
+--- a/servers/rendering/rendering_device.cpp
++++ b/servers/rendering/rendering_device.cpp
+@@ -8123,6 +8123,29 @@
+ 		}
+ 
+ 		_texture_free_shared_fallback(texture);
++
++		// An immutable upload can finish before its sampling transition is
++		// consumed (for example, a room cubemap invalidated before first use).
++		// After this frame's fence has retired the texture, those CPU-side
++		// barriers must not outlive its driver handle and reach a later frame.
++		{
++			MutexLock pool_lock(transfer_worker_pool_mutex);
++			for (uint32_t worker_index = 0; worker_index < transfer_worker_pool_size; worker_index++) {
++				TransferWorker *worker = transfer_worker_pool[worker_index];
++				MutexLock worker_lock(worker->thread_mutex);
++				for (int64_t i = int64_t(worker->texture_barriers.size()) - 1; i >= 0; i--) {
++					if (worker->texture_barriers[i].texture == texture->driver_id) {
++						worker->texture_barriers.remove_at(i);
++					}
++				}
++			}
++			MutexLock barriers_lock(transfer_worker_pool_texture_barriers_mutex);
++			for (int64_t i = int64_t(transfer_worker_pool_texture_barriers.size()) - 1; i >= 0; i--) {
++				if (transfer_worker_pool_texture_barriers[i].texture == texture->driver_id) {
++					transfer_worker_pool_texture_barriers.remove_at(i);
++				}
++			}
++		}
+ 
+ 		texture_memory.sub(driver->texture_get_allocation_size(texture->driver_id));
+ 		driver->texture_free(texture->driver_id);

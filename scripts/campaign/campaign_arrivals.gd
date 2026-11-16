@@ -52,6 +52,7 @@ var epoch := -1
 var audio_enabled := false
 var reduced_effects := false
 var _suspended := false
+var _text_visible := false
 var _seen: Dictionary = {}
 var _candidate := ""
 var _candidate_room: WeakRef
@@ -106,6 +107,10 @@ func set_audio_enabled(value: bool) -> void:
  audio_enabled=value
  if not value and is_instance_valid(_voice): _voice.stop();_voice.free();_voice=null
 
+func set_text_visible(value: bool) -> void:
+ _text_visible=value
+ if is_instance_valid(_layer): _layer.visible=value
+
 func set_suspended(value: bool) -> void:
  _suspended=value
  if value: _stop_cue();_reset_candidate()
@@ -148,7 +153,7 @@ func _reset_candidate() -> void:
 
 func _start_cue(room: Node3D, identity: String, description: Dictionary) -> void:
  _stop_cue();_active=identity;_active_room=weakref(room);_age=0.0
- _layer=CanvasLayer.new();_layer.layer=34;add_child(_layer)
+ _layer=CanvasLayer.new();_layer.layer=34;_layer.visible=_text_visible;add_child(_layer)
  var margin:=MarginContainer.new();margin.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
  margin.offset_left=-362;margin.offset_right=-28;margin.offset_top=84;margin.offset_bottom=182
  margin.mouse_filter=Control.MOUSE_FILTER_IGNORE;_layer.add_child(margin)

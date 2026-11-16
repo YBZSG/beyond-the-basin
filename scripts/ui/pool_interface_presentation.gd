@@ -1,10 +1,10 @@
 extends Node
 ## PC-only presentation over the existing live controls. No settings owner,
 ## callback replacement, runtime allocation, renderer effects or mobile changes.
-const INK := Color("e4eff2")
-const MUTED := Color("93adb8")
-const ACCENT := Color("91d7d8")
-const EDGE := Color("344e5b")
+const INK := Color("e6e6d9")
+const MUTED := Color("a1aaa0")
+const ACCENT := Color("c6d7ae")
+const EDGE := Color("414b40")
 var main: Node
 var ui: Control
 var _menu: PanelContainer
@@ -18,6 +18,9 @@ var _backdrop: ColorRect
 var _panels: Array[PanelContainer] = []
 var _layout_pending := false
 var _suppress_focus_scroll := false
+var _home: VBoxContainer
+var _settings_scroll: ScrollContainer
+var _settings_back: Button
 
 static func install(host: Node) -> Node:
 	if OS.has_feature("android") or OS.has_feature("ios") or "--mobile-preview" in OS.get_cmdline_user_args(): return null
@@ -39,7 +42,7 @@ func configure(host: Node) -> void:
 	ui.theme = _theme(original_font)
 	_backdrop = ColorRect.new()
 	_backdrop.name = "MenuAtmosphere"
-	_backdrop.color = Color(0.015, 0.035, 0.055, 0.38)
+	_backdrop.color = Color(0.008, 0.018, 0.012, 0.62)
 	_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.add_child(_backdrop)
@@ -51,22 +54,23 @@ func configure(host: Node) -> void:
 	if desktop != null:
 		_graphics = desktop.get("_panel") as PanelContainer
 		_build_graphics_presentation()
+	_build_home()
 	for panel: PanelContainer in [_menu, _water, _graphics]:
 		if not is_instance_valid(panel): continue
 		_panels.append(panel)
-		panel.add_theme_stylebox_override("panel", _box(Color("111f29"), EDGE, 14, 24))
+		panel.add_theme_stylebox_override("panel", _box(Color("141b18"), EDGE, 3, 24))
 		panel.visibility_changed.connect(_panel_visibility_changed.bind(panel))
 		panel.minimum_size_changed.connect(_queue_layout)
 	ui.resized.connect(refresh_layout)
 	for key: String in ["_room_title", "_status", "_hint"]:
 		var label := main.get(key) as Label
 		if is_instance_valid(label):
-			label.add_theme_color_override("font_color", Color("b1c8ce"))
+			label.add_theme_color_override("font_color", Color("cdd5bd"))
 			label.add_theme_font_size_override("font_size", 13)
 	refresh_layout()
 	_panel_visibility_changed(_menu)
 
-func _box(color: Color, edge: Color = EDGE, radius: int = 8, padding: int = 12) -> StyleBoxFlat:
+func _box(color: Color, edge: Color = EDGE, radius: int = 3, padding: int = 12) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = color
 	style.border_color = edge
@@ -85,33 +89,33 @@ func _theme(font: Font) -> Theme:
 		theme.set_color("font_focus_color", type, Color.WHITE)
 		theme.set_color("font_pressed_color", type, INK)
 		theme.set_color("font_disabled_color", type, Color("637d89"))
-	var normal := _box(Color("1c313e"), Color("35515e"), 7, 10)
-	var hover := _box(Color("294754"), Color("65a8b5"), 7, 10)
-	var pressed := _box(Color("153c47"), ACCENT, 7, 10)
-	var disabled := _box(Color("172731"), Color("293e49"), 7, 10)
+	var normal := _box(Color("243129"), Color("4a5849"), 7, 10)
+	var hover := _box(Color("354839"), Color("9cae86"), 7, 10)
+	var pressed := _box(Color("303f2b"), ACCENT, 7, 10)
+	var disabled := _box(Color("1d2720"), Color("354235"), 7, 10)
 	var focus := _box(Color(0,0,0,0), ACCENT, 8, 0)
 	focus.set_border_width_all(2)
 	for type: String in ["Button", "OptionButton"]:
 		for state: String in ["normal", "hover", "pressed", "disabled", "focus"]:
 			theme.set_stylebox(state, type, {"normal":normal, "hover":hover, "pressed":pressed, "disabled":disabled, "focus":focus}[state])
 		theme.set_constant("h_separation", type, 10)
-	theme.set_stylebox("normal", "LineEdit", _box(Color("0e1c25"), EDGE, 7, 10))
+	theme.set_stylebox("normal", "LineEdit", _box(Color("101a14"), EDGE, 7, 10))
 	theme.set_stylebox("focus", "LineEdit", focus)
 	theme.set_color("caret_color", "LineEdit", ACCENT)
 	theme.set_color("selection_color", "LineEdit", Color("3d6775"))
 	theme.set_color("font_placeholder_color", "LineEdit", MUTED)
 	var quiet := _box(Color(0,0,0,0), Color(0,0,0,0), 5, 4)
 	for state: String in ["normal", "pressed", "disabled"]: theme.set_stylebox(state, "CheckButton", quiet)
-	theme.set_stylebox("hover", "CheckButton", _box(Color("1c3541"), Color(0,0,0,0), 5, 4))
-	theme.set_stylebox("hover_pressed", "CheckButton", _box(Color("1c3541"), Color(0,0,0,0), 5, 4))
+	theme.set_stylebox("hover", "CheckButton", _box(Color("283a2c"), Color(0,0,0,0), 5, 4))
+	theme.set_stylebox("hover_pressed", "CheckButton", _box(Color("283a2c"), Color(0,0,0,0), 5, 4))
 	theme.set_stylebox("focus", "CheckButton", focus)
 	theme.set_color("icon_normal_color", "CheckButton", ACCENT)
 	theme.set_color("icon_hover_color", "CheckButton", Color("b8f2ee"))
 	theme.set_color("icon_pressed_color", "CheckButton", ACCENT)
-	var track := _box(Color("0d1b24"), Color("344d59"), 3, 0)
+	var track := _box(Color("111c15"), Color("465642"), 3, 0)
 	track.content_margin_top = 3
 	track.content_margin_bottom = 3
-	var fill := _box(Color("73b9c4"), Color("73b9c4"), 3, 0)
+	var fill := _box(Color("aabd91"), Color("aabd91"), 3, 0)
 	fill.content_margin_top = 3
 	fill.content_margin_bottom = 3
 	theme.set_stylebox("slider", "HSlider", track)
@@ -120,26 +124,27 @@ func _theme(font: Font) -> Theme:
 	theme.set_color("grabber_color", "HSlider", ACCENT)
 	theme.set_color("grabber_highlight_color", "HSlider", Color.WHITE)
 	theme.set_color("grabber_disabled_color", "HSlider", Color("56727d"))
-	var rail := _box(Color("142833"), Color(0,0,0,0), 3, 0)
+	var rail := _box(Color("1d2b20"), Color(0,0,0,0), 3, 0)
 	rail.content_margin_left = 4
 	rail.content_margin_right = 4
-	var thumb := _box(Color("496f7d"), Color(0,0,0,0), 3, 0)
+	var thumb := _box(Color("607657"), Color(0,0,0,0), 3, 0)
 	thumb.content_margin_left = 4
 	thumb.content_margin_right = 4
 	for type: String in ["VScrollBar", "HScrollBar"]:
 		theme.set_stylebox("scroll", type, rail)
 		for state: String in ["grabber", "grabber_highlight", "grabber_pressed"]: theme.set_stylebox(state, type, thumb)
-	theme.set_stylebox("panel", "PopupMenu", _box(Color("172b36"), EDGE, 8, 8))
+	theme.set_stylebox("panel", "PopupMenu", _box(Color("1f2c22"), EDGE, 8, 8))
 	theme.set_stylebox("hover", "PopupMenu", hover)
 	theme.set_constant("v_separation", "PopupMenu", 12)
-	theme.set_stylebox("panel", "TooltipPanel", _box(Color("1c303b"), EDGE, 7, 10))
+	theme.set_stylebox("panel", "TooltipPanel", _box(Color("263329"), EDGE, 7, 10))
 	theme.set_color("font_color", "TooltipLabel", INK)
 	theme.set_font_size("font_size", "TooltipLabel", 14)
-	theme.set_stylebox("separator", "HSeparator", _box(Color("304954"), Color(0,0,0,0), 0, 0))
+	theme.set_stylebox("separator", "HSeparator", _box(Color("42553e"), Color(0,0,0,0), 0, 0))
 	return theme
 
 func _style_existing(parent: Node) -> void:
 	for child: Node in parent.get_children():
+		if child.name == "CameraViewfinder": continue
 		if child is CheckButton:
 			child.custom_minimum_size.y = 32
 			child.add_theme_font_size_override("font_size", 14)
@@ -177,7 +182,7 @@ func _label(text: String, size: int = 14, color: Color = MUTED) -> Label:
 func _card(parent: Node, title: String) -> VBoxContainer:
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	panel.add_theme_stylebox_override("panel", _box(Color("172a35"), Color("2e4855"), 10, 18))
+	panel.add_theme_stylebox_override("panel", _box(Color("1b2720"), Color("3b4a3b"), 3, 18))
 	parent.add_child(panel)
 	var list := VBoxContainer.new()
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -197,7 +202,7 @@ func _build_main_presentation() -> void:
 	var brand := old[0] as Label
 	brand.add_theme_font_size_override("font_size", 30)
 	var sub := old[1] as Label
-	sub.text = "泳池之外   /   POOLCORE · PC EXPLORER"
+	sub.text = "泳池之外   /   FIELD CAMERA     ·     待机 STANDBY"
 	sub.add_theme_color_override("font_color", MUTED)
 	for index: int in range(2, old.size()): column.remove_child(old[index])
 	_main_body = BoxContainer.new()
@@ -205,7 +210,28 @@ func _build_main_presentation() -> void:
 	_main_body.add_theme_constant_override("separation", 18)
 	column.add_child(_main_body)
 	var world_card := _card(_main_body, "01   选择世界 / STARTING WORLD")
-	var preference_card := _card(_main_body, "02   探索设置 / PREFERENCES")
+	var preference_card := _card(_main_body, "02   相机与探索 / CAMERA SETUP")
+	preference_card.add_child(_label("镜头 / LENS", 13, ACCENT))
+	_move(main.get("_looks"), preference_card)
+	# Reuse the live, validated controls, not a second settings owner.
+	for key: String in ["referenceHalation", "referenceFringePx", "referenceGrain", "referenceVignette"]:
+		var slider := _water.find_child(key, true, false) as HSlider
+		if slider != null:
+			_move(slider.get_parent(), preference_card)
+			slider.get_parent().get_child(0).custom_minimum_size.x = 130
+	var waves := CheckButton.new()
+	waves.name = "referenceWaves"
+	waves.text = "大波纹 / 交错水面"
+	waves.button_pressed = bool(main.get("_reference_settings").referenceWaves)
+	waves.toggled.connect(func(value: bool): main._change_reference_setting("referenceWaves", value))
+	preference_card.add_child(waves)
+	preference_card.add_child(_label("关闭大波纹仍保留脚步与涉水涟漪。\nF 切换镜头 · 按住 Tab 查看提示，松开隐藏。", 13))
+	var dream := main.get("_dream") as Node
+	if is_instance_valid(dream):
+		world_card.add_child(_label("新增地图 / DREAMCORE", 13, ACCENT))
+		for field: String in ["_summary", "_selector", "_enter", "_relaxed", "_reduced", "_repair", "_recovery"]:
+			var control := dream.get(field) as Control
+			if is_instance_valid(control): _move(control, world_card)
 	var campaign := main.get("_campaign") as Node
 	if is_instance_valid(campaign):
 		_move(campaign.get("_menu_summary"), world_card)
@@ -224,8 +250,8 @@ func _build_main_presentation() -> void:
 	var resume := main.get("_resume") as Button
 	_move(resume, world_card)
 	resume.custom_minimum_size.y = 48
-	resume.add_theme_stylebox_override("normal", _box(Color("315a65"), Color("76b8c1"), 8, 12))
-	resume.add_theme_stylebox_override("hover", _box(Color("3e7380"), ACCENT, 8, 12))
+	resume.add_theme_stylebox_override("normal", _box(Color("46573b"), Color("a9bd90"), 8, 12))
+	resume.add_theme_stylebox_override("hover", _box(Color("586e49"), ACCENT, 8, 12))
 	_move(main.get("_loading_status"), world_card)
 	world_card.add_child(_label("快速前往 / DESTINATION", 13))
 	_move((main.get("_destination") as Control).get_parent(), world_card)
@@ -264,7 +290,7 @@ func _build_main_presentation() -> void:
 	var footer := HBoxContainer.new()
 	footer.add_theme_constant_override("separation", 10)
 	for node: Node in old:
-		if node.get_parent() != null: continue
+		if node.get_parent() != null or node.is_queued_for_deletion(): continue
 		if node is CheckButton:
 			if labels.has(node.text):
 				if node.tooltip_text.is_empty(): node.tooltip_text = node.text
@@ -285,7 +311,7 @@ func _build_main_presentation() -> void:
 			preference_card.add_child(node)
 		elif node is Label and node.text.begins_with("WASD"):
 			node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			node.text = "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 交互 · Q 阅读机关铭牌\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\nL 手电筒 · F 镜头 · H 隐藏界面\nG 诊断 · F11 全屏 · Esc 暂停 / 返回"
+			node.text = "WASD 移动 · Shift 奔跑\nSpace 跳跃 / 水中上浮 · E 交互 · Q 阅读机关铭牌\n左键抓取 · 右键蓄力投掷 · 滚轮调距离\n按住 Tab 查看提示 · L 手电筒 · F 镜头\nH 隐藏取景界面 · G 诊断（Tab 查看） · F11 全屏 · Esc 暂停 / 返回"
 			preference_card.add_child(node)
 		elif node is Button and (node.text.contains("DIAGNOSTICS") or node.text.contains("QUIT")):
 			node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -297,8 +323,127 @@ func _build_main_presentation() -> void:
 			node.add_theme_color_override("font_color", MUTED)
 			world_card.add_child(node)
 		else: preference_card.add_child(node)
-	preference_card.add_child(_label("设置更改会自动保存。\n实验烘焙和镜头滤镜仅在本次运行生效。", 13, MUTED))
+	preference_card.add_child(_label("镜头与水面设置独立保存。\n实验主池厅烘焙仅在本次运行生效。", 13, MUTED))
 	column.add_child(footer)
+
+func _build_home() -> void:
+	# Reuse the real controls and callbacks; the homepage owns no game state.
+	_settings_scroll = _menu.get_child(0) as ScrollContainer
+	_menu.remove_child(_settings_scroll)
+	var shell := VBoxContainer.new()
+	shell.add_theme_constant_override("separation", 12)
+	_menu.add_child(shell)
+	_home = VBoxContainer.new()
+	_home.name = "HomePage"
+	_home.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_home.add_theme_constant_override("separation", 18)
+	shell.add_child(_home)
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 18)
+	_home.add_child(header)
+	var identity := VBoxContainer.new()
+	identity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity.add_theme_constant_override("separation", 3)
+	header.add_child(identity)
+	identity.add_child(_label("BEYOND THE BASIN", 28, INK))
+	identity.add_child(_label("泳池之外  ·  选择旅程", 14, MUTED))
+	var mark := _label("POOLCORE\nEXPLORATION", 12, ACCENT)
+	mark.autowrap_mode = TextServer.AUTOWRAP_OFF
+	mark.custom_minimum_size.x = 120
+	mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	header.add_child(mark)
+	var language_box := VBoxContainer.new()
+	header.add_child(language_box)
+	language_box.add_child(_label("语言 / Language", 12, MUTED))
+	var language := OptionButton.new()
+	language.name = "LanguageSelector"
+	language.add_item("简体中文 / Simplified Chinese")
+	language.add_item("English")
+	language.select(0 if TranslationServer.get_locale().begins_with("zh") else 1)
+	language.custom_minimum_size = Vector2(220, 40)
+	language_box.add_child(language)
+	var language_status := _label("", 12)
+	language_status.hide()
+	language_box.add_child(language_status)
+	var localization := get_node("/root/Localization")
+	language.item_selected.connect(func(index: int):
+		var result: Error = localization.select_locale(localization.LOCALES[index])
+		language_status.visible = result != OK
+		if result != OK:
+			language_status.text = tr("语言保存失败（%s）") % error_string(result)
+			language.select(0 if TranslationServer.get_locale().begins_with("zh") else 1))
+	localization.locale_changed.connect(_queue_layout)
+	localization.locale_changed.connect(func(): language.select(0 if TranslationServer.get_locale().begins_with("zh") else 1))
+	_home.add_child(HSeparator.new())
+	var cards := HBoxContainer.new()
+	cards.name = "HomeChoices"
+	cards.add_theme_constant_override("separation", 16)
+	cards.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_home.add_child(cards)
+	var journey := _card(cards, "01   继续旅程")
+	var campaign := main.get("_campaign") as Node
+	if is_instance_valid(campaign):
+		_move(campaign.get("_menu_summary"), journey)
+		_move(campaign.get("_continue"), journey)
+		(campaign.get("_continue") as Button).text = "进入主线"
+	journey.add_child(HSeparator.new())
+	journey.add_child(_label("当前场景", 13, ACCENT))
+	_move(main.get("_resume"), journey)
+	_move(main.get("_loading_status"), journey)
+	var spacer := Control.new()
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	journey.add_child(spacer)
+	journey.add_child(_label("进度自动保存 · Esc 返回菜单", 13))
+	var maps := _card(cards, "02   选择地图")
+	var dream := main.get("_dream") as Node
+	if is_instance_valid(dream):
+		_move(dream.get("_summary"), maps)
+		var dream_row := HBoxContainer.new()
+		dream_row.add_theme_constant_override("separation", 8)
+		maps.add_child(dream_row)
+		_move(dream.get("_selector"), dream_row)
+		(dream.get("_selector") as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_move(dream.get("_enter"), dream_row)
+		(dream.get("_enter") as Button).text = "进入"
+		(dream.get("_enter") as Button).custom_minimum_size.x = 80
+	maps.add_child(HSeparator.new())
+	maps.add_child(_label("原有场景", 14, INK))
+	var spawn := main.get("_spawn_select") as OptionButton
+	var spawn_row := spawn.get_parent() as HBoxContainer
+	_move(spawn_row, maps)
+	(spawn_row.get_child(1) as Button).text = "进入"
+	var caption := _label("选择场景后加载；设置中可更改种子。", 13)
+	maps.add_child(caption)
+	var foot := HBoxContainer.new()
+	foot.add_theme_constant_override("separation", 12)
+	_home.add_child(foot)
+	var settings := Button.new()
+	settings.name = "OpenSettings"
+	settings.text = "设置  /  SETTINGS"
+	settings.custom_minimum_size = Vector2(180, 42)
+	settings.pressed.connect(func(): _set_home_visible(false))
+	foot.add_child(settings)
+	var note := _label("镜头 · 水体 · 画质 · 声音", 13)
+	note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	note.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	foot.add_child(note)
+	_settings_back = Button.new()
+	_settings_back.name = "SettingsBackToHome"
+	_settings_back.text = "←  返回主页"
+	_settings_back.custom_minimum_size.y = 40
+	_settings_back.pressed.connect(func(): _set_home_visible(true))
+	shell.add_child(_settings_back)
+	_settings_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	shell.add_child(_settings_scroll)
+	_set_home_visible(true)
+
+func _set_home_visible(value: bool) -> void:
+	if not is_instance_valid(_home): return
+	_home.visible = value
+	_settings_scroll.visible = not value
+	_settings_back.visible = not value
+	_queue_layout()
+	if _menu.is_visible_in_tree(): _focus_panel.call_deferred(_menu)
 
 func _collapse_empty_status(label: Label) -> void:
 	label.visible = not label.text.is_empty()
@@ -306,7 +451,7 @@ func _collapse_empty_status(label: Label) -> void:
 
 func _world_selection_changed(index: int) -> void:
 	if not is_instance_valid(_world_note): return
-	var descriptions := ["原仓库场景\n保留原始房间与熟悉的水面交互。", "重做主池厅\n从宽阔的主池空间开始安静探索。", "扩展随机地图\n由世界种子生成更多相连的泳池空间。", "曲廊池区\n三处新池厅相连，外侧延续种子地图。"]
+	var descriptions := ["原仓库场景\n保留原始房间与熟悉的水面交互。", "重做主池厅\n从宽阔的主池空间开始安静探索。", "扩展随机地图\n由世界种子生成更多相连的泳池空间。", "曲廊池区\n三处新池厅相连，外侧延续种子地图。", "五境参考场景\n阶厅、暗柱水厅、青窗水廊、八角池与球池休息室。"]
 	_world_note.text = descriptions[clampi(index, 0, descriptions.size() - 1)]
 
 func _panel_shell(panel: PanelContainer, scroll: ScrollContainer, title: Label, subtitle: String, back: Button) -> void:
@@ -345,6 +490,13 @@ func _build_water_presentation() -> void:
 	for node: Node in old:
 		if node.get_parent() == list: list.remove_child(node)
 	list.add_theme_constant_override("separation", 14)
+	var reference := _card(list, "大波纹 / CROSS WAVES")
+	reference.add_child(_label("与镜头滤镜独立；关闭后仍可踩出小涟漪。", 13))
+	for node: Node in old:
+		if node.name in ["ReferenceHeading", "ReferenceNote", "referenceLook"]:
+			node.queue_free()
+		elif node.name == "referenceWaves" or (node is HBoxContainer and node.find_child("referenceWave*", false, false) != null):
+			_move(node, reference)
 	var wind := _card(list, "室内风纹 / WIND")
 	for key: String in ["windWaves", "windStrength", "windDirection", "windDensity"]:
 		if not main.get("_wind_controls").has(key): continue
@@ -375,7 +527,7 @@ func _build_water_presentation() -> void:
 	checks.add_theme_constant_override("v_separation", 4)
 	layers.add_child(checks)
 	for node: Node in old:
-		if node.get_parent() != null: continue
+		if node.get_parent() != null or node.is_queued_for_deletion(): continue
 		if node is CheckButton:
 			node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			checks.add_child(node)
@@ -435,7 +587,9 @@ func refresh_layout() -> void:
 
 func _panel_visibility_changed(panel: PanelContainer) -> void:
 	refresh_layout()
-	if panel.visible: _focus_panel.call_deferred(panel)
+	if panel.visible:
+		if panel == _menu and is_instance_valid(_home): _set_home_visible(true)
+		_focus_panel.call_deferred(panel)
 
 func _focus_panel(panel: PanelContainer) -> void:
 	if not is_instance_valid(panel) or not panel.is_visible_in_tree(): return
@@ -478,6 +632,10 @@ func _restore_water_entry_focus() -> void:
 	if is_instance_valid(_water_entry): _water_entry.grab_focus.call_deferred()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause") and is_instance_valid(_menu) and _menu.visible and is_instance_valid(_home) and not _home.visible:
+		_set_home_visible(true)
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("pause") and is_instance_valid(_water) and _water.visible:
 		_water_back.pressed.emit()
 		get_viewport().set_input_as_handled()

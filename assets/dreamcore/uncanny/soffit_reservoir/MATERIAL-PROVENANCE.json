@@ -1,0 +1,27 @@
+{
+  "revision": 3,
+  "license": "Original project-authored procedural maps; no external inputs",
+  "concrete_recipe": "CONCRETE-V3-PROVENANCE.json",
+  "tile_recipe": "TILE-V2-PROVENANCE.json",
+  "concrete_period_m": 3.2,
+  "tile_period_m": 1.6,
+  "tile_pitch_m": 0.1,
+  "grout_width_m": 0.002,
+  "dimensions_each": [
+    2048,
+    2048
+  ],
+  "normal_convention": "OpenGL",
+  "channel_pack": "ORM=occlusion,roughness,metallic",
+  "source_material_scaling": "GDScript UV1 scale Vector3.ONE / actual period; not renderer-only",
+  "nominal_rgba_with_full_mips_upper_bound_bytes": 134217728,
+  "gpu_memory_measured": false,
+  "files": {
+    "concrete_albedo.png": "21e2258e72c847ce2816cf21f906d569baf5ae348920b97b72683eed11601bab",
+    "concrete_normal.png": "071f2de690a98bea2d9d90ad50e29a56480960015e42d5d675f51c8d62524580",
+    "concrete_orm.png": "a5e45cb85dbea1cf2ae1066f63ad91b65f95f17f894a07afa3bdf05750963005",
+    "ivory_tile_albedo.png": "b2acaa9c1a974ef40009d2c83cf1b9e4ab2b1f73f0810179ea122a0af3cec5e1",
+    "ivory_tile_normal.png": "f1ea57478eb73f4c7b4b91accd8866ba4d4c7da1af98f65ec10466f3be1f818a",
+    "ivory_tile_orm.png": "7d844e9cc3e342a4d4b0cea03bb3487e6623c2f09fd12bc579a7ae3f1b813a4b"
+  }
+}

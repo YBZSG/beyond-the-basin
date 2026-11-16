@@ -23,3 +23,9 @@
 ## Campaign Chinese font
 
 `assets/fonts/campaign/PoolCoreCampaignSC.otf` is a renamed, character-subset derivative of Noto Sans CJK SC Regular (face2 of the locally installed Noto CJK TTC), distributed under SIL Open Font License1.1. Original font-face metadata: ©2014–2021 Adobe (http://www.adobe.com/). The local package also retains a Copyright2010–2012 Google Corporation upstream notice. Full license and provenance/hash accompany the font in that directory. The original font is not authored by this project. The subset is used only by the new campaign UI, arrival captions and station labels; existing character/license boundaries are unchanged.
+
+
+## Giant hanging hand anatomy
+
+- **Dan Ulrich — Hand - Realistic**, from Blender Studio/community **Human Base Meshes v1.4.1**, **CC0/public domain**. The hand is custom-posed, extended and detailed for this scene; it is not wholly project-authored geometry despite the retained legacy `hanging_hand_original.obj` filename. Official source: https://www.blender.org/download/demo-files/ . Asset-level license verification, acquisition hashes and derivative details: `assets/dreamcore/late_references/ANATOMICAL_HAND_PROVENANCE.md`. No private ithappy asset was used in this sculpture or uploaded externally.
+- Hand-only weathered-limestone albedo/normal/ORM maps are original deterministic periodic scalar fields, not downloaded scans or generated from private assets. See `assets/dreamcore/late_references/HANGING_HAND_STONE_PROVENANCE.json`. Hand-only offline triplanar material translation follows the documented Godot 4.6 StandardMaterial3D projection conventions; it is not a claim of native renderer equivalence.

@@ -303,6 +303,7 @@ func build_interior() -> void:
 		7: _pillar_hall()
 		8,9,10: _authored_wing()
 	_prepare_fixtures_and_props()
+	if int(layout.variant) in [0,1,2]: preload("res://scripts/world/original_hall_layout.gd").filter_wet_props(self)
 	var exclusions: Array[AABB] = []
 	for solid in solids:
 		if solid.position.y < .32 and solid.end.y > .32: exclusions.append(solid)
@@ -314,65 +315,7 @@ func build_interior() -> void:
 	room.set_meta("complete",true)
 
 func _old_pool() -> void:
-	for dx in [-10,-3,4,11]:
-		box(dx,(6+GROUND)/2,-9,1,6-GROUND,1)
-		box(dx,7.45,-9,.65,2.9,.65)
-	box(0,5.85,-11.7,31,.35,5.5)
-	box(0,5.5,-9,31,.6,.55)
-	rail(-15,6.05,-9,30)
-	ladder(-12,-8.4,6.04,-10.1)
-	for dx in [-14,-7,0,7,14]: box(dx,8.65,0,.32,.6,31)
-	for dz in [-5,6]: box(0,8.65,dz,31,.6,.4)
-	sign_board(-3,3.4,-8.48,"禁止\n跳水")
-	sign_board(10,3.4,-15.68,decay_text("泳池\n须知"),0,true)
-	if layout.variant!=2: tower(6,-6)
-	else:
-		for dx in [-7,7]: box(dx,(4.8+GROUND)/2,0,1.1,4.8-GROUND,1.1,"pale")
-		rng.next()
-		box(-12.75,.08,-6,5.9,1.72,4,"pale")
-		for i in 5:
-			var top: float = .94-(i+1)*.28
-			box(-9.5+i*.62,(GROUND+top)/2,-6,.64,top-GROUND,3.2,"pale")
-		rail(-15.6,.94,-8,5.6)
-	for dx in [-.65,.65]:
-		for dz in [-.6,.6]: rod(Vector3(12+dx,GROUND,-7+dz),Vector3(12+dx*.65,2.8,-7+dz*.65),.045)
-	box(12,2.45,-7,1,.13,.9,"pale")
-	box(12,2.95,-7.4,1,.9,.1,"pale")
-	ladder(12,-6.6,2.2)
-	for dz in [-3,5]:
-		box(-13,.72,dz,2.4,.12,.65,"pale")
-		for dx in [-.8,.8]: rod(Vector3(-13+dx,GROUND,dz),Vector3(-13+dx,.7,dz))
-	for dz in [1,9]:
-		var tilt:=Vector3.ZERO
-		if layout.corrupt>=2:
-			tilt.z=(rng.next()-.5)*.15
-			tilt.x=(rng.next()-.5)*.15
-		cylinder(-8,(8.9+GROUND)/2,dz,.65,8.9-GROUND,"tile",tilt)
-	var slide_start:=Vector3(10,3.3,2)
-	var slide_end:=Vector3(10,GROUND,8)
-	var midpoint: Vector3 = (slide_start+slide_end)*.5
-	var slope: float = atan2(slide_start.y-slide_end.y,slide_end.z-slide_start.z)
-	var slide:=box(midpoint.x,midpoint.y,midpoint.z,1.65,.16,slide_start.distance_to(slide_end),"red",false,Vector3(slope,0,0))
-	slide.name="WalkableSlide"
-	var body:=StaticBody3D.new()
-	body.name="SlideCollision"
-	body.collision_layer=1
-	body.collision_mask=0
-	body.add_to_group("pool_slides")
-	body.set_meta("pool_slide",true)
-	room.add_child(body)
-	var shape:=BoxShape3D.new()
-	shape.size=Vector3(1.65,.16,slide_start.distance_to(slide_end))
-	add_shape(shape,slide.transform,body)
-	for side in [-1,1]: rod(slide_start+Vector3(side*.86,.3,0),slide_end+Vector3(side*.86,.3,0),.075)
-	box(10,3.22,1.1,2,.16,1.8,"pale")
-	ladder(10,-.15,3.3,.65)
-	box(-5,.21,7,1.5,1.98,1.5,"pale")
-	sphere(-5,1.9,7,.8,"chrome")
-	for dx in [-.8,.8]: box(3+dx,1.11,8,.15,3.78,.25,"metal")
-	box(3,3,8,1.75,.16,.25,"metal")
-	sign_board(3,2.55,8.14,"出口\n不存在",0,true)
-	if layout.variant==1: sphere(-3,.87,0,1.6,"yellow")
+	preload("res://scripts/world/original_hall_layout.gd").build(self)
 
 func _high_arcades() -> void:
 	for dx in [-8,8]:
@@ -427,15 +370,7 @@ func _connected_baths() -> void:
 	sign_board(10,3,-15.65,decay_text("夜间\n浴场"))
 
 func _high_gallery() -> void:
-	for dx in [-10,10]:
-		for dz in [-10,-3,4,11]:
-			box(dx,4.1,dz,1.5,9.76,1.5,"pale")
-			box(dx,5.5,dz,4,.3,3,"pale")
-	box(0,5.5,-12,28,.35,3,"pale")
-	rail(-14,5.7,-10.6,28)
-	ladder(12,-9.8,5.7,-11.4)
-	tower(-10,2)
-	sign_board(8,3,-15.65,decay_text("午后\n无人"))
+	preload("res://scripts/world/high_gallery_access.gd").build(self)
 
 func _pillar_hall() -> void:
 	wfc_grid=WFC.collapse_interior(SourceRandom.new(layout.coord.x,layout.coord.y,layout.seed+911),12,1+layout.corrupt*.55)

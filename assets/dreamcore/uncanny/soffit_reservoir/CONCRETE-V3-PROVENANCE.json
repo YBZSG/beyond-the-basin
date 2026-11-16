@@ -1,0 +1,39 @@
+{
+  "generator": "tools/uncanny/soffit_reservoir/generate_concrete_v3.py",
+  "generator_sha256": "c9b79e6e6fedd54cf53631ae4ab17811587e44df678749b24e486dea3b94747c",
+  "seed": 60102703,
+  "license": "Original procedural project texture; no external image input",
+  "dimensions": [
+    2048,
+    2048
+  ],
+  "period_m": 3.2,
+  "texel_mm": 1.5625,
+  "normal_convention": "OpenGL",
+  "purpose": "Same cast concrete values/physical scale as V2; periodic lattice, wrap-filtered pores and modular drips remove false repeat edges. No painted lighting.",
+  "repeat_boundary_gradient_tests": {
+    "macro": {
+      "wrap_y_rms": 0.00036265116068534553,
+      "interior_y_rms": 0.00033550511579960585,
+      "wrap_x_rms": 0.0005482545820996165,
+      "interior_x_rms": 0.0003382885770406574
+    },
+    "albedo": {
+      "wrap_y_rms": 0.0073334211483597755,
+      "interior_y_rms": 0.006696772295981646,
+      "wrap_x_rms": 0.007168299984186888,
+      "interior_x_rms": 0.0067125181667506695
+    },
+    "roughness": {
+      "wrap_y_rms": 0.0035917051136493683,
+      "interior_y_rms": 0.003182989079505205,
+      "wrap_x_rms": 0.003424050286412239,
+      "interior_x_rms": 0.003307310864329338
+    }
+  },
+  "files": {
+    "concrete_albedo.png": "21e2258e72c847ce2816cf21f906d569baf5ae348920b97b72683eed11601bab",
+    "concrete_normal.png": "071f2de690a98bea2d9d90ad50e29a56480960015e42d5d675f51c8d62524580",
+    "concrete_orm.png": "a5e45cb85dbea1cf2ae1066f63ad91b65f95f17f894a07afa3bdf05750963005"
+  }
+}

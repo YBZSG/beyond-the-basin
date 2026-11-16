@@ -287,7 +287,7 @@ func _build_memory() -> void:
 	for index in range(6):
 		var panel := _box("PrivacyPanel", Vector3(0.43+index*0.83, 1.5, 0.10 if index%2 else -0.10), Vector3(0.86, 3.0, 0.1), _accent, _door)
 		panel.rotation.y = 0.13 if index%2 else -0.13
-	_box("LoungeBench", Vector3(-1.9, 0.35, -1.8), Vector3(0.8, 0.7, 2.2), _floor)
+	preload("res://scripts/campaign/memory_seating.gd").build(_stage,_metal,STAGE_LAYER)
 	for side in [-1.0, 1.0]:
 		_box("ArchiveCabinet", Vector3(side*2.1, 1.1, -7), Vector3(0.6, 2.2, 3.2), _metal)
 		for row in range(4):

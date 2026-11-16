@@ -218,12 +218,12 @@ func _build_panel() -> void:
 	refresh_label.text = "动态焦散更新间隔 / CAUSTIC INTERVAL"
 	column.add_child(refresh_label)
 	_refresh = OptionButton.new()
-	for interval in range(7): _refresh.add_item("每次更新 / EVERY FRAME" if interval == 0 else "间隔 %d 帧 / %d FRAMES" % [interval, interval])
+	for interval in range(7): _refresh.add_item("每次更新 / EVERY FRAME" if interval == 0 else TranslationServer.translate("间隔 %d 帧 / %d FRAMES") % [interval, interval])
 	_refresh.custom_minimum_size.y = 48
 	_refresh.item_selected.connect(func(index: int): caustics_refresh=index; apply_settings(); save_settings())
 	column.add_child(_refresh)
 	_cap = OptionButton.new()
-	for cap in FRAME_CAPS: _cap.add_item("帧率上限 / CAP: %d" % cap if cap > 0 else "不限制帧率 / UNCAPPED")
+	for cap in FRAME_CAPS: _cap.add_item(TranslationServer.translate("帧率上限 / CAP: %d") % cap if cap > 0 else "不限制帧率 / UNCAPPED")
 	_cap.custom_minimum_size.y = 48
 	_cap.item_selected.connect(func(index: int): frame_cap=FRAME_CAPS[index]; apply_settings(); save_settings())
 	column.add_child(_cap)
@@ -276,14 +276,14 @@ func _refresh_interface() -> void:
 	if not is_instance_valid(_quality): return
 	_quality.select(PRESETS.keys().find(preset))
 	_scale.set_value_no_signal(resolution_scale * 100.0)
-	_scale_label.text = "3D 渲染比例 / RESOLUTION: %d%%" % roundi(resolution_scale * 100.0)
+	_scale_label.text = TranslationServer.translate("3D 渲染比例 / RESOLUTION: %d%%") % roundi(resolution_scale * 100.0)
 	_shadow_check.set_pressed_no_signal(shadows)
 	_reflection_check.set_pressed_no_signal(reflections)
 	_aa.select(screen_aa)
 	_refresh.select(caustics_refresh)
 	_cap.select(FRAME_CAPS.find(frame_cap))
 	var renderer := RenderingServer.get_current_rendering_method()
-	_notes.text = "渲染器：%s。保留动态水面、涟漪、折射、焦散和平面倒影；手机版已移除立体水花和飞溅粒子。高画质控制在最长边 1600、短边 900 像素以内，再应用上方比例。" % renderer
+	_notes.text = TranslationServer.translate("渲染器：%s。保留动态水面、涟漪、折射、焦散和平面倒影；手机版已移除立体水花和飞溅粒子。高画质控制在最长边 1600、短边 900 像素以内，再应用上方比例。") % renderer
 	if preset == "Low":
 		_notes.text += "\nLow 保留主浅水，关闭细波、微法线、泡沫、焦散及倒影等外观层。"
 	if renderer != "forward_plus":

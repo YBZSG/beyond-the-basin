@@ -1,0 +1,12 @@
+{
+  "asset": "Green Metal Rust",
+  "author_source": "Poly Haven",
+  "asset_url": "https://polyhaven.com/a/green_metal_rust",
+  "license": "CC0",
+  "license_url": "https://polyhaven.com/license",
+  "scale_m": 1,
+  "runtime_pngs": "Original diffuse and ARM plus explicitly labeled previously native-decoded RGB8 normal copy; all retained input bytes unchanged. Original16bit normal remains in external study, not silently replaced.",
+  "original_16bit_normal_sha256": "103eeb774e68bee61292e5a95de1b9ad040c56185c39a7485c5cefca8b064326",
+  "native_RGB8_raw_sha256": "e6c1205d5e2c9390d3920420126739007d63c4d080e3eb16409a6b0c650c1f59",
+  "native_RGB8_png_sha256": "05a7880eda90b70c783fb52d61122325187ee395fec16c79a2ccabacc0bb69e9"
+}

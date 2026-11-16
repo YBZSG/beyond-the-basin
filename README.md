@@ -1,5 +1,7 @@
 # Beyond the Basin
 
+[English](README.en.md)
+
 一个还在制作中的泳池空间探索游戏，也叫 **PoolCore**。
 
 沿着水道穿过空荡的池厅、回廊和设备间，听脚步、水声和远处的回响。你可以自由闲逛、拨动水面、搬动物品，也可以进入六章主线，逐步恢复房间里的设施。主线中的空间会随时间变暗、发生异变；想慢慢看风景，可以开启舒缓模式。
@@ -10,19 +12,21 @@
 
 | 平台 | 下载 | 版本 |
 | --- | --- | --- |
-| Windows x64 | [下载安装包](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.13-pc-20261026/PoolCore-PC-0.6.13-Setup.exe) · [更新说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.13-pc-20261026) | 0.6.13 |
+| Windows x64 | [下载免安装版](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.14-pc-20261116/PoolCore-Windows-0.6.14.zip) · [更新说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.14-pc-20261116) | 0.6.14 |
 | Android ARM64 | [下载 APK](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.4-android/PoolCore-Mobile-8400-AvatarFix.apk) · [安装说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.4-android) | 0.6.4 测试版 |
 | 源码 | [下载 main 分支](https://github.com/YBZSG/beyond-the-basin/archive/refs/heads/main.zip) | 开发中 |
 
-Windows 安装包包含游戏资源和所需运行库，安装后从桌面或开始菜单打开 PoolCore。需要 Windows 10/11 x64 和支持 Vulkan 的显卡。首次启动会编译着色器、准备场景，需要等一会儿。
+Windows 免安装版包含游戏资源和所需运行库，完整解压后运行 `Launch-PoolCore.cmd`。连续双厅预览使用 `Launch-Connected-Halls.cmd`。主页右上角「语言 / Language」可切换中文和 English，选择会自动保存。需要 Windows 10/11 x64 和支持 Vulkan 的显卡。首次启动会编译着色器、准备场景，需要等一会儿。
 
 Android 版提供触屏控制，默认 High 画质、30 FPS 上限，可以在菜单中调整。为降低开销，手机版去掉了立体水花，保留水面涟漪、折射、焦散和倒影。我的测试手机是天玑 8400、12GB 内存的设备；PC 主要使用 RTX 5070 Laptop 测试。这些是测试设备记录，不是最低配置要求。APK 文件名里的 `8400` 是早期命名。
 
-源码、Windows 安装包和 Android APK 并非同步更新。Android 版早于当前 PC 版；下面的操作按源码版介绍。GitHub 的 **Source code ZIP** 需要用编辑器运行，直接游玩请下载 EXE 或 APK。
+Windows 0.6.14 包含当前主页、15 张独立地图、中英界面及 10 月 31 日修复汇总中的 20 项更新。连续双厅连接悬手浅池、检修连廊与水族中庭。Android 版保持原有发布版本。GitHub 的 **Source code ZIP** 需要用编辑器运行，直接游玩请下载 Windows ZIP 或 Android APK。
+
+也可以在 [itch.io 下载 Windows 版](https://ybzsg.itch.io/beyond-the-basin)。
 
 ## 怎么玩
 
-菜单里的「主线 · 继续旅程」会开始或继续六章流程。自由探索可以选择原泳池、重做主池厅、扩展随机地图、曲廊池区和五境参考场景，也可以输入种子重建随机地图。
+主页可进入原有六章主线，也可选择原泳池、重做主池厅、扩展随机地图、曲廊池区和五境参考场景。新增的 15 个地图在「新增地图」中选择，使用独立进度；主线的重新设计留待后续。
 
 房间里的阀门、开关和部分设施可以操作；漂浮物、球池里的球和软垫可以拨动、拿起或投掷。当前地图以浅水探索为主，没有可玩的深水游泳区域。
 
@@ -33,17 +37,18 @@ Android 版提供触屏控制，默认 High 画质、30 FPS 上限，可以在�
 | 操作设施 / 阅读主线设备铭牌 | E / Q |
 | 抓取 / 蓄力投掷 / 调整距离 | 左键 / 右键 / 滚轮 |
 | 手电筒 / 切换镜头滤镜 | L / F |
+| 查看文字提示 | 按住 Tab，松开隐藏 |
 | 隐藏界面 / 全屏 / 菜单 | H / F11 / Esc |
 
-在暂停菜单中选择角色、调整画质和水体。镜头可以选择青绿柔光，也可以在水体设置中调整交错水波；关闭交错水波仍会有脚步和涉水涟漪。
+在主页的「设置」中选择角色、调整画质和水体。模拟摄像机镜头带光晕、色散和日期时间戳；大波纹可以单独开关，关闭后仍会有脚步和涉水涟漪。REC 是取景界面装饰，不会录制视频。室外草地被踩过后会逐渐恢复。
 
 光追、DLSS、帧生成和神经渲染（NR）是可选的实验功能，需要对应的显卡、驱动和定制引擎支持，首次启动默认关闭光追、帧生成和 NR。水面使用光栅折射与倒影。帧生成仍可能出现拉扯、果冻感，NR 与帧生成不能同时开启。
 
 ## 运行源码
 
-日常修改脚本、场景和材质，用安装包附带的编辑器即可。
+日常修改脚本、场景和材质，继续使用已有的定制编辑器。
 
-1. 安装上面的 Windows 版，安装目录内有 **PoolCoreEditor.exe**。它是本项目使用的定制 Godot 4.8-dev 编辑器。
+1. 使用已有的 **PoolCoreEditor.exe**，或从 [0.6.13 安装包](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.13-pc-20261026/PoolCore-PC-0.6.13-Setup.exe) 获取。本次继续使用相同的定制 Godot 4.8-dev 引擎。
 2. 下载源码 ZIP 并完整解压，或克隆仓库：
 
    ```powershell
@@ -62,7 +67,7 @@ Android 版提供触屏控制，默认 High 画质、30 FPS 上限，可以在�
 
 ## 存档与常见问题
 
-安装版的存档和设置在安装目录的 `profile` 下，升级保留，卸载也不会主动删除。默认安装位置是 `%LOCALAPPDATA%\Programs\PoolCore`。使用上述 CMD 运行源码时，存档放在 `%LOCALAPPDATA%\PoolCore\SourceProfile`，与安装版分开。迁移旧免安装版存档时，先退出游戏并备份，再复制旧 `profile`。
+免安装版的存档和设置在游戏目录的 `profile` 下。旧安装版也使用安装目录下的 `profile`，升级保留，卸载也不会主动删除。默认安装位置是 `%LOCALAPPDATA%\Programs\PoolCore`。使用上述 CMD 运行源码时，存档放在 `%LOCALAPPDATA%\PoolCore\SourceProfile`，与安装版分开。迁移旧免安装版存档时，先退出游戏并备份，再复制旧 `profile`。
 
 - **CMD 找不到编辑器**：确认已安装 Windows 版；自定义安装目录可用上面的拖入方式指定编辑器。
 - **光追或 DLSS 选项不可用**：查看画质菜单给出的原因，并检查引擎、驱动和 DLL。不是所有 NVIDIA 显卡都支持全部功能。

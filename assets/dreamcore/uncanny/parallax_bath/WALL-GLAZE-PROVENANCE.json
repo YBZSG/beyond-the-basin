@@ -1,0 +1,21 @@
+{
+  "origin": "Original procedural pixels; no third-party image inputs",
+  "license": "Project-authored original",
+  "seed": 270102,
+  "resolution": [
+    1200,
+    1200
+  ],
+  "atlas_modules": [
+    12,
+    12
+  ],
+  "roles": {
+    "R": "AO",
+    "G": "linear roughness, glazed face~0.176 / matte mortar~0.718",
+    "B": "zero metallic"
+  },
+  "normal_policy": "Reuse original OpenGL normal; source material scales normal strength inversely to UV period, preserving approximate normal-only relief rather than tripling height",
+  "physical_policy": "Main wall near module300mm / mortar6mm / roll band9.6mm are deliberate; far75mm / mortar1.5mm. These are authored forced-perspective set pieces, not accidental UV stretch. Approximate normal-only relief target~0.96mm; no geometric displacement/collision claim.",
+  "sha256": "4870ade687dedb70509de708130f2cc40c27cc2c870b4cf5b032ebd0894fd51b"
+}

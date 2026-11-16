@@ -18,7 +18,8 @@ neither GPU names nor the presence of a menu selection count as support.
 
 Extract dependencies outside the Godot project. For 0.6.11, apply
 `engine-taa-rg16f.patch`, `engine-fg-rt.patch`, then
-`engine-camera-visibility.patch` and `engine-scene-retirement.patch` to the pinned upstream source.
+`engine-camera-visibility.patch`, `engine-scene-retirement.patch`, and
+`engine-texture-upload-retirement.patch` to the pinned upstream source.
 The FG/RT patch includes the old SR dispatch log; do not apply `engine-dispatch-log.patch`
 a second time. The patches have been checked against the downloaded source archive.
 
@@ -39,6 +40,13 @@ also excludes expanded and formal maps from RT until their shaders are adapted.
 `engine-scene-retirement.patch` gives TTL eviction the same BLAS ownership as
 shutdown: freeing the owned vertex buffer retires the dependent BLAS if still live;
 the old mesh index buffer may already have freed it during a map replacement.
+
+`engine-texture-upload-retirement.patch` removes queued upload transitions for a
+texture at its deferred destruction point, under the existing transfer locks.
+This prevents a retired room cubemap's driver handle from being reused by a later
+`vkCmdPipelineBarrier`. It does not disable RT, change captures, or add a GPU wait.
+See [the local crash investigation](../../docs/DOOR-CRASH-20261026.md) for evidence
+and the limits of the reproduction.
 
 Build the editor, then its matching release export template, from that source:
 

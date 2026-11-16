@@ -1,0 +1,19 @@
+{
+  "generator": "tools/uncanny/soffit_reservoir/generate_concrete_v2.py",
+  "generator_sha256": "7a945baba56186ef60a22b193f6ff4061d6e757873bee87da52aa1853f03dcc5",
+  "seed": 60102702,
+  "license": "Original procedural project texture; no external image input",
+  "dimensions": [
+    2048,
+    2048
+  ],
+  "period_m": 3.2,
+  "texel_mm": 1.5625,
+  "normal_convention": "OpenGL",
+  "purpose": "fine aggregate, restrained cast mottling and moisture traces; no painted lighting",
+  "files": {
+    "concrete_albedo.png": "06e26025555abb3c8aea0542b6f1a5c5386f8d75687b31394d4be429e91222cc",
+    "concrete_normal.png": "1b79507187d4d0771a8706fe2686996a7fdf61c2a6116cbba54629e0baee188a",
+    "concrete_orm.png": "9e71792beb71e8805cc6f935e1deda577485682153a6ece32356896c35d6044e"
+  }
+}

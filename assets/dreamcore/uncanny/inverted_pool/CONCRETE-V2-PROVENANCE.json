@@ -1,0 +1,22 @@
+{
+  "status": "ACCEPTED AND IMPORTED; original V1 PNG bytes retained unchanged",
+  "purpose": "Remove conspicuous half-metre mottling; retain fine aggregate, normal pinholes and physically rough concrete",
+  "seed": 27102603,
+  "period_m": 3.2,
+  "normal": "OpenGL tangent",
+  "orm": "R AO/G roughness/B metal0",
+  "license": "Original procedural, no third-party input",
+  "files": {
+    "concrete_v2_normal.png": "27099e178168d221c64544f0bd75c2e7d7c1edfc3518b182ca2e04bfbde4b0a8",
+    "concrete_v2_albedo.png": "a5ecb22cf7d824171c4d3b82aa88b371d496915e56393750d7eefd48dea7281e",
+    "concrete_v2_orm.png": "b4169462c767056f2d96949d34ad636aeee4b474e18341fb32ed8ce5fdcb39c7"
+  },
+  "original_candidate_status": "CANDIDATE not imported",
+  "coordinated_import_evidence": {
+    "ledger": "poolcore-uncanny-expansion/import-materials10/window-summary.json",
+    "ledger_sha256": "ecfcdf41d7834c4462307c447b42329b6b375a06b865d7806b84555370561a66",
+    "old660_metadata_exact": true,
+    "unexpected_old_cache_deltas": [],
+    "note": "The six authorized Soffit V3 cache changes in this joint batch are not rooms3/4 original-source changes."
+  }
+}

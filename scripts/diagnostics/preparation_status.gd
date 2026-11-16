@@ -19,16 +19,16 @@ const LABELS := {
 }
 static func describe(status: Dictionary) -> String:
 	var error := str(status.get("error", ""))
-	if not error.is_empty(): return "水体初始化失败 / WATER ERROR\n" + error.left(180)
+	if not error.is_empty(): return TranslationServer.translate("水体初始化失败 / WATER ERROR\n") + error.left(180)
 	if bool(status.get("ready", false)):
 		var probe: Dictionary = status.get("probe", {})
 		if not bool(probe.get("texture_ready", true)):
-			return "可开始探索，倒影正在准备 / READY; REFLECTIONS PREPARING"
+			return TranslationServer.translate("可开始探索，倒影正在准备 / READY; REFLECTIONS PREPARING")
 		return ""
 	var stage := str(status.get("stage", "queued"))
-	var text: String = str(LABELS.get(stage, "准备水体 / PREPARING WATER"))
+	var text: String = TranslationServer.translate(str(LABELS.get(stage, "准备水体 / PREPARING WATER")))
 	if stage == "collecting_geometry":
-		text += " · %d / %d 间" % [int(status.get("rooms_collected",0)),int(status.get("rooms_total",0))]
+		text += TranslationServer.translate(" · %d / %d 间") % [int(status.get("rooms_collected",0)),int(status.get("rooms_total",0))]
 	var seconds := float(status.get("elapsed_ms",0.0)) / 1000.0
-	if seconds >= 3.0: text += "\n已用 %.0f 秒 / ELAPSED %.0f s" % [seconds,seconds]
+	if seconds >= 3.0: text += TranslationServer.translate("\n已用 %.0f 秒 / ELAPSED %.0f s") % [seconds,seconds]
 	return text

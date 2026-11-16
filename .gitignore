@@ -1,5 +1,6 @@
 # Godot-generated local editor/import cache
 .godot/
+native/source_water/bin/~*.dll
 # Local source-update receipts and original-file backups
 .poolcore-source-updates/
 # Local export and capture products

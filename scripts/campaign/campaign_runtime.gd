@@ -132,15 +132,15 @@ func _process(delta:float)->void:
 	_recovery_button.visible=not writable
 	_recovery_button.disabled=busy
 	if _retry_armed_until>0 and Time.get_ticks_msec()>_retry_armed_until:
-		_retry_armed_until=0;_retry_button.text="重试本章机关…"
+		_retry_armed_until=0;_retry_button.text=TranslationServer.translate("重试本章机关…")
 	_retry_button.disabled=not active or busy or main._switching_spawn or state.completed
 	_repair_button.disabled=not active or busy or state.corruption()<=0.0
 	_relaxed_check.disabled=busy;_reduced_check.disabled=busy
 	var chapter:Dictionary=Catalog.chapter(state.chapter_index,state.seed)
-	_menu_summary.text=chapter.title+(" · 已通关" if state.completed else " · "+Objectives.status(state.chapter_index,state.objective))
-	if state.legacy_credit>0:_menu_summary.text+="\n旧版已收集记录保留；当前机关获得 %d 秒额外宽限。"%(state.legacy_credit*30)
-	if not writable:_menu_summary.text+="\n只读恢复：本次进度无法写入，请保留原存档。"
-	_hud.visible=active and not main.menu_open and not main.hud_hidden
+	_menu_summary.text=tr(chapter.title)+(TranslationServer.translate(" · 已通关") if state.completed else " · "+Objectives.status(state.chapter_index,state.objective))
+	if state.legacy_credit>0:_menu_summary.text+=TranslationServer.translate("\n旧版已收集记录保留；当前机关获得 %d 秒额外宽限。")%(state.legacy_credit*30)
+	if not writable:_menu_summary.text+=TranslationServer.translate("\n只读恢复：本次进度无法写入，请保留原存档。")
+	_hud.visible=active and main.hints_visible()
 	if not active:return
 	if not main._audio_on:_stop_bell()
 	if not _pending_rooms.is_empty() and not _placement_pending and main._booted:_place_pending()
@@ -160,24 +160,24 @@ func _process(delta:float)->void:
 			_save();_last_saved_room=state.checkpoint_room;_save_cooldown=2.0;_autosave=0.0
 	_refresh_stations()
 	var target:=_target()
-	_hud.text=chapter.title+"\n"+Objectives.GOALS[state.chapter_index]+"\n"+Objectives.status(state.chapter_index,state.objective)
-	if state.relaxed:_hud.text+="\n舒缓模式 · 无时间侵蚀"
+	_hud.text=tr(chapter.title)+"\n"+tr(Objectives.GOALS[state.chapter_index])+"\n"+Objectives.status(state.chapter_index,state.objective)
+	if state.relaxed:_hud.text+=TranslationServer.translate("\n舒缓模式 · 无时间侵蚀")
 	elif not state.objective.solved:
 		var remaining:float=maxf(0.0,state.pressure_limit()-state.elapsed)
-		_hud.text+="\n稳定窗口 %02d:%02d"%[int(remaining)/60,int(remaining)%60]
-		if state.corruption()>0.0:_hud.text+=" · 侵蚀 %d%% · 入口复位台 / 暂停菜单可修复"%int(state.corruption()*100)
+		_hud.text+=TranslationServer.translate("\n稳定窗口 %02d:%02d")%[int(remaining)/60,int(remaining)%60]
+		if state.corruption()>0.0:_hud.text+=TranslationServer.translate(" · 侵蚀 %d%% · 入口复位台 / 暂停菜单可修复")%int(state.corruption()*100)
 	if not target.is_empty():
-		_hud.text+="\n[E] "+str(target.label)
+		_hud.text+="\n[E] "+tr(str(target.label))
 		if _specs.has(target.id):
 			var spec:Dictionary=_specs[target.id]
-			_hud.text+="\n"+Objectives.HINTS[state.chapter_index]+"  [Q] 阅读检修刻牌"
+			_hud.text+="\n"+tr(Objectives.HINTS[state.chapter_index])+TranslationServer.translate("  [Q] 阅读检修刻牌")
 			if spec.kind=="pressure_panel":_hud.text+="\n"+Objectives.feedback(state.chapter_index,state.objective)
-			else:_hud.text+="\n本设备读数："+str(state.objective.values[spec.index])
-	elif state.can_depart():_hud.text+="\n系统稳定。返回本层入口终端继续。"
-	else:_hud.text+="\n靠近设备查看刻线和操作提示；暂停菜单可修复或重试。"
-	if _mount_failed:_hud.text+="\n设备布置未通过安全检查，计时暂停。请在菜单选择「重建本章场景」。"
-	elif not _chapter_mount_ready():_hud.text+="\n正在检查本层设备与通道，计时暂停。"
-	if not message.is_empty():_hud.text+="\n"+message
+			else:_hud.text+=TranslationServer.translate("\n本设备读数：")+str(state.objective.values[spec.index])
+	elif state.can_depart():_hud.text+=TranslationServer.translate("\n系统稳定。返回本层入口终端继续。")
+	else:_hud.text+=TranslationServer.translate("\n靠近设备查看刻线和操作提示；暂停菜单可修复或重试。")
+	if _mount_failed:_hud.text+=TranslationServer.translate("\n设备布置未通过安全检查，计时暂停。请在菜单选择「重建本章场景」。")
+	elif not _chapter_mount_ready():_hud.text+=TranslationServer.translate("\n正在检查本层设备与通道，计时暂停。")
+	if not message.is_empty():_hud.text+="\n"+tr(message)
 
 func _input(event:InputEvent)->void:
 	if _inspecting:
@@ -372,7 +372,7 @@ func _mount_position(desired:Vector3,fallback:Vector3,reserved:Vector3=Vector3.I
 func _save()->bool:
 	if not writable:message="存档不可写，本次进度未保存。请先保留并处理原存档。";return false
 	var result:Error=Store.save_state(state,save_path,fingerprint)
-	if result!=OK:message="保存失败（%d），暂不进入下一层。"%result;return false
+	if result!=OK:message=TranslationServer.translate("保存失败（%d），暂不进入下一层。")%result;return false
 	var loaded:Dictionary=Store.load_state(save_path);fingerprint=str(loaded.get("fingerprint",""));return true
 
 func restore_checkpoint()->void:
@@ -556,7 +556,7 @@ func _create_recovery_save()->void:
 	var recovery_path:="user://campaign_recovery_%d.json"%Time.get_unix_time_from_system()
 	if FileAccess.file_exists(recovery_path):message="恢复副本已存在，请稍后重试。";return
 	var result:Error=Store.save_state(state,recovery_path)
-	if result!=OK:message="无法创建恢复副本（%d）；原存档保留。"%result;return
+	if result!=OK:message=TranslationServer.translate("无法创建恢复副本（%d）；原存档保留。")%result;return
 	var profile:=ConfigFile.new();profile.set_value("campaign","save_path",recovery_path)
 	if profile.save("user://campaign_profile.cfg")!=OK:
 		message="恢复副本已保存，但无法记住副本路径："+recovery_path;return
@@ -568,6 +568,7 @@ func _update_arrival(delta:float,playable:bool)->void:
 	if not is_instance_valid(_arrivals):return
 	_arrivals.reduced_effects=state.reduced_effects
 	_arrivals.set_audio_enabled(main._audio_on and main._ambience_on)
+	_arrivals.set_text_visible(main.hints_visible())
 	if _arrival_epoch!=_epoch or _arrivals.chapter_id!=str(state.current_chapter().id):
 		_arrivals.configure(str(state.current_chapter().id),_epoch)
 		_arrivals.restore_seen(state.visited.keys());_arrival_epoch=_epoch
@@ -600,7 +601,7 @@ func _blocks_portal(point:Vector3)->bool:
 func _open_inspect(spec:Dictionary)->void:
 	if busy or not active or main.menu_open:return
 	_inspecting=true;main.set_menu(true);main._menu.hide()
-	_inspect_text.text=str(spec.label)+"\n\n"+str(spec.clue)+"\n\n当前读数："+Objectives.feedback(state.chapter_index,state.objective)
+	_inspect_text.text=tr(str(spec.label))+"\n\n"+tr(str(spec.clue))+tr("\n\n当前读数：")+Objectives.feedback(state.chapter_index,state.objective)
 	_inspect_panel.show();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 
 func _close_inspect()->void:

@@ -884,21 +884,21 @@ func get_status() -> Dictionary:
 	if enabled and not is_instance_valid(held) and not is_instance_valid(climbing) and aimed == null and is_instance_valid(facility_devices):
 		var exclude: Array[RID] = [get_rid()]
 		facility_hint = facility_devices.interaction_hint(camera, false, false, exclude)
-	var hint: String = "低头点击水面 · F 切换镜头"
+	var hint: String = TranslationServer.translate("低头点击水面 · F 切换镜头")
 	if not (OS.has_feature("android") or OS.has_feature("ios")):
-		hint += " · L " + ("关闭手电" if is_instance_valid(flashlight) and flashlight.visible else "开启手电")
+		hint += " · L " + (TranslationServer.translate("关闭手电") if is_instance_valid(flashlight) and flashlight.visible else TranslationServer.translate("开启手电"))
 	if get_charge() > 0.0:
-		hint = "右键蓄力 %d%% · 松开投出" % int(get_charge() * 100.0)
+		hint = TranslationServer.translate("右键蓄力 %d%% · 松开投出") % int(get_charge() * 100.0)
 	elif is_instance_valid(held):
-		hint = "右键按住蓄力投掷 · 滚轮调整距离 · E 放下"
+		hint = TranslationServer.translate("右键按住蓄力投掷 · 滚轮调整距离 · E 放下")
 	elif is_instance_valid(climbing):
-		hint = "W / S 攀爬 · E 松开"
+		hint = TranslationServer.translate("W / S 攀爬 · E 松开")
 	elif aimed != null:
-		hint = str(aimed.get("display_name")) + " · 左键拖动 / E 拿起"
+		hint = tr(str(aimed.get("display_name"))) + TranslationServer.translate(" · 左键拖动 / E 拿起")
 	elif not facility_hint.is_empty():
 		hint = facility_hint
 	elif ladder != null:
-		hint = "E 攀爬梯子"
+		hint = TranslationServer.translate("E 攀爬梯子")
 	return {"held": str(held.get("display_name")) if is_instance_valid(held) else "", "held_kind": str(held.get("prop_kind")) if is_instance_valid(held) else "", "charge": get_charge(), "climbing": is_instance_valid(climbing), "climb_progress": climb_progress, "grabs": grabs, "throws": throws, "slides": slides, "grounded": is_on_floor(), "swimming": _swimming, "in_water": _in_water, "height": camera.global_position.y if camera != null else global_position.y + EYE_HEIGHT, "hint": hint, "paused": not enabled}
 
 func status() -> Dictionary:

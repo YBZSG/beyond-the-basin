@@ -10,6 +10,7 @@ uniform bool reference_look_enabled = false;
 uniform float reference_fringe_px : hint_range(0.0, 8.0, 0.05) = 0.8;
 uniform float reference_grain : hint_range(0.0, 0.02, 0.001) = 0.006;
 uniform float reference_vignette : hint_range(0.0, 0.45, 0.005) = 0.07;
+uniform float reference_halation : hint_range(0.0, 2.0, 0.05) = 1.3;
 // QA can hold the sensor grain fixed without touching water simulation time.
 uniform bool reference_freeze_grain = false;
 
@@ -24,7 +25,7 @@ float sensor_noise(vec2 pixel, float frame) {
 
 void fragment() {
 	vec2 uv = SCREEN_UV;
-	// Original Clean/CCD/VHS/Cold controls remain independent and session-owned.
+	// Original Clean/CCD/VHS/Cold controls remain independent of the reference look.
 	if (look_mode == 2 && !reference_look_enabled) uv.x += sin(uv.y * 370.0 + TIME * 8.0) * 0.0006;
 	vec3 color = texture(screen_tex, safe_uv(uv, SCREEN_PIXEL_SIZE)).rgb;
 	vec2 reference_offset = vec2(0.0);
@@ -55,13 +56,19 @@ void fragment() {
 		// Stable lens treatment: straight architecture, highlight-only diffusion.
 		vec3 soft_near = textureLod(screen_tex, safe_uv(uv, SCREEN_PIXEL_SIZE), 3.0).rgb;
 		vec3 soft_wide = textureLod(screen_tex, safe_uv(uv, SCREEN_PIXEL_SIZE), 5.0).rgb;
-		vec3 halo = max(soft_near - vec3(0.42), vec3(0.0)) * 0.58;
-		halo += max(soft_wide - vec3(0.34), vec3(0.0)) * 0.42;
+		// Wider highlight diffusion, with a faint warm lens edge. No frame history,
+		// exposure pumping, UV wobble or additional full-screen pass.
+		vec3 soft_far = textureLod(screen_tex, safe_uv(uv, SCREEN_PIXEL_SIZE), 6.5).rgb;
+		vec3 halo = max(soft_near - vec3(0.40), vec3(0.0)) * 0.72;
+		halo += max(soft_wide - vec3(0.30), vec3(0.0)) * vec3(0.76, 0.69, 0.57);
+		halo += max(soft_far - vec3(0.24), vec3(0.0)) * vec3(0.38, 0.32, 0.24);
 		float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
 		color = max((mix(vec3(luma), color, 0.94) - vec3(0.018)) * 1.055, vec3(0.0));
 		color *= mix(vec3(0.90, 1.015, 1.005), vec3(1.0), smoothstep(0.25, 0.85, luma));
 		color *= 1.0 + smoothstep(0.35, 0.82, luma) * 0.40;
-		color += halo;
+		color += halo * clamp(reference_halation, 0.0, 2.0);
+		// Stationary low-contrast sensor lines; architecture stays stable in motion.
+		color *= 1.0 - (0.5 + 0.5 * cos(FRAGCOORD.y * 3.14159265)) * 0.009;
 		float radius = clamp(length(centered) * 1.41421356, 0.0, 1.0);
 		color *= 1.0 - smoothstep(0.25, 1.0, radius) * clamp(reference_vignette, 0.0, 0.45);
 		float frame = reference_freeze_grain ? 0.0 : floor(mod(TIME, 1024.0) * 24.0);

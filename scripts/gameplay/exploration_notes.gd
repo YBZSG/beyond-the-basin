@@ -184,16 +184,16 @@ func refresh_menu_summary() -> void:
 	var names := PackedStringArray()
 	for entry: Dictionary in summary.archetypes:
 		if names.size() >= 6: break
-		names.append(entry.name)
-	var observed := "、".join(names) if not names.is_empty() else "尚未记录 / Nothing recorded yet"
+		names.append(tr(entry.name))
+	var observed: String = "、".join(names) if not names.is_empty() else TranslationServer.translate("尚未记录 / Nothing recorded yet")
 	if summary.archetypes.size() > 6: observed += " · +%d" % (summary.archetypes.size() - 6)
-	var text := "探索手记 / EXPLORATION NOTES\n%s · SEED %s\n已记录 %d 处 / Recorded places · %d 类房间 / Room types\n%s" % [_active_mode.to_upper(), _active_seed, summary.recorded_coordinates, summary.archetypes.size(), observed]
-	if summary.coordinate_limit_reached: text += "\n已保留前 4096 处坐标 / First 4096 coordinates retained; further types can still be noted."
-	if not _scope_note.is_empty(): text += "\n" + _scope_note
-	if _write_blocked: text += "\n只读 / READ ONLY: new discoveries are session-only."
-	elif _dirty: text += "\n尚未保存 / Not yet saved"
-	elif _worlds.is_empty(): text += "\n尚无记录 / No saved discoveries yet"
-	else: text += "\n已保存 / Saved"
+	var text := TranslationServer.translate("探索手记 / EXPLORATION NOTES\n%s · SEED %s\n已记录 %d 处 / Recorded places · %d 类房间 / Room types\n%s") % [_active_mode.to_upper(), _active_seed, summary.recorded_coordinates, summary.archetypes.size(), observed]
+	if summary.coordinate_limit_reached: text += TranslationServer.translate("\n已保留前 4096 处坐标 / First 4096 coordinates retained; further types can still be noted.")
+	if not _scope_note.is_empty(): text += "\n" + tr(_scope_note)
+	if _write_blocked: text += TranslationServer.translate("\n只读 / READ ONLY: new discoveries are session-only.")
+	elif _dirty: text += TranslationServer.translate("\n尚未保存 / Not yet saved")
+	elif _worlds.is_empty(): text += TranslationServer.translate("\n尚无记录 / No saved discoveries yet")
+	else: text += TranslationServer.translate("\n已保存 / Saved")
 	if not _storage_note.is_empty(): text += "\n" + _storage_note
 	_menu_summary.text = text
 

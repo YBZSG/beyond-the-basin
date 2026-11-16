@@ -1,0 +1,46 @@
+{
+  "authorship": "Original deterministic periodic procedural scalar fields; no external image input, no reused/edited old texture bytes",
+  "status": "External V2 near-uniform material isolation; not yet runtime-promoted; V7 geometry unchanged",
+  "seed": 27102026,
+  "resolution": [
+    2048,
+    2048
+  ],
+  "metric_period_m": 6.4,
+  "mapping": "world_triplanar",
+  "blend_sharpness": 1.0,
+  "normal_map_convention": "OpenGL:normal=(-dx,+image-row-dy,1), matching existing C4 generator convention",
+  "source_height_m": [
+    -0.004822701994083224,
+    0.0021172922693947376
+  ],
+  "suggested_normal_strength": 0.6,
+  "suggested_specular": 0.26,
+  "roughness_range": [
+    0.7,
+    0.94
+  ],
+  "albedo_mean_srgb_255": [
+    202.15680694580078,
+    199.163667678833,
+    190.18425011634827
+  ],
+  "metallic": 0,
+  "revision": "V2: metre-scale albedo amplitude10.5->1.4 (86.7% reduction); sparse millimetric mineral/pores retained; correlated heights reduced, no anatomical content",
+  "ao_scope": "Only sparse millimetric mineral recess response, no face-specific cavity, lip, eye or lighting painted into any map",
+  "files": {
+    "hollow_visage_limestone_albedo.png": {
+      "sha256": "30ad4cf41a08fe2f7fb561ab587a4694ae2ca4b6989343c0cbf9b4c4ad366fa9",
+      "bytes": 1865898
+    },
+    "hollow_visage_limestone_normal.png": {
+      "sha256": "3e117745f392e7e3179490a6668faec3bccb5e4047a0d5c7857e27b47ff207f1",
+      "bytes": 4516147
+    },
+    "hollow_visage_limestone_orm.png": {
+      "sha256": "b433768fdd647313e5146b12877fc4f7de5b9573de61beb6ccb34e61163240bf",
+      "bytes": 2240296
+    }
+  },
+  "generator_sha256": "cf32fe4d64a7a198d2fca5b154ebf36cca4499e482adb2c926330ad3fcc3eb66"
+}

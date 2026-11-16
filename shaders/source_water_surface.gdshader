@@ -15,6 +15,7 @@ uniform sampler2D poolCaustics : filter_linear_mipmap, repeat_disable;
 uniform vec2 domain_origin = vec2(0.0);
 uniform mat4 textureMatrix;
 uniform float reflectionReady = 0.0;
+uniform float dreamWaterOptics = 0.0;
 uniform float refractionOn = 1.0;
 uniform float reflectionOn = 1.0;
 uniform float absorptionOn = 1.0;
@@ -104,7 +105,7 @@ void fragment(){
   vec2 wind=windOpticalSlope(worldPosition.xz,footprint,bed);
   vec3 N=normalize(vec3(-sim-ripple-micro-wind,1).xzy);
   float theta=clamp(dot(N,V),0.0,1.0);
-  const float f0=.020373;
+  float f0=mix(.020373,.075,dreamWaterOptics);
   float fresnel=clamp((f0+(1.0-f0)*pow(1.0-theta,5.0))*fresnelStrength,0.0,1.0)*fresnelOn;
   vec2 screenUv=SCREEN_UV;
   vec3 viewP=(VIEW_MATRIX*worldPosition).xyz;
@@ -125,7 +126,8 @@ void fragment(){
   float offsetZ=source_view_depth(refractUv,INV_PROJECTION_MATRIX);
   if(offsetZ<-viewP.z+.02)refractUv=screenUv;
   vec3 transmitted=water_transmission(refractUv,-viewP.z,INV_PROJECTION_MATRIX);
-  vec3 absorption=exp(-vec3(.11,.033,.021)*absorptionStrength*absorptionOn*thickness);
+  float opticalThickness=mix(thickness,max(thickness,.65),dreamWaterOptics);
+  vec3 absorption=exp(-vec3(.11,.033,.021)*absorptionStrength*absorptionOn*opticalThickness);
   transmitted=transmitted*absorption+vec3(.13,.29,.30)*(1.0-absorption)*.24;
   vec2 reflectUv=mirrorCoord.xy/max(mirrorCoord.w,.001);
   reflectUv+=(N.xz*vec2(1.0,-1.0))*distortionScale*(.002+.025/max(distanceToEye,1.0));

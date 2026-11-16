@@ -3,6 +3,20 @@ extends Node3D
 const CampaignWorld = preload("res://scripts/campaign/campaign_world.gd")
 const CampaignRuntime = preload("res://scripts/campaign/campaign_runtime.gd")
 var _campaign: Node
+const DreamWorld = preload("res://scripts/dreamcore/dream_world.gd")
+const DreamRuntime = preload("res://scripts/dreamcore/dream_runtime.gd")
+const DreamWater = preload("res://scripts/dreamcore/dream_water_runtime.gd")
+const UnifiedInteractionHost = preload("res://scripts/unified/gate_interaction_host.gd")
+var _unified_interactions: Node3D
+var _unified_region_title := ""
+const UnifiedWorld = preload("res://scripts/unified/unified_world.gd")
+const UnifiedPresentation = preload("res://scripts/unified/preview_presentation.gd")
+var _unified_preview := false
+const UnifiedAcoustics = preload("res://scripts/unified/unified_acoustics.gd")
+var _unified_acoustics: Node
+var _unified_acoustics_started := false
+var _unified_no_acoustics := false
+var _dream: Node
 const WorldScript = preload("res://scripts/world/pool_world.gd")
 const ReferenceWorld = preload("res://scripts/reference_wing/reference_world.gd")
 const ReferenceCatalog = preload("res://scripts/reference_wing/reference_catalog.gd")
@@ -112,6 +126,10 @@ var _status: Label
 var _room_title: Label
 var _hint: Label
 var _diag: Label
+var _camera_osd: Control
+var _hints_held := false
+var _map_loading: CanvasLayer
+var _last_world_load_success := false
 var _seed_edit: LineEdit
 var _seed_input_status: Label
 var _destination: OptionButton
@@ -131,6 +149,8 @@ func _ready() -> void:
 	get_tree().auto_accept_quit = false
 	_setup_inputs()
 	_load_settings()
+	_unified_preview = MainhallPreview.desktop_allowed() and "--unified-preview=hand_aquarium" in OS.get_cmdline_user_args()
+	_unified_no_acoustics = "--unified-no-acoustics" in OS.get_cmdline_user_args()
 	if MainhallPreview.desktop_allowed(): _character_id = CharacterPreferences.load_character(_character_settings_path)
 	if "--formal-hall" in OS.get_cmdline_user_args(): _spawn_mode="formal"
 	if "--expanded-world" in OS.get_cmdline_user_args(): _spawn_mode="expanded"
@@ -143,6 +163,9 @@ func _ready() -> void:
 	_pc_preview_return_spawn = _spawn_mode
 	_pc_mainhall_preview = MainhallPreview.requested()
 	if _pc_mainhall_preview: _spawn_mode = "formal"
+	if _unified_preview:
+		_spawn_mode = "unified"
+		_pc_mainhall_preview = false
 	_qa = "--qa" in OS.get_cmdline_user_args()
 	if not _configure_qa_capture_resolution(OS.get_cmdline_user_args()):
 		get_tree().quit(2)
@@ -152,17 +175,29 @@ func _ready() -> void:
 		_ccd_on = false
 		if "--qa-user-water" not in OS.get_cmdline_user_args(): _water_settings.clear()
 		_water_visible=true
-	if MainhallPreview.desktop_allowed() and "--no-exploration-notes" not in OS.get_cmdline_user_args():
+	if MainhallPreview.desktop_allowed() and not _unified_preview and "--no-exploration-notes" not in OS.get_cmdline_user_args():
 		_exploration_notes = preload("res://scripts/reference_wing/reference_exploration_notes.gd").new()
 		_exploration_notes.name = "ExplorationNotes"
 		add_child(_exploration_notes)
 		_exploration_notes.initialize_store(true)
 	_build_interface()
-	if MainhallPreview.desktop_allowed():
+	if _unified_preview:
+		_spawn_select.clear()
+		_spawn_select.add_item("连续双厅预览 / CONNECTED HALLS")
+		_spawn_select.select(0)
+		_spawn_select.disabled = true
+		_world_restart_button.disabled = true
+		_seed_edit.editable = false
+		_spawn_select.tooltip_text = "连续双厅预览；移除启动参数后返回原地图。"
+	if MainhallPreview.desktop_allowed() and not _unified_preview:
 		_campaign = CampaignRuntime.new()
 		_campaign.name = "Campaign"
 		add_child(_campaign)
 		_campaign.initialize(self)
+		_dream = DreamRuntime.new()
+		_dream.name = "Dreamcore"
+		add_child(_dream)
+		_dream.initialize(self)
 	materials = MaterialsScript.new()
 	lighting = ReferenceLighting.new() if MainhallPreview.desktop_allowed() else LightingScript.new()
 	# PC candidates remain explicit until native same-camera acceptance.
@@ -206,6 +241,16 @@ func _ready() -> void:
 	if "--qa-legacy-quality" not in OS.get_cmdline_user_args():
 		preload("res://scripts/rendering/desktop_quality_panel.gd").install(self)
 	preload("res://scripts/ui/pool_interface_presentation.gd").install(self)
+	get_node("/root/Localization").locale_changed.connect(_refresh_localized_titles)
+
+func _refresh_localized_titles() -> void:
+	if _unified_preview:
+		_unified_region_title = ""
+		_update_unified_region_title()
+	else:
+		_room_title.text = "%s   /   %s" % [tr(str(_last_layout.get("name", "泳池"))), tr(str(_last_layout.get("subtitle", "")))]
+	if is_instance_valid(_exploration_notes): _exploration_notes.refresh_menu_summary()
+	_refresh_pc_preview_interface()
 
 func _initial_water_quality() -> String:
 	if preload("res://scripts/mobile/pool_mobile_profile.gd").is_mobile_session():
@@ -231,7 +276,7 @@ func _create_world() -> void:
 	# Retirement is an awaited phase owned by regenerate(), never constructor overlap.
 	assert(not is_instance_valid(world) and not is_instance_valid(water))
 	lighting.invalidate_active_room()
-	water = ReferenceSceneWater.new() if _spawn_mode == "reference" else (ReferenceWater.new() if MainhallPreview.desktop_allowed() else WaterScript.new())
+	water = DreamWater.new() if _unified_preview or (is_instance_valid(_dream) and _dream.active) else ReferenceSceneWater.new() if _spawn_mode == "reference" else (ReferenceWater.new() if MainhallPreview.desktop_allowed() else WaterScript.new())
 	water.name = "NativeWater"
 	add_child(water)
 	water.quality = _initial_water_quality()
@@ -288,10 +333,11 @@ func _create_world() -> void:
 	var effects:Array[CompositorEffect]=player.camera.compositor.compositor_effects
 	effects.append(source_fog)
 	player.camera.compositor.compositor_effects=effects
-	world = CampaignWorld.new() if is_instance_valid(_campaign) and _campaign.active else (ReferenceWorld.new() if _spawn_mode == "reference" else WorldScript.new())
+	world = UnifiedWorld.new() if _unified_preview else DreamWorld.new() if is_instance_valid(_dream) and _dream.active else CampaignWorld.new() if is_instance_valid(_campaign) and _campaign.active else (ReferenceWorld.new() if _spawn_mode == "reference" else WorldScript.new())
+	if is_instance_valid(_dream) and _dream.active: world.scene_id = _dream.state.scene_id
 	if is_instance_valid(_campaign) and _campaign.active: world.chapter_index = _campaign.world_chapter()
 	world.formal_mode = _spawn_mode == "formal"
-	world.expanded_mode = _spawn_mode in ["expanded", "poolrooms", "reference"]
+	world.expanded_mode = _spawn_mode in ["expanded", "poolrooms", "reference", "dreamcore", "unified"]
 	world.poolrooms_mode = _spawn_mode == "poolrooms"
 	world.name = "SeededPoolWorld"
 	add_child(world)
@@ -299,8 +345,27 @@ func _create_world() -> void:
 	world.room_changed.connect(_on_room_changed)
 	world.streaming_completed.connect(_on_world_streamed)
 	world.initialize(world_seed, materials)
+	if is_instance_valid(_dream) and _dream.active:
+		var grass := preload("res://scripts/dreamcore/grass_interaction.gd").new()
+		grass.name = "GrassInteraction"
+		world.add_child(grass)
+		grass.configure(self)
 	_settle_created_world_lighting()
-	if is_instance_valid(_campaign) and _campaign.active:
+	if _unified_preview:
+		player.camera.near = .08; player.camera.far = 1600.0
+		player.warp_to(world.get_spawn_position(),world.definition.look_at)
+		UnifiedPresentation.apply(self)
+		_unified_interactions = UnifiedInteractionHost.new()
+		world.add_child(_unified_interactions)
+		_unified_interactions.install(materials)
+		_unified_interactions.install_gates(player)
+		_unified_region_title = ""
+		_update_unified_region_title()
+	elif is_instance_valid(_dream) and _dream.active:
+		player.camera.near = .08; player.camera.far = 1600.0
+		player.warp_to(world.get_spawn_position(), world.definition.look_at)
+		_dream.apply_environment()
+	elif is_instance_valid(_campaign) and _campaign.active:
 		# Chapter transitions verify collision while input/physics are paused.
 		# Start on the authored floor, rather than relying on gravity to settle.
 		var spawn: Vector3 = world.get_spawn_position(world.current_room)
@@ -316,7 +381,9 @@ func _create_world() -> void:
 	else:
 		# 66a4543 engine.ts initial camera, translated into a feet-root body.
 		player.camera.near=.08;player.camera.far=100.0
-		player.warp_to(Vector3(10,1.5-PlayerScript.EYE_HEIGHT,12),Vector3(-4,1.9,-10))
+		# The updated original hall has a raised dry promenade at this point.
+		var start_y := .54 if int(world.get_layout(world.current_room).variant) in [0, 1, 2] else 1.5-PlayerScript.EYE_HEIGHT
+		player.warp_to(Vector3(10,start_y,12),Vector3(-4,1.9,-10))
 	pool_audio.attach_player(player,water)
 	player.set_enabled(false)
 	_rebuild_destinations()
@@ -345,9 +412,12 @@ func _trace_world_lifecycle(phase: String) -> void:
 	}))
 
 func _retire_world() -> void:
+	_release_unified_acoustics()
 	_trace_world_lifecycle("retire_begin")
 	if is_instance_valid(_campaign): _campaign.world_replacing()
+	if is_instance_valid(_dream): _dream.world_replacing()
 	_retiring_world = true
+	if is_instance_valid(_unified_interactions): _unified_interactions.dispose()
 	_gi_refresh_ticket += 1
 	# Freeze the old scene; UI and DesktopQuality remain alive across all awaits.
 	if is_instance_valid(world): world.set_process(false)
@@ -411,7 +481,8 @@ func _prepare_facility_devices() -> void:
 
 func _on_room_loaded(room: Node3D,coord: Vector2i,layout: Dictionary) -> void:
 	if _retiring_world: return
-	lighting.add_formal_lights(room,layout) if layout.get("formal",false) else lighting.add_room_lights(room,int(layout.variant))
+	if not layout.get("dreamcore",false):
+		lighting.add_formal_lights(room,layout) if layout.get("formal",false) else lighting.add_room_lights(room,int(layout.variant))
 	if _pc_mainhall_preview and coord == Vector2i(-1,-1) and layout.get("formal",false):
 		_pc_preview_result = MainhallPreview.install(room,materials,environment.environment,environment.get_node_or_null("ApertureSun"))
 		_refresh_pc_preview_interface()
@@ -419,6 +490,7 @@ func _on_room_loaded(room: Node3D,coord: Vector2i,layout: Dictionary) -> void:
 	water.add_room(room,coord,layout)
 	props.spawn_for_room(room,coord,layout,world_seed)
 	if is_instance_valid(_campaign): _campaign.room_loaded(room,coord,layout)
+	if is_instance_valid(_dream): _dream.room_loaded(room,coord,layout)
 	if is_instance_valid(_facility_devices) and _facility_devices.enabled:
 		_facility_devices.attach_formal_room(room,coord,layout)
 
@@ -426,10 +498,45 @@ func _on_room_changed(coord: Vector2i,layout: Dictionary) -> void:
 	if _retiring_world: return
 	_last_layout = layout
 	water.set_active_room(coord)
-	_room_title.text = "%s   /   %s" % [layout.get("name","泳池"),layout.get("subtitle","")]
-	pool_audio.set_room(layout)
-	if lighting.has_method("update_active_room"):
+	if not _unified_preview:
+		_room_title.text = "%s   /   %s" % [tr(str(layout.get("name","泳池"))),tr(str(layout.get("subtitle","")))]
+	if layout.get("dreamcore",false): _room_title.add_theme_font_override("font",DreamRuntime.DreamFont)
+	else: _room_title.remove_theme_font_override("font")
+	_set_room_audio(layout)
+	if _unified_preview:
+		pass # Unified presentation remains stable; audio owns its first-room lease.
+	elif layout.get("dreamcore",false):
+		if is_instance_valid(_dream): _dream.apply_environment()
+	elif lighting.has_method("update_active_room"):
 		lighting.call("update_active_room",coord,layout)
+
+func _set_room_audio(layout: Dictionary) -> void:
+	if not _unified_preview:
+		if not layout.get("dreamcore",false): pool_audio.set_room(layout)
+		return
+	if _unified_no_acoustics:
+		pool_audio.set_room(layout)
+		return
+	# Set the original baseline exactly once per session, before acquiring.
+	# Even a failed/yielded lease must NOT fall back to per-chunk setter writes.
+	if _unified_acoustics_started: return
+	pool_audio.set_room(layout)
+	_unified_acoustics_started = true
+	_unified_acoustics = UnifiedAcoustics.new()
+	_unified_acoustics.name = "UnifiedFootstepAcoustics"
+	add_child(_unified_acoustics)
+	_unified_acoustics.acquire()
+
+func _advance_unified_acoustics(delta: float, can_play: bool) -> void:
+	if _unified_preview and is_instance_valid(_unified_acoustics) and is_instance_valid(player):
+		_unified_acoustics.update_at(player.global_position, delta, not can_play)
+
+func _release_unified_acoustics() -> void:
+	if is_instance_valid(_unified_acoustics):
+		_unified_acoustics.release()
+		_unified_acoustics.free()
+	_unified_acoustics = null
+	_unified_acoustics_started = false
 
 func _capture_lighting_changed() -> void:
 	if _retiring_world: return
@@ -448,9 +555,11 @@ func effective_gi_requested(value: bool) -> bool:
 	return value and not _pc_mainhall_preview
 
 func _set_pc_mainhall_preview(enabled: bool, target_spawn: String = "") -> void:
+	if _unified_preview: return
 	if enabled and not MainhallPreview.resources_available():
 		_refresh_pc_preview_interface()
 		return
+	if is_instance_valid(_dream) and _dream.busy: return
 	if is_instance_valid(_campaign) and _campaign.busy: return
 	if is_instance_valid(_campaign) and _campaign.active: _campaign.leave_campaign()
 	if not MainhallPreview.desktop_allowed() or _switching_spawn:
@@ -464,23 +573,28 @@ func _set_pc_mainhall_preview(enabled: bool, target_spawn: String = "") -> void:
 func _refresh_pc_preview_interface() -> void:
 	if is_instance_valid(_pc_preview_check):
 		_pc_preview_check.set_pressed_no_signal(_pc_mainhall_preview)
-		_pc_preview_check.disabled = _switching_spawn or not MainhallPreview.resources_available()
+		_pc_preview_check.disabled = _unified_preview or _switching_spawn or not MainhallPreview.resources_available()
 	if not is_instance_valid(_pc_preview_status): return
 	_pc_preview_status.visible = _pc_mainhall_preview
 	if _pc_mainhall_preview:
-		_pc_preview_status.text = "实验预览：仅主池厅有原生烘焙，SDFGI 暂停；其余 4 厅保留直接光/环境光，但间接光不等价。退出恢复所选 GI。\n" + ("MAINHALL BAKE ACTIVE · EXPERIMENTAL" if _pc_preview_result.get("installed",false) else "BAKE UNAVAILABLE · 原场景保留：" + str(_pc_preview_result.get("reason","loading")))
+		_pc_preview_status.text = tr("实验预览：仅主池厅有原生烘焙，SDFGI 暂停；其余 4 厅保留直接光/环境光，但间接光不等价。退出恢复所选 GI。\n") + ("MAINHALL BAKE ACTIVE · EXPERIMENTAL" if _pc_preview_result.get("installed",false) else tr("BAKE UNAVAILABLE · 原场景保留：") + str(_pc_preview_result.get("reason","loading")))
 		_pc_preview_status.tooltip_text = MainhallPreview.SCOPE
 
 
 func _physics_process(_delta: float) -> void:
 	if not _booted or _switching_spawn: return
 	world.update_player_position(player.global_position)
+	if _unified_preview:
+		_update_unified_region_title()
+		_advance_unified_acoustics(_delta, _unified_can_play())
+		if is_instance_valid(_unified_interactions): _unified_interactions.advance(_delta,_unified_can_play())
 	if is_instance_valid(_exploration_notes):
 		_exploration_notes.observe_player_room(world, player.global_position)
 	if is_instance_valid(_facility_devices):
 		_facility_devices.advance(_delta,world.current_room,not menu_open and player.enabled)
 	if player.global_position.y < -12.0:
-		travel_to(world.current_room)
+		if is_instance_valid(_dream) and _dream.active: _dream.restore_checkpoint()
+		else: travel_to(world.current_room)
 
 func _process(delta: float) -> void:
 	if not _booted or _retiring_world: return
@@ -499,6 +613,7 @@ func _process(delta: float) -> void:
 	var coord: Vector2i = world.current_room
 	_status.text = "SECTOR %02d / %02d   ·   SEED %d   ·   %d ROOMS" % [coord.x,coord.y,world_seed,world.get_discovered_count()]
 	if is_instance_valid(_campaign) and _campaign.active: _status.text="POOLCORE · CAMPAIGN"
+	if is_instance_valid(_dream) and _dream.active: _status.text="POOLCORE · DREAMCORE"
 	if _pc_mainhall_preview:
 		_status.text += " · EXPERIMENTAL MAINHALL BAKE" if _pc_preview_result.get("installed",false) else " · BAKE UNAVAILABLE / ORIGINAL VISUALS"
 	var ps: Dictionary = player.get_status()
@@ -506,8 +621,13 @@ func _process(delta: float) -> void:
 	_crosshair.text = "◉" if not str(ps.get("held","")).is_empty() else "·"
 	_charge_bar.value=float(ps.get("charge",0.0))*100.0
 	_charge_bar.visible=_charge_bar.value>0.0 and not hud_hidden and not menu_open
-	_hint.visible = not hud_hidden and not menu_open
+	_refresh_hud_visibility()
 	_hint.text = str(ps.get("hint","WASD 移动 · Esc 菜单"))
+	if _unified_can_target():
+		var hint_excluded: Array[RID] = []
+		hint_excluded.append(player.get_rid())
+		var inspection_hint: String = _unified_interactions.hint(player.camera,hint_excluded)
+		if not inspection_hint.is_empty(): _hint.text = tr(inspection_hint)
 	if diagnostic_open:
 		_diag.text = "Godot %s · %s\n%s\n%.0f FPS · %d resident rooms · %d props\nDraw calls %d · triangles %d\nPosition %.2f, %.2f, %.2f\nNative GI %s · water caustics %s\nThis is a native port, not the HTML renderer." % [str(Engine.get_version_info().get("string","unknown")),RenderingServer.get_current_rendering_method(),RenderingServer.get_video_adapter_name(),Engine.get_frames_per_second(),world.resident_rooms.size(),props.bodies.size(),RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),player.position.x,player.position.y,player.position.z,str(_gi_on),str(_caustics_on)]
 		if _pc_mainhall_preview: _diag.text += "\n" + MainhallPreview.SCOPE + "\nBake installed: " + str(_pc_preview_result.get("installed",false))
@@ -517,7 +637,48 @@ func _process(delta: float) -> void:
 		_diag.text += "\nWater terrain: %s · cache hits %d · commit %.2f ms" % ["preparing" if water_stats.terrain_pending else "ready",water_stats.terrain_cache_hits,float(water_stats.terrain_stage_ms.commit_ms)]
 		_diag.text += "\nHDR room cache: %d · async captures %d" % [int(water_stats.probe.get("cache_hits",0)),int(water_stats.probe.get("captures_completed",0))]
 
+func _unified_can_play() -> bool:
+	return _unified_preview and _booted and not _retiring_world and not _switching_spawn and not menu_open and not get_tree().paused and get_window().has_focus() and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and is_instance_valid(player) and player.enabled and is_instance_valid(world) and world.current_room_ready()
+
+func _unified_can_target() -> bool:
+	return _unified_can_play() and is_instance_valid(_unified_interactions) and not is_instance_valid(player.held) and not is_instance_valid(player.climbing)
+
+func _update_unified_region_title() -> void:
+	var title: String = world.region_at(player.global_position)
+	if title == _unified_region_title: return
+	_unified_region_title = title
+	_room_title.text = tr(title)
+
+
+func hints_visible() -> bool:
+	return not menu_open and not hud_hidden and (_hints_held or not MainhallPreview.desktop_allowed())
+
+func _refresh_hud_visibility() -> void:
+	var show_hints := hints_visible()
+	for label: Label in [_room_title, _status, _hint]:
+		if is_instance_valid(label): label.visible = show_hints
+	if is_instance_valid(_diag): _diag.visible = show_hints and diagnostic_open
+	if is_instance_valid(_camera_osd):
+		_camera_osd.visible = not menu_open and not hud_hidden
+		_camera_osd.set_hints_visible(show_hints)
+
+func _input(event: InputEvent) -> void:
+	# Runs before player's unhandled-input phase; only valid preview hardware wins.
+	if is_instance_valid(_unified_interactions):
+		_unified_interactions.set_playable(_unified_can_target())
+		var excluded: Array[RID] = []
+		if is_instance_valid(player): excluded.append(player.get_rid())
+		if _unified_interactions.handle_event(event,player.camera if is_instance_valid(player) else null,excluded):
+			get_viewport().set_input_as_handled()
+
+	if not event.is_action("show_hints") or event.is_echo(): return
+	_hints_held = event.is_action_pressed("show_hints") and not menu_open
+	_refresh_hud_visibility()
+	# In menus Tab retains normal keyboard focus traversal.
+	if not menu_open: get_viewport().set_input_as_handled()
+
 func _unhandled_input(event: InputEvent) -> void:
+	if is_instance_valid(_dream) and _dream.busy: return
 	if is_instance_valid(_campaign) and _campaign.busy: return
 	if not _booted or _switching_spawn: return
 	if event.is_action_pressed("pause"):
@@ -527,13 +688,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		match event.physical_keycode:
 			KEY_H:
 				hud_hidden = not hud_hidden
-				_room_title.visible = not hud_hidden
-				_status.visible = not hud_hidden
+				_refresh_hud_visibility()
 			KEY_G:
 				diagnostic_open = not diagnostic_open
-				_diag.visible = diagnostic_open
+				_refresh_hud_visibility()
 			KEY_F:
-				_set_filter((_filter_mode+1)%4)
+				_set_filter((_filter_mode+1)%5)
 			KEY_V:
 				_set_gi(not _gi_on)
 			KEY_C:
@@ -559,34 +719,41 @@ func _refresh_preparation_interface() -> void:
 			_loading_status.show()
 		return
 	if not is_instance_valid(water): return
-	_resume.disabled = _switching_spawn or not water.is_terrain_ready()
+	_resume.disabled = _switching_spawn or not water.is_terrain_ready() or not is_instance_valid(world) or not world.current_room_ready()
 	_resume.text = "正在准备水体 / PREPARING WATER…" if _resume.disabled else "继续探索 / CONTINUE"
 	if is_instance_valid(_loading_status) and water.has_method("get_preparation_status"):
 		_loading_status.text = preload("res://scripts/diagnostics/preparation_status.gd").describe(water.get_preparation_status())
 		_loading_status.visible = not _loading_status.text.is_empty()
 
 func set_menu(value: bool) -> void:
+	if not value and is_instance_valid(_dream) and not _dream.can_resume(): return
 	if not value and is_instance_valid(_campaign) and (_campaign.busy or not _campaign.can_resume()): return
 	# Initial static optical data prepares without freezing the menu. Do not let
 	# floating actors fall through an unprepared depth field on a cold launch.
-	if not value and (_switching_spawn or (is_instance_valid(water) and not water.is_terrain_ready())): value=true
+	if not value and (_switching_spawn or (is_instance_valid(water) and not water.is_terrain_ready()) or (is_instance_valid(world) and not world.current_room_ready())): value=true
 	if value and is_instance_valid(_exploration_notes):
 		_exploration_notes.flush()
 		_exploration_notes.refresh_menu_summary()
 	if value and not menu_open and is_instance_valid(_campaign): _campaign.flush()
+	if value and not menu_open and is_instance_valid(_dream): _dream.flush()
 	menu_open = value
-	_menu.visible = value
+	if is_instance_valid(_unified_interactions): _unified_interactions.set_playable(false)
+	_hints_held = false
+	_refresh_hud_visibility()
+	_menu.visible = value and not (is_instance_valid(_dream) and _dream.busy and is_instance_valid(_dream._threshold) and _dream._threshold.diagnostics().visible)
 	_refresh_pc_preview_interface()
 	if is_instance_valid(_advanced): _advanced.visible=false
 	if is_instance_valid(_gi_check): _gi_check.set_pressed_no_signal(_gi_on)
 	if is_instance_valid(_caustics_check): _caustics_check.set_pressed_no_signal(_caustics_on)
 	if is_instance_valid(_looks): _looks.select(_filter_mode)
 	if is_instance_valid(player): player.set_enabled(not value)
+	if is_instance_valid(_dream): _dream.menu_changed(value)
 	if is_instance_valid(props): props.set_enabled(not value)
 	if is_instance_valid(water):
 		if not _retiring_world: water.process_mode=Node.PROCESS_MODE_INHERIT
 		water.set_paused(value)
 	if is_instance_valid(pool_audio): pool_audio.set_active(not value)
+	_refresh_dream_audio()
 	_resume.text = "进入泳池 / CONTINUE" if is_instance_valid(world) and world.get_discovered_count() <= 1 else "继续探索 / CONTINUE"
 	if value: _refresh_preparation_interface()
 
@@ -595,6 +762,7 @@ func travel_to(coord: Vector2i, campaign_restore: bool = false) -> void:
 	if _switching_spawn or not _booted: return
 	if is_instance_valid(_campaign) and _campaign.active and coord not in world.finite_coords: return
 	if world.formal_mode and coord not in preload("res://scripts/world/formal_rooms.gd").COORDS: coord=Vector2i(-1,-1)
+	if is_instance_valid(_dream): _dream.prepare_player_relocation()
 	player.set_enabled(false)
 	var spawn: Vector3 = world.teleport_to_room(coord)
 	player.warp_to(spawn,Vector3(coord.x*32,3.0,coord.y*32-8))
@@ -633,14 +801,19 @@ func _read_seed_input() -> Dictionary:
 	return result
 
 func _rebuild_seed_world() -> void:
+	if _unified_preview: return
+	if is_instance_valid(_dream) and _dream.busy: return
 	if is_instance_valid(_campaign) and _campaign.busy: return
 	if _switching_spawn or not _booted: return
 	var parsed := _read_seed_input()
 	if not parsed.ok: return
 	if is_instance_valid(_campaign): _campaign.leave_campaign()
-	regenerate(parsed.seed)
+	await regenerate(parsed.seed)
+	if _last_world_load_success and _booted: set_menu(false)
 
 func _choose_spawn(index:int)->void:
+	if _unified_preview: return
+	if is_instance_valid(_dream) and _dream.busy: return
 	if is_instance_valid(_campaign) and _campaign.busy: return
 	if _switching_spawn or not _booted:
 		if is_instance_valid(_spawn_select): _spawn_select.select(maxi(0,SPAWN_MODES.find(_spawn_mode)))
@@ -654,9 +827,12 @@ func _choose_spawn(index:int)->void:
 	if is_instance_valid(_campaign): _campaign.leave_campaign()
 	_spawn_mode=chosen
 	# Explicit menu action, never a hidden teleport or a deletion of either world.
-	regenerate(parsed.seed)
+	await regenerate(parsed.seed)
+	if _last_world_load_success and _booted: set_menu(false)
 
 func _restart_into_selected_world() -> void:
+	if _unified_preview: return
+	if is_instance_valid(_dream) and _dream.busy: return
 	if is_instance_valid(_campaign) and _campaign.busy: return
 	if not is_instance_valid(_spawn_select) or not is_instance_valid(_seed_edit): return
 	var parsed := _read_seed_input()
@@ -678,21 +854,41 @@ func _restart_into_selected_world() -> void:
 		set_menu(true)
 
 func regenerate(seed_value: int, allow_campaign_cancel: bool = false) -> void:
+	if is_instance_valid(_dream) and _dream.active and _spawn_mode != "dreamcore":
+		if _dream.busy:
+			_spawn_mode = "dreamcore"
+			if is_instance_valid(_campaign): _campaign.active = false
+			return
+		if _switching_spawn or not _booted:return
+		_dream.leave()
 	if _switching_spawn or not _booted:return
+	_last_world_load_success = false
 	_switching_spawn=true
 	_gi_refresh_ticket+=1
 	set_menu(true)
+	var own_loading: bool = is_instance_valid(_map_loading) and not (is_instance_valid(_dream) and _dream.busy)
+	if own_loading:
+		_map_loading.begin("正在加载场景")
+		await get_tree().process_frame
+		if DisplayServer.get_name() != "headless": await RenderingServer.frame_post_draw
 	if is_instance_valid(water):
 		water.suspend_preparation(true)
 		var preparation_started:int=Time.get_ticks_msec()
 		while water.preparation_pending():
+			if is_instance_valid(_dream) and _dream.active and (Time.get_ticks_msec()-preparation_started>45000 or _dream._cancel):
+				water.suspend_preparation(false); _switching_spawn=false
+				if own_loading: _map_loading.finish()
+				_dream._failed=true; _dream.message="水体准备尚未完成；原世界保留，可重试。"
+				return
 			if is_instance_valid(_campaign) and _campaign.active and Time.get_ticks_msec()-preparation_started>45000:
 				water.suspend_preparation(false);_switching_spawn=false
+				if own_loading: _map_loading.finish()
 				_campaign._cancel_requested=true;_campaign.message="水体准备超时。已保留当前世界与机关进度，请重试或安全退出。"
 				return
 			if allow_campaign_cancel and is_instance_valid(_campaign) and _campaign._cancel_requested:
 				water.suspend_preparation(false)
 				_switching_spawn=false
+				if own_loading: _map_loading.finish()
 				return
 			await get_tree().process_frame
 			if not _booted: return
@@ -713,8 +909,22 @@ func regenerate(seed_value: int, allow_campaign_cancel: bool = false) -> void:
 	_create_world()
 	_apply_quality(_quality)
 	_set_gi(_gi_on)
+	var load_started := Time.get_ticks_msec()
+	var last_status := 0
+	while _booted and is_instance_valid(world) and is_instance_valid(water) and (not world.current_room_ready() or not water.is_terrain_ready()):
+		if Time.get_ticks_msec() - load_started > 60000: break
+		if is_instance_valid(_dream) and _dream.busy and _dream._cancel: break
+		if own_loading and Time.get_ticks_msec() - last_status > 250:
+			last_status = Time.get_ticks_msec()
+			_map_loading.set_detail(preload("res://scripts/diagnostics/preparation_status.gd").describe(water.get_preparation_status()))
+		await get_tree().process_frame
+	_last_world_load_success = _booted and is_instance_valid(world) and is_instance_valid(water) and world.current_room_ready() and water.is_terrain_ready()
 	_switching_spawn=false
+	if own_loading: _map_loading.finish()
 	set_menu(true)
+	if not _last_world_load_success and is_instance_valid(_loading_status):
+		_loading_status.text = "场景尚未准备完成，请等待后继续或返回菜单重试。"
+		_loading_status.show()
 	_save_settings()
 	_trace_world_lifecycle("switch_complete")
 
@@ -726,7 +936,7 @@ func _interaction(kind: String,at: Vector3,power: float) -> void:
 	pool_audio.interaction(kind,at,power)
 
 func _setup_inputs() -> void:
-	var keys := {"move_forward":KEY_W,"move_back":KEY_S,"move_left":KEY_A,"move_right":KEY_D,"sprint":KEY_SHIFT,"jump":KEY_SPACE,"interact":KEY_E,"pause":KEY_ESCAPE,"toggle_flashlight":KEY_L}
+	var keys := {"move_forward":KEY_W,"move_back":KEY_S,"move_left":KEY_A,"move_right":KEY_D,"sprint":KEY_SHIFT,"jump":KEY_SPACE,"interact":KEY_E,"pause":KEY_ESCAPE,"toggle_flashlight":KEY_L,"show_hints":KEY_TAB}
 	for action: String in keys:
 		if not InputMap.has_action(action): InputMap.add_action(action)
 		var event := InputEventKey.new()
@@ -742,6 +952,9 @@ func _build_interface() -> void:
 	_overlay = CanvasLayer.new()
 	_overlay.name = "NativeInterface"
 	add_child(_overlay)
+	if MainhallPreview.desktop_allowed():
+		_map_loading = preload("res://scripts/ui/map_loading_screen.gd").new()
+		add_child(_map_loading)
 	var ui := Control.new()
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -778,10 +991,12 @@ func _build_interface() -> void:
 	_status.add_theme_font_size_override("font_size",13)
 	ui.add_child(_status)
 	_hint=Label.new()
-	_hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	_hint.position=Vector2(-630,-43)
-	_hint.size=Vector2(602,25)
-	_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
+	_hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	_hint.offset_left=32
+	_hint.offset_right=-32
+	_hint.offset_top=-180
+	_hint.offset_bottom=-145
+	_hint.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	_hint.add_theme_font_size_override("font_size",13)
 	ui.add_child(_hint)
 	_diag=Label.new()
@@ -795,6 +1010,10 @@ func _build_interface() -> void:
 	_renderer_warning.add_theme_font_size_override("font_size",15)
 	_renderer_warning.hide()
 	ui.add_child(_renderer_warning)
+	if MainhallPreview.desktop_allowed():
+		_camera_osd = preload("res://scripts/ui/camera_viewfinder.gd").new()
+		ui.add_child(_camera_osd)
+	_refresh_hud_visibility()
 	_menu=PanelContainer.new()
 	_menu.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	_menu.position=Vector2(-260,-285)
@@ -824,6 +1043,7 @@ func _build_interface() -> void:
 	column.add_child(brand)
 	var sub := Label.new()
 	sub.text="POOLCORE · PC EXPLORER EDITION\n原版 / 主池厅 / 扩展随机地图 · 骨骼角色 · 原水体交互"
+	if _unified_preview: sub.text = "连续设施预览 · 悬手浅池 — 检修廊 — 水族中庭\n同一世界步行连接；尚非完整大地图。"
 	sub.add_theme_color_override("font_color",Color(0.66,0.79,0.76))
 	sub.add_theme_font_size_override("font_size",14)
 	column.add_child(sub)
@@ -841,7 +1061,9 @@ func _build_interface() -> void:
 	_spawn_select.select(maxi(0,SPAWN_MODES.find(_spawn_mode)))
 	_spawn_select.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	spawn_row.add_child(_spawn_select)
-	spawn_row.add_child(_button("在此出生",func():_choose_spawn(_spawn_select.selected)))
+	var spawn_button := _button("在此出生",func():_choose_spawn(_spawn_select.selected))
+	spawn_button.disabled = _unified_preview
+	spawn_row.add_child(spawn_button)
 	column.add_child(spawn_row)
 	if MainhallPreview.desktop_allowed():
 		_world_restart_button = _button("重启到所选世界 / RESTART INTO SELECTED WORLD", _restart_into_selected_world)
@@ -884,7 +1106,9 @@ func _build_interface() -> void:
 	_seed_edit.placeholder_text="World seed"
 	_seed_edit.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	seed_row.add_child(_seed_edit)
-	seed_row.add_child(_button("重建种子世界",_rebuild_seed_world))
+	var seed_button := _button("重建种子世界",_rebuild_seed_world)
+	seed_button.disabled = _unified_preview
+	seed_row.add_child(seed_button)
 	column.add_child(seed_row)
 	_seed_input_status = Label.new()
 	_seed_input_status.name = "SeedInputStatus"
@@ -918,11 +1142,11 @@ func _build_interface() -> void:
 			_depth_wading_enabled=v
 			if is_instance_valid(player): player.depth_wading_response_enabled=v
 			_save_settings())
-	_add_check(column,"声音 / ORIGINAL SOUND EFFECTS",_audio_on,func(v):_audio_on=v;pool_audio.set_enabled(v);_save_settings())
-	_add_check(column,"空间底噪 / AMBIENCE",_ambience_on,func(v):_ambience_on=v;pool_audio.set_ambience(v);_save_settings())
+	_add_check(column,"声音 / ORIGINAL SOUND EFFECTS",_audio_on,func(v):_audio_on=v;pool_audio.set_enabled(v);_refresh_dream_audio();_save_settings())
+	_add_check(column,"空间底噪 / AMBIENCE",_ambience_on,func(v):_ambience_on=v;pool_audio.set_ambience(v);_refresh_dream_audio();_save_settings())
 	var looks:=OptionButton.new()
 	_looks=looks
-	for look_name in ["镜头：原始 / CLEAN","镜头：CCD 摄像机","镜头：VHS 录像","镜头：冷色纪实","镜头：青绿柔光 / POOLROOMS"]: looks.add_item(look_name)
+	for look_name in ["镜头：原始 / CLEAN","镜头：CCD 摄像机","镜头：VHS 录像","镜头：冷色纪实","镜头：模拟摄像机 / 青绿柔光"]: looks.add_item(look_name)
 	looks.select(_filter_mode)
 	looks.item_selected.connect(_set_filter)
 	column.add_child(looks)
@@ -1058,9 +1282,10 @@ func _set_avatar_enabled(value: bool) -> void:
 func _set_filter(index: int) -> void:
 	_filter_mode=clampi(index,0,4)
 	if MainhallPreview.desktop_allowed():
-		if _filter_mode == 4: _reference_settings = ReferenceLook.POOLROOMS_PRESET.duplicate()
-		else: _reference_settings.referenceLook = false
+		# Lens selection must preserve every water setting and custom lens strength.
+		_reference_settings.referenceLook = _filter_mode == 4
 	_ccd_on=_filter_mode!=0
+	if is_instance_valid(_looks): _looks.select(_filter_mode)
 	if is_instance_valid(_film_rect):
 		_film_rect.visible=_ccd_on
 		(_film_rect.material as ShaderMaterial).set_shader_parameter("look_mode",_filter_mode)
@@ -1069,14 +1294,16 @@ func _set_filter(index: int) -> void:
 	_save_settings()
 
 func _sync_reference_controls() -> void:
-	if not is_instance_valid(_advanced): return
-	for key: String in _reference_settings:
-		var control := _advanced.find_child(key, true, false)
-		if control is CheckButton: control.set_pressed_no_signal(bool(_reference_settings[key]))
-		elif control is HSlider:
-			control.set_value_no_signal(float(_reference_settings[key]))
-			var numeric := control.get_parent().get_node_or_null("NumericValue") as Label
-			if numeric != null: numeric.text = String.num(control.value,3)
+	# Lens controls are presented on the main menu; water controls on its subpage.
+	for panel: Control in [_menu, _advanced]:
+		if not is_instance_valid(panel): continue
+		for key: String in _reference_settings:
+			for control: Node in panel.find_children(key, "", true, false):
+				if control is CheckButton: control.set_pressed_no_signal(bool(_reference_settings[key]))
+				elif control is HSlider:
+					control.set_value_no_signal(float(_reference_settings[key]))
+					var numeric := control.get_parent().get_node_or_null("NumericValue") as Label
+					if numeric != null: numeric.text = String.num(control.value,3)
 
 func _change_reference_setting(key: String, value: Variant) -> void:
 	_reference_settings[key]=value
@@ -1085,6 +1312,7 @@ func _change_reference_setting(key: String, value: Variant) -> void:
 		_filter_mode = 4 if bool(value) else 0
 		if is_instance_valid(_looks): _looks.select(_filter_mode)
 	_apply_reference_settings()
+	_sync_reference_controls()
 	_save_settings()
 
 func _apply_reference_settings() -> void:
@@ -1343,6 +1571,12 @@ func _add_check(parent: Node,text: String,value: bool,callback: Callable) -> Che
 func _rebuild_destinations() -> void:
 	_destination.clear()
 	_destinations.clear()
+	if _unified_preview:
+		_destinations.append(Vector2i.ZERO); _destination.add_item("连续双厅 · 安全起点")
+		return
+	if is_instance_valid(_dream) and _dream.active:
+		_destinations.append(Vector2i.ZERO); _destination.add_item("DREAMCORE · SAFE ENTRY")
+		return
 	if is_instance_valid(_campaign) and _campaign.active:
 		for spec: Dictionary in world.chapter.room_specs:
 			_destinations.append(spec.coord)
@@ -1441,20 +1675,26 @@ func _load_settings() -> void:
 	_reference_settings=ReferenceLook.sanitize(config.get_value("reference_wing","look",{}))
 	_water_settings=WaterSettingsScript.sanitize_wind_settings(config.get_value("water","settings",{}))
 	_water_visible=bool(config.get_value("water","visible",true))
-	# The optional reference style persists; legacy CCD/VHS remain session-only.
-	_filter_mode=4 if bool(_reference_settings.referenceLook) else 0
+	# Preserve the selected lens on restart, including an explicitly clean view.
+	_filter_mode=clampi(int(config.get_value("display","camera_mode",4 if bool(_reference_settings.referenceLook) else 0)),0,4)
+	_reference_settings.referenceLook = _filter_mode == 4
 	_ccd_on=_filter_mode!=0
 
 func _save_settings(restart_mode: String = "", restart_seed: int = 0, atomic: bool = false) -> Error:
+	# Preview is session-only: never persist its mode/seed over the existing project.
+	if _unified_preview: return OK
 	# A queued ordinary autosave must not undo the committed restart selection.
 	if _world_restart._requested and restart_mode.is_empty(): return ERR_BUSY
 	var config:=ConfigFile.new()
 	# Preserve settings owned by other features on ordinary autosave too.
 	var loaded := config.load("user://settings.cfg")
 	if loaded != OK and loaded != ERR_FILE_NOT_FOUND: return loaded
-	config.set_value("game","seed",restart_seed if not restart_mode.is_empty() else world_seed)
-	config.set_value("game","spawn_mode",restart_mode if not restart_mode.is_empty() else (_pc_preview_return_spawn if _pc_mainhall_preview else _spawn_mode))
+	var persisted_seed: int = _dream.return_seed if is_instance_valid(_dream) and _dream.active else world_seed
+	var persisted_mode: String = _dream.return_spawn_mode if is_instance_valid(_dream) and _dream.active else (_pc_preview_return_spawn if _pc_mainhall_preview else _spawn_mode)
+	config.set_value("game","seed",restart_seed if not restart_mode.is_empty() else persisted_seed)
+	config.set_value("game","spawn_mode",restart_mode if not restart_mode.is_empty() else persisted_mode)
 	config.set_value("display","quality",_quality)
+	config.set_value("display","camera_mode",_filter_mode)
 	config.set_value("display","player_body",_avatar_enabled)
 	config.set_value("display","avatar_fabric",_avatar_fabric_enabled)
 	config.set_value("game","quiet_valves",_facility_enabled)
@@ -1907,11 +2147,18 @@ func _record_walkthrough() -> bool:
 	return bool(report["pass"])
 
 func _safe_quit(exit_code: int = 0) -> void:
+	_release_unified_acoustics()
+	if is_instance_valid(_dream): _dream.flush()
 	if not _booted: return
-	if is_instance_valid(_campaign): _campaign.flush()
+	if is_instance_valid(_campaign):
+		var campaign_active: bool = _campaign.active
+		if is_instance_valid(_dream) and _dream.preserve_unchanged_campaign_on_quit(): _campaign.active = false
+		_campaign.flush()
+		_campaign.active = campaign_active
 	if is_instance_valid(_exploration_notes): _exploration_notes.flush()
 	_booted=false
 	_retiring_world=true
+	if is_instance_valid(_unified_interactions): _unified_interactions.dispose()
 	_gi_refresh_ticket+=1
 	set_process(false)
 	set_physics_process(false)
@@ -1936,10 +2183,19 @@ func _safe_quit(exit_code: int = 0) -> void:
 	get_tree().quit(exit_code)
 
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_hints_held = false
+		_refresh_hud_visibility()
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and _booted:
 		_safe_quit.call_deferred()
 
 func _exit_tree()->void:
+	_release_unified_acoustics()
+	if is_instance_valid(_unified_interactions): _unified_interactions.dispose()
 	if is_instance_valid(_facility_devices): _facility_devices.clear()
 	_dispose_distance_fog()
 	if source_fog!=null:source_fog.dispose();source_fog=null
+
+func _refresh_dream_audio() -> void:
+	if is_instance_valid(_dream) and _dream.active and is_instance_valid(_dream._ambience):
+		_dream._ambience.update(not menu_open and not _dream.busy and _audio_on and _ambience_on)

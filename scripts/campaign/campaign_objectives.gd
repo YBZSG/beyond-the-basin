@@ -72,43 +72,43 @@ static func _powered(v: Array) -> bool:
 	return true
 
 static func action(chapter: int, snapshot: Dictionary, index: int) -> Dictionary:
-	if index<0 or index>=LABELS[chapter].size() or not valid(chapter,snapshot): return {"accepted":false,"message":"无效控制。","snapshot":snapshot}
-	if snapshot.solved: return {"accepted":false,"message":"系统已稳定，无需再次操作。","snapshot":snapshot}
+	if index<0 or index>=LABELS[chapter].size() or not valid(chapter,snapshot): return {"accepted":false,"message":TranslationServer.translate("无效控制。"),"snapshot":snapshot}
+	if snapshot.solved: return {"accepted":false,"message":TranslationServer.translate("系统已稳定，无需再次操作。"),"snapshot":snapshot}
 	var next: Dictionary = snapshot.duplicate(true)
 	var v: Array = next.values
 	var message := ""
 	match chapter:
 		0:
 			v[index]=1-int(v[index]);next.stable=0.0
-			message="支路已"+("接通" if v[index] else "隔离")
-			if index==0: message="馈电复位："+("正在观察稳定性…" if _powered(v) else "保护联锁仍在报警。检查漏电支路与其余照明。")
+			message=TranslationServer.translate("支路已")+(TranslationServer.translate("接通") if v[index] else TranslationServer.translate("隔离"))
+			if index==0: message=TranslationServer.translate("馈电复位：")+(TranslationServer.translate("正在观察稳定性…") if _powered(v) else TranslationServer.translate("保护联锁仍在报警。检查漏电支路与其余照明。"))
 		1:
-			if index<3: v[index]=(int(v[index])+1)%4; message="阀门转至 %d 档；压力读数：%d / %d / %d"%[v[index],v[0]+v[1],v[1]+v[2],v[0]+v[2]]
+			if index<3: v[index]=(int(v[index])+1)%4; message=TranslationServer.translate("阀门转至 %d 档；压力读数：%d / %d / %d")%[v[index],v[0]+v[1],v[1]+v[2],v[0]+v[2]]
 			else:
 				next.solved=v[0]+v[1]==3 and v[1]+v[2]==4 and v[0]+v[2]==5
 				v[3]=1 if next.solved else 0
-				message="三路压力验收通过。" if next.solved else "压力不平衡。目标读数 3 / 4 / 5；阀门互相影响，请继续调节。"
+				message=TranslationServer.translate("三路压力验收通过。") if next.solved else TranslationServer.translate("压力不平衡。目标读数 3 / 4 / 5；阀门互相影响，请继续调节。")
 		2:
-			if index<2: v[index]=(int(v[index])+1)%3;v[2]=0;next.stable=0.0;message="导流器转至 %d 档。出口联锁已复位。"%v[index]
-			elif v[0]==2 and v[1]==1: v[2]=1-int(v[2]);next.stable=0.0;message="出口闸已"+("打开，等待水位平稳。" if v[2] else "关闭。")
-			else: message="出口压力反向。先比对两段刻线与流向，闸门未动。"
+			if index<2: v[index]=(int(v[index])+1)%3;v[2]=0;next.stable=0.0;message=TranslationServer.translate("导流器转至 %d 档。出口联锁已复位。")%v[index]
+			elif v[0]==2 and v[1]==1: v[2]=1-int(v[2]);next.stable=0.0;message=TranslationServer.translate("出口闸已")+(TranslationServer.translate("打开，等待水位平稳。") if v[2] else TranslationServer.translate("关闭。"))
+			else: message=TranslationServer.translate("出口压力反向。先比对两段刻线与流向，闸门未动。")
 		3:
 			var order: Array = [0,2,1,3]
 			if index==4:
-				next.solved=next.sequence==order;message="四拍回声吻合。" if next.solved else "回声尚未重现完整；四拍之后再验收。"
-			elif next.sequence.size()<4 and index==order[next.sequence.size()]: next.sequence.append(index);v[index]=1;message="回声记住了第 %d 拍。"%next.sequence.size()
-			else: next.sequence=[];next.values=[0,0,0,0,0];message="回声散去。顺序已清空，可从阶厅重新开始。"
+				next.solved=next.sequence==order;message=TranslationServer.translate("四拍回声吻合。") if next.solved else TranslationServer.translate("回声尚未重现完整；四拍之后再验收。")
+			elif next.sequence.size()<4 and index==order[next.sequence.size()]: next.sequence.append(index);v[index]=1;message=TranslationServer.translate("回声记住了第 %d 拍。")%next.sequence.size()
+			else: next.sequence=[];next.values=[0,0,0,0,0];message=TranslationServer.translate("回声散去。顺序已清空，可从阶厅重新开始。")
 		4:
-			if index==0: v[0]=1-int(v[0]);v[1]=0;v[2]=0;next.stable=0.0;message="噪声闸已"+("隔离。可以打开百叶。" if v[0] else "解除隔离；排风已安全停止。")
-			elif index==1 and v[0]==1: v[1]=1-int(v[1]);v[2]=0;next.stable=0.0;message="百叶已"+("打开。可以启动电机。" if v[1] else "关闭，电机已停。")
-			elif index==2 and v[0]==1 and v[1]==1: v[2]=1-int(v[2]);next.stable=0.0;message="电机已"+("启动，正在排出滞气…" if v[2] else "停止。")
-			else: message="安全联锁拒绝：必须先隔离噪声，再打开百叶。"
+			if index==0: v[0]=1-int(v[0]);v[1]=0;v[2]=0;next.stable=0.0;message=TranslationServer.translate("噪声闸已")+(TranslationServer.translate("隔离。可以打开百叶。") if v[0] else TranslationServer.translate("解除隔离；排风已安全停止。"))
+			elif index==1 and v[0]==1: v[1]=1-int(v[1]);v[2]=0;next.stable=0.0;message=TranslationServer.translate("百叶已")+(TranslationServer.translate("打开。可以启动电机。") if v[1] else TranslationServer.translate("关闭，电机已停。"))
+			elif index==2 and v[0]==1 and v[1]==1: v[2]=1-int(v[2]);next.stable=0.0;message=TranslationServer.translate("电机已")+(TranslationServer.translate("启动，正在排出滞气…") if v[2] else TranslationServer.translate("停止。"))
+			else: message=TranslationServer.translate("安全联锁拒绝：必须先隔离噪声，再打开百叶。")
 		5:
-			if index in [1,3]: v[index]=(int(v[index])+1)%3;v[0]=0;next.stable=0.0;message="反射镜转至 %d 档；总闸已关闭以保护眼睛。"%v[index]
-			elif index==2: v[2]=1-int(v[2]);message="消波排水"+("开启，水面更稳定。" if v[2] else "关闭。")
-			elif index==0 and v[1]==1 and v[3]==2: v[0]=1-int(v[0]);message="采光总闸已"+("打开，正在蓄光。" if v[0] else "关闭。")
-			elif index==4 and next.stable>=12.0: next.solved=true;v[4]=1;message="穹顶机械锁释放。日光出口已开启。"
-			else: message="光线尚未汇聚或蓄光不足。检查两面镜子和主池总闸。"
+			if index in [1,3]: v[index]=(int(v[index])+1)%3;v[0]=0;next.stable=0.0;message=TranslationServer.translate("反射镜转至 %d 档；总闸已关闭以保护眼睛。")%v[index]
+			elif index==2: v[2]=1-int(v[2]);message=TranslationServer.translate("消波排水")+(TranslationServer.translate("开启，水面更稳定。") if v[2] else TranslationServer.translate("关闭。"))
+			elif index==0 and v[1]==1 and v[3]==2: v[0]=1-int(v[0]);message=TranslationServer.translate("采光总闸已")+(TranslationServer.translate("打开，正在蓄光。") if v[0] else TranslationServer.translate("关闭。"))
+			elif index==4 and next.stable>=12.0: next.solved=true;v[4]=1;message=TranslationServer.translate("穹顶机械锁释放。日光出口已开启。")
+			else: message=TranslationServer.translate("光线尚未汇聚或蓄光不足。检查两面镜子和主池总闸。")
 	return {"accepted":true,"snapshot":next,"message":message}
 
 static func tick(chapter: int, snapshot: Dictionary, delta: float) -> Dictionary:
@@ -123,22 +123,22 @@ static func tick(chapter: int, snapshot: Dictionary, delta: float) -> Dictionary
 	return next
 
 static func feedback(chapter: int, snapshot: Dictionary) -> String:
-	if snapshot.solved: return "系统稳定 · 出口已解锁"
+	if snapshot.solved: return TranslationServer.translate("系统稳定 · 出口已解锁")
 	var v: Array = snapshot.values
 	match chapter:
-		0: return "主馈电 %s · 故障支路 %s · 稳定 %.1f / 8 秒"%["开" if v[0] else "关","接通" if v[4] else "隔离",snapshot.stable]
-		1: return "三路压力 %d / %d / %d（目标 3 / 4 / 5）"%[v[0]+v[1],v[1]+v[2],v[0]+v[2]]
-		2: return "流向 %d → %d · 闸 %s · 平稳 %.1f / 6 秒"%[v[0],v[1],"开" if v[2] else "关",snapshot.stable]
-		3: return "回声 %d / 4 拍 · 错序可从阶厅重演"%snapshot.sequence.size()
-		4: return "隔离 %s / 百叶 %s / 电机 %s · 排风 %.1f / 10 秒"%[v[0],v[1],v[2],snapshot.stable]
-		5: return "反射 %d / %d · 蓄光 %.1f / 12 秒"%[v[1],v[3],snapshot.stable]
+		0: return TranslationServer.translate("主馈电 %s · 故障支路 %s · 稳定 %.1f / 8 秒")%[TranslationServer.translate("开") if v[0] else TranslationServer.translate("关"),TranslationServer.translate("接通") if v[4] else TranslationServer.translate("隔离"),snapshot.stable]
+		1: return TranslationServer.translate("三路压力 %d / %d / %d（目标 3 / 4 / 5）")%[v[0]+v[1],v[1]+v[2],v[0]+v[2]]
+		2: return TranslationServer.translate("流向 %d → %d · 闸 %s · 平稳 %.1f / 6 秒")%[v[0],v[1],TranslationServer.translate("开") if v[2] else TranslationServer.translate("关"),snapshot.stable]
+		3: return TranslationServer.translate("回声 %d / 4 拍 · 错序可从阶厅重演")%snapshot.sequence.size()
+		4: return TranslationServer.translate("隔离 %s / 百叶 %s / 电机 %s · 排风 %.1f / 10 秒")%[v[0],v[1],v[2],snapshot.stable]
+		5: return TranslationServer.translate("反射 %d / %d · 蓄光 %.1f / 12 秒")%[v[1],v[3],snapshot.stable]
 	return ""
 
 static func view(chapter: int, snapshot: Dictionary, index: int) -> Dictionary:
 	return {"value":int(snapshot.values[index]),"active":snapshot.values[index]!=0,"solved":bool(snapshot.solved),"feedback":feedback(chapter,snapshot),"stable":float(snapshot.stable),"readings":[snapshot.values[0]+snapshot.values[1],snapshot.values[1]+snapshot.values[2],snapshot.values[0]+snapshot.values[2]] if chapter==1 else []}
 
 static func status(chapter:int,snapshot:Dictionary)->String:
-	if snapshot.solved:return "系统已稳定 · 出口联锁解除"
-	if chapter==3:return "回声已记住 %d / 4 拍"%snapshot.sequence.size()
-	if snapshot.stable>0.0:return "设备正在运行，等待稳定；可继续观察附近环境。"
-	return "系统尚未稳定。附近设备的刻线和痕迹留下了线索。"
+	if snapshot.solved:return TranslationServer.translate("系统已稳定 · 出口联锁解除")
+	if chapter==3:return TranslationServer.translate("回声已记住 %d / 4 拍")%snapshot.sequence.size()
+	if snapshot.stable>0.0:return TranslationServer.translate("设备正在运行，等待稳定；可继续观察附近环境。")
+	return TranslationServer.translate("系统尚未稳定。附近设备的刻线和痕迹留下了线索。")
