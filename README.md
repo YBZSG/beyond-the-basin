@@ -1,97 +1,139 @@
-# Beyond the Basin
+# Beyond the Basin (PoolCore)
 
-**语言 / Language**　[简体中文 / Simplified Chinese](README.md) · [English](README.en.md)
+**语言 / Language**：[简体中文](README.md) · [English](README.en.md)
 
-一个还在制作中的泳池空间探索游戏，也叫 **PoolCore**。
+> 一个开发中的泳池空间探索游戏，也叫 **PoolCore**。  
+> *A pool-space exploration game in development, also known as **PoolCore**.*
 
-A pool-space exploration game in development, also called **PoolCore**.
+沿着水道穿过空荡的池厅、回廊与设备间，聆听脚步、水声与远处的回响。你可以在这里自由漫游、拨动水面、搬运物品，也可以进入六章主线流程，逐步恢复各个房间的设施。主线中的空间会随时间逐渐变暗并发生异变；如果只想静静游览风景，随时可以开启**舒缓模式**。
 
-沿着水道穿过空荡的池厅、回廊和设备间，听脚步、水声和远处的回响。你可以自由闲逛、拨动水面、搬动物品，也可以进入六章主线，逐步恢复房间里的设施。主线中的空间会随时间变暗、发生异变；想慢慢看风景，可以开启舒缓模式。
+本项目目前以 **Godot** 引擎开发为主，`main` 分支为 Godot 工程；早期 Web 版本保留在 [legacy/web-20261026](https://github.com/YBZSG/beyond-the-basin/tree/legacy/web-20261026) 分支。
 
-项目现在以 **Godot** 为主，`main` 是 Godot 工程。早期 Web 版保留在 [legacy/web-20261026](https://github.com/YBZSG/beyond-the-basin/tree/legacy/web-20261026) 分支。
+---
 
-## 下载
+## 下载与游玩
 
-| 平台 | 下载 | 版本 |
+| 平台 | 获取方式 | 当前版本 |
 | --- | --- | --- |
-| Windows x64 | [下载免安装版](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.14-pc-20261116/PoolCore-Windows-0.6.14.zip) · [更新说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.14-pc-20261116) | 0.6.14 |
-| Android ARM64 | [下载 APK](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.4-android/PoolCore-Mobile-8400-AvatarFix.apk) · [安装说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.4-android) | 0.6.4 测试版 |
-| 源码 | [下载 main 分支](https://github.com/YBZSG/beyond-the-basin/archive/refs/heads/main.zip) | 开发中 |
+| **Windows x64** | [下载免安装版 (ZIP)](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.14-pc-20261116/PoolCore-Windows-0.6.14.zip) · [更新说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.14-pc-20261116) · [itch.io 页面](https://ybzsg.itch.io/beyond-the-basin) | `0.6.14` |
+| **Android ARM64** | [下载 APK](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.4-android/PoolCore-Mobile-8400-AvatarFix.apk) · [安装说明](https://github.com/YBZSG/beyond-the-basin/releases/tag/v0.6.4-android) | `0.6.4` 测试版 |
+| **工程源码** | [下载 main 分支 ZIP](https://github.com/YBZSG/beyond-the-basin/archive/refs/heads/main.zip) | 开发中 |
 
-Windows 免安装版包含游戏资源和所需运行库，完整解压后运行 `Launch-PoolCore.cmd`。连续双厅预览使用 `Launch-Connected-Halls.cmd`。主页右上角「语言 / Language」可切换中文和 English，选择会自动保存。需要 Windows 10/11 x64 和支持 Vulkan 的显卡。首次启动会编译着色器、准备场景，需要等一会儿。
+> **提示**：GitHub 提供的 **Source code ZIP** 仅包含源码，需要通过编辑器运行；直接游玩请下载上方的 **Windows 免安装版** 或 **Android APK**。
 
-Android 版提供触屏控制，默认 High 画质、30 FPS 上限，可以在菜单中调整。为降低开销，手机版去掉了立体水花，保留水面涟漪、折射、焦散和倒影。我的测试手机是天玑 8400、12GB 内存的设备；PC 主要使用 RTX 5070 Laptop 测试。这些是测试设备记录，不是最低配置要求。APK 文件名里的 `8400` 是早期命名。
+### Windows 版说明
 
-Windows 0.6.14 包含当前主页、15 张独立地图、中英界面及 10 月 31 日修复汇总中的 20 项更新。连续双厅连接悬手浅池、检修连廊与水族中庭。Android 版保持原有发布版本。GitHub 的 **Source code ZIP** 需要用编辑器运行，直接游玩请下载 Windows ZIP 或 Android APK。
+- **启动方式**：压缩包已包含游戏资源与所需运行库，请**完整解压**后运行 `Launch-PoolCore.cmd`；如需体验连续双厅预览（连接悬手浅池、检修连廊与水族中庭），请运行 `Launch-Connected-Halls.cmd`。
+- **语言切换**：在主页右上角点击「语言 / Language」即可切换简体中文与 English，设置会自动保存。
+- **运行环境**：需要 **Windows 10/11 x64** 及支持 **Vulkan** 的显卡。首次启动会编译着色器并准备场景，等待片刻即可。
+- **当前版本内容（0.6.14）**：包含当前主页、15 张独立地图、中英双语界面，以及 10 月 31 日修复汇总中的 20 项更新。
 
-也可以在 [itch.io 下载 Windows 版](https://ybzsg.itch.io/beyond-the-basin)。
+### Android 版说明
 
-## 怎么玩
+- **操控与画质**：提供触屏控制，默认 **High** 画质、**30 FPS** 上限，可在菜单中自由调整。
+- **移动端优化**：为降低性能开销，手机版移除了立体水花，保留水面涟漪、折射、焦散与倒影效果。当前保持原有发布版本。
+- **测试设备参考**：个人测试设备为天玑 8400（12GB 内存）手机与 RTX 5070 Laptop（PC），以上仅为测试记录，**并非最低配置要求**。APK 文件名中的 `8400` 属于早期命名沿用。
 
-主页可进入原有六章主线，也可选择原泳池、重做主池厅、扩展随机地图、曲廊池区和五境参考场景。新增的 15 个地图在「新增地图」中选择，使用独立进度；主线的重新设计留待后续。
+---
 
-房间里的阀门、开关和部分设施可以操作；漂浮物、球池里的球和软垫可以拨动、拿起或投掷。当前地图以浅水探索为主，没有可玩的深水游泳区域。
+## 玩法与操作
 
-| PC 操作 | 按键 |
+### 探索与交互
+
+- **自由探索与主线模式**：从主页可直接进入 **15 个独立池区世界**与**连续双厅**，也可点击「开始游戏 / 主线」体验六章流程，按目标推进并逐步恢复房间设施。
+- **环境互动**：房间内的阀门、开关及部分设施均可操作；漂浮物、球池球与软垫支持拨动、抓取或蓄力投掷。
+- **水域范围**：当前地图以浅水涉水探索为主，暂不含可游玩的深水游泳区域。
+
+### PC 键鼠操作
+
+| 操作功能 | 按键 |
 | --- | --- |
-| 移动 / 转动视角 | WASD / 鼠标 |
-| 奔跑 / 跳跃 | Shift / Space |
-| 操作设施 / 阅读主线设备铭牌 | E / Q |
-| 抓取 / 蓄力投掷 / 调整距离 | 左键 / 右键 / 滚轮 |
-| 手电筒 / 切换镜头滤镜 | L / F |
-| 查看文字提示 | 按住 Tab，松开隐藏 |
-| 隐藏界面 / 全屏 / 菜单 | H / F11 / Esc |
+| 移动 / 转动视角 | `WASD` / 鼠标 |
+| 奔跑 / 跳跃 | `Shift` / `Space` |
+| 操作设施 / 阅读主线设备铭牌 | `E` / `Q` |
+| 抓取 / 蓄力投掷 / 调整抓取距离 | 鼠标左键 / 鼠标右键 / 滚轮 |
+| 手电筒 / 切换镜头滤镜 | `L` / `F` |
+| 查看文字提示 | 按住 `Tab`（松开隐藏） |
+| 隐藏界面 / 全屏切换 / 菜单 | `H` / `F11` / `Esc` |
 
-在主页的「设置」中选择角色、调整画质和水体。模拟摄像机镜头带光晕、色散和日期时间戳；大波纹可以单独开关，关闭后仍会有脚步和涉水涟漪。REC 是取景界面装饰，不会录制视频。室外草地被踩过后会逐渐恢复。
+### 画面、镜头与实验特性
 
-光追、DLSS、帧生成和神经渲染（NR）是可选的实验功能，需要对应的显卡、驱动和定制引擎支持，首次启动默认关闭光追、帧生成和 NR。水面使用光栅折射与倒影。帧生成仍可能出现拉扯、果冻感，NR 与帧生成不能同时开启。
+- **个性化设置**：可在主页「设置」中选择角色，并调整画质与水体参数。
+- **镜头与环境细节**：模拟摄像机滤镜带有光晕、色散与日期时间戳（画面中的 `REC` 仅为取景装饰，不会实际录屏）；大波纹支持单独开关，关闭后仍保留脚步与涉水涟漪；室外草地被踩踏后会随时间逐渐恢复。
+- **实验渲染功能**：光追、DLSS、帧生成与神经渲染（NR）均为可选实验特性，依赖对应显卡、驱动及定制引擎支持。首次启动默认关闭光追、帧生成与 NR；水面采用光栅折射与倒影实现。
+  - 已知限制：开启帧生成时可能出现画面拉扯或果冻感；**NR 与帧生成不可同时开启**。
+
+---
 
 ## 运行源码
 
-日常修改脚本、场景和材质，继续使用已有的定制编辑器。
+日常修改脚本、场景与材质，请继续使用定制版 Godot 编辑器（基于定制 Godot 4.8-dev 引擎）：
 
-1. 使用已有的 **PoolCoreEditor.exe**，或从 [0.6.13 安装包](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.13-pc-20261026/PoolCore-PC-0.6.13-Setup.exe) 获取。本次继续使用相同的定制 Godot 4.8-dev 引擎。
-2. 下载源码 ZIP 并完整解压，或克隆仓库：
+1. **获取编辑器**：使用已有的 `PoolCoreEditor.exe`，或从 [0.6.13 安装包](https://github.com/YBZSG/beyond-the-basin/releases/download/v0.6.13-pc-20261026/PoolCore-PC-0.6.13-Setup.exe) 获取。
+2. **获取源码**：下载源码 ZIP 并完整解压，或通过 Git 克隆仓库：
 
-   ```powershell
-   git clone https://github.com/YBZSG/beyond-the-basin.git PoolCoreSource
-   cd PoolCoreSource
-   ```
+```powershell
+git clone https://github.com/YBZSG/beyond-the-basin.git PoolCoreSource
+cd PoolCoreSource
+```
 
-3. 双击源码根目录的 **Open-Editor.cmd**。若游戏装在自定义目录，把那里的 `PoolCoreEditor.exe` 拖到这个 CMD 上。
-4. 等首次资源导入完成，按 **F5** 运行。以后也可以双击 **Run-Source.cmd**；自定义安装目录同样支持拖入编辑器。
+3. **打开工程**：双击源码根目录下的 `Open-Editor.cmd`。如果游戏安装在自定义目录，直接将对应目录中的 `PoolCoreEditor.exe` 拖到该 CMD 文件上即可启动。
+4. **运行调试**：等待首次资源导入完成后，按 `F5` 运行。后续也可直接双击 `Run-Source.cmd` 快速启动（同样支持拖入自定义路径的编辑器）。
 
-工程入口是 [`project.godot`](project.godot)，主场景是 [`scenes/main.tscn`](scenes/main.tscn)。更新 Git 工作目录可用 `git pull --ff-only`，更新前先提交或备份自己的修改。
+### 开发注意事项
 
-编辑器旁的 DLL 要一起保留。`PoolCore.exe` 会优先读取旁边的游戏 PCK，因此编辑源码请使用 `PoolCoreEditor.exe`。换电脑后让编辑器重新导入资源，不要复制旧的 `.godot` 缓存。官方 Godot 不包含这里的原生光追、DLSS 和 NR 接口；需要修改引擎或自行打包时，见 [Windows 引擎编译说明](docs/BUILDING-WINDOWS.md)。
+- **工程入口**：配置文件为 [project.godot](https://www.google.com/search?q=project.godot)，主场景为 [scenes/main.tscn](https://www.google.com/search?q=scenes/main.tscn)。
+- **编辑器与依赖**：请完整保留编辑器同目录下的 DLL 文件。由于 `PoolCore.exe` 会优先加载旁边的游戏 PCK，调试源码请务必使用 `PoolCoreEditor.exe`。
+- **更新与迁移**：拉取最新代码前请先提交或备份本地修改，推荐使用 `git pull --ff-only`。更换设备后请让编辑器重新导入资源，**不要直接复制旧的 `.godot` 缓存目录**。
+- **定制引擎编译**：官方版 Godot 不包含本项目的原生光追、DLSS 与 NR 接口；如需修改引擎源码或自行打包，请参阅 [Windows 引擎编译说明](https://www.google.com/search?q=docs/BUILDING-WINDOWS.md)。
+- **角色素材说明**：公开源码包含原探索者角色；可选 ithappy 人物的原始模型与贴图不随公开 Git 仓库分发（缺少这些素材时仍可正常使用原角色），详情见 [人物来源记录](https://www.google.com/search?q=source_provenance/ithappy/README.md)。
 
-源码包含原探索者。可选 ithappy 人物的原始模型、贴图不随公开 Git 仓库提供；缺少这些素材时仍可使用原角色。资产说明见 [人物来源记录](source_provenance/ithappy/README.md)。
+---
 
 ## 存档与常见问题
 
-免安装版的存档和设置在游戏目录的 `profile` 下。旧安装版也使用安装目录下的 `profile`，升级保留，卸载也不会主动删除。默认安装位置是 `%LOCALAPPDATA%\Programs\PoolCore`。使用上述 CMD 运行源码时，存档放在 `%LOCALAPPDATA%\PoolCore\SourceProfile`，与安装版分开。迁移旧免安装版存档时，先退出游戏并备份，再复制旧 `profile`。
+### 存档与配置路径
 
-- **CMD 找不到编辑器**：确认已安装 Windows 版；自定义安装目录可用上面的拖入方式指定编辑器。
-- **光追或 DLSS 选项不可用**：查看画质菜单给出的原因，并检查引擎、驱动和 DLL。不是所有 NVIDIA 显卡都支持全部功能。
-- **切换世界黑屏、颜色异常或闪退**：这部分仍在修复。可以先退出游戏，从对应场景启动器重新进入。反馈时附上版本、场景、显卡、画质设置和安装目录下的 `profile/PoolCore.log`。
+| 运行方式 | 存档与设置路径 | 备注 |
+| --- | --- | --- |
+| **Windows 免安装版** | 游戏目录下的 `profile` | 迁移旧免安装版存档时，请先退出游戏并备份，再复制旧 `profile` |
+| **旧安装版** | 安装目录下的 `profile`（默认 `%LOCALAPPDATA%\Programs\PoolCore`） | 升级时保留，卸载不会主动删除 |
+| **源码 CMD 启动** | `%LOCALAPPDATA%\PoolCore\SourceProfile` | 与安装版存档相互独立 |
 
-目前仍是开发版本，尚未完成全地图通关检查和跨设备兼容测试。已知的引擎退出资源警告及具体修复记录见 `docs/`。
+### 常见问题
 
-## 开发资料
+- **运行 CMD 提示找不到编辑器**：请确认已安装 Windows 版；若安装在自定义路径，可将 `PoolCoreEditor.exe` 直接拖到 `Open-Editor.cmd` 或 `Run-Source.cmd` 上启动。
+- **光追或 DLSS 选项不可用**：请查看画质菜单内显示的具体原因，并检查定制引擎、显卡驱动与同目录 DLL 是否完整。并非所有 NVIDIA 显卡都支持全部特性。
+- **切换世界时黑屏、色彩异常或闪退**：该问题仍在持续排查修复中。遇到时可先退出游戏，再通过对应场景启动器重新进入。反馈问题请附上**版本号、所在场景、显卡型号、画质设置**以及 `profile/PoolCore.log`。
 
-| 目录 | 内容 |
+> 本项目目前仍处于开发阶段，尚未完成全地图通关检查与跨设备兼容测试。已知的引擎退出资源警告及详细修复记录请查阅 `docs/` 目录。
+
+---
+
+## 项目结构与开发资料
+
+| 目录 | 说明 |
 | --- | --- |
-| `scripts/`、`scenes/`、`shaders/` | 游戏逻辑、场景、材质与后处理 |
-| `assets/` | 模型、贴图、音效和运行所需资源 |
-| `native/source_water/` | 水体辅助库及源码 |
-| `tools/blender/` | Blender 作者文件、生成和导出工具 |
+| `scripts/`、`scenes/`、`shaders/` | 游戏逻辑、场景、材质与后处理着色器 |
+| `assets/` | 模型、贴图、音效与运行所需资源 |
+| `native/source_water/` | 水体辅助库及原生源码 |
+| `tools/blender/` | Blender 工程文件、场景生成与导出工具 |
 | `tools/dlss/` | 定制引擎补丁、依赖记录与检查工具 |
-| `docs/`、`source_provenance/` | 功能说明、开发记录和资源来源 |
+| `docs/`、`source_provenance/` | 功能说明、开发记录与素材来源 |
 
-`assets/cache/source_terrain/` 是随工程提供的地形加速数据，修改池底、碰撞或水深时需要更新。Blender 只在编辑模型或重新生成几何时使用。
+- `assets/cache/source_terrain/` 为随工程提供的地形加速数据，修改池底、碰撞或水深后需同步更新。
+- 仅在编辑模型或重新生成几何体时需要使用 Blender。
 
-[主线玩法](docs/campaign/README.md) · [水体移植](docs/SOURCE_LIQUID_PORT.md) · [水面闪点修复](docs/RASTER-WATER-RT-NOISE.md) · [Android 开发记录](docs/ANDROID-8400-20261023.md)
+**延伸文档**：[主线玩法](https://www.google.com/search?q=docs/campaign/README.md) · [水体移植](https://www.google.com/search?q=docs/SOURCE_LIQUID_PORT.md) · [水面闪点修复](https://www.google.com/search?q=docs/RASTER-WATER-RT-NOISE.md) · [Android 开发记录](https://www.google.com/search?q=docs/ANDROID-8400-20261023.md)
+
+---
 
 ## 来源与许可
 
-项目由早期 Web 版继续开发，Godot 工程保留了原水体算法的移植记录。素材和第三方代码各自适用原许可，见 [CREDITS.md](CREDITS.md)、[水体相关许可](docs/SOURCE_LIQUID_LICENSES.md)及资源目录内的 NOTICE。仓库可下载不代表其中所有素材都可以单独提取、再分发。
+本项目由早期 Web 版本演进而来，Godot 工程中保留了原水体算法的移植记录。项目内使用的各类素材与第三方代码分别适用其原始许可协议，详情请查阅：
+
+- [CREDITS.md](CREDITS.md)
+- [水体相关许可](https://www.google.com/search?q=docs/SOURCE_LIQUID_LICENSES.md)
+- 各资源目录下的 `NOTICE` 文件
+
+> 仓库公开可供下载，并不代表其中所有素材均可单独提取或再分发。
