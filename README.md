@@ -1,8 +1,10 @@
 # Beyond the Basin
 
-[English](README.en.md)
+**语言 / Language**　[简体中文 / Simplified Chinese](README.md) · [English](README.en.md)
 
 一个还在制作中的泳池空间探索游戏，也叫 **PoolCore**。
+
+A pool-space exploration game in development, also called **PoolCore**.
 
 沿着水道穿过空荡的池厅、回廊和设备间，听脚步、水声和远处的回响。你可以自由闲逛、拨动水面、搬动物品，也可以进入六章主线，逐步恢复房间里的设施。主线中的空间会随时间变暗、发生异变；想慢慢看风景，可以开启舒缓模式。
 
